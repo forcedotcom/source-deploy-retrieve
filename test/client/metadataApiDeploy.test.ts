@@ -7,7 +7,7 @@
 import { basename, join, sep } from 'node:path';
 import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import chai, { assert, expect } from 'chai';
-import { AnyJson, getString } from '@salesforce/ts-types';
+import { AnyJson, ensureString, getString } from '@salesforce/ts-types';
 import { Lifecycle, Messages, PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
@@ -548,13 +548,13 @@ describe('MetadataApiDeploy', () => {
             fullName,
             type: type.name,
             state: ComponentStatus.Changed,
-            filePath: content,
+            filePath: ensureString(content),
           },
           {
             fullName,
             type: type.name,
             state: ComponentStatus.Changed,
-            filePath: xml,
+            filePath: ensureString(xml),
           },
         ];
 
@@ -584,13 +584,13 @@ describe('MetadataApiDeploy', () => {
             fullName,
             type: type.name,
             state: ComponentStatus.Created,
-            filePath: content,
+            filePath: ensureString(content),
           },
           {
             fullName,
             type: type.name,
             state: ComponentStatus.Created,
-            filePath: xml,
+            filePath: ensureString(xml),
           },
         ];
 
@@ -620,13 +620,13 @@ describe('MetadataApiDeploy', () => {
             fullName,
             type: type.name,
             state: ComponentStatus.Deleted,
-            filePath: content,
+            filePath: ensureString(content),
           },
           {
             fullName,
             type: type.name,
             state: ComponentStatus.Deleted,
-            filePath: xml,
+            filePath: ensureString(xml),
           },
         ];
 
@@ -695,13 +695,13 @@ describe('MetadataApiDeploy', () => {
             fullName,
             type: type.name,
             state: ComponentStatus.Unchanged,
-            filePath: content,
+            filePath: ensureString(content),
           },
           {
             fullName,
             type: type.name,
             state: ComponentStatus.Unchanged,
-            filePath: xml,
+            filePath: ensureString(xml),
           },
         ];
 
@@ -1031,19 +1031,19 @@ describe('MetadataApiDeploy', () => {
             fullName: DECOMPOSED_CHILD_COMPONENT_1.fullName,
             type: DECOMPOSED_CHILD_COMPONENT_1.type.name,
             state: ComponentStatus.Changed,
-            filePath: DECOMPOSED_CHILD_COMPONENT_1.xml,
+            filePath: ensureString(DECOMPOSED_CHILD_COMPONENT_1.xml),
           },
           {
             fullName: DECOMPOSED_CHILD_COMPONENT_2.fullName,
             type: DECOMPOSED_CHILD_COMPONENT_2.type.name,
             state: ComponentStatus.Changed,
-            filePath: DECOMPOSED_CHILD_COMPONENT_2.xml,
+            filePath: ensureString(DECOMPOSED_CHILD_COMPONENT_2.xml),
           },
           {
             fullName: component.fullName,
             type: component.type.name,
             state: ComponentStatus.Changed,
-            filePath: component.xml,
+            filePath: ensureString(component.xml),
           },
         ];
 
@@ -1074,13 +1074,13 @@ describe('MetadataApiDeploy', () => {
             fullName: component.fullName,
             type: component.type.name,
             state: ComponentStatus.Deleted,
-            filePath: component.content,
+            filePath: ensureString(component.content),
           },
           {
             fullName: component.fullName,
             type: component.type.name,
             state: ComponentStatus.Deleted,
-            filePath: component.xml,
+            filePath: ensureString(component.xml),
           },
         ];
 

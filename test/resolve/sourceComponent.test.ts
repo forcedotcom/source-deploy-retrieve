@@ -15,6 +15,7 @@ import {
   CHILD_1_NAME,
   CHILD_1_XML,
   CHILD_2_NAME,
+  CHILD_2_XML,
   COMPONENT_1,
   COMPONENT_1_XML,
   COMPONENT_1_XML_PATH,
@@ -37,6 +38,7 @@ import {
 } from '../mock/type-constants/customObjectTranslationConstant';
 import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
 import { DE_METAFILE } from '../mock/type-constants/digitalExperienceBundleConstants';
+import { XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { RegistryTestUtil } from './registryTestUtil';
 
 Messages.importMessagesDirectory(__dirname);
@@ -485,6 +487,24 @@ describe('SourceComponent', () => {
       const childXml = expectedChild.parseFromParentXml(COMPONENT_1_XML);
       expect(childXml).to.deep.equal(CHILD_1_XML);
       expect(COMPONENT_1.parseFromParentXml(COMPONENT_1_XML)).to.deep.equal(COMPONENT_1_XML);
+    });
+
+    it('throw an error when it cant find the parent xml', () => {
+      try {
+        expectedChild.parseFromParentXml({
+          // notice "B" not "b"
+          CustomLaBels: {
+            [XML_NS_KEY]: XML_NS_URL,
+            [type.directoryName]: [CHILD_1_XML, CHILD_2_XML],
+          },
+        });
+        assert.fail('this should throw');
+      } catch (e) {
+        assert(e instanceof Error);
+        expect(e.message).to.equal(
+          'Invalid XML tags or unable to find matching parent xml file for CustomLabel "Child_1"'
+        );
+      }
     });
 
     // https://github.com/forcedotcom/salesforcedx-vscode/issues/3210

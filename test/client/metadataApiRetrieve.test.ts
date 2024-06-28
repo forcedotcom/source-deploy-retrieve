@@ -11,7 +11,7 @@ import { assert, expect } from 'chai';
 import chai = require('chai');
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import { SinonStub } from 'sinon';
-import { getString } from '@salesforce/ts-types';
+import { ensureString, getString } from '@salesforce/ts-types';
 import fs from 'graceful-fs';
 import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import {
@@ -549,14 +549,14 @@ hY2thZ2VkL3BhY2thZ2UueG1sUEsFBgAAAAADAAMA7QAAAJoCAAAAAA==`;
         const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet, retrievedSet);
 
         const responses = result.getFileResponses();
-        const baseResponse: FileResponse = {
+        const baseResponse = {
           state: ComponentStatus.Changed,
           fullName: component.fullName,
           type: component.type.name,
-        };
+        } as const;
         const expected: FileResponse[] = [
-          Object.assign({}, baseResponse, { filePath: component.content }),
-          Object.assign({}, baseResponse, { filePath: component.xml }),
+          { ...baseResponse, filePath: ensureString(component.content) },
+          { ...baseResponse, filePath: ensureString(component.xml) },
         ];
 
         expect(responses).to.deep.equal(expected);
@@ -572,20 +572,20 @@ hY2thZ2VkL3BhY2thZ2UueG1sUEsFBgAAAAADAAMA7QAAAJoCAAAAAA==`;
       const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet, localSet);
 
       const responses = result.getFileResponses();
-      const baseResponse: FileResponse = {
+      const baseResponse = {
         state: ComponentStatus.Changed,
         fullName: component.fullName,
         type: component.type.name,
-      };
+      } as const;
       // Since the DECOMPOSED_COMPONENT was in the retrieved ComponentSet but
       // not the local source ComponentSet it should have a state of 'Created'
       // rather than 'Changed'.
       const expected: FileResponse[] = [
-        Object.assign({}, baseResponse, { filePath: component.content }),
-        Object.assign({}, baseResponse, { filePath: component.xml }),
+        { ...baseResponse, filePath: ensureString(component.content) },
+        { ...baseResponse, filePath: ensureString(component.xml) },
         {
           fullName: DECOMPOSED_COMPONENT.fullName,
-          filePath: DECOMPOSED_COMPONENT.xml,
+          filePath: ensureString(DECOMPOSED_COMPONENT.xml),
           state: ComponentStatus.Created,
           type: DECOMPOSED_COMPONENT.type.name,
         },
@@ -646,7 +646,7 @@ hY2thZ2VkL3BhY2thZ2UueG1sUEsFBgAAAAADAAMA7QAAAJoCAAAAAA==`;
           state: ComponentStatus.Changed,
           fullName: successComponent.fullName,
           type: successComponent.type.name,
-          filePath: successComponent.xml,
+          filePath: ensureString(successComponent.xml),
         },
       ];
 
@@ -695,7 +695,7 @@ hY2thZ2VkL3BhY2thZ2UueG1sUEsFBgAAAAADAAMA7QAAAJoCAAAAAA==`;
           state: ComponentStatus.Changed,
           fullName: component.fullName,
           type: component.type.name,
-          filePath: component.xml,
+          filePath: ensureString(component.xml),
         },
       ];
 
@@ -721,7 +721,7 @@ hY2thZ2VkL3BhY2thZ2UueG1sUEsFBgAAAAADAAMA7QAAAJoCAAAAAA==`;
           state: ComponentStatus.Changed,
           fullName: component.fullName,
           type: component.type.name,
-          filePath: component.content,
+          filePath: ensureString(component.content),
         },
       ];
 

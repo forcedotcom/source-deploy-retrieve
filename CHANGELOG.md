@@ -1,3 +1,12 @@
+## [12.1.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.3...12.1.4) (2024-06-28)
+
+
+### Bug Fixes
+
+* use import rather than fs read ([#1359](https://github.com/forcedotcom/source-deploy-retrieve/issues/1359)) ([db46af6](https://github.com/forcedotcom/source-deploy-retrieve/commit/db46af6a19f3479126b7c88f117b07253a4a21f7))
+
+
+
 ## [12.1.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.2...12.1.3) (2024-06-28)
 
 

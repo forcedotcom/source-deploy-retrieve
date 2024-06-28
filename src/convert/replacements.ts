@@ -8,7 +8,7 @@ import { readFile } from 'node:fs/promises';
 import { Transform, Readable } from 'node:stream';
 import { sep, posix, join, isAbsolute } from 'node:path';
 import { Lifecycle, Messages, SfError, SfProject } from '@salesforce/core';
-import minimatch from 'minimatch';
+import { minimatch } from 'minimatch';
 import { Env } from '@salesforce/kit';
 import { ensureString, isString } from '@salesforce/ts-types';
 import { SourcePath } from '../common/types';

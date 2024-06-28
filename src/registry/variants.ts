@@ -25,7 +25,7 @@ export type RegistryLoadInput = {
 export const getEffectiveRegistry = (input?: RegistryLoadInput): MetadataRegistry =>
   deepFreeze(firstLevelMerge(registryData as MetadataRegistry, loadVariants(input)));
 
-const presetsJsonMap: Map<string, string> = new Map();
+const presetsJsonMap: Map<string, MetadataRegistry> = new Map();
 
 /** read the project to get additional registry customizations and sourceBehaviorOptions */
 const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry => {
@@ -81,16 +81,15 @@ const maybeGetProject = (projectDir?: string): SfProjectJson | undefined => {
 };
 
 const loadPresetJson = (): void => {
-  presetsJsonMap.set('decomposeCustomLabelsBeta', JSON.stringify(decomposeCustomLabelsBeta));
-  presetsJsonMap.set('decomposePermissionSetBeta', JSON.stringify(decomposePermissionSetBeta));
-  presetsJsonMap.set('decomposeSharingRulesBeta', JSON.stringify(decomposeSharingRulesBeta));
-  presetsJsonMap.set('decomposeWorkflowBeta', JSON.stringify(decomposeWorkflowBeta));
+  presetsJsonMap.set('decomposeCustomLabelsBeta', decomposeCustomLabelsBeta as MetadataRegistry);
+  presetsJsonMap.set('decomposePermissionSetBeta', decomposePermissionSetBeta as MetadataRegistry);
+  presetsJsonMap.set('decomposeSharingRulesBeta', decomposeSharingRulesBeta as MetadataRegistry);
+  presetsJsonMap.set('decomposeWorkflowBeta', decomposeWorkflowBeta as MetadataRegistry);
 };
 
 const loadPreset = (preset: string): MetadataRegistry => {
   try {
-    const rawPreset = presetsJsonMap.get(preset);
-    return JSON.parse(rawPreset as string) as MetadataRegistry;
+    return presetsJsonMap.get(preset) as MetadataRegistry;
   } catch (e) {
     throw new Error(`Failed to load preset ${preset}. The value is invalid.`);
   }

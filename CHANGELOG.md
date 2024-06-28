@@ -1,3 +1,12 @@
+## [12.1.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.0...12.1.1) (2024-06-28)
+
+
+### Bug Fixes
+
+* definition/version types  ([#1357](https://github.com/forcedotcom/source-deploy-retrieve/issues/1357)) ([3448e89](https://github.com/forcedotcom/source-deploy-retrieve/commit/3448e89f1c8ff6b672114901cee5376014b6d907))
+
+
+
 # [12.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.0.2...12.1.0) (2024-06-28)
 
 

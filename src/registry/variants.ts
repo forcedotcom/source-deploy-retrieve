@@ -4,12 +4,14 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as fs from 'node:fs';
-import * as path from 'node:path';
 import { Logger, SfProject, SfProjectJson, Lifecycle } from '@salesforce/core';
 import { deepFreeze } from '../utils/collections';
 import { MetadataRegistry } from './types';
 import * as registryData from './metadataRegistry.json';
+import decomposeCustomLabelsBeta from './presets/decomposeCustomLabelsBeta.json';
+import decomposePermissionSetBeta from './presets/decomposePermissionSetBeta.json';
+import decomposeSharingRulesBeta from './presets/decomposeSharingRulesBeta.json';
+import decomposeWorkflowBeta from './presets/decomposeWorkflowBeta.json';
 
 export type RegistryLoadInput = {
   /** The project directory to look at sfdx-project.json file
@@ -22,6 +24,8 @@ export type RegistryLoadInput = {
 /** combine the standard registration with any overrides specific in the sfdx-project.json */
 export const getEffectiveRegistry = (input?: RegistryLoadInput): MetadataRegistry =>
   deepFreeze(firstLevelMerge(registryData as MetadataRegistry, loadVariants(input)));
+
+const presetsJsonMap: Map<string, string> = new Map();
 
 /** read the project to get additional registry customizations and sourceBehaviorOptions */
 const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry => {
@@ -49,6 +53,7 @@ const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry 
   }
   if (sourceBehaviorOptions.length > 0) {
     logger.debug(`using sourceBehaviorOptions [${sourceBehaviorOptions.join(',')}] in ${projJson.getPath()}`);
+    loadPresetJson();
   }
   const registryFromPresets = sourceBehaviorOptions.reduce<MetadataRegistry>(
     (prev, curr) => firstLevelMerge(prev, loadPreset(curr)),
@@ -75,14 +80,19 @@ const maybeGetProject = (projectDir?: string): SfProjectJson | undefined => {
   }
 };
 
-const loadPreset = (preset: string): MetadataRegistry => {
-  const pathToCheck = path.join(__dirname, 'presets', `${preset}.json`);
+const loadPresetJson = (): void => {
+  presetsJsonMap.set('decomposeCustomLabelsBeta', JSON.stringify(decomposeCustomLabelsBeta));
+  presetsJsonMap.set('decomposePermissionSetBeta', JSON.stringify(decomposePermissionSetBeta));
+  presetsJsonMap.set('decomposeSharingRulesBeta', JSON.stringify(decomposeSharingRulesBeta));
+  presetsJsonMap.set('decomposeWorkflowBeta', JSON.stringify(decomposeWorkflowBeta));
+};
 
+const loadPreset = (preset: string): MetadataRegistry => {
   try {
-    const rawPreset = fs.readFileSync(pathToCheck, 'utf-8');
-    return JSON.parse(rawPreset) as MetadataRegistry;
+    const rawPreset = presetsJsonMap.get(preset);
+    return JSON.parse(rawPreset as string) as MetadataRegistry;
   } catch (e) {
-    throw new Error(`Failed to load preset ${preset} in ${pathToCheck}`);
+    throw new Error(`Failed to load preset ${preset}. The value does not exist.`);
   }
 };
 

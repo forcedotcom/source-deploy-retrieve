@@ -4,12 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as fs from 'node:fs';
-import * as path from 'node:path';
-import { Logger, SfProject, SfProjectJson, Lifecycle } from '@salesforce/core';
+import { Logger, SfProject, SfProjectJson, Lifecycle, SfError } from '@salesforce/core';
 import { deepFreeze } from '../utils/collections';
 import { MetadataRegistry } from './types';
 import * as registryData from './metadataRegistry.json';
+import { presetMap } from './presets/presetMap';
 
 export type RegistryLoadInput = {
   /** The project directory to look at sfdx-project.json file
@@ -76,14 +75,18 @@ const maybeGetProject = (projectDir?: string): SfProjectJson | undefined => {
 };
 
 const loadPreset = (preset: string): MetadataRegistry => {
-  const pathToCheck = path.join(__dirname, 'presets', `${preset}.json`);
-
-  try {
-    const rawPreset = fs.readFileSync(pathToCheck, 'utf-8');
-    return JSON.parse(rawPreset) as MetadataRegistry;
-  } catch (e) {
-    throw new Error(`Failed to load preset ${preset} in ${pathToCheck}`);
+  const matchedPreset = presetMap.get(preset);
+  if (matchedPreset) {
+    return matchedPreset;
   }
+  throw SfError.create({
+    message: `Failed to load preset "${preset}"`,
+    name: 'InvalidPreset',
+    actions: [
+      `Use a valid preset.  Currently available presets are: [${[...presetMap.keys()].join(', ')}]`,
+      'Updating your CLI may be required to get newer presets',
+    ],
+  });
 };
 
 const emptyRegistry = {

@@ -100,3 +100,5 @@ export {
   RecompositionStrategy,
   TransformerStrategy,
 } from './registry';
+
+export { presetMap } from './registry/presets/presetMap';

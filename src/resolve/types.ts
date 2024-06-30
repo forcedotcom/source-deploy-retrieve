@@ -52,9 +52,4 @@ export type SourceAdapter = {
    * @param isResolvingSource Whether the path to resolve is a single file
    */
   getComponent(fsPath: SourcePath, isResolvingSource?: boolean): SourceComponent | undefined;
-
-  /**
-   * Whether the adapter allows content-only metadata definitions.
-   */
-  allowMetadataWithContent(): boolean;
 };

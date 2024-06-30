@@ -43,7 +43,6 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
  */
 export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
   protected ownFolder = true;
-  protected metadataWithContent = false;
 
   public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent | undefined {
     let rootMetadata = super.parseAsRootMetadataXml(path);

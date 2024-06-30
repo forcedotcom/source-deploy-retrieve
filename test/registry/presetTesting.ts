@@ -16,10 +16,13 @@ type RegistryIterator = {
   registry: MetadataRegistry;
 };
 
-const registriesFromPresets = fs.readdirSync(presetFolder, { withFileTypes: true }).map((file) => ({
-  name: file.name,
-  registry: JSON.parse(fs.readFileSync(path.join(file.path, file.name), 'utf-8')) as MetadataRegistry,
-}));
+const registriesFromPresets = fs
+  .readdirSync(presetFolder, { withFileTypes: true })
+  .filter((file) => file.name.endsWith('.json'))
+  .map((file) => ({
+    name: file.name,
+    registry: JSON.parse(fs.readFileSync(path.join(file.path, file.name), 'utf-8')) as MetadataRegistry,
+  }));
 
 const allMerged = registriesFromPresets.reduce<MetadataRegistry>(
   (acc, { registry }) => firstLevelMerge(acc, registry),

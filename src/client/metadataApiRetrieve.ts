@@ -16,6 +16,7 @@ import {
   AsyncResult,
   ComponentStatus,
   FileResponse,
+  FileResponseSuccess,
   MetadataApiRetrieveStatus,
   MetadataTransferResult,
   PackageOptions,
@@ -88,20 +89,20 @@ export class RetrieveResult implements MetadataTransferResult {
     // construct successes
     for (const retrievedComponent of this.components.getSourceComponents()) {
       const { fullName, type, xml } = retrievedComponent;
-      const baseResponse: FileResponse = {
+      const baseResponse = {
         fullName,
         type: type.name,
         state: this.localComponents.has(retrievedComponent) ? ComponentStatus.Changed : ComponentStatus.Created,
-      };
+      } as const;
 
       if (!type.children || Object.values(type.children.types).some((t) => t.unaddressableWithoutParent)) {
         for (const filePath of retrievedComponent.walkContent()) {
-          this.fileResponses.push(Object.assign({}, baseResponse, { filePath }));
+          this.fileResponses.push({ ...baseResponse, filePath } satisfies FileResponseSuccess);
         }
       }
 
       if (xml) {
-        this.fileResponses.push(Object.assign({}, baseResponse, { filePath: xml }));
+        this.fileResponses.push({ ...baseResponse, filePath: xml } satisfies FileResponseSuccess);
       }
     }
 

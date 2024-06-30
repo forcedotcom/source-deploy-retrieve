@@ -9,7 +9,6 @@
     "customfield": "customobject",
     "customfieldtranslation": "customobjecttranslation",
     "customlabel": "customlabels",
-    "decisionmatrixdefinitionversion": "decisionmatrixdefinition",
     "digitalexperience": "digitalexperiencebundle",
     "escalationrule": "escalationrules",
     "extdatatranfieldtemplate": "extdatatranobjecttemplate",
@@ -203,7 +202,7 @@
     "datacategorygroup": "datacategorygroup",
     "datatype": "customdatatype",
     "decisionMatrixDefinition": "decisionmatrixdefinition",
-    "decisionMatrixDefinitionVersion": "decisionmatrixdefinitionversion",
+    "decisionMatrixVersion": "decisionmatrixdefinitionversion",
     "decisionTable": "decisiontable",
     "decisionTableDatasetLink": "decisiontabledatasetlink",
     "delegateGroup": "delegategroup",
@@ -250,6 +249,7 @@
     "explainabilityActionVersion": "explainabilityactionversion",
     "explainabilityMsgTemplate": "explainabilitymsgtemplate",
     "expressionSetDefinition": "expressionsetdefinition",
+    "expressionSetVersion": "expressionsetdefinitionversion",
     "expressionSetMessageToken": "expressionsetmessagetoken",
     "expressionSetObjectAlias": "expressionsetobjectalias",
     "extDataTranFieldTemplate": "extdatatranfieldtemplate",
@@ -1765,28 +1765,20 @@
       "suffix": "dwl"
     },
     "decisionmatrixdefinition": {
-      "children": {
-        "directories": {
-          "versions": "decisionmatrixdefinitionversion"
-        },
-        "suffixes": {
-          "decisionMatrixDefinitionVersion": "decisionmatrixdefinitionversion"
-        },
-        "types": {
-          "decisionmatrixdefinitionversion": {
-            "directoryName": "versions",
-            "id": "decisionmatrixdefinitionversion",
-            "name": "DecisionMatrixDefinitionVersion",
-            "suffix": "decisionMatrixDefinitionVersion"
-          }
-        }
-      },
       "directoryName": "decisionMatrixDefinition",
       "id": "decisionmatrixdefinition",
       "inFolder": false,
       "name": "DecisionMatrixDefinition",
       "strictDirectoryName": false,
       "suffix": "decisionMatrixDefinition"
+    },
+    "decisionmatrixdefinitionversion": {
+      "directoryName": "decisionMatrixVersion",
+      "id": "decisionmatrixdefinitionversion",
+      "inFolder": false,
+      "name": "DecisionMatrixDefinitionVersion",
+      "strictDirectoryName": false,
+      "suffix": "decisionMatrixVersion"
     },
     "decisiontable": {
       "directoryName": "decisionTables",
@@ -2236,6 +2228,14 @@
       "name": "ExpressionSetDefinition",
       "strictDirectoryName": false,
       "suffix": "expressionSetDefinition"
+    },
+    "expressionsetdefinitionversion": {
+      "directoryName": "expressionSetVersion",
+      "id": "expressionsetdefinitionversion",
+      "inFolder": false,
+      "name": "ExpressionSetDefinitionVersion",
+      "strictDirectoryName": false,
+      "suffix": "expressionSetVersion"
     },
     "expressionsetmessagetoken": {
       "directoryName": "expressionSetMessageToken",

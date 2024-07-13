@@ -634,6 +634,7 @@ v62 introduces the following new types.  Here's their current level of support
 |AnalyticsDashboard|❌|Not supported, but support could be added|
 |ChannelRevMgmtSettings|✅||
 |ChoiceList|❌|Not supported, but support could be added|
+|ConversationMessageDefinition|✅||
 |EnblProgramTaskSubCategory|✅||
 |ExtlClntAppPushConfigurablePolicies|❌|Not supported, but support could be added (but not for tracking)|
 |ExtlClntAppPushSettings|✅||
@@ -662,7 +663,6 @@ v62 introduces the following new types.  Here's their current level of support
 - AutoResponseRule
 - BusinessProcessFeedbackConfiguration
 - CallCtrAgentFavTrfrDest
-- ConversationMessageDefinition
 - ConversationVendorFieldDef
 - CustomDataType
 - CustomExperience

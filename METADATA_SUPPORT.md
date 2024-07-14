@@ -633,7 +633,7 @@ v62 introduces the following new types.  Here's their current level of support
 |AccountPlanSettings|✅||
 |AnalyticsDashboard|❌|Not supported, but support could be added|
 |ChannelRevMgmtSettings|✅||
-|ChoiceList|❌|Not supported, but support could be added|
+|ChoiceList|❌|Not supported, but support could be added (but not for tracking)|
 |ConversationMessageDefinition|✅||
 |EnblProgramTaskSubCategory|✅||
 |ExtlClntAppPushConfigurablePolicies|❌|Not supported, but support could be added (but not for tracking)|
@@ -642,8 +642,8 @@ v62 introduces the following new types.  Here's their current level of support
 |IndustriesRatingSettings|✅||
 |IndustriesUsageSettings|✅||
 |LearningItemType|✅||
-|PublicKeyCertificate|❌|Not supported, but support could be added|
-|PublicKeyCertificateSet|❌|Not supported, but support could be added|
+|PublicKeyCertificate|❌|Not supported, but support could be added (but not for tracking)|
+|PublicKeyCertificateSet|❌|Not supported, but support could be added (but not for tracking)|
 |StageDefinition|✅||
 |UiFormatSpecificationSet|❌|Not supported, but support could be added|
 

@@ -83,7 +83,11 @@ const recompose =
     // RecompositionState combines all labels metadata files into 1 component containing
     // all the children.  This checks for multiple parent components and gets the xml
     // file content from each.
-    if (stateValue.component.type.name === 'CustomLabels') {
+    if (
+      childComponents &&
+      stateValue.component.type.strategies?.recomposition === 'startEmpty' &&
+      stateValue.component.type.strategies?.transformer === 'nonDecomposed'
+    ) {
       const parentLabelNames: string[] = [];
       for (const childComp of childComponents) {
         const parentComp = childComp.parent as SourceComponent;

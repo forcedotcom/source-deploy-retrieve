@@ -84,7 +84,7 @@ const recompose =
     // all the children.  This checks for multiple parent components and gets the xml
     // file content from each.
     if (
-      childComponents &&
+      childComponents.length &&
       stateValue.component.type.strategies?.recomposition === 'startEmpty' &&
       stateValue.component.type.strategies?.transformer === 'nonDecomposed'
     ) {

@@ -10,15 +10,7 @@ import { ensure } from '@salesforce/ts-types';
 import { SourcePath } from '../../common/types';
 import { META_XML_SUFFIX } from '../../common/constants';
 import { extName, parseMetadataXml } from '../../utils/path';
-import { SourceComponent } from '../sourceComponent';
-import {
-  BaseSourceAdapter,
-  FindRootMetadata,
-  GetComponent,
-  Populate,
-  getComponent,
-  parseAsRootMetadataXml,
-} from './baseSourceAdapter';
+import { FindRootMetadata, GetComponent, Populate, getComponent, parseAsRootMetadataXml } from './baseSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -38,46 +30,14 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
  * ├── foobar.ext-meta.xml
  *```
  */
-export class MatchingContentSourceAdapter extends BaseSourceAdapter {
-  // disabled since used by subclasses
-  // eslint-disable-next-line class-methods-use-this
-  protected getRootMetadataXmlPath(trigger: SourcePath): SourcePath {
-    return `${trigger}${META_XML_SUFFIX}`;
-  }
-
-  protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
-    let sourcePath: SourcePath | undefined;
-
-    if (component.xml === trigger) {
-      const fsPath = removeMetaXmlSuffix(trigger);
-      if (this.tree.exists(fsPath)) {
-        sourcePath = fsPath;
-      }
-    } else if (this.registry.getTypeBySuffix(extName(trigger)) === this.type) {
-      sourcePath = trigger;
-    }
-
-    if (!sourcePath) {
-      throw new SfError(
-        messages.getMessage('error_expected_source_files', [trigger, this.type.name]),
-        'ExpectedSourceFilesError'
-      );
-    } else if (this.forceIgnore.denies(sourcePath)) {
-      throw messages.createError('noSourceIgnore', [this.type.name, sourcePath]);
-    }
-
-    component.content = sourcePath;
-    return component;
-  }
-}
 
 /** foo.bar-meta.xml => foo.bar */
 const removeMetaXmlSuffix = (fsPath: SourcePath): SourcePath => fsPath.slice(0, fsPath.lastIndexOf(META_XML_SUFFIX));
 
 export const getMatchingContentComponent: GetComponent =
   (context) =>
-  ({ type, path, isResolvingSource }) => {
-    const sourceComponent = getComponent(context)({ type, path, metadataXml: findRootMetadata, isResolvingSource });
+  ({ type, path }) => {
+    const sourceComponent = getComponent(context)({ type, path, metadataXml: findRootMetadata });
     return populate(context)(type)(path, sourceComponent);
   };
 
@@ -110,7 +70,7 @@ const populate: Populate = (context) => (type) => (trigger, component) => {
       messages.getMessage('error_expected_source_files', [trigger, type.name]),
       'ExpectedSourceFilesError'
     );
-  } else if (context.forceIgnore.denies(sourcePath)) {
+  } else if (context.forceIgnore?.denies(sourcePath)) {
     throw messages.createError('noSourceIgnore', [type.name, sourcePath]);
   }
 

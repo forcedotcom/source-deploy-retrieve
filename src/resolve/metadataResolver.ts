@@ -11,7 +11,7 @@ import { RegistryAccess, typeAllowsMetadataWithContent } from '../registry/regis
 import { MetadataType } from '../registry/types';
 import { ComponentSet } from '../collections/componentSet';
 import { META_XML_SUFFIX } from '../common/constants';
-import { getAdapter } from './adapters/sourceAdapterFactory';
+import { adapterSelector } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
@@ -136,8 +136,13 @@ export class MetadataResolver {
       ) {
         return;
       }
-      const adapter = getAdapter(this.registry)(this.tree)(this.forceIgnore)(type);
-      return adapter.getComponent(fsPath, isResolvingSource);
+
+      return adapterSelector(type)({
+        tree: this.tree,
+        forceIgnore: this.forceIgnore,
+        registry: this.registry,
+        isResolvingSource,
+      })({ path: fsPath, type });
     }
 
     if (isProbablyPackageManifest(this.tree)(fsPath)) return undefined;
@@ -354,7 +359,7 @@ const resolveType =
 /**
  * Any file with a registered suffix is potentially a content metadata file.
  *
- * @param registry a metadata registry to resolve types agsinst
+ * @param registry a metadata registry to resolve types against
  */
 const parseAsContentMetadataXml =
   (registry: RegistryAccess) =>

@@ -5,16 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { createSandbox, SinonSandbox } from 'sinon';
-import {
-  ForceIgnore,
-  MetadataResolver,
-  MetadataType,
-  SourceComponent,
-  SourcePath,
-  VirtualDirectory,
-  VirtualTreeContainer,
-} from '../../src';
-import { SourceAdapterFactory } from '../../src/resolve/adapters/sourceAdapterFactory';
+import { ForceIgnore, MetadataResolver, SourcePath, VirtualDirectory, VirtualTreeContainer } from '../../src';
 
 export class RegistryTestUtil {
   private env: SinonSandbox;
@@ -31,25 +22,6 @@ export class RegistryTestUtil {
   // eslint-disable-next-line class-methods-use-this
   public createMetadataResolver(virtualFS: VirtualDirectory[], useRealForceIgnore = true): MetadataResolver {
     return new MetadataResolver(undefined, new VirtualTreeContainer(virtualFS), useRealForceIgnore);
-  }
-
-  public stubAdapters(
-    config: Array<{
-      type: MetadataType;
-      componentMappings: Array<{ path: SourcePath; component: SourceComponent }>;
-      allowContent?: boolean;
-    }>
-  ): void {
-    const getAdapterStub = this.env.stub(SourceAdapterFactory.prototype, 'getAdapter');
-    for (const entry of config) {
-      const componentMap: { [path: string]: SourceComponent } = {};
-      for (const c of entry.componentMappings) {
-        componentMap[c.path] = c.component;
-      }
-      getAdapterStub.withArgs(entry.type).returns({
-        getComponent: (path: SourcePath) => componentMap[path],
-      });
-    }
   }
 
   public stubForceIgnore(config: { seed: SourcePath; accept?: SourcePath[]; deny?: SourcePath[] }): ForceIgnore {

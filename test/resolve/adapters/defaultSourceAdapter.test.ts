@@ -6,16 +6,20 @@
  */
 import { join } from 'node:path';
 import { expect } from 'chai';
-import { DefaultSourceAdapter } from '../../../src/resolve/adapters';
-import { registry, SourceComponent } from '../../../src';
+import { getDefaultComponent } from '../../../src/resolve/adapters/defaultSourceAdapter';
+import { NodeFSTreeContainer, registry, RegistryAccess, SourceComponent } from '../../../src';
 import { META_XML_SUFFIX } from '../../../src/common';
 
 describe('DefaultSourceAdapter', () => {
   it('should return a SourceComponent when given a metadata xml file', () => {
     const type = registry.types.eventdelivery;
     const path = join('path', 'to', type.directoryName, `My_Test.${type.suffix}${META_XML_SUFFIX}`);
-    const adapter = new DefaultSourceAdapter(type);
-    expect(adapter.getComponent(path)).to.deep.equal(
+    expect(
+      getDefaultComponent({ registry: new RegistryAccess(), tree: new NodeFSTreeContainer() })({
+        path,
+        type,
+      })
+    ).to.deep.equal(
       new SourceComponent({
         name: 'My_Test',
         type,

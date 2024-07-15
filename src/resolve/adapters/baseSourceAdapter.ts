@@ -6,11 +6,11 @@
  */
 import { basename, dirname, sep } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
-import { ensure, ensureString } from '@salesforce/ts-types';
-import { MetadataXml, SourceAdapter } from '../types';
+import { ensureString } from '@salesforce/ts-types';
+import { MetadataXml } from '../types';
 import { parseMetadataXml, parseNestedFullName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
-import { NodeFSTreeContainer, TreeContainer } from '../treeContainers';
+import { TreeContainer } from '../treeContainers';
 import { SourceComponent } from '../sourceComponent';
 import { SourcePath } from '../../common/types';
 import { MetadataType } from '../../registry/types';
@@ -21,106 +21,10 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 
 export type AdapterContext = {
   registry: RegistryAccess;
-  forceIgnore: ForceIgnore;
+  forceIgnore?: ForceIgnore;
   tree: TreeContainer;
-  // TODO: maybe get rid of this or derive it from the type
-  ownFolder?: boolean;
+  isResolvingSource?: boolean;
 };
-
-export abstract class BaseSourceAdapter implements SourceAdapter {
-  protected type: MetadataType;
-  protected registry: RegistryAccess;
-  protected forceIgnore: ForceIgnore;
-  protected tree: TreeContainer;
-
-  /**
-   * Whether or not an adapter should expect a component to be in its own, self-named
-   * folder, including its root metadata xml file.
-   */
-  protected ownFolder = false;
-
-  public constructor(
-    type: MetadataType,
-    registry = new RegistryAccess(),
-    forceIgnore = new ForceIgnore(),
-    tree = new NodeFSTreeContainer()
-  ) {
-    this.type = type;
-    this.registry = registry;
-    this.forceIgnore = forceIgnore;
-    this.tree = tree;
-  }
-
-  public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent | undefined {
-    let rootMetadata = parseAsRootMetadataXml(this.type)(path);
-    if (!rootMetadata) {
-      const rootMetadataPath = this.getRootMetadataXmlPath(path);
-      if (rootMetadataPath) {
-        rootMetadata = this.parseMetadataXml(rootMetadataPath);
-      }
-    }
-    if (rootMetadata && this.forceIgnore.denies(rootMetadata.path)) {
-      throw new SfError(
-        messages.getMessage('error_no_metadata_xml_ignore', [rootMetadata.path, path]),
-        'UnexpectedForceIgnore'
-      );
-    }
-
-    let component: SourceComponent | undefined;
-    if (rootMetadata) {
-      const name = calculateName(this.registry)(this.type)(rootMetadata);
-      component = new SourceComponent(
-        {
-          name,
-          type: this.type,
-          xml: rootMetadata.path,
-          parentType: this.type.folderType ? this.registry.getTypeByName(this.type.folderType) : undefined,
-        },
-        this.tree,
-        this.forceIgnore
-      );
-    }
-
-    return this.populate(path, component, isResolvingSource);
-  }
-
-  /**
-   * If the path given to `getComponent` is the root metadata xml file for a component,
-   * parse the name and return it. This is an optimization to not make a child adapter do
-   * anymore work to find it.
-   *
-   * @param path File path of a metadata component
-   */
-  protected parseAsRootMetadataXml(path: SourcePath): MetadataXml | undefined {
-    return parseAsRootMetadataXml(this.type)(path);
-  }
-
-  // allowed to preserve API
-  // eslint-disable-next-line class-methods-use-this
-  protected parseMetadataXml(path: SourcePath): MetadataXml | undefined {
-    return parseMetadataXml(path);
-  }
-
-  /**
-   * Determine the related root metadata xml when the path given to `getComponent` isn't one.
-   *
-   * @param trigger Path that `getComponent` was called with
-   */
-  protected abstract getRootMetadataXmlPath(trigger: SourcePath): SourcePath | undefined;
-
-  /**
-   * Populate additional properties on a SourceComponent, such as source files and child components.
-   * The component passed to `populate` has its fullName, xml, and type properties already set.
-   *
-   * @param component Component to populate properties on
-   * @param trigger Path that `getComponent` was called with
-   */
-  protected abstract populate(
-    trigger: SourcePath,
-    component?: SourceComponent,
-    isResolvingSource?: boolean
-  ): SourceComponent | undefined;
-}
 
 /**
  * If the path given to `getComponent` is the root metadata xml file for a component,
@@ -256,33 +160,37 @@ export const trimPathToContent =
     return pathParts.slice(0, typeFolderIndex + offset).join(sep);
   };
 
-type GetComponentInput = {
+export type GetComponentInput = {
   type: MetadataType;
   path: SourcePath;
-  isResolvingSource: boolean;
   /** either a MetadataXml OR a function that resolves to it using the type/path  */
   metadataXml?: MetadataXml | FindRootMetadata;
 };
 
 export type MaybeGetComponent = (context: AdapterContext) => (input: GetComponentInput) => SourceComponent | undefined;
 export type GetComponent = (context: AdapterContext) => (input: GetComponentInput) => SourceComponent;
-export type FindRootMetadata = (type: MetadataType, path: SourcePath) => MetadataXml;
-
-export type MaybePopulate = (
-  context: AdapterContext
-) => (type: MetadataType) => (trigger: SourcePath, component?: SourceComponent) => SourceComponent | undefined;
+export type FindRootMetadata = (type: MetadataType, path: SourcePath) => MetadataXml | undefined;
 
 /** requires a component, will definitely return one */
 export type Populate = (
   context: AdapterContext
 ) => (type: MetadataType) => (trigger: SourcePath, component: SourceComponent) => SourceComponent;
+export type MaybePopulate = (
+  context: AdapterContext
+) => (type: MetadataType) => (trigger: SourcePath, component?: SourceComponent) => SourceComponent | undefined;
 
 export const getComponent: GetComponent =
   (context) =>
   ({ type, path, metadataXml: findRootMetadata = defaultFindRootMetadata }) => {
     // find rootMetadata
     const metadataXml = typeof findRootMetadata === 'function' ? findRootMetadata(type, path) : findRootMetadata;
-    if (context.forceIgnore.denies(metadataXml.path)) {
+    if (!metadataXml) {
+      throw SfError.create({
+        message: messages.getMessage('error_parsing_xml', [path, type.name]),
+        name: 'MissingXml',
+      });
+    }
+    if (context.forceIgnore?.denies(metadataXml.path)) {
       throw SfError.create({
         message: messages.getMessage('error_no_metadata_xml_ignore', [metadataXml.path, path]),
         name: 'UnexpectedForceIgnore',
@@ -306,5 +214,5 @@ const defaultFindRootMetadata: FindRootMetadata = (type, path) => {
     return pathAsRoot;
   }
 
-  return ensure(parseMetadataXml(path));
+  return parseMetadataXml(path);
 };

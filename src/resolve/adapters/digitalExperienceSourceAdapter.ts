@@ -4,16 +4,18 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { dirname, join, sep } from 'node:path';
+import { dirname, sep, basename } from 'node:path';
 import { Messages } from '@salesforce/core';
+import { ensure } from '@salesforce/ts-types';
 import type { RegistryAccess } from '../../registry/registryAccess';
 import { MetadataType } from '../../registry/types';
 import { META_XML_SUFFIX } from '../../common/constants';
 import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
 import { MetadataXml } from '../types';
-import { baseName, parentName } from '../../utils/path';
-import { BundleSourceAdapter } from './bundleSourceAdapter';
+import { baseName, parentName, parseMetadataXml } from '../../utils/path';
+import { MaybeGetComponent, Populate, getComponent, parseAsRootMetadataXml } from './baseSourceAdapter';
+import { populateMixedContent } from './mixedContentSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -57,70 +59,34 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
  * corresponding folder are the contents to the DigitalExperience metadata. So, incase of DigitalExperience the metadata file is a JSON file
  * and not an XML file
  */
-export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
-  protected getRootMetadataXmlPath(trigger: string): string {
-    if (isBundleType(this.type)) {
-      return getBundleMetadataXmlPath(this.registry)(this.type)(trigger);
-    }
-    // metafile name = metaFileSuffix for DigitalExperience.
-    if (!this.type.metaFileSuffix) {
-      throw messages.createError('missingMetaFileSuffix', [this.type.name]);
-    }
-    return join(dirname(trigger), this.type.metaFileSuffix);
-  }
 
-  protected trimPathToContent(path: string): string {
-    return isBundleType(this.type) ? path : trimNonBundlePathToContentPath(path);
-  }
+export const getDigitalExperienceComponent: MaybeGetComponent =
+  (context) =>
+  ({ path, type }) => {
+    // if it's an empty directory, don't include it (e.g., lwc/emptyLWC)
+    if (context.tree.isEmptyDirectory(path)) return;
+    const componentRoot = isBundleType(type) ? path : trimNonBundlePathToContentPath(path);
+    const rootMeta = context.tree.find('metadataXml', basename(componentRoot), componentRoot);
+    const rootMetaXml = rootMeta
+      ? parseAsRootMetadataXml(type)(rootMeta)
+      : ensure(parseMetadataXmlForDEB(context.registry)(type)(path));
+    const sourceComponent = getComponent(context)({ type, path, metadataXml: rootMetaXml });
+    return populate(context)(type)(path, sourceComponent);
+  };
 
-  protected populate(trigger: string, component?: SourceComponent): SourceComponent {
-    if (isBundleType(this.type) && component) {
-      // for top level types we don't need to resolve parent
-      return component;
-    }
-    const source = super.populate(trigger, component);
-    const parentType = this.registry.getParentType(this.type.id);
-    // we expect source, parentType and content to be defined.
-    if (!source || !parentType || !source.content) {
-      throw messages.createError('error_failed_convert', [component?.fullName ?? this.type.name]);
-    }
-    const xml = getBundleMetadataXmlPath(this.registry)(this.type)(source.content);
-    const parent = new SourceComponent(
-      {
-        name: getBundleName(xml),
-        type: parentType,
-        xml,
-      },
-      this.tree,
-      this.forceIgnore
-    );
-    return new SourceComponent(
-      {
-        name: calculateNameFromPath(source.content),
-        type: this.type,
-        content: source.content,
-        xml: source.xml,
-        parent,
-        parentType,
-      },
-      this.tree,
-      this.forceIgnore
-    );
-  }
-
-  protected parseMetadataXml(path: SourcePath): MetadataXml | undefined {
-    const xml = super.parseMetadataXml(path);
+const parseMetadataXmlForDEB =
+  (registry: RegistryAccess) =>
+  (type: MetadataType) =>
+  (path: SourcePath): MetadataXml | undefined => {
+    const xml = parseMetadataXml(path);
     if (xml) {
       return {
-        fullName: getBundleName(getBundleMetadataXmlPath(this.registry)(this.type)(path)),
+        fullName: getBundleName(getBundleMetadataXmlPath(registry)(type)(path)),
         suffix: xml.suffix,
         path: xml.path,
       };
     }
-  }
-}
-
-export const getDigitalExperienceComponent: MaybeGetComponent = (context) => (input) => {};
+  };
 
 const getBundleName = (bundlePath: string): string => `${parentName(dirname(bundlePath))}/${parentName(bundlePath)}`;
 
@@ -160,6 +126,40 @@ const trimNonBundlePathToContentPath = (path: string): string => {
   return pathToContent;
 };
 
+const populate: Populate = (context) => (type) => (path, component) => {
+  if (isBundleType(type) && component) {
+    // for top level types we don't need to resolve parent
+    return component;
+  }
+  const source = populateMixedContent(context)(type)(path, component);
+  const parentType = context.registry.getParentType(type.id);
+  // we expect source, parentType and content to be defined.
+  if (!source || !parentType || !source.content) {
+    throw messages.createError('error_failed_convert', [component?.fullName ?? type.name]);
+  }
+  const xml = getBundleMetadataXmlPath(context.registry)(type)(source.content);
+  const parent = new SourceComponent(
+    {
+      name: getBundleName(xml),
+      type: parentType,
+      xml,
+    },
+    context.tree,
+    context.forceIgnore
+  );
+  return new SourceComponent(
+    {
+      name: calculateNameFromPath(source.content),
+      type,
+      content: source.content,
+      xml: source.xml,
+      parent,
+      parentType,
+    },
+    context.tree,
+    context.forceIgnore
+  );
+};
 /**
  * @param contentPath This hook is called only after trimPathToContent() is called. so this will always be a folder structure
  * @returns name of type/apiName format

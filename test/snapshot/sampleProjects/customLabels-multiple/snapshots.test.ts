@@ -52,7 +52,7 @@ describe('Multiple large custom labels files', () => {
       outputDirectory: testOutput,
       genUniqueDir: false,
     });
-    // Longer than 2 seconds could indicate a regression
+    // Longer than 10 seconds could indicate a regression
     expect(Date.now() - convertStartTime, 'conversion should take less than 10 seconds').to.be.lessThan(10000);
 
     const convertedFiles = await getConvertedFilePaths(testOutput);

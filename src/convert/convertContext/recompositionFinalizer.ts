@@ -78,10 +78,31 @@ type ChildWithXml = {
 const recompose =
   (cache: XmlCache) =>
   async (stateValue: RecompositionStateValueWithParent): Promise<JsonMap> => {
-    await getXmlFromCache(cache)(stateValue.component);
+    const childComponents = stateValue.children?.toArray() ?? [];
+
+    // RecompositionState combines all labels metadata files into 1 component containing
+    // all the children.  This checks for multiple parent components and gets the xml
+    // file content from each.
+    if (
+      childComponents.length &&
+      stateValue.component.type.strategies?.recomposition === 'startEmpty' &&
+      stateValue.component.type.strategies?.transformer === 'nonDecomposed'
+    ) {
+      const parentLabelNames: string[] = [];
+      for (const childComp of childComponents) {
+        const parentComp = childComp.parent as SourceComponent;
+        if (parentComp && !parentLabelNames.includes(parentComp.name)) {
+          parentLabelNames.push(parentComp.name);
+          // eslint-disable-next-line no-await-in-loop
+          await getXmlFromCache(cache)(parentComp);
+        }
+      }
+    } else {
+      await getXmlFromCache(cache)(stateValue.component);
+    }
 
     const childXmls = await Promise.all(
-      (stateValue.children?.toArray() ?? []).filter(ensureMetadataComponentWithParent).map(
+      childComponents.filter(ensureMetadataComponentWithParent).map(
         async (child): Promise<ChildWithXml> => ({
           cmp: child,
           xmlContents: await getXmlFromCache(cache)(child),

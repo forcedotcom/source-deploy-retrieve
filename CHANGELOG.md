@@ -1,3 +1,12 @@
+## [12.1.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.6...12.1.7) (2024-07-17)
+
+
+### Bug Fixes
+
+* remove top-level metadata types mlmodel, modelconnection and modelschema ([#1369](https://github.com/forcedotcom/source-deploy-retrieve/issues/1369)) ([e3b4285](https://github.com/forcedotcom/source-deploy-retrieve/commit/e3b4285698f7af94ba2a5189c236960e22220232))
+
+
+
 ## [12.1.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.5...12.1.6) (2024-07-16)
 
 

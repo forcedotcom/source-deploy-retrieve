@@ -339,9 +339,6 @@
     "mktDataTranObject": "mktdatatranobject",
     "mlDataDefinition": "mldatadefinition",
     "mlDomain": "mldomain",
-    "mlModel": "mlmodelartifact",
-    "mlModelConnection": "mlmodelconnection",
-    "mlModelSchema": "mlmodelschema",
     "mlPrediction": "mlpredictiondefinition",
     "mlRecommendation": "mlrecommendationdefinition",
     "mobSecurityCertPinConfig": "mobsecuritycertpinconfig",
@@ -3064,30 +3061,6 @@
       "inFolder": false,
       "name": "MlDomain",
       "suffix": "mlDomain"
-    },
-    "mlmodelartifact": {
-      "directoryName": "mlModels",
-      "id": "mlmodelartifact",
-      "inFolder": false,
-      "name": "MlModelArtifact",
-      "strictDirectoryName": false,
-      "suffix": "mlModel"
-    },
-    "mlmodelconnection": {
-      "directoryName": "mlModelConnections",
-      "id": "mlmodelconnection",
-      "inFolder": false,
-      "name": "MlModelConnection",
-      "strictDirectoryName": false,
-      "suffix": "mlModelConnection"
-    },
-    "mlmodelschema": {
-      "directoryName": "mlModelSchemas",
-      "id": "mlmodelschema",
-      "inFolder": false,
-      "name": "MlModelSchema",
-      "strictDirectoryName": false,
-      "suffix": "mlModelSchema"
     },
     "mlpredictiondefinition": {
       "directoryName": "mlPredictions",

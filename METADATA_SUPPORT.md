@@ -697,9 +697,6 @@ v62 introduces the following new types.  Here's their current level of support
 - MatchingRule
 - MktDataTranField
 - MLDataDefinition
-- MlModelArtifact
-- MlModelConnection
-- MlModelSchema
 - MLPredictionDefinition
 - MLRecommendationDefinition
 - MobileSecurityPolicySet

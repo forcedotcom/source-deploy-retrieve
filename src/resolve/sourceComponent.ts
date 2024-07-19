@@ -75,7 +75,7 @@ export class SourceComponent implements MetadataComponent {
     }
     if (this.parent && this.type.ignoreParentName) {
       if (!this.name) {
-        throw new SfError(`Component was initialized without a name: ${this.xml} (${this.type.name})`);
+        throw new SfError(`Component was initialized without a name: ${this.xml ?? ''} (${this.type.name})`);
       }
       return this.name;
     } else {
@@ -355,12 +355,12 @@ export class SourceComponent implements MetadataComponent {
       if (!uniqueIdElement) {
         return [];
       }
-      const xmlPathToChildren = `${this.type.name}.${childType.xmlElementName}`;
+      const xmlPathToChildren = `${this.type.name}.${childType.xmlElementName ?? ''}`;
       const elements = ensureArray(get(parsed, xmlPathToChildren, []));
       return elements.map((element) => {
         const name = getString(element, uniqueIdElement);
         if (!name) {
-          throw new SfError(`Missing ${uniqueIdElement} on ${childType.name} in ${this.xml}`);
+          throw new SfError(`Missing ${uniqueIdElement} on ${childType.name} in ${this.xml ?? ''}`);
         }
         return new SourceComponent(
           {

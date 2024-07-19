@@ -261,8 +261,8 @@ const logComponents = (logger: Logger, componentSet: ComponentSet): void => {
     .map((m) => logger.debug(m));
   if (components.length > 20) logger.debug(`(showing 20 of ${componentSet.size} matches)`);
 
-  logger.debug(`ComponentSet apiVersion = ${componentSet.apiVersion}`);
-  logger.debug(`ComponentSet sourceApiVersion = ${componentSet.sourceApiVersion}`);
+  logger.debug(`ComponentSet apiVersion = ${componentSet.apiVersion ?? '<not set>'}`);
+  logger.debug(`ComponentSet sourceApiVersion = ${componentSet.sourceApiVersion ?? '<not set>'}`);
 };
 
 const getOrgComponentFilter = (

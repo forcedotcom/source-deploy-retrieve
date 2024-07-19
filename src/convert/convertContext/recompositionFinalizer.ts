@@ -63,7 +63,7 @@ const stateValueToWriterFormat =
         source: new JsToXml(await recompose(cache)(stateValue)),
         output: join(
           stateValue.component.type.directoryName,
-          `${stateValue.component.fullName}.${stateValue.component.type.suffix}`
+          `${stateValue.component.fullName}.${stateValue.component.type.suffix ?? ''}`
         ),
       },
     ],
@@ -139,10 +139,15 @@ const ensureStateValueWithParent = (
     return true;
   }
   throw new Error(
-    `The parent component is missing from the recomposition state entry.  The children are ${stateValue.children
-      ?.toArray()
-      .map((c) => c.fullName)
-      .join(', ')}`
+    `The parent component is missing from the recomposition state entry.  ${
+      stateValue.children
+        ? `The children are ${stateValue.children
+            ?.toArray()
+            .map((c) => c.fullName)
+            .join(', ')}
+    `
+        : 'There are no children.'
+    }`
   );
 };
 

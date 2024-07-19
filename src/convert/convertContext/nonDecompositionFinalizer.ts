@@ -197,7 +197,7 @@ const recompose = (children: Map<string, JsonMap>, parentSourceComponent: Source
 const getDefaultOutput = (component: SourceComponent): string => {
   const { fullName } = component;
   const [baseName] = fullName.split('.');
-  const output = `${baseName}.${component.type.suffix}${META_XML_SUFFIX}`;
+  const output = `${baseName}.${component.type.suffix ?? ''}${META_XML_SUFFIX}`;
 
   return join(component.getPackageRelativePath('', 'source'), output);
 };

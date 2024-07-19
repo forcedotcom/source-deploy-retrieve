@@ -52,7 +52,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
 
     // Zip the static resource from disk to a stream, compressing at level 9.
     const zipIt = (): Readable => {
-      getLogger().debug(`zipping static resource: ${component.content}`);
+      getLogger().debug(`zipping static resource: ${content}`);
       const zip = JSZip();
 
       // JSZip does not have an API for adding a directory of files recursively so we always
@@ -78,7 +78,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
             streamFiles: true,
           })
           .on('end', () => {
-            getLogger().debug(`zip complete for: ${component.content}`);
+            getLogger().debug(`zip complete for: ${content}`);
           })
       );
     };
@@ -88,7 +88,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
         source: (await componentIsExpandedArchive(component))
           ? zipIt()
           : getReplacementStreamForReadable(component, content),
-        output: join(type.directoryName, `${baseName(content)}.${type.suffix}`),
+        output: join(type.directoryName, `${baseName(content)}.${type.suffix ?? ''}`),
       },
       {
         source: getReplacementStreamForReadable(component, xml),
@@ -197,7 +197,9 @@ const getContentType = async (component: SourceComponent): Promise<string> => {
 
   if (typeof output !== 'string') {
     throw new SfError(
-      `Expected a string for contentType in ${component.name} (${component.xml}) but got ${JSON.stringify(output)}`
+      `Expected a string for contentType in ${component.name} (${component.xml ?? '<no xml>'}) but got ${JSON.stringify(
+        output
+      )}`
     );
   }
   return output;
@@ -211,7 +213,7 @@ const getBaseContentPath = (component: SourceComponent, mergeWith?: SourceCompon
     const baseContentPath = component.getPackageRelativePath(component.content, 'source');
     return join(dirname(baseContentPath), baseName(baseContentPath));
   }
-  throw new SfError(`Expected a content path for ${component.name} (${component.xml})`);
+  throw new SfError(`Expected a content path for ${component.name} (${component.xml ?? '<no xml>'})`);
 };
 
 const getExtensionFromType = (contentType: string): string =>
@@ -238,8 +240,10 @@ async function getStaticResourceZip(component: SourceComponent, content: string)
     const staticResourceZip = await component.tree.readFile(content);
     return await JSZip.loadAsync(staticResourceZip, { createFolders: true });
   } catch (e) {
-    throw new SfError(`Unable to open zip file ${content} for ${component.name} (${component.xml})`, 'BadZipFile', [
-      'Check that your file really is a valid zip archive',
-    ]);
+    throw new SfError(
+      `Unable to open zip file ${content} for ${component.name} (${component.xml ?? '<no xml>'})`,
+      'BadZipFile',
+      ['Check that your file really is a valid zip archive']
+    );
   }
 }

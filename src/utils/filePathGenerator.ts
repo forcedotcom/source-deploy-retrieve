@@ -44,7 +44,7 @@ export const filePathsFromMetadataComponent = (
 
   if (type.strategies?.adapter === 'digitalExperience') {
     // child MD Type, the metafile is a JSON, not an XML
-    if (type.id === 'digitalexperience') {
+    if (type.id === 'digitalexperience' && type.metaFileSuffix) {
       // metafile name = metaFileSuffix for DigitalExperience.
       return [
         join(
@@ -55,12 +55,12 @@ export const filePathsFromMetadataComponent = (
     }
 
     // parent MD Type
-    if (type.id === 'digitalexperiencebundle') {
+    if (type.id === 'digitalexperiencebundle' && type.suffix) {
       return [join(packageDirWithTypeDir, `${fullName}${sep}${basename(fullName)}.${type.suffix}${META_XML_SUFFIX}`)];
     }
   }
 
-  if (type.strategies?.adapter === 'decomposed') {
+  if (type.strategies?.adapter === 'decomposed' && type.suffix) {
     return [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.${type.suffix}${META_XML_SUFFIX}`)];
   }
 
@@ -70,19 +70,19 @@ export const filePathsFromMetadataComponent = (
   }
 
   // Non-decomposed parents (i.e., any type that defines children and not a decomposed transformer)
-  if (type.children) {
+  if (type.children && type.suffix) {
     return [join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`)];
   }
 
   // basic metadata (with or without folders)
-  if (!type.children && !type.strategies) {
+  if (!type.children && !type.strategies && type.suffix) {
     return (type.inFolder ?? type.folderType ? generateFolders({ fullName, type }, packageDirWithTypeDir) : []).concat([
       join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`),
     ]);
   }
 
   // matching content (with or without folders)
-  if (type.strategies?.adapter === 'matchingContentFile') {
+  if (type.strategies?.adapter === 'matchingContentFile' && type.suffix) {
     return (type.inFolder ? generateFolders({ fullName, type }, packageDirWithTypeDir) : []).concat([
       join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`),
       join(packageDirWithTypeDir, `${fullName}.${type.suffix}`),
@@ -102,8 +102,10 @@ export const filePathsFromMetadataComponent = (
     return [
       join(
         packageDirWithTypeDir,
-        // registry doesn't have a suffix for EB (it comes down inside the mdapi response)
-        `${fullName}.${type.strategies?.transformer === 'staticResource' ? type.suffix : 'site'}${META_XML_SUFFIX}`
+        // registry doesn't have a suffix for EB (it comes down inside the mdapi response).  // staticResource has a suffix
+        `${fullName}.${
+          type.strategies?.transformer === 'staticResource' ? (type.suffix as string) : 'site'
+        }${META_XML_SUFFIX}`
       ),
       join(packageDirWithTypeDir, `${fullName}`),
     ];
@@ -140,7 +142,7 @@ const generateFolders = ({ fullName, type }: MetadataComponent, packageDirWithTy
       join(
         packageDirWithTypeDir,
         `${originalArray.slice(0, index + 1).join(sep)}.${
-          registryAccess.getTypeByName(folderType).suffix
+          registryAccess.getTypeByName(folderType).suffix ?? ''
         }${META_XML_SUFFIX}`
       )
     );
@@ -159,14 +161,14 @@ const getDecomposedChildType = ({ fullName, type }: MetadataComponent, packageDi
     // parent
     join(
       topLevelTypeDir,
-      `${fullName.split('.')[0]}${sep}${fullName.split('.')[0]}.${topLevelType.suffix}${META_XML_SUFFIX}`
+      `${fullName.split('.')[0]}${sep}${fullName.split('.')[0]}.${topLevelType.suffix ?? ''}${META_XML_SUFFIX}`
     ),
     // child
     join(
       topLevelTypeDir,
       fullName.split('.')[0],
       type.directoryName,
-      `${fullName.split('.')[1]}.${type.suffix}${META_XML_SUFFIX}`
+      `${fullName.split('.')[1]}.${type.suffix ?? ''}${META_XML_SUFFIX}`
     ),
   ];
 };

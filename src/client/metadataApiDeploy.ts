@@ -272,7 +272,9 @@ export class MetadataApiDeploy extends MetadataTransfer<
     } catch (err) {
       const error = err as Error;
       this.logger.debug(
-        `Error trying to compile/send deploy telemetry data for deploy ID: ${this.id}\nError: ${error.message}`
+        `Error trying to compile/send deploy telemetry data for deploy ID: ${this.id ?? '<not provided>'}\nError: ${
+          error.message
+        }`
       );
     }
     const deployResult = new DeployResult(
@@ -394,7 +396,9 @@ const warnIfUnmatchedServerResult =
 
         // warn that this component is found in server response, but not in component set
         void Lifecycle.getInstance().emitWarning(
-          `${deployMessage.componentType}, ${deployMessage.fullName}, returned from org, but not found in the local project`
+          `${deployMessage.componentType ?? '<no component type in deploy message>'}, ${
+            deployMessage.fullName
+          }, returned from org, but not found in the local project`
         );
       }
     });

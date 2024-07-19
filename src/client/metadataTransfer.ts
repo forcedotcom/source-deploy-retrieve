@@ -71,7 +71,7 @@ export abstract class MetadataTransfer<
     this.canceled = false;
     const asyncResult = await this.pre();
     this.transferId = asyncResult.id;
-    this.logger.debug(`Started metadata transfer. ID = ${this.id}`);
+    this.logger.debug(`Started metadata transfer. ID = ${this.id ?? '<no id>'}`);
     return asyncResult;
   }
 
@@ -105,7 +105,7 @@ export abstract class MetadataTransfer<
     });
 
     try {
-      this.logger.debug(`Polling for metadata transfer status. ID = ${this.id}`);
+      this.logger.debug(`Polling for metadata transfer status. ID = ${this.id ?? '<no id>'}`);
       this.logger.debug(`Polling frequency (ms): ${normalizedOptions.frequency.milliseconds}`);
       this.logger.debug(`Polling timeout (min): ${normalizedOptions.timeout.minutes}`);
       const completedMdapiStatus = (await pollingClient.subscribe()) as unknown as Status;

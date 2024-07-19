@@ -168,7 +168,10 @@ const getChildWriteInfos =
       return [
         {
           source,
-          output: join(dirname(mergeWith.xml), `${entryName}.${childComponent.type.suffix}${META_XML_SUFFIX}`),
+          output: join(
+            dirname(mergeWith.xml),
+            `${entryName}.${ensureString(childComponent.type.suffix)}${META_XML_SUFFIX}`
+          ),
         },
       ];
     }
@@ -259,7 +262,7 @@ const getDefaultOutput = (component: MetadataComponent): SourcePath => {
   const childName = tail.length ? tail.join('.') : undefined;
   const output = join(
     parent?.type.strategies?.decomposition === DecompositionStrategy.FolderPerType ? type.directoryName : '',
-    `${childName ?? baseName}.${component.type.suffix}${META_XML_SUFFIX}`
+    `${childName ?? baseName}.${ensureString(component.type.suffix)}${META_XML_SUFFIX}`
   );
   return join(calculateRelativePath('source')({ self: parent?.type ?? type })(fullName)(baseName), output);
 };
@@ -289,7 +292,7 @@ type ComposedMetadata = { tagKey: string; tagValue: AnyJson; parentType: Metadat
 type ComposedMetadataWithChildType = ComposedMetadata & { childType: MetadataType };
 
 type InfoContainer = {
-  entryName?: string;
+  entryName: string;
   childComponent: MetadataComponent;
   /** the parsed xml */
   value: JsonMap;

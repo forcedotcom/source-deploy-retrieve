@@ -6,6 +6,7 @@
  */
 import { dirname, join, sep } from 'node:path';
 import { Messages } from '@salesforce/core';
+import { ensureString } from '@salesforce/ts-types';
 import { META_XML_SUFFIX } from '../../common/constants';
 import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
@@ -147,7 +148,9 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     // 3 because we want 'digitalExperiences' directory, 'baseType' directory and 'bundleName' directory
     const basePath = pathParts.slice(0, typeFolderIndex + 3).join(sep);
     const bundleFileName = pathParts[typeFolderIndex + 2];
-    const suffix = this.isBundleType() ? this.type.suffix : this.registry.getParentType(this.type.id)?.suffix;
+    const suffix = ensureString(
+      this.isBundleType() ? this.type.suffix : this.registry.getParentType(this.type.id)?.suffix
+    );
     return `${basePath}${sep}${bundleFileName}.${suffix}${META_XML_SUFFIX}`;
   }
 

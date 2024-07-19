@@ -112,9 +112,17 @@ export class ConnectionResolver {
 
     return {
       components: Aggregator.filter(componentFilter).map((component) => ({
-        fullName: ensureString(component.fullName, `Component fullName was not set for ${component.fileName}`),
+        fullName: ensureString(
+          component.fullName,
+          `Component fullName was not set for ${component.fileName ?? '<missing filename>'}`
+        ),
         type: this.registry.getTypeByName(
-          ensureString(component.type, `Component type was not set for ${component.fullName} (${component.fileName})`)
+          ensureString(
+            component.type,
+            `Component type was not set for ${component.fullName ?? '<missing fullname>'} (${
+              component.fileName ?? '<missing filename>'
+            })`
+          )
         ),
       })),
       apiVersion: this.connection.getApiVersion(),
@@ -142,7 +150,7 @@ const listMembers =
           return (
             standardValueSetRecord.Metadata.standardValue.length && {
               fullName: standardValueSetRecord.MasterLabel,
-              fileName: `${mdType.directoryName}/${standardValueSetRecord.MasterLabel}.${mdType.suffix}`,
+              fileName: `${mdType.directoryName}/${standardValueSetRecord.MasterLabel}.${mdType.suffix ?? ''}`,
               type: mdType.name,
             }
           );
@@ -172,7 +180,7 @@ const listMembers =
 const inferFilenamesFromType =
   (metadataType: MetadataType) =>
   (member: RelevantFileProperties): RelevantFileProperties =>
-    typeof member.fileName === 'object'
+    typeof member.fileName === 'object' && metadataType.suffix
       ? { ...member, fileName: `${metadataType.directoryName}/${member.fullName}.${metadataType.suffix}` }
       : member;
 

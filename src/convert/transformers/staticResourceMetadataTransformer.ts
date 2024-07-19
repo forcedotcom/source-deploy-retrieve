@@ -52,7 +52,6 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
 
     // Zip the static resource from disk to a stream, compressing at level 9.
     const zipIt = (): Readable => {
-      // static resource should always have content prop
       getLogger().debug(`zipping static resource: ${content}`);
       const zip = JSZip();
 
@@ -198,7 +197,7 @@ const getContentType = async (component: SourceComponent): Promise<string> => {
 
   if (typeof output !== 'string') {
     throw new SfError(
-      `Expected a string for contentType in ${component.name} (${component.xml ?? ''}) but got ${JSON.stringify(
+      `Expected a string for contentType in ${component.name} (${component.xml ?? '<no xml>'}) but got ${JSON.stringify(
         output
       )}`
     );
@@ -214,7 +213,7 @@ const getBaseContentPath = (component: SourceComponent, mergeWith?: SourceCompon
     const baseContentPath = component.getPackageRelativePath(component.content, 'source');
     return join(dirname(baseContentPath), baseName(baseContentPath));
   }
-  throw new SfError(`Expected a content path for ${component.name} (${component.xml ?? ''})`);
+  throw new SfError(`Expected a content path for ${component.name} (${component.xml ?? '<no xml>'})`);
 };
 
 const getExtensionFromType = (contentType: string): string =>
@@ -242,7 +241,7 @@ async function getStaticResourceZip(component: SourceComponent, content: string)
     return await JSZip.loadAsync(staticResourceZip, { createFolders: true });
   } catch (e) {
     throw new SfError(
-      `Unable to open zip file ${content} for ${component.name} (${component.xml ?? ''})`,
+      `Unable to open zip file ${content} for ${component.name} (${component.xml ?? '<no xml>'})`,
       'BadZipFile',
       ['Check that your file really is a valid zip archive']
     );

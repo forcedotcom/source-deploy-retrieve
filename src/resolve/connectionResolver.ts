@@ -180,8 +180,8 @@ const listMembers =
 const inferFilenamesFromType =
   (metadataType: MetadataType) =>
   (member: RelevantFileProperties): RelevantFileProperties =>
-    typeof member.fileName === 'object'
-      ? { ...member, fileName: `${metadataType.directoryName}/${member.fullName}.${metadataType.suffix ?? ''}` }
+    typeof member.fileName === 'object' && metadataType.suffix
+      ? { ...member, fileName: `${metadataType.directoryName}/${member.fullName}.${metadataType.suffix}` }
       : member;
 
 const isNonEmptyString = (value: string | undefined): boolean => typeof value === 'string' && value.length > 0;

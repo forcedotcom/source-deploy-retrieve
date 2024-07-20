@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1721483094862,
+  "lastUpdate": 1721483446545,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -46451,6 +46451,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 13317,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cbcb7046aaf7d6843efd602fae5d852d03a05154",
+          "message": "chore(dev-deps): bump @salesforce/cli-plugins-testkit\n\nBumps [@salesforce/cli-plugins-testkit](https://github.com/salesforcecli/cli-plugins-testkit) from 5.3.18 to 5.3.19.\n- [Release notes](https://github.com/salesforcecli/cli-plugins-testkit/releases)\n- [Changelog](https://github.com/salesforcecli/cli-plugins-testkit/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/salesforcecli/cli-plugins-testkit/compare/5.3.18...5.3.19)\n\n---\nupdated-dependencies:\n- dependency-name: \"@salesforce/cli-plugins-testkit\"\n  dependency-type: direct:development\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2024-07-20T13:37:29Z",
+          "tree_id": "172f95566d975891fc089503875da02e07ae550a",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/cbcb7046aaf7d6843efd602fae5d852d03a05154"
+        },
+        "date": 1721483434584,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 439,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4719,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3066,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 6545,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 961,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 8640,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 5592,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 8826,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1561,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 14450,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 9481,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 14262,
             "unit": "ms"
           }
         ]

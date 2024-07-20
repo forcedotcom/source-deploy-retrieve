@@ -631,7 +631,6 @@ v62 introduces the following new types.  Here's their current level of support
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
 |AccountPlanSettings|✅||
-|AnalyticsDashboard|❌|Not supported, but support could be added|
 |BillingSettings|✅||
 |ChannelRevMgmtSettings|✅||
 |ChoiceList|❌|Not supported, but support could be added (but not for tracking)|
@@ -643,6 +642,7 @@ v62 introduces the following new types.  Here's their current level of support
 |IndustriesRatingSettings|✅||
 |IndustriesUsageSettings|✅||
 |LearningItemType|✅||
+|ProductDiscoverySettings|✅||
 |PublicKeyCertificate|❌|Not supported, but support could be added (but not for tracking)|
 |PublicKeyCertificateSet|❌|Not supported, but support could be added (but not for tracking)|
 |StageDefinition|✅||

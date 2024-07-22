@@ -13,6 +13,9 @@ jobs:
   linux-unit-tests:
     needs: yarn-lockfile-check
     uses: salesforcecli/github-workflows/.github/workflows/unitTestsLinux.yml@main
+  prevent-TS:
+    needs: yarn-lockfile-check
+    uses: salesforcecli/github-workflows/.github/workflows/preventTypescriptDep.yml@wr/noTS
   windows-unit-tests:
     needs: linux-unit-tests
     uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@main

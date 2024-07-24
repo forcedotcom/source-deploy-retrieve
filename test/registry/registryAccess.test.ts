@@ -43,6 +43,26 @@ describe('RegistryAccess', () => {
         messages.getMessage('error_missing_type_definition', ['typewithoutdef'])
       );
     });
+
+    describe('suggestions for type name', () => {
+      it('should provide suggestions for unresolvable types that are close', () => {
+        try {
+          registryAccess.getTypeByName('Worflow');
+        } catch (e) {
+          assert(e instanceof SfError);
+          expect(e.actions).to.have.length.greaterThan(0);
+          expect(e.actions).to.deep.include('Workflow');
+        }
+      });
+      it('should provide several suggestions for unresolvable types that are nowhere', () => {
+        try {
+          registryAccess.getTypeByName('&&&&&&');
+        } catch (e) {
+          assert(e instanceof SfError);
+          expect(e.actions).to.have.length.greaterThan(1);
+        }
+      });
+    });
   });
 
   describe('getTypeBySuffix', () => {

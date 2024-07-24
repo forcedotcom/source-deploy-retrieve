@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { Messages, SfError } from '@salesforce/core';
-import * as Levenshtein from 'fast-levenshtein';
 import { MetadataRegistry, MetadataType } from './types';
 import { getEffectiveRegistry } from './variants';
+import { getSuffixGuesses, getTypeSuggestions } from './levenshtein';
 
 /**
  * Container for querying metadata registry data.
@@ -50,7 +50,11 @@ export class RegistryAccess {
       );
     }
     if (!this.registry.types[lower]) {
-      throw new SfError(messages.getMessage('error_missing_type_definition', [lower]), 'RegistryError');
+      throw SfError.create({
+        message: messages.getMessage('error_missing_type_definition', [lower]),
+        name: 'RegistryError',
+        actions: getTypeSuggestions(this.registry, lower),
+      });
     }
     const alias = this.registry.types[lower].aliasFor;
     // redirect via alias
@@ -79,27 +83,13 @@ export class RegistryAccess {
   public guessTypeBySuffix(
     suffix: string
   ): Array<{ suffixGuess: string; metadataTypeGuess: MetadataType }> | undefined {
-    const registryKeys = Object.keys(this.registry.suffixes);
-
-    const scores = registryKeys.map((registryKey) => ({
-      registryKey,
-      score: Levenshtein.get(suffix, registryKey, { useCollator: true }),
-    }));
-    const sortedScores = scores.sort((a, b) => a.score - b.score);
-    const lowestScore = sortedScores[0].score;
-    // Levenshtein uses positive integers for scores, find all scores that match the lowest score
-    const guesses = sortedScores.filter((score) => score.score === lowestScore);
-
-    if (guesses.length > 0) {
-      return guesses.map((guess) => {
-        const typeId = this.registry.suffixes[guess.registryKey];
-        const metadataType = this.getTypeByName(typeId);
-        return {
-          suffixGuess: guess.registryKey,
-          metadataTypeGuess: metadataType,
-        };
-      });
-    }
+    const guesses = getSuffixGuesses(Object.keys(this.registry.suffixes), suffix);
+    return guesses.length
+      ? guesses.map((guess) => ({
+          suffixGuess: guess,
+          metadataTypeGuess: this.getTypeByName(this.registry.suffixes[guess]),
+        }))
+      : undefined;
   }
 
   /**

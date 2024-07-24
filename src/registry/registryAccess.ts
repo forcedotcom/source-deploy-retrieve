@@ -51,7 +51,7 @@ export class RegistryAccess {
     }
     if (!this.registry.types[lower]) {
       throw SfError.create({
-        message: messages.getMessage('error_missing_type_definition', [lower]),
+        message: messages.getMessage('error_missing_type_definition', [name]),
         name: 'RegistryError',
         actions: getTypeSuggestions(this.registry, lower),
       });

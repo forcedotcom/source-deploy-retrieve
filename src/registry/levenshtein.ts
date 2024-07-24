@@ -19,14 +19,16 @@ export const getTypeSuggestions = (registry: MetadataRegistry, typeName: string)
     typeName
   );
 
-  const guesses = getLowestScores(scores);
-  return guesses.length
-    ? [
-        'Did you mean one of the following types?',
-        ...guesses.map((guess) => guess.registryKey),
-        ...messages.getMessages('type_name_suggestions'),
-      ]
-    : messages.getMessages('type_name_suggestions');
+  const guesses = getLowestScores(scores).map((guess) => guess.registryKey);
+  return [
+    ...(guesses.length
+      ? [
+          `Did you mean one of the following types? [${guesses.join(',')}]`,
+          '', // Add a blank line for better readability
+        ]
+      : []),
+    messages.getMessage('type_name_suggestions'),
+  ];
 };
 
 export const getSuffixGuesses = (suffixes: string[], input: string): string[] => {

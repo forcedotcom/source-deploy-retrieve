@@ -215,14 +215,15 @@ const addToComponentSet =
   };
 
 const componentSetBuilderErrorHandler = (e: unknown): never => {
-  if (e instanceof Error && e.message.includes('Missing metadata type definition in registry for id')) {
-    // to remain generic to catch missing metadata types regardless of parameters, split on '
-    // example message : Missing metadata type definition in registry for id 'NonExistentType'
-    const issueType = e.message.split("'")[1];
-    throw new SfError(`The specified metadata type is unsupported: [${issueType}]`);
-  } else {
-    throw e;
-  }
+  // if (e instanceof Error && e.message.includes('Missing metadata type definition in registry for id')) {
+  //   console.log(e);
+  //   // to remain generic to catch missing metadata types regardless of parameters, split on '
+  //   // example message : Missing metadata type definition in registry for id 'NonExistentType'
+  //   const issueType = e.message.split("'")[1];
+  //   throw new SfError(`The specified metadata type is unsupported: [${issueType}]`);
+  // } else {
+  throw e;
+  // }
 };
 
 const validateAndResolvePath = (filepath: string): string => path.resolve(assertFileExists(filepath));

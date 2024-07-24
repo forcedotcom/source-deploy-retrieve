@@ -502,7 +502,7 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@jsforce/jsforce-node@^3.2.3", "@jsforce/jsforce-node@^3.2.4":
+"@jsforce/jsforce-node@^3.2.4":
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/@jsforce/jsforce-node/-/jsforce-node-3.2.4.tgz#a03fe2331af171c5dd9276ea17faf440f076cfdb"
   integrity sha512-VIswA769m+1wkAVqaxMjNUfvQ4RqyBKoXa4L+SYQ0NAkMsi+NHdj1bcXN0jkbCHXpd2j+IB4MrO1hIX8Itgwdg==
@@ -564,31 +564,7 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.8.1"
 
-"@salesforce/core@^8.1.1", "@salesforce/core@^8.2.1":
-  version "8.2.1"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-8.2.1.tgz#16b383886ec02ee9a99f815d5ce4a9f5a492295e"
-  integrity sha512-juLxb4t12vZD9ozkhKhGtbZzOiYkEcUWdw+gAtgzuSrTFTwvoXlbKtzdGbdYPLTHLGYQCVW6cRdMswfwbE5BnQ==
-  dependencies:
-    "@jsforce/jsforce-node" "^3.2.3"
-    "@salesforce/kit" "^3.1.6"
-    "@salesforce/schemas" "^1.9.0"
-    "@salesforce/ts-types" "^2.0.10"
-    ajv "^8.17.1"
-    change-case "^4.1.2"
-    fast-levenshtein "^3.0.0"
-    faye "^1.4.0"
-    form-data "^4.0.0"
-    js2xmlparser "^4.0.1"
-    jsonwebtoken "9.0.2"
-    jszip "3.10.1"
-    pino "^9.2.0"
-    pino-abstract-transport "^1.2.0"
-    pino-pretty "^11.2.1"
-    proper-lockfile "^4.1.2"
-    semver "^7.6.2"
-    ts-retry-promise "^0.8.1"
-
-"@salesforce/core@^8.2.3":
+"@salesforce/core@^8.1.1", "@salesforce/core@^8.2.1", "@salesforce/core@^8.2.3":
   version "8.2.3"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-8.2.3.tgz#4714e5ca046c6fcdcffb91aad151affa9e7a0e88"
   integrity sha512-epkV2ZU+WQFgxb6q98+9vAp9Qo1bUnCOyk1VyVr2XycJk6BkC0fBE188KpvH0/nqB2+0p2K4Cd3x1/+oC7HYvQ==
@@ -867,14 +843,7 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.1.7.tgz#ce10c802f7731909d0a44ac9888e8b3a9125eb62"
   integrity sha512-WCuw/o4GSwDGMoonES8rcvwsig77dGCMbZDrZr2x4ZZiNW4P/gcoZXe/0twgtobcTkmg9TuKflxYL/DuwDyJzg==
 
-"@types/node@^18.15.3":
-  version "18.19.36"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.19.36.tgz#c9861e84727e07ecf79a5ff6d0e14f91bab2b478"
-  integrity sha512-tX1BNmYSWEvViftB26VLNxT6mEr37M7+ldUtq7rlKnv4/2fKYsJIOmqJAjT6h1DNuwQjIKgw3VJ/Dtw3yiTIQw==
-  dependencies:
-    undici-types "~5.26.4"
-
-"@types/node@^18.19.41":
+"@types/node@^18.15.3", "@types/node@^18.19.41":
   version "18.19.42"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.19.42.tgz#b54ed4752c85427906aab40917b0f7f3d724bf72"
   integrity sha512-d2ZFc/3lnK2YCYhos8iaNIYu9Vfhr92nHiyJHRltXWjXUBjEE+A4I58Tdbnw4VhggSW+2j5y5gTrLs4biNnubg==

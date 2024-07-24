@@ -406,64 +406,41 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @returns Object representation of a package manifest
    */
   public async getObject(destructiveType?: DestructiveChangesType): Promise<PackageManifestObject> {
-    const version = await this.getApiVersion();
-
     // If this ComponentSet has components marked for delete, we need to
     // only include those components in a destructiveChanges.xml and
     // all other components in the regular manifest.
-    let components = this.components;
-    if (this.getTypesOfDestructiveChanges().length) {
-      components = destructiveType ? this.destructiveComponents[destructiveType] : this.manifestComponents;
-    }
+    const components = this.getTypesOfDestructiveChanges().length
+      ? destructiveType
+        ? this.destructiveComponents[destructiveType]
+        : this.manifestComponents
+      : this.components;
 
     const typeMap = new Map<string, string[]>();
 
-    const addToTypeMap = (type: MetadataType, fullName: string): void => {
-      if (type.isAddressable !== false) {
-        const typeName = type.name;
-        if (!typeMap.has(typeName)) {
-          typeMap.set(typeName, []);
-        }
-        const typeEntry = typeMap.get(typeName);
-        if (fullName === ComponentSet.WILDCARD && !type.supportsWildcardAndName && !destructiveType) {
-          // if the type doesn't support mixed wildcards and specific names, overwrite the names to be a wildcard
-          typeMap.set(typeName, [fullName]);
-        } else if (
-          typeEntry &&
-          !typeEntry.includes(fullName) &&
-          (!typeEntry.includes(ComponentSet.WILDCARD) || type.supportsWildcardAndName)
-        ) {
-          // if the type supports both wildcards and names, add them regardless
-          typeMap.get(typeName)?.push(fullName);
-        }
-      }
-    };
-
-    for (const key of components.keys()) {
+    [...components.entries()].map(([key, cmpMap]) => {
       const [typeId, fullName] = splitOnFirstDelimiter(key);
-      let type = this.registry.getTypeByName(typeId);
-
-      if (type.folderContentType) {
-        type = this.registry.getTypeByName(type.folderContentType);
-      }
-      addToTypeMap(
-        type,
-        // they're reassembled like CustomLabels.MyLabel
-        this.registry.getParentType(type.name)?.strategies?.recomposition === 'startEmpty' && fullName.includes('.')
-          ? fullName.split('.')[1]
-          : fullName
-      );
+      const type = this.registry.getTypeByName(typeId);
 
       // Add children
-      const componentMap = components.get(key);
-      if (componentMap) {
-        for (const comp of componentMap.values()) {
-          for (const child of comp.getChildren()) {
-            addToTypeMap(child.type, child.fullName);
-          }
-        }
-      }
-    }
+      [...(cmpMap?.values() ?? [])]
+        .flatMap((c) => c.getChildren())
+        .map((child) => addToTypeMap({ typeMap, type: child.type, fullName: child.fullName, destructiveType }));
+
+      // new logic: if this is a decomposed type, we have to determine whether
+      // 2. skip its inclusion in the manifest if
+      // 3. every element from its xml is an addressable child and is in the cs (ex: it's only CustomField)
+
+      addToTypeMap({
+        typeMap,
+        type: type.folderContentType ? this.registry.getTypeByName(type.folderContentType) : type,
+        fullName:
+          this.registry.getParentType(type.name)?.strategies?.recomposition === 'startEmpty' && fullName.includes('.')
+            ? // they're reassembled like CustomLabels.MyLabel
+              fullName.split('.')[1]
+            : fullName,
+        destructiveType,
+      });
+    });
 
     const typeMembers = Array.from(typeMap.entries())
       .map(([typeName, members]) => ({ members: members.sort(), name: typeName }))
@@ -473,7 +450,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       Package: {
         ...{
           types: typeMembers,
-          version,
+          version: await this.getApiVersion(),
         },
         ...(this.fullName ? { fullName: this.fullName } : {}),
       },
@@ -749,4 +726,35 @@ const simpleKey = (component: ComponentLike): string => {
 const splitOnFirstDelimiter = (input: string): [string, string] => {
   const indexOfSplitChar = input.indexOf(KEY_DELIMITER);
   return [input.substring(0, indexOfSplitChar), input.substring(indexOfSplitChar + 1)];
+};
+
+/** side effect: mutates the typeMap property */
+const addToTypeMap = ({
+  typeMap,
+  type,
+  fullName,
+  destructiveType,
+}: {
+  typeMap: Map<string, string[]>;
+  type: MetadataType;
+  fullName: string;
+  destructiveType?: DestructiveChangesType;
+}): void => {
+  if (type.isAddressable === false) return;
+  const typeName = type.name;
+  if (!typeMap.has(typeName)) {
+    typeMap.set(typeName, []);
+  }
+  const typeEntry = typeMap.get(typeName);
+  if (fullName === ComponentSet.WILDCARD && !type.supportsWildcardAndName && !destructiveType) {
+    // if the type doesn't support mixed wildcards and specific names, overwrite the names to be a wildcard
+    typeMap.set(typeName, [fullName]);
+  } else if (
+    typeEntry &&
+    !typeEntry.includes(fullName) &&
+    (!typeEntry.includes(ComponentSet.WILDCARD) || type.supportsWildcardAndName)
+  ) {
+    // if the type supports both wildcards and names, add them regardless
+    typeMap.get(typeName)?.push(fullName);
+  }
 };

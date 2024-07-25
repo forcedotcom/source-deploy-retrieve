@@ -4,11 +4,5 @@
         <members>Case</members>
         <name>Workflow</name>
     </types>
-    <types>
-        <members>Case.ChangePriorityToHigh</members>
-        <members>Case.ChangePriorityToLow</members>
-        <members>Case.ChangePriorityToMedium</members>
-        <name>WorkflowFieldUpdate</name>
-    </types>
     <version>60.0</version>
 </Package>

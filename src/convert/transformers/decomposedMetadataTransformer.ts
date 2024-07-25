@@ -17,14 +17,13 @@ import type { MetadataComponent } from '../../resolve/types';
 import { DecompositionStrategy, type MetadataType } from '../../registry/types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { JsToXml } from '../streams';
-import type { WriteInfo } from '../types';
+import type { WriteInfo, XmlObj } from '../types';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../common/constants';
 import type { SourcePath } from '../../common/types';
 import { ComponentSet } from '../../collections/componentSet';
 import type { DecompositionState, DecompositionStateValue } from '../convertContext/decompositionFinalizer';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
-export type XmlObj = { [index: string]: { [XML_NS_KEY]: typeof XML_NS_URL } & JsonMap };
 type StateSetter = (forComponent: MetadataComponent, props: Partial<Omit<DecompositionStateValue, 'origin'>>) => void;
 
 Messages.importMessagesDirectory(__dirname);

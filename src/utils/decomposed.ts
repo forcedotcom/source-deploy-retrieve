@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { JsonMap, getString } from '@salesforce/ts-types';
-import { XmlObj } from '../convert/transformers/decomposedMetadataTransformer';
+import { XmlObj } from '../convert/types';
 import { XML_NS_KEY } from '../common/constants';
 import { MetadataType } from '../registry/types';
 

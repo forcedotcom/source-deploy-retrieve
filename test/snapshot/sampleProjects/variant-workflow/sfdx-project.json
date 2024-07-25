@@ -47,6 +47,7 @@
               "id": "workflowalert",
               "name": "WorkflowAlert",
               "suffix": "workflowAlert",
+              "unaddressableWithoutParent": true,
               "xmlElementName": "alerts"
             },
             "workflowfieldupdate": {
@@ -54,6 +55,7 @@
               "id": "workflowfieldupdate",
               "name": "WorkflowFieldUpdate",
               "suffix": "workflowFieldUpdate",
+              "unaddressableWithoutParent": true,
               "xmlElementName": "fieldUpdates"
             },
             "workflowknowledgepublish": {
@@ -61,6 +63,7 @@
               "id": "workflowknowledgepublish",
               "name": "WorkflowKnowledgePublish",
               "suffix": "workflowKnowledgePublish",
+              "unaddressableWithoutParent": true,
               "xmlElementName": "knowledgePublishes"
             },
             "workflowoutboundmessage": {
@@ -68,6 +71,7 @@
               "id": "workflowoutboundmessage",
               "name": "WorkflowOutboundMessage",
               "suffix": "workflowOutboundMessage",
+              "unaddressableWithoutParent": true,
               "xmlElementName": "outboundMessages"
             },
             "workflowrule": {
@@ -75,6 +79,7 @@
               "id": "workflowrule",
               "name": "WorkflowRule",
               "suffix": "workflowRule",
+              "unaddressableWithoutParent": true,
               "xmlElementName": "rules"
             },
             "workflowsend": {
@@ -82,6 +87,7 @@
               "id": "workflowsend",
               "name": "WorkflowSend",
               "suffix": "workflowSend",
+              "unaddressableWithoutParent": true,
               "xmlElementName": "send"
             },
             "workflowtask": {
@@ -89,6 +95,7 @@
               "id": "workflowtask",
               "name": "WorkflowTask",
               "suffix": "workflowTask",
+              "unaddressableWithoutParent": true,
               "xmlElementName": "tasks"
             }
           }

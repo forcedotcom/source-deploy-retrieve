@@ -431,7 +431,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       if (
         type.strategies?.transformer === 'decomposed' &&
         // exclude (ex: CustomObjectTranslation) where there are no addressable children
-        Object.values(type.children?.types ?? {}).every((t) => t.unaddressableWithoutParent !== true)
+        Object.values(type.children?.types ?? {}).some((t) => t.unaddressableWithoutParent !== true) &&
+        Object.values(type.children?.types ?? {}).some((t) => t.isAddressable !== false)
       ) {
         const parentComp = [...(cmpMap?.values() ?? [])].find((c) => c.fullName === fullName);
         if (parentComp?.xml && !objectHasSomeRealValues(type)(parentComp.parseXmlSync())) {

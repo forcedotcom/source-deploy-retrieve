@@ -55,41 +55,41 @@
           "workflowknowledgepublish": {
             "directoryName": "workflowKnowledgePublishes",
             "id": "workflowknowledgepublish",
+            "isAddressable": false,
             "name": "WorkflowKnowledgePublish",
             "suffix": "workflowKnowledgePublish",
-            "unaddressableWithoutParent": true,
             "xmlElementName": "knowledgePublishes"
           },
           "workflowoutboundmessage": {
             "directoryName": "workflowOutboundMessages",
             "id": "workflowoutboundmessage",
+            "isAddressable": false,
             "name": "WorkflowOutboundMessage",
             "suffix": "workflowOutboundMessage",
-            "unaddressableWithoutParent": true,
             "xmlElementName": "outboundMessages"
           },
           "workflowrule": {
             "directoryName": "workflowRules",
             "id": "workflowrule",
+            "isAddressable": false,
             "name": "WorkflowRule",
             "suffix": "workflowRule",
-            "unaddressableWithoutParent": true,
             "xmlElementName": "rules"
           },
           "workflowsend": {
             "directoryName": "workflowSends",
             "id": "workflowsend",
+            "isAddressable": false,
             "name": "WorkflowSend",
             "suffix": "workflowSend",
-            "unaddressableWithoutParent": true,
             "xmlElementName": "send"
           },
           "workflowtask": {
             "directoryName": "workflowTasks",
             "id": "workflowtask",
+            "isAddressable": false,
             "name": "WorkflowTask",
             "suffix": "workflowTask",
-            "unaddressableWithoutParent": true,
             "xmlElementName": "tasks"
           }
         }

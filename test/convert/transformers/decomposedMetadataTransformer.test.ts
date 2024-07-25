@@ -454,7 +454,7 @@ describe('DecomposedMetadataTransformer', () => {
     describe('Merging Components', () => {
       it('should merge output with merge component that only has children', async () => {
         assert(registry.types.customobject.children?.types.customfield.name);
-        const mergeComponentChild = component.getChildren()[0];
+        const mergeComponentChild = component.getChildren()[1];
         assert(mergeComponentChild.parent);
         const componentToConvert = SourceComponent.createVirtualComponent(
           {

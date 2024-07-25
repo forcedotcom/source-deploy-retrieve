@@ -7,7 +7,7 @@
 import { join } from 'node:path';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
-import { unwrapAndOmitNS } from '../../../src/convert/convertContext/recompositionFinalizer';
+import { unwrapAndOmitNS } from '../../../src/utils/decomposed';
 import { decomposed, nonDecomposed } from '../../mock';
 import { ConvertContext } from '../../../src/convert/convertContext/convertContext';
 import { ComponentSet } from '../../../src/collections/componentSet';

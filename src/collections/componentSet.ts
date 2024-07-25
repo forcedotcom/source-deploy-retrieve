@@ -17,6 +17,7 @@ import {
   SfProject,
 } from '@salesforce/core';
 import { isString } from '@salesforce/ts-types';
+import { objectHasSomeRealValues } from '../utils/decomposed';
 import { MetadataApiDeploy, MetadataApiDeployOptions } from '../client/metadataApiDeploy';
 import { MetadataApiRetrieve } from '../client/metadataApiRetrieve';
 import type { MetadataApiRetrieveOptions } from '../client/types';
@@ -415,7 +416,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         : this.manifestComponents
       : this.components;
 
-    const typeMap = new Map<string, string[]>();
+    const typeMap = new Map<string, Set<string>>();
 
     [...components.entries()].map(([key, cmpMap]) => {
       const [typeId, fullName] = splitOnFirstDelimiter(key);
@@ -426,9 +427,17 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         .flatMap((c) => c.getChildren())
         .map((child) => addToTypeMap({ typeMap, type: child.type, fullName: child.fullName, destructiveType }));
 
-      // new logic: if this is a decomposed type, we have to determine whether
-      // 2. skip its inclusion in the manifest if
-      // 3. every element from its xml is an addressable child and is in the cs (ex: it's only CustomField)
+      // logic: if this is a decomposed type, skip its inclusion in the manifest if the parent is "empty"
+      if (
+        type.strategies?.transformer === 'decomposed' &&
+        // exclude (ex: CustomObjectTranslation) where there are no addressable children
+        Object.values(type.children?.types ?? {}).every((t) => t.unaddressableWithoutParent !== true)
+      ) {
+        const parentComp = [...(cmpMap?.values() ?? [])].find((c) => c.fullName === fullName);
+        if (parentComp?.xml && !objectHasSomeRealValues(type)(parentComp.parseXmlSync())) {
+          return;
+        }
+      }
 
       addToTypeMap({
         typeMap,
@@ -443,7 +452,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     });
 
     const typeMembers = Array.from(typeMap.entries())
-      .map(([typeName, members]) => ({ members: members.sort(), name: typeName }))
+      .map(([typeName, members]) => ({ members: [...members].sort(), name: typeName }))
       .sort((a, b) => (a.name > b.name ? 1 : -1));
 
     return {
@@ -735,26 +744,20 @@ const addToTypeMap = ({
   fullName,
   destructiveType,
 }: {
-  typeMap: Map<string, string[]>;
+  typeMap: Map<string, Set<string>>;
   type: MetadataType;
   fullName: string;
   destructiveType?: DestructiveChangesType;
 }): void => {
   if (type.isAddressable === false) return;
-  const typeName = type.name;
-  if (!typeMap.has(typeName)) {
-    typeMap.set(typeName, []);
-  }
-  const typeEntry = typeMap.get(typeName);
   if (fullName === ComponentSet.WILDCARD && !type.supportsWildcardAndName && !destructiveType) {
     // if the type doesn't support mixed wildcards and specific names, overwrite the names to be a wildcard
-    typeMap.set(typeName, [fullName]);
-  } else if (
-    typeEntry &&
-    !typeEntry.includes(fullName) &&
-    (!typeEntry.includes(ComponentSet.WILDCARD) || type.supportsWildcardAndName)
-  ) {
+    typeMap.set(type.name, new Set([fullName]));
+    return;
+  }
+  const existing = typeMap.get(type.name) ?? new Set<string>();
+  if (!existing.has(ComponentSet.WILDCARD) || type.supportsWildcardAndName) {
     // if the type supports both wildcards and names, add them regardless
-    typeMap.get(typeName)?.push(fullName);
+    typeMap.set(type.name, existing.add(fullName));
   }
 };

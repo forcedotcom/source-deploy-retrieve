@@ -7,7 +7,7 @@
 import { join } from 'node:path';
 import { JsonMap } from '@salesforce/ts-types';
 import { Messages } from '@salesforce/core';
-import { extractUniqueElementValue, getXmlElement } from '../../utils/decomposed';
+import { extractUniqueElementValue, getXmlElement, unwrapAndOmitNS } from '../../utils/decomposed';
 import { MetadataComponent } from '../../resolve/types';
 import { XML_NS_KEY, XML_NS_URL } from '../../common/constants';
 import { ComponentSet } from '../../collections/componentSet';
@@ -199,19 +199,3 @@ const getXmlFromCache =
     }
     return xmlCache.get(key) ?? {};
   };
-
-/** composed function, exported from module for test */
-export const unwrapAndOmitNS =
-  (outerType: string) =>
-  (xml: JsonMap): JsonMap =>
-    omitNsKey(unwrapXml(outerType)(xml));
-
-/** Remove the namespace key from the json object.  Only the parent needs one */
-const omitNsKey = (obj: JsonMap): JsonMap =>
-  Object.fromEntries(Object.entries(obj).filter(([key]) => key !== XML_NS_KEY)) as JsonMap;
-
-const unwrapXml =
-  (outerType: string) =>
-  (xml: JsonMap): JsonMap =>
-    // assert that the outerType is also a metadata type name (ex: CustomObject)
-    (xml[outerType] as JsonMap) ?? xml;

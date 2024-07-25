@@ -39,17 +39,17 @@
           "workflowalert": {
             "directoryName": "workflowAlerts",
             "id": "workflowalert",
+            "isAddressable": false,
             "name": "WorkflowAlert",
             "suffix": "workflowAlert",
-            "unaddressableWithoutParent": true,
             "xmlElementName": "alerts"
           },
           "workflowfieldupdate": {
             "directoryName": "workflowFieldUpdates",
             "id": "workflowfieldupdate",
+            "isAddressable": false,
             "name": "WorkflowFieldUpdate",
             "suffix": "workflowFieldUpdate",
-            "unaddressableWithoutParent": true,
             "xmlElementName": "fieldUpdates"
           },
           "workflowknowledgepublish": {

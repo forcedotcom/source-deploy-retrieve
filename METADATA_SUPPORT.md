@@ -625,23 +625,26 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 v62 introduces the following new types. Here's their current level of support
 
-| Metadata Type              | Support | Notes                                     |
-| :------------------------- | :------ | :---------------------------------------- |
-| AccountPlanSettings        | ✅      |                                           |
-| AnalyticsDashboard         | ❌      | Not supported, but support could be added |
-| ChannelRevMgmtSettings     | ✅      |                                           |
-| ChoiceList                 | ❌      | Not supported, but support could be added |
-| DataKitObjectDependency    | ✅      |                                           |
-| EnblProgramTaskSubCategory | ✅      |                                           |
-| ExtlClntAppPushSettings    | ✅      |                                           |
-| HerokuIntegrationSettings  | ✅      |                                           |
-| IndustriesRatingSettings   | ✅      |                                           |
-| IndustriesUsageSettings    | ✅      |                                           |
-| LearningItemType           | ✅      |                                           |
-| PublicKeyCertificate       | ❌      | Not supported, but support could be added |
-| PublicKeyCertificateSet    | ❌      | Not supported, but support could be added |
-| StageDefinition            | ✅      |                                           |
-| UiFormatSpecificationSet   | ❌      | Not supported, but support could be added |
+| Metadata Type                       | Support | Notes                                                            |
+| :---------------------------------- | :------ | :--------------------------------------------------------------- |
+| AccountPlanSettings                 | ✅      |                                                                  |
+| BillingSettings                     | ✅      |                                                                  |
+| ChannelRevMgmtSettings              | ✅      |                                                                  |
+| ChoiceList                          | ❌      | Not supported, but support could be added (but not for tracking) |
+| ConversationMessageDefinition       | ✅      |                                                                  |
+| DataKitObjectDependency             | ✅      |                                                                  |
+| EnblProgramTaskSubCategory          | ✅      |                                                                  |
+| ExtlClntAppPushConfigurablePolicies | ❌      | Not supported, but support could be added (but not for tracking) |
+| ExtlClntAppPushSettings             | ✅      |                                                                  |
+| HerokuIntegrationSettings           | ✅      |                                                                  |
+| IndustriesRatingSettings            | ✅      |                                                                  |
+| IndustriesUsageSettings             | ✅      |                                                                  |
+| LearningItemType                    | ✅      |                                                                  |
+| ProductDiscoverySettings            | ✅      |                                                                  |
+| PublicKeyCertificate                | ❌      | Not supported, but support could be added (but not for tracking) |
+| PublicKeyCertificateSet             | ❌      | Not supported, but support could be added (but not for tracking) |
+| StageDefinition                     | ✅      |                                                                  |
+| UiFormatSpecificationSet            | ❌      | Not supported, but support could be added                        |
 
 ## Additional Types
 
@@ -659,7 +662,6 @@ v62 introduces the following new types. Here's their current level of support
 - AutoResponseRule
 - BusinessProcessFeedbackConfiguration
 - CallCtrAgentFavTrfrDest
-- ConversationMessageDefinition
 - ConversationVendorFieldDef
 - CustomDataType
 - CustomExperience
@@ -693,9 +695,6 @@ v62 introduces the following new types. Here's their current level of support
 - MatchingRule
 - MktDataTranField
 - MLDataDefinition
-- MlModelArtifact
-- MlModelConnection
-- MlModelSchema
 - MLPredictionDefinition
 - MLRecommendationDefinition
 - MobileSecurityPolicySet

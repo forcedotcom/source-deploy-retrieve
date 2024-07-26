@@ -154,9 +154,9 @@ describe('Recomposition', () => {
       expect(readFileSpy.callCount, JSON.stringify(readFileSpy.getCalls(), undefined, 2)).to.equal(1);
     });
 
-    describe('should only read unique child xml files once for non-decomposed components', () => {
+    describe('should only read unique child xml files once per parent for non-decomposed components', () => {
       // This test sets up 2 CustomLabels files; 1 in each package directory. The CustomLabels files
-      // each have 2 labels within them. This should result in only 2 file reads.
+      // each have 2 labels within them. This should result in only 2 file reads; 1 per parent CustomLabels file.
       const customLabelsType = new RegistryAccess().getTypeByName('CustomLabels');
       const labelsFileName = 'CustomLabels.labels-meta.xml';
       const projectDir = join(process.cwd(), 'my-project');
@@ -210,7 +210,7 @@ describe('Recomposition', () => {
         new VirtualTreeContainer(vDir)
       );
 
-      it('one item in transaction state covering all the children', async () => {
+      it('one main component with multiple parents in transaction state covering all the children', async () => {
         const context = new ConvertContext();
         const compSet = new ComponentSet();
         component.getChildren().forEach((child) => compSet.add(child));
@@ -220,11 +220,11 @@ describe('Recomposition', () => {
           children: compSet,
         });
 
-        const readFileSpy = env.spy(component.tree, 'readFile');
+        const readFileSpy = env.spy(VirtualTreeContainer.prototype, 'readFile');
 
         await context.recomposition.finalize();
 
-        expect(readFileSpy.callCount).to.equal(context.recomposition.transactionState.size);
+        expect(readFileSpy.callCount, 'readFile() should only be called twice').to.equal(2);
       });
     });
   });

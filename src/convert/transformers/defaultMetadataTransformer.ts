@@ -101,7 +101,7 @@ const getXmlDestination = (
   if (!component.content && !['digitalexperiencebundle'].includes(component.type.id)) {
     if (targetFormat === 'metadata') {
       if (folderContentType) {
-        xmlDestination = xmlDestination.replace(`.${suffix}`, '');
+        xmlDestination = xmlDestination.replace(`.${suffix ?? ''}`, '');
       } else if (xmlDestination.includes(META_XML_SUFFIX)) {
         xmlDestination = xmlDestination.slice(0, xmlDestination.lastIndexOf(META_XML_SUFFIX));
       } else {
@@ -111,7 +111,7 @@ const getXmlDestination = (
       }
     } else {
       xmlDestination = folderContentType
-        ? xmlDestination.replace(META_XML_SUFFIX, `.${suffix}${META_XML_SUFFIX}`)
+        ? xmlDestination.replace(META_XML_SUFFIX, `.${suffix ?? ''}${META_XML_SUFFIX}`)
         : `${xmlDestination}${META_XML_SUFFIX}`;
     }
   } else if (suffix) {

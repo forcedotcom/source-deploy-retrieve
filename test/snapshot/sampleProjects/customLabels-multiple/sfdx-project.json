@@ -1,0 +1,17 @@
+{
+  "name": "customLabelsMultipleProject",
+  "namespace": "",
+  "packageDirectories": [
+    {
+      "default": true,
+      "path": "core"
+    },
+    {
+      "path": "app1"
+    },
+    {
+      "path": "app2"
+    }
+  ],
+  "sourceApiVersion": "59.0"
+}

@@ -1,3 +1,23 @@
+## [12.1.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.7...12.1.8) (2024-07-19)
+
+### Bug Fixes
+
+- handle nulls/undefined in template literal ([#1370](https://github.com/forcedotcom/source-deploy-retrieve/issues/1370)) ([2f8dac3](https://github.com/forcedotcom/source-deploy-retrieve/commit/2f8dac3ce0ed143be8985f0e419e69e5a8db5c04))
+
+## [12.1.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.6...12.1.7) (2024-07-17)
+
+### Bug Fixes
+
+- remove top-level metadata types mlmodel, modelconnection and modelschema ([#1369](https://github.com/forcedotcom/source-deploy-retrieve/issues/1369)) ([e3b4285](https://github.com/forcedotcom/source-deploy-retrieve/commit/e3b4285698f7af94ba2a5189c236960e22220232))
+
+## [12.1.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.5...12.1.6) (2024-07-16)
+
+### Bug Fixes
+
+- only read multiple custom labels files once during conversion ([#1368](https://github.com/forcedotcom/source-deploy-retrieve/issues/1368)) ([d5606ba](https://github.com/forcedotcom/source-deploy-retrieve/commit/d5606ba8ce1d22553f00af5d9b2569f0266c1e24))
+
+## [12.1.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.4...12.1.5) (2024-07-05)
+
 ## [12.1.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.3...12.1.4) (2024-06-28)
 
 ### Bug Fixes

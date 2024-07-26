@@ -7,6 +7,7 @@
 import { dirname, sep, basename } from 'node:path';
 import { Messages } from '@salesforce/core';
 import { ensure } from '@salesforce/ts-types';
+import { ensureString } from '@salesforce/ts-types';
 import type { RegistryAccess } from '../../registry/registryAccess';
 import { MetadataType } from '../../registry/types';
 import { META_XML_SUFFIX } from '../../common/constants';
@@ -103,7 +104,7 @@ const getBundleMetadataXmlPath =
     // 3 because we want 'digitalExperiences' directory, 'baseType' directory and 'bundleName' directory
     const basePath = pathParts.slice(0, typeFolderIndex + 3).join(sep);
     const bundleFileName = pathParts[typeFolderIndex + 2];
-    const suffix = isBundleType(type) ? type.suffix : registry.getParentType(type.id)?.suffix;
+    const suffix = ensureString(isBundleType(type) ? type.suffix : registry.getParentType(type.id)?.suffix);
     return `${basePath}${sep}${bundleFileName}.${suffix}${META_XML_SUFFIX}`;
   };
 

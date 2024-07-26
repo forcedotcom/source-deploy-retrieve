@@ -8,13 +8,10 @@ import { basename } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
 import { SourceComponent } from '../sourceComponent';
 import { baseName, parentName, parseMetadataXml } from '../../utils/path';
-import {
-  AdapterContext,
-  GetComponentInput,
-  MaybeGetComponent,
-  parseAsRootMetadataXml,
-  trimPathToContent,
-} from './baseSourceAdapter';
+import { parseAsRootMetadataXml, trimPathToContent } from './baseSourceAdapter';
+import { AdapterContext } from './types';
+import { GetComponentInput } from './types';
+import { MaybeGetComponent } from './types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');

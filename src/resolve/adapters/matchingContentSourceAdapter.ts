@@ -10,7 +10,8 @@ import { ensure } from '@salesforce/ts-types';
 import { SourcePath } from '../../common/types';
 import { META_XML_SUFFIX } from '../../common/constants';
 import { extName, parseMetadataXml } from '../../utils/path';
-import { FindRootMetadata, GetComponent, Populate, getComponent, parseAsRootMetadataXml } from './baseSourceAdapter';
+import { getComponent, parseAsRootMetadataXml } from './baseSourceAdapter';
+import { FindRootMetadata, GetComponent, Populate } from './types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');

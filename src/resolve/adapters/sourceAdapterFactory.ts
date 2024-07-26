@@ -12,7 +12,7 @@ import { getMatchingContentComponent } from './matchingContentSourceAdapter';
 import { getMixedContentComponent } from './mixedContentSourceAdapter';
 import { getDefaultComponent } from './defaultSourceAdapter';
 import { getDigitalExperienceComponent } from './digitalExperienceSourceAdapter';
-import { MaybeGetComponent } from './baseSourceAdapter';
+import { MaybeGetComponent } from './types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');

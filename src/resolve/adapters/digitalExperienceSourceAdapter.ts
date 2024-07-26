@@ -15,7 +15,8 @@ import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
 import { MetadataXml } from '../types';
 import { baseName, parentName, parseMetadataXml } from '../../utils/path';
-import { MaybeGetComponent, Populate, getComponent, parseAsRootMetadataXml } from './baseSourceAdapter';
+import { getComponent, parseAsRootMetadataXml } from './baseSourceAdapter';
+import { MaybeGetComponent, Populate } from './types';
 import { populateMixedContent } from './mixedContentSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);

@@ -11,13 +11,9 @@ import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
 import { MetadataType } from '../../registry/types';
 import { TreeContainer } from '../treeContainers';
-import {
-  AdapterContext,
-  GetComponent,
-  getComponent,
-  parseAsRootMetadataXml,
-  trimPathToContent,
-} from './baseSourceAdapter';
+import { getComponent, parseAsRootMetadataXml, trimPathToContent } from './baseSourceAdapter';
+import { AdapterContext } from './types';
+import { GetComponent } from './types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');

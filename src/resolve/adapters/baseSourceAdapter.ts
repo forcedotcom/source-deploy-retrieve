@@ -9,22 +9,14 @@ import { Messages, SfError } from '@salesforce/core';
 import { ensureString } from '@salesforce/ts-types';
 import { MetadataXml } from '../types';
 import { parseMetadataXml, parseNestedFullName } from '../../utils/path';
-import { ForceIgnore } from '../forceIgnore';
-import { TreeContainer } from '../treeContainers';
 import { SourceComponent } from '../sourceComponent';
 import { SourcePath } from '../../common/types';
 import { MetadataType } from '../../registry/types';
 import { RegistryAccess, typeAllowsMetadataWithContent } from '../../registry/registryAccess';
+import { FindRootMetadata, GetComponent } from './types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
-
-export type AdapterContext = {
-  registry: RegistryAccess;
-  forceIgnore?: ForceIgnore;
-  tree: TreeContainer;
-  isResolvingSource?: boolean;
-};
 
 /**
  * If the path given to `getComponent` is the root metadata xml file for a component,
@@ -63,51 +55,6 @@ export const parseAsRootMetadataXml =
       return parseAsContentMetadataXml(type)(path);
     }
   };
-/**
- * If the path given to `getComponent` serves as the sole definition (metadata and content)
- * for a component, parse the name and return it. This allows matching files in metadata
- * format such as:
- *
- * .../tabs/MyTab.tab
- *
- * @param path File path of a metadata component
- */
-const parseAsContentMetadataXml =
-  (type: MetadataType) =>
-  (path: SourcePath): MetadataXml | undefined => {
-    // InFolder metadata can be nested more than 1 level beneath its
-    // associated directoryName.
-    if (type.inFolder) {
-      const fullName = parseNestedFullName(path, type.directoryName);
-      if (fullName && type.suffix) {
-        return { fullName, suffix: type.suffix, path };
-      }
-    }
-
-    const parentPath = dirname(path);
-    const parts = parentPath.split(sep);
-    const typeFolderIndex = parts.lastIndexOf(type.directoryName);
-    // nestedTypes (ex: territory2) have a folderType equal to their type but are themselves
-    // in a folder per metadata item, with child folders for rules/territories
-    const allowedIndex = type.folderType === type.id ? parts.length - 2 : parts.length - 1;
-
-    if (typeFolderIndex !== allowedIndex) {
-      return undefined;
-    }
-
-    const match = new RegExp(/(.+)\.(.+)/).exec(basename(path));
-    if (match && type.suffix === match[2]) {
-      return { fullName: match[1], suffix: match[2], path };
-    }
-  };
-
-const parseAsFolderMetadataXml = (fsPath: SourcePath): MetadataXml | undefined => {
-  const match = new RegExp(/(.+)-meta\.xml$/).exec(basename(fsPath));
-  const parts = fsPath.split(sep);
-  if (match && !match[1].includes('.') && parts.length > 1) {
-    return { fullName: match[1], suffix: undefined, path: fsPath };
-  }
-};
 
 // Given a MetadataXml, build a fullName from the path and type.
 export const calculateName =
@@ -160,25 +107,6 @@ export const trimPathToContent =
     return pathParts.slice(0, typeFolderIndex + offset).join(sep);
   };
 
-export type GetComponentInput = {
-  type: MetadataType;
-  path: SourcePath;
-  /** either a MetadataXml OR a function that resolves to it using the type/path  */
-  metadataXml?: MetadataXml | FindRootMetadata;
-};
-
-export type MaybeGetComponent = (context: AdapterContext) => (input: GetComponentInput) => SourceComponent | undefined;
-export type GetComponent = (context: AdapterContext) => (input: GetComponentInput) => SourceComponent;
-export type FindRootMetadata = (type: MetadataType, path: SourcePath) => MetadataXml | undefined;
-
-/** requires a component, will definitely return one */
-export type Populate = (
-  context: AdapterContext
-) => (type: MetadataType) => (trigger: SourcePath, component: SourceComponent) => SourceComponent;
-export type MaybePopulate = (
-  context: AdapterContext
-) => (type: MetadataType) => (trigger: SourcePath, component?: SourceComponent) => SourceComponent | undefined;
-
 export const getComponent: GetComponent =
   (context) =>
   ({ type, path, metadataXml: findRootMetadata = defaultFindRootMetadata }) => {
@@ -207,6 +135,52 @@ export const getComponent: GetComponent =
       context.forceIgnore
     );
   };
+
+/**
+ * If the path given to `getComponent` serves as the sole definition (metadata and content)
+ * for a component, parse the name and return it. This allows matching files in metadata
+ * format such as:
+ *
+ * .../tabs/MyTab.tab
+ *
+ * @param path File path of a metadata component
+ */
+const parseAsContentMetadataXml =
+  (type: MetadataType) =>
+  (path: SourcePath): MetadataXml | undefined => {
+    // InFolder metadata can be nested more than 1 level beneath its
+    // associated directoryName.
+    if (type.inFolder) {
+      const fullName = parseNestedFullName(path, type.directoryName);
+      if (fullName && type.suffix) {
+        return { fullName, suffix: type.suffix, path };
+      }
+    }
+
+    const parentPath = dirname(path);
+    const parts = parentPath.split(sep);
+    const typeFolderIndex = parts.lastIndexOf(type.directoryName);
+    // nestedTypes (ex: territory2) have a folderType equal to their type but are themselves
+    // in a folder per metadata item, with child folders for rules/territories
+    const allowedIndex = type.folderType === type.id ? parts.length - 2 : parts.length - 1;
+
+    if (typeFolderIndex !== allowedIndex) {
+      return undefined;
+    }
+
+    const match = new RegExp(/(.+)\.(.+)/).exec(basename(path));
+    if (match && type.suffix === match[2]) {
+      return { fullName: match[1], suffix: match[2], path };
+    }
+  };
+
+const parseAsFolderMetadataXml = (fsPath: SourcePath): MetadataXml | undefined => {
+  const match = new RegExp(/(.+)-meta\.xml$/).exec(basename(fsPath));
+  const parts = fsPath.split(sep);
+  if (match && !match[1].includes('.') && parts.length > 1) {
+    return { fullName: match[1], suffix: undefined, path: fsPath };
+  }
+};
 
 const defaultFindRootMetadata: FindRootMetadata = (type, path) => {
   const pathAsRoot = parseAsRootMetadataXml(type)(path);

@@ -7,7 +7,8 @@
 import { basename } from 'node:path';
 import { ensure } from '@salesforce/ts-types';
 import { parseMetadataXml } from '../../utils';
-import { MaybeGetComponent, getComponent, parseAsRootMetadataXml, trimPathToContent } from './baseSourceAdapter';
+import { getComponent, parseAsRootMetadataXml, trimPathToContent } from './baseSourceAdapter';
+import { MaybeGetComponent } from './types';
 import { populateMixedContent } from './mixedContentSourceAdapter';
 
 /**

@@ -638,6 +638,10 @@ v62 introduces the following new types.  Here's their current level of support
 |EnblProgramTaskSubCategory|✅||
 |ExtlClntAppPushConfigurablePolicies|❌|Not supported, but support could be added (but not for tracking)|
 |ExtlClntAppPushSettings|✅||
+|HerokuIntegrationSettings|✅||
+|IndustriesRatingSettings|✅||
+|IndustriesUsageSettings|✅||
+|LearningItemType|✅||
 |ProductDiscoverySettings|✅||
 |PublicKeyCertificate|❌|Not supported, but support could be added (but not for tracking)|
 |PublicKeyCertificateSet|❌|Not supported, but support could be added (but not for tracking)|
@@ -687,7 +691,6 @@ v62 introduces the following new types.  Here's their current level of support
 - IntegrationHubSettings
 - IntegrationHubSettingsType
 - InternalOrganization
-- LearningItemType
 - LicenseDefinition
 - ManagedTopic
 - MarketingResourceType

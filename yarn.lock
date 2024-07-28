@@ -502,7 +502,7 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@jsforce/jsforce-node@^3.2.3", "@jsforce/jsforce-node@^3.2.4":
+"@jsforce/jsforce-node@^3.2.4":
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/@jsforce/jsforce-node/-/jsforce-node-3.2.4.tgz#a03fe2331af171c5dd9276ea17faf440f076cfdb"
   integrity sha512-VIswA769m+1wkAVqaxMjNUfvQ4RqyBKoXa4L+SYQ0NAkMsi+NHdj1bcXN0jkbCHXpd2j+IB4MrO1hIX8Itgwdg==
@@ -548,12 +548,12 @@
   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
-"@salesforce/cli-plugins-testkit@^5.3.18":
-  version "5.3.18"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.3.18.tgz#f36ae6ed8573b18396668a4d38b4effe0bd1a2bf"
-  integrity sha512-9+Yvmw5idIQryJcXVKZ2HASLKj2RUJizDuDFPq5ut9X+8y8MTWAkO0hO6OSj3IPkV+LTo8QF7QOCl16R2PWpMw==
+"@salesforce/cli-plugins-testkit@^5.3.20":
+  version "5.3.20"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.3.20.tgz#03ecb0fe32345a8d468101d2c34bdd7235196b39"
+  integrity sha512-MRY3o8TXmiRmdDQ4orwnGhbxFHqX5xCKvGTIYwPRGSgMs2RHyyPrWrtS+aSC3IINEFJX7NSsXluTJIgl1R2fPA==
   dependencies:
-    "@salesforce/core" "^8.1.1"
+    "@salesforce/core" "^8.2.3"
     "@salesforce/kit" "^3.1.6"
     "@salesforce/ts-types" "^2.0.10"
     "@types/shelljs" "^0.8.15"
@@ -564,12 +564,12 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.8.1"
 
-"@salesforce/core@^8.1.1", "@salesforce/core@^8.2.1":
-  version "8.2.1"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-8.2.1.tgz#16b383886ec02ee9a99f815d5ce4a9f5a492295e"
-  integrity sha512-juLxb4t12vZD9ozkhKhGtbZzOiYkEcUWdw+gAtgzuSrTFTwvoXlbKtzdGbdYPLTHLGYQCVW6cRdMswfwbE5BnQ==
+"@salesforce/core@^8.2.1", "@salesforce/core@^8.2.3":
+  version "8.2.3"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-8.2.3.tgz#4714e5ca046c6fcdcffb91aad151affa9e7a0e88"
+  integrity sha512-epkV2ZU+WQFgxb6q98+9vAp9Qo1bUnCOyk1VyVr2XycJk6BkC0fBE188KpvH0/nqB2+0p2K4Cd3x1/+oC7HYvQ==
   dependencies:
-    "@jsforce/jsforce-node" "^3.2.3"
+    "@jsforce/jsforce-node" "^3.2.4"
     "@salesforce/kit" "^3.1.6"
     "@salesforce/schemas" "^1.9.0"
     "@salesforce/ts-types" "^2.0.10"

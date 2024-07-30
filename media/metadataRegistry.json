@@ -1,0 +1,4413 @@
+{
+  "childTypes": {
+    "aiscoringmodeldefversion": "aiscoringmodeldefinition",
+    "assignmentrule": "assignmentrules",
+    "autoresponserule": "autoresponserules",
+    "botversion": "bot",
+    "businessprocess": "customobject",
+    "compactlayout": "customobject",
+    "customfield": "customobject",
+    "customfieldtranslation": "customobjecttranslation",
+    "customlabel": "customlabels",
+    "digitalexperience": "digitalexperiencebundle",
+    "escalationrule": "escalationrules",
+    "extdatatranfieldtemplate": "extdatatranobjecttemplate",
+    "fieldset": "customobject",
+    "formsection": "form",
+    "index": "customobject",
+    "listview": "customobject",
+    "managedtopic": "managedtopics",
+    "matchingrule": "matchingrules",
+    "mktdatatranfield": "mktdatatranobject",
+    "recordtype": "customobject",
+    "sharingcriteriarule": "sharingrules",
+    "sharingguestrule": "sharingrules",
+    "sharingownerrule": "sharingrules",
+    "sharingreason": "customobject",
+    "sharingterritoryrule": "sharingrules",
+    "validationrule": "customobject",
+    "weblink": "customobject",
+    "workflowalert": "workflow",
+    "workflowfieldupdate": "workflow",
+    "workflowknowledgepublish": "workflow",
+    "workflowoutboundmessage": "workflow",
+    "workflowrule": "workflow",
+    "workflowsend": "workflow",
+    "workflowtask": "workflow",
+    "workskillroutingattribute": "workskillrouting"
+  },
+  "strictDirectoryNames": {
+    "ActionableEventOrchDefSettings": "actionableeventorchdef",
+    "ActionableEventTypeDefSettings": "actionableeventtypedef",
+    "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
+    "ObjectHierarchyRelationship": "objecthierarchyrelationship",
+    "accessControlPolicies": "accesscontrolpolicy",
+    "appointmentAssignmentPolicies": "appointmentassignmentpolicy",
+    "appointmentSchedulingPolicies": "appointmentschedulingpolicy",
+    "aura": "auradefinitionbundle",
+    "botBlocks": "botblock",
+    "botTemplates": "bottemplate",
+    "bots": "bot",
+    "documents": "document",
+    "emailservices": "emailservicesfunction",
+    "experiencePropertyTypeBundles": "experiencepropertytypebundle",
+    "experiences": "experiencebundle",
+    "fieldRestrictionRules": "fieldrestrictionrule",
+    "integrationHub": "integrationhubsettings",
+    "lwc": "lightningcomponentbundle",
+    "mktDataSources": "datasource",
+    "objectTranslations": "customobjecttranslation",
+    "objects": "customobject",
+    "restrictionRules": "restrictionrule",
+    "siteDotComSites": "sitedotcom",
+    "sites": "customsite",
+    "staticresources": "staticresource",
+    "waveTemplates": "wavetemplatebundle"
+  },
+  "suffixes": {
+    "Canvas": "canvasmetadata",
+    "CaseSubjectParticle": "casesubjectparticle",
+    "ChannelObjectLinkingRule": "channelobjectlinkingrule",
+    "ChatterExtension": "chatterextension",
+    "ConversationChannelDefinition": "conversationchanneldefinition",
+    "ConversationVendorFieldDefinition": "conversationvendorfielddef",
+    "ConversationVendorInformation": "conversationvendorinfo",
+    "DataPackageKitObject": "datapackagekitobject",
+    "EmbeddedServiceBranding": "embeddedservicebranding",
+    "EmbeddedServiceConfig": "embeddedserviceconfig",
+    "EmbeddedServiceFieldService": "embeddedservicefieldservice",
+    "EmbeddedServiceFlowConfig": "embeddedserviceflowconfig",
+    "EmbeddedServiceLiveAgent": "embeddedserviceliveagent",
+    "EmbeddedServiceMenuSettings": "embeddedservicemenusettings",
+    "IPAddressRange": "ipaddressrange",
+    "IdentityVerificationProcDef": "identityverificationprocdef",
+    "LeadConvertSetting": "leadconvertsettings",
+    "MobileApplicationDetail": "mobileapplicationdetail",
+    "OmniExtTrackingDef": "omniexttrackingdef",
+    "OmniTrackingGroup": "omnitrackinggroup",
+    "RecordAggregationDefinition": "recordaggregationdefinition",
+    "RetrievalSummaryDefinition": "retrievalsummarydefinition",
+    "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration",
+    "SearchableObjDataSyncInfoSetting": "searchableobjdatasyncinfo",
+    "accountForecastSetting": "accountforecastsettings",
+    "accountRelationshipShareRule": "accountrelationshipsharerule",
+    "accountingFieldMapping": "accountingfieldmapping",
+    "accountingModelConfig": "accountingmodelconfig",
+    "acctMgrTargetSetting": "acctmgrtargetsettings",
+    "actionLauncherItemDef": "actionlauncheritemdef",
+    "actionLinkGroupTemplate": "actionlinkgrouptemplate",
+    "actionableListDefinition": "actionablelistdefinition",
+    "activationPlatform": "activationplatform",
+    "actnblListKeyPrfmIndDef": "actnbllistkeyprfminddef",
+    "advAccountForecastSet": "advaccountforecastset",
+    "advAcctForecastDimSource": "advacctforecastdimsource",
+    "advAcctForecastPeriodGroup": "advacctforecastperiodgroup",
+    "affinityScoreDefinition": "affinityscoredefinition",
+    "ai": "aiapplication",
+    "aiAssistantTemplate": "aiassistanttemplate",
+    "aiScoringModelDefVersion": "aiscoringmodeldefversion",
+    "aiScoringModelDefinition": "aiscoringmodeldefinition",
+    "aiUsecaseDefinitions": "aiusecasedefinition",
+    "aiapplicationconfig": "aiapplicationconfig",
+    "animationRule": "animationrule",
+    "app": "customapplication",
+    "appMenu": "appmenu",
+    "applicationRecordTypeConfig": "applicationrecordtypeconfig",
+    "applicationSubtypeDefinition": "applicationsubtypedefinition",
+    "approvalProcess": "approvalprocess",
+    "apt": "actionplantemplate",
+    "aq": "assessmentquestion",
+    "aqs": "assessmentquestionset",
+    "asset": "contentasset",
+    "assignmentRule": "assignmentrule",
+    "assignmentRules": "assignmentrules",
+    "assistantContextItem": "assistantcontextitem",
+    "assistantDefinition": "assistantdefinition",
+    "assistantRecommendationType": "assistantrecommendationtype",
+    "assistantSkillQuickAction": "assistantskillquickaction",
+    "assistantSkillSobjectAction": "assistantskillsobjectaction",
+    "assistantVersion": "assistantversion",
+    "audience": "audience",
+    "authprovider": "authprovider",
+    "autoResponseRule": "autoresponserule",
+    "autoResponseRules": "autoresponserules",
+    "batchCalcJobDefinition": "batchcalcjobdefinition",
+    "batchProcessJobDefinition": "batchprocessjobdefinition",
+    "benefitAction": "benefitaction",
+    "blacklistedConsumer": "blacklistedconsumer",
+    "bot": "bot",
+    "botBlock": "botblock",
+    "botTemplate": "bottemplate",
+    "botVersion": "botversion",
+    "brandingSet": "brandingset",
+    "briefcaseDefinition": "briefcasedefinition",
+    "buildingEnergyIntensityConfig": "bldgenrgyintensitycnfg",
+    "businessProcessFeedbackConfiguration": "businessprocessfeedbackconfiguration",
+    "businessProcessGroup": "businessprocessgroup",
+    "businessProcessTypeDefinition": "businessprocesstypedefinition",
+    "cachePartition": "platformcachepartition",
+    "callCenter": "callcenter",
+    "callCenterRoutingMap": "callcenterroutingmap",
+    "callCoachingMediaProvider": "callcoachingmediaprovider",
+    "callCtrAgentFavTrfrDest": "callctragentfavtrfrdest",
+    "campaignInfluenceModel": "campaigninfluencemodel",
+    "careBenefitVerifySettings": "carebenefitverifysettings",
+    "careLimitType": "carelimittype",
+    "careProviderAfflRoleConfig": "careproviderafflroleconfig",
+    "careProviderSearchConfig": "careprovidersearchconfig",
+    "careRequestConfiguration": "carerequestconfiguration",
+    "careSystemFieldMapping": "caresystemfieldmapping",
+    "catalogFilterCondition": "svccatalogfiltercondition",
+    "catalogFilterCriteria": "svccatalogfiltercriteria",
+    "catalogItem": "svccatalogitemdef",
+    "catalogItemDefFiltrCrit": "svccatalogitemdeffiltrcrit",
+    "category": "svccatalogcategory",
+    "channelLayout": "channellayout",
+    "clauseCatgConfiguration": "clausecatgconfiguration",
+    "cleanDataService": "cleandataservice",
+    "cls": "apexclass",
+    "cmsConnectSource": "cmsconnectsource",
+    "commandaction": "commandaction",
+    "community": "community",
+    "communityTemplateDefinition": "communitytemplatedefinition",
+    "communityThemeDefinition": "communitythemedefinition",
+    "component": "apexcomponent",
+    "config": "notificationtypeconfig",
+    "connectedApp": "connectedapp",
+    "contextDefinition": "contextdefinition",
+    "conversationMessageDefinition": "conversationmessagedefinition",
+    "corsWhitelistOrigin": "corswhitelistorigin",
+    "crt": "certificate",
+    "cspTrustedSite": "csptrustedsite",
+    "customApplicationComponent": "customapplicationcomponent",
+    "customExperience": "customexperience",
+    "customHelpMenuSection": "customhelpmenusection",
+    "customPermission": "custompermission",
+    "custompageweblink": "custompageweblink",
+    "dashboard": "dashboard",
+    "dashboardFolder": "dashboardfolder",
+    "dataCalcInsightTemplate": "datacalcinsighttemplate",
+    "dataConnectorIngestApi": "dataconnectoringestapi",
+    "dataKitObjectDependency": "datakitobjectdependency",
+    "dataKitObjectTemplate": "datakitobjecttemplate",
+    "dataPackageKitDefinition": "datapackagekitdefinition",
+    "dataPipeline": "datapipeline",
+    "dataSource": "externaldatasource",
+    "dataSourceBundleDefinition": "datasourcebundledefinition",
+    "dataSourceObject": "datasourceobject",
+    "dataSourceTenant": "datasourcetenant",
+    "dataSrcDataModelFieldMap": "datasrcdatamodelfieldmap",
+    "dataStreamDefinition": "datastreamdefinition",
+    "dataStreamTemplate": "datastreamtemplate",
+    "datacategorygroup": "datacategorygroup",
+    "datatype": "customdatatype",
+    "decisionMatrixDefinition": "decisionmatrixdefinition",
+    "decisionMatrixVersion": "decisionmatrixdefinitionversion",
+    "decisionTable": "decisiontable",
+    "decisionTableDatasetLink": "decisiontabledatasetlink",
+    "delegateGroup": "delegategroup",
+    "delivery": "eventdelivery",
+    "deployment": "recordactiondeployment",
+    "digitalExperience": "digitalexperiencebundle",
+    "digitalExperienceConfig": "digitalexperienceconfig",
+    "disclosureDefinition": "disclosuredefinition",
+    "disclosureDefinitionVersion": "disclosuredefinitionversion",
+    "disclosureType": "disclosuretype",
+    "documentCategory": "documentcategory",
+    "documentCategoryDocumentType": "documentcategorydocumenttype",
+    "documentFolder": "documentfolder",
+    "documentGenerationSetting": "documentgenerationsetting",
+    "documentType": "documenttype",
+    "duplicateRule": "duplicaterule",
+    "dwl": "dataweaveresource",
+    "dynamicTrigger": "dynamictrigger",
+    "eSignatureConfig": "esignatureconfig",
+    "eSignatureEnvelopeConfig": "esignatureenvelopeconfig",
+    "eca": "externalclientapplication",
+    "ecaGlblOauth": "extlclntappglobaloauthsettings",
+    "ecaMobile": "extlclntappmobilesettings",
+    "ecaMobilePlcy": "extlclntappmobileconfigurablepolicies",
+    "ecaNotifications": "extlclntappnotificationsettings",
+    "ecaOauth": "extlclntappoauthsettings",
+    "ecaOauthPlcy": "extlclntappoauthconfigurablepolicies",
+    "ecaPlcy": "extlclntappconfigurablepolicies",
+    "ecaSmpl": "extlclntappsamplesettings",
+    "ecaSmplPlcy": "extlclntappsampleconfigurablepolicies",
+    "email": "emailtemplate",
+    "emailFolder": "emailfolder",
+    "enablementMeasureDefinition": "enablementmeasuredefinition",
+    "enablementProgramDefinition": "enablementprogramdefinition",
+    "enblProgramTaskSubCategory": "enblprogramtasksubcategory",
+    "entitlementProcess": "entitlementprocess",
+    "entitlementTemplate": "entitlementtemplate",
+    "entityImplements": "entityimplements",
+    "escalationRule": "escalationrule",
+    "escalationRules": "escalationrules",
+    "eventRelay": "eventrelayconfig",
+    "eventType": "eventtype",
+    "explainabilityActionDefinition": "explainabilityactiondefinition",
+    "explainabilityActionVersion": "explainabilityactionversion",
+    "explainabilityMsgTemplate": "explainabilitymsgtemplate",
+    "expressionSetDefinition": "expressionsetdefinition",
+    "expressionSetVersion": "expressionsetdefinitionversion",
+    "expressionSetMessageToken": "expressionsetmessagetoken",
+    "expressionSetObjectAlias": "expressionsetobjectalias",
+    "extDataTranFieldTemplate": "extdatatranfieldtemplate",
+    "extDataTranObjectTemplate": "extdatatranobjecttemplate",
+    "externalAIModel": "externalaimodel",
+    "externalCredential": "externalcredential",
+    "externalDataConnector": "externaldataconnector",
+    "externalServiceRegistration": "externalserviceregistration",
+    "featureParameterBoolean": "featureparameterboolean",
+    "featureParameterDate": "featureparameterdate",
+    "featureParameterInteger": "featureparameterinteger",
+    "feedFilter": "customfeedfilter",
+    "fieldServiceMobileExtension": "fieldservicemobileextension",
+    "fieldSrcTrgtRelationship": "fieldsrctrgtrelationship",
+    "fieldTranslation": "customfieldtranslation",
+    "flexipage": "flexipage",
+    "flow": "flow",
+    "flowCategory": "flowcategory",
+    "flowDefinition": "flowdefinition",
+    "flowtest": "flowtest",
+    "forecastingFilter": "forecastingfilter",
+    "forecastingFilterCondition": "forecastingfiltercondition",
+    "forecastingGroup": "forecastinggroup",
+    "forecastingSourceDefinition": "forecastingsourcedefinition",
+    "forecastingType": "forecastingtype",
+    "forecastingTypeSource": "forecastingtypesource",
+    "form": "form",
+    "formSection": "formsection",
+    "fuelType": "fueltype",
+    "fuelTypeSustnUom": "fueltypesustnuom",
+    "fulfillmentFlow": "svccatalogfulfillmentflow",
+    "function": "functionreference",
+    "fundraisingConfig": "fundraisingconfig",
+    "gatewayProviderPaymentMethodType": "gatewayproviderpaymentmethodtype",
+    "genAiFunction": "genaifunction",
+    "genAiPlanner": "genaiplanner",
+    "genAiPromptTemplate": "genaiprompttemplate",
+    "genAiPromptTemplateActivation": "genaiprompttemplateactv",
+    "geodata": "eclairgeodata",
+    "globalPicklist": "globalpicklist",
+    "globalValueSet": "globalvalueset",
+    "globalValueSetTranslation": "globalvaluesettranslation",
+    "goal": "discoverygoal",
+    "group": "group",
+    "homePageComponent": "homepagecomponent",
+    "homePageLayout": "homepagelayout",
+    "icon": "icon",
+    "iframeWhiteListUrlSettings": "iframewhitelisturlsettings",
+    "inboundCertificate": "inboundcertificate",
+    "inboundNetworkConnection": "inboundnetworkconnection",
+    "indx": "customindex",
+    "insightType": "insighttype",
+    "installedPackage": "installedpackage",
+    "integrationProviderDefinition": "integrationproviderdef",
+    "internalDataConnector": "internaldataconnector",
+    "internalOrganization": "internalorganization",
+    "keywords": "keywordlist",
+    "labels": "customlabels",
+    "layout": "layout",
+    "learningItemType": "learningitemtype",
+    "letter": "letterhead",
+    "licenseDefinition": "licensedefinition",
+    "lightningBolt": "lightningbolt",
+    "lightningExperienceTheme": "lightningexperiencetheme",
+    "lightningOnboardingConfig": "lightningonboardingconfig",
+    "liveChatAgentConfig": "livechatagentconfig",
+    "liveChatButton": "livechatbutton",
+    "liveChatDeployment": "livechatdeployment",
+    "liveChatSensitiveDataRule": "livechatsensitivedatarule",
+    "locationUse": "locationuse",
+    "loyaltyProgramSetup": "loyaltyprogramsetup",
+    "managedContentType": "managedcontenttype",
+    "managedEventSubscription": "managedeventsubscription",
+    "managedTopic": "managedtopic",
+    "managedTopics": "managedtopics",
+    "marketSegmentDefinition": "marketsegmentdefinition",
+    "marketingResourceType": "marketingresourcetype",
+    "marketingappextension": "marketingappextension",
+    "matchingRule": "matchingrules",
+    "md": "custommetadata",
+    "messageChannel": "lightningmessagechannel",
+    "messagingChannel": "messagingchannel",
+    "mfgProgramTemplate": "mfgprogramtemplate",
+    "milestoneType": "milestonetype",
+    "mktCalcInsightObjectDef": "mktcalcinsightobjectdef",
+    "mktDataTranField": "mktdatatranfield",
+    "mktDataTranObject": "mktdatatranobject",
+    "mlDataDefinition": "mldatadefinition",
+    "mlDomain": "mldomain",
+    "mlPrediction": "mlpredictiondefinition",
+    "mlRecommendation": "mlrecommendationdefinition",
+    "mobSecurityCertPinConfig": "mobsecuritycertpinconfig",
+    "mobileSecurityAssignment": "mobilesecurityassignment",
+    "mobileSecurityPolicy": "mobilesecuritypolicy",
+    "mobileSecurityPolicySet": "mobilesecuritypolicyset",
+    "model": "discoveryaimodel",
+    "mutingpermissionset": "mutingpermissionset",
+    "myDomainDiscoverableLogin": "mydomaindiscoverablelogin",
+    "namedCredential": "namedcredential",
+    "navigationMenu": "navigationmenu",
+    "network": "network",
+    "networkBranding": "networkbranding",
+    "notifications": "apexemailnotifications",
+    "notiftype": "customnotificationtype",
+    "oauthcustomscope": "oauthcustomscope",
+    "oauthtokenexchangehandler": "oauthtokenexchangehandler",
+    "object": "customobject",
+    "objectSourceTargetMap": "objectsourcetargetmap",
+    "objectTranslation": "customobjecttranslation",
+    "ocrSampleDocument": "ocrsampledocument",
+    "ocrTemplate": "ocrtemplate",
+    "oip": "omniintegrationprocedure",
+    "omniInteractionAccessConfig": "omniinteractionaccessconfig",
+    "omniInteractionConfig": "omniinteractionconfig",
+    "omniSupervisorConfig": "omnisupervisorconfig",
+    "orchestration": "orchestration",
+    "orchestrationContext": "orchestrationcontext",
+    "os": "omniscript",
+    "ouc": "omniuicard",
+    "outboundNetworkConnection": "outboundnetworkconnection",
+    "page": "apexpage",
+    "participantRole": "participantrole",
+    "pathAssistant": "pathassistant",
+    "paymentGatewayProvider": "paymentgatewayprovider",
+    "permissionSetLicenseDefinition": "permissionsetlicensedefinition",
+    "permissionset": "permissionset",
+    "permissionsetgroup": "permissionsetgroup",
+    "personAccountOwnerPowerUser": "personaccountownerpoweruser",
+    "pipelineInspMetricConfig": "pipelineinspmetricconfig",
+    "platformEventChannel": "platformeventchannel",
+    "platformEventChannelMember": "platformeventchannelmember",
+    "platformEventSubscriberConfig": "platformeventsubscriberconfig",
+    "policy": "appointmentassignmentpolicy",
+    "portal": "portal",
+    "postTemplate": "posttemplate",
+    "presenceDeclineReason": "presencedeclinereason",
+    "presenceUserConfig": "presenceuserconfig",
+    "pricingActionParameters": "pricingactionparameters",
+    "pricingRecipe": "pricingrecipe",
+    "processflowmigration": "processflowmigration",
+    "productAttributeSet": "productattributeset",
+    "productSpecificationTypeDefinition": "productspecificationtypedefinition",
+    "profile": "profile",
+    "profilePasswordPolicy": "profilepasswordpolicy",
+    "profileSessionSetting": "profilesessionsetting",
+    "prompt": "prompt",
+    "queue": "queue",
+    "queueRoutingConfig": "queueroutingconfig",
+    "quickAction": "quickaction",
+    "recommendationStrategy": "recommendationstrategy",
+    "recordAlertCategory": "recordalertcategory",
+    "recordAlertDataSource": "recordalertdatasource",
+    "recordAlertTemplate": "recordalerttemplate",
+    "redirectWhitelistUrl": "redirectwhitelisturl",
+    "registeredExternalService": "registeredexternalservice",
+    "relationshipGraphDefinition": "relationshipgraphdefinition",
+    "remoteSite": "remotesitesetting",
+    "report": "report",
+    "reportFolder": "reportfolder",
+    "reportType": "reporttype",
+    "role": "role",
+    "rpt": "omnidatatransform",
+    "rule": "moderationrule",
+    "s3DataConnector": "dataconnectors3",
+    "salesAgreementSetting": "salesagreementsettings",
+    "samlssoconfig": "samlssoconfig",
+    "scf": "scontrol",
+    "schedulingObjective": "schedulingobjective",
+    "schedulingRule": "schedulingrule",
+    "scoreCategory": "scorecategory",
+    "searchCustomization": "searchcustomization",
+    "searchOrgWideObjectConfig": "searchorgwideobjectconfig",
+    "serviceAISetupDescription": "serviceaisetupdefinition",
+    "serviceAISetupField": "serviceaisetupfield",
+    "serviceChannel": "servicechannel",
+    "servicePresenceStatus": "servicepresencestatus",
+    "serviceprocess": "serviceprocess",
+    "settings": "settings",
+    "sharingCriteriaRule": "sharingcriteriarule",
+    "sharingGuestRule": "sharingguestrule",
+    "sharingOwnerRule": "sharingownerrule",
+    "sharingRules": "sharingrules",
+    "sharingSet": "sharingset",
+    "sharingTerritoryRule": "sharingterritoryrule",
+    "site": "sitedotcom",
+    "skill": "skill",
+    "skilltype": "skilltype",
+    "slackapp": "slackapp",
+    "snapshot": "analyticsnapshot",
+    "standardValueSet": "standardvalueset",
+    "standardValueSetTranslation": "standardvaluesettranslation",
+    "stationaryAssetEnvSourceConfig": "stnryassetenvsrccnfg",
+    "story": "discoverystory",
+    "streamingAppDataConnector": "streamingappdataconnector",
+    "subscription": "eventsubscription",
+    "sustainabilityUom": "sustainabilityuom",
+    "sustnUomConversion": "sustnuomconversion",
+    "synonymDictionary": "synonymdictionary",
+    "tab": "customtab",
+    "territory": "territory",
+    "territory2": "territory2",
+    "territory2Model": "territory2model",
+    "territory2Rule": "territory2rule",
+    "territory2Type": "territory2type",
+    "testSuite": "apextestsuite",
+    "timeSheetTemplate": "timesheettemplate",
+    "timelineObjectDefinition": "timelineobjectdefinition",
+    "topicsForObjects": "topicsforobjects",
+    "transactionSecurityPolicy": "transactionsecuritypolicy",
+    "translation": "translations",
+    "trigger": "apextrigger",
+    "type": "integrationhubsettingstype",
+    "uiObjectRelationConfig": "uiobjectrelationconfig",
+    "uiplugin": "uiplugin",
+    "uiview": "uiviewdefinition",
+    "userAuthCertificate": "userauthcertificate",
+    "userCriteria": "usercriteria",
+    "userProfileSearchScope": "userprofilesearchscope",
+    "userProvisioningConfig": "userprovisioningconfig",
+    "useraccesspolicy": "useraccesspolicy",
+    "vehicleAssetEmssnSourceConfig": "vehicleassetemssnsrccnfg",
+    "view": "viewdefinition",
+    "visualizationPlugin": "visualizationplugin",
+    "wapp": "waveapplication",
+    "wcomp": "wavecomponent",
+    "wdash": "wavedashboard",
+    "wdf": "wavedataflow",
+    "wdpr": "waverecipe",
+    "wds": "wavedataset",
+    "webStoreBundle": "webstorebundle",
+    "webStoreTemplate": "webstoretemplate",
+    "weblink": "custompageweblink",
+    "wlens": "wavelens",
+    "workSkillRouting": "workskillrouting",
+    "workSkillRoutingAttribute": "workskillroutingattribute",
+    "workflow": "workflow",
+    "workflowAlert": "workflowalert",
+    "workflowFieldUpdate": "workflowfieldupdate",
+    "workflowKnowledgePublish": "workflowknowledgepublish",
+    "workflowOutboundMessage": "workflowoutboundmessage",
+    "workflowRule": "workflowrule",
+    "workflowSend": "workflowsend",
+    "workflowTask": "workflowtask",
+    "xmd": "wavexmd",
+    "xml": "emailservicesfunction",
+    "xorghub": "xorghub",
+    "stageDefinition": "stagedefinition"
+  },
+  "types": {
+    "accesscontrolpolicy": {
+      "directoryName": "accessControlPolicies",
+      "id": "accesscontrolpolicy",
+      "inFolder": false,
+      "name": "AccessControlPolicy",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": true,
+      "suffix": "policy"
+    },
+    "accountforecastsettings": {
+      "directoryName": "AccountForecastSettings",
+      "id": "accountforecastsettings",
+      "name": "AccountForecastSettings",
+      "strictDirectoryName": false,
+      "suffix": "accountForecastSetting"
+    },
+    "accountingfieldmapping": {
+      "directoryName": "accountingFieldMappings",
+      "id": "accountingfieldmapping",
+      "inFolder": false,
+      "name": "AccountingFieldMapping",
+      "strictDirectoryName": false,
+      "suffix": "accountingFieldMapping"
+    },
+    "accountingmodelconfig": {
+      "directoryName": "accountingModelConfigs",
+      "id": "accountingmodelconfig",
+      "inFolder": false,
+      "name": "AccountingModelConfig",
+      "strictDirectoryName": false,
+      "suffix": "accountingModelConfig"
+    },
+    "accountrelationshipsharerule": {
+      "directoryName": "accountRelationshipShareRules",
+      "id": "accountrelationshipsharerule",
+      "name": "AccountRelationshipShareRule",
+      "strictDirectoryName": false,
+      "suffix": "accountRelationshipShareRule"
+    },
+    "acctmgrtargetsettings": {
+      "directoryName": "acctMgrTargetSettings",
+      "id": "acctmgrtargetsettings",
+      "name": "AcctMgrTargetSettings",
+      "strictDirectoryName": false,
+      "suffix": "acctMgrTargetSetting"
+    },
+    "actionableeventorchdef": {
+      "directoryName": "ActionableEventOrchDefSettings",
+      "id": "actionableeventorchdef",
+      "inFolder": false,
+      "name": "ActionableEventOrchDef",
+      "strictDirectoryName": true,
+      "suffix": "settings"
+    },
+    "actionableeventtypedef": {
+      "directoryName": "ActionableEventTypeDefSettings",
+      "id": "actionableeventtypedef",
+      "inFolder": false,
+      "name": "ActionableEventTypeDef",
+      "strictDirectoryName": true,
+      "suffix": "settings"
+    },
+    "actionablelistdefinition": {
+      "directoryName": "actionableListDefinitions",
+      "id": "actionablelistdefinition",
+      "inFolder": false,
+      "name": "ActionableListDefinition",
+      "strictDirectoryName": false,
+      "suffix": "actionableListDefinition"
+    },
+    "actionlauncheritemdef": {
+      "directoryName": "ActionLauncherItemDef",
+      "id": "actionlauncheritemdef",
+      "inFolder": false,
+      "name": "ActionLauncherItemDef",
+      "strictDirectoryName": false,
+      "suffix": "actionLauncherItemDef"
+    },
+    "actionlinkgrouptemplate": {
+      "directoryName": "actionLinkGroupTemplates",
+      "id": "actionlinkgrouptemplate",
+      "inFolder": false,
+      "name": "ActionLinkGroupTemplate",
+      "strictDirectoryName": false,
+      "suffix": "actionLinkGroupTemplate"
+    },
+    "actionplantemplate": {
+      "directoryName": "actionPlanTemplates",
+      "id": "actionplantemplate",
+      "name": "ActionPlanTemplate",
+      "strictDirectoryName": false,
+      "suffix": "apt"
+    },
+    "activationplatform": {
+      "directoryName": "activationPlatforms",
+      "id": "activationplatform",
+      "inFolder": false,
+      "name": "ActivationPlatform",
+      "strictDirectoryName": false,
+      "suffix": "activationPlatform"
+    },
+    "actnbllistkeyprfminddef": {
+      "directoryName": "actnblListKeyPrfmIndDefs",
+      "id": "actnbllistkeyprfminddef",
+      "inFolder": false,
+      "name": "ActnblListKeyPrfmIndDef",
+      "strictDirectoryName": false,
+      "suffix": "actnblListKeyPrfmIndDef"
+    },
+    "advaccountforecastset": {
+      "directoryName": "AdvAccountForecastSet",
+      "id": "advaccountforecastset",
+      "inFolder": false,
+      "name": "AdvAccountForecastSet",
+      "suffix": "advAccountForecastSet"
+    },
+    "advacctforecastdimsource": {
+      "directoryName": "AdvAcctForecastDimSource",
+      "id": "advacctforecastdimsource",
+      "inFolder": false,
+      "name": "AdvAcctForecastDimSource",
+      "strictDirectoryName": false,
+      "suffix": "advAcctForecastDimSource"
+    },
+    "advacctforecastperiodgroup": {
+      "directoryName": "AdvAcctForecastPeriodGroup",
+      "id": "advacctforecastperiodgroup",
+      "inFolder": false,
+      "name": "AdvAcctForecastPeriodGroup",
+      "suffix": "advAcctForecastPeriodGroup"
+    },
+    "affinityscoredefinition": {
+      "directoryName": "affinityScoreDefinitions",
+      "id": "affinityscoredefinition",
+      "inFolder": false,
+      "name": "AffinityScoreDefinition",
+      "strictDirectoryName": false,
+      "suffix": "affinityScoreDefinition"
+    },
+    "aiapplication": {
+      "directoryName": "aiApplications",
+      "id": "aiapplication",
+      "inFolder": false,
+      "name": "AIApplication",
+      "strictDirectoryName": false,
+      "suffix": "ai"
+    },
+    "aiapplicationconfig": {
+      "directoryName": "aiApplicationConfigs",
+      "id": "aiapplicationconfig",
+      "inFolder": false,
+      "name": "AIApplicationConfig",
+      "strictDirectoryName": false,
+      "suffix": "aiapplicationconfig"
+    },
+    "aiassistanttemplate": {
+      "directoryName": "aiAssistantTemplates",
+      "id": "aiassistanttemplate",
+      "inFolder": false,
+      "name": "AIAssistantTemplate",
+      "suffix": "aiAssistantTemplate"
+    },
+    "aiscoringmodeldefinition": {
+      "children": {
+        "directories": {
+          "aiScoringModelDefVersions": "aiscoringmodeldefversion"
+        },
+        "suffixes": {
+          "aiScoringModelDefVersion": "aiscoringmodeldefversion"
+        },
+        "types": {
+          "aiscoringmodeldefversion": {
+            "directoryName": "aiScoringModelDefVersions",
+            "id": "aiscoringmodeldefversion",
+            "name": "AIScoringModelDefVersion",
+            "suffix": "aiScoringModelDefVersion",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "aiScoringModelDefVersions"
+          }
+        }
+      },
+      "directoryName": "aiScoringModelDefinitions",
+      "id": "aiscoringmodeldefinition",
+      "inFolder": false,
+      "name": "AIScoringModelDefinition",
+      "suffix": "aiScoringModelDefinition",
+      "supportsWildcardAndName": true
+    },
+    "aiusecasedefinition": {
+      "directoryName": "aiUsecaseDefinitions",
+      "id": "aiusecasedefinition",
+      "inFolder": false,
+      "name": "AIUsecaseDefinition",
+      "strictDirectoryName": false,
+      "suffix": "aiUsecaseDefinitions"
+    },
+    "analyticsnapshot": {
+      "directoryName": "analyticSnapshots",
+      "id": "analyticsnapshot",
+      "inFolder": false,
+      "name": "AnalyticSnapshot",
+      "strictDirectoryName": false,
+      "suffix": "snapshot"
+    },
+    "animationrule": {
+      "directoryName": "animationRules",
+      "id": "animationrule",
+      "inFolder": false,
+      "name": "AnimationRule",
+      "strictDirectoryName": false,
+      "suffix": "animationRule"
+    },
+    "apexclass": {
+      "directoryName": "classes",
+      "id": "apexclass",
+      "inFolder": false,
+      "name": "ApexClass",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "cls",
+      "supportsWildcardAndName": true
+    },
+    "apexcomponent": {
+      "directoryName": "components",
+      "id": "apexcomponent",
+      "inFolder": false,
+      "name": "ApexComponent",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "component"
+    },
+    "apexemailnotifications": {
+      "directoryName": "apexEmailNotifications",
+      "id": "apexemailnotifications",
+      "inFolder": false,
+      "name": "ApexEmailNotifications",
+      "strictDirectoryName": false,
+      "suffix": "notifications"
+    },
+    "apexpage": {
+      "directoryName": "pages",
+      "id": "apexpage",
+      "inFolder": false,
+      "name": "ApexPage",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "page",
+      "supportsWildcardAndName": true
+    },
+    "apextestsuite": {
+      "directoryName": "testSuites",
+      "id": "apextestsuite",
+      "inFolder": false,
+      "name": "ApexTestSuite",
+      "strictDirectoryName": false,
+      "suffix": "testSuite"
+    },
+    "apextrigger": {
+      "directoryName": "triggers",
+      "id": "apextrigger",
+      "inFolder": false,
+      "name": "ApexTrigger",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "trigger"
+    },
+    "applicationrecordtypeconfig": {
+      "directoryName": "ApplicationRecordTypeConfig",
+      "id": "applicationrecordtypeconfig",
+      "inFolder": false,
+      "name": "ApplicationRecordTypeConfig",
+      "suffix": "applicationRecordTypeConfig"
+    },
+    "applicationsubtypedefinition": {
+      "directoryName": "ApplicationSubtypeDefinitions",
+      "id": "applicationsubtypedefinition",
+      "inFolder": false,
+      "name": "ApplicationSubtypeDefinition",
+      "strictDirectoryName": false,
+      "suffix": "applicationSubtypeDefinition"
+    },
+    "appmenu": {
+      "directoryName": "appMenus",
+      "id": "appmenu",
+      "inFolder": false,
+      "name": "AppMenu",
+      "strictDirectoryName": false,
+      "suffix": "appMenu"
+    },
+    "appointmentassignmentpolicy": {
+      "directoryName": "appointmentAssignmentPolicies",
+      "id": "appointmentassignmentpolicy",
+      "inFolder": false,
+      "name": "AppointmentAssignmentPolicy",
+      "strictDirectoryName": true,
+      "suffix": "policy"
+    },
+    "appointmentschedulingpolicy": {
+      "directoryName": "appointmentSchedulingPolicies",
+      "id": "appointmentschedulingpolicy",
+      "inFolder": false,
+      "name": "AppointmentSchedulingPolicy",
+      "strictDirectoryName": true,
+      "suffix": "policy"
+    },
+    "approvalprocess": {
+      "directoryName": "approvalProcesses",
+      "id": "approvalprocess",
+      "inFolder": false,
+      "name": "ApprovalProcess",
+      "strictDirectoryName": false,
+      "suffix": "approvalProcess"
+    },
+    "assessmentquestion": {
+      "directoryName": "AssessmentQuestions",
+      "id": "assessmentquestion",
+      "inFolder": false,
+      "name": "AssessmentQuestion",
+      "strictDirectoryName": false,
+      "suffix": "aq"
+    },
+    "assessmentquestionset": {
+      "directoryName": "AssessmentQuestionSets",
+      "id": "assessmentquestionset",
+      "inFolder": false,
+      "name": "AssessmentQuestionSet",
+      "strictDirectoryName": false,
+      "suffix": "aqs"
+    },
+    "assignmentrules": {
+      "children": {
+        "directories": {
+          "assignmentRules": "assignmentrule"
+        },
+        "suffixes": {
+          "assignmentRule": "assignmentrule"
+        },
+        "types": {
+          "assignmentrule": {
+            "directoryName": "assignmentRules",
+            "id": "assignmentrule",
+            "name": "AssignmentRule",
+            "suffix": "assignmentRule",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "assignmentRule"
+          }
+        }
+      },
+      "directoryName": "assignmentRules",
+      "id": "assignmentrules",
+      "inFolder": false,
+      "name": "AssignmentRules",
+      "strictDirectoryName": false,
+      "suffix": "assignmentRules"
+    },
+    "assistantcontextitem": {
+      "directoryName": "assistantContextItems",
+      "id": "assistantcontextitem",
+      "inFolder": false,
+      "name": "AssistantContextItem",
+      "suffix": "assistantContextItem"
+    },
+    "assistantdefinition": {
+      "directoryName": "assistantDefinitions",
+      "id": "assistantdefinition",
+      "inFolder": false,
+      "name": "AssistantDefinition",
+      "suffix": "assistantDefinition"
+    },
+    "assistantrecommendationtype": {
+      "directoryName": "assistantRecommendationTypes",
+      "id": "assistantrecommendationtype",
+      "inFolder": false,
+      "name": "AssistantRecommendationType",
+      "suffix": "assistantRecommendationType"
+    },
+    "assistantskillquickaction": {
+      "directoryName": "assistantSkillQuickActions",
+      "id": "assistantskillquickaction",
+      "inFolder": false,
+      "name": "AssistantSkillQuickAction",
+      "suffix": "assistantSkillQuickAction"
+    },
+    "assistantskillsobjectaction": {
+      "directoryName": "assistantSkillSobjectActions",
+      "id": "assistantskillsobjectaction",
+      "inFolder": false,
+      "name": "AssistantSkillSobjectAction",
+      "suffix": "assistantSkillSobjectAction"
+    },
+    "assistantversion": {
+      "directoryName": "assistantVersions",
+      "id": "assistantversion",
+      "inFolder": false,
+      "name": "AssistantVersion",
+      "suffix": "assistantVersion"
+    },
+    "audience": {
+      "directoryName": "audience",
+      "id": "audience",
+      "inFolder": false,
+      "name": "Audience",
+      "strictDirectoryName": false,
+      "suffix": "audience"
+    },
+    "auradefinitionbundle": {
+      "directoryName": "aura",
+      "id": "auradefinitionbundle",
+      "inFolder": false,
+      "name": "AuraDefinitionBundle",
+      "strategies": {
+        "adapter": "bundle"
+      },
+      "strictDirectoryName": true,
+      "supportsPartialDelete": true
+    },
+    "authprovider": {
+      "directoryName": "authproviders",
+      "id": "authprovider",
+      "inFolder": false,
+      "name": "AuthProvider",
+      "strictDirectoryName": false,
+      "suffix": "authprovider"
+    },
+    "autoresponserules": {
+      "children": {
+        "directories": {
+          "autoResponseRules": "autoresponserule"
+        },
+        "suffixes": {
+          "autoResponseRule": "autoresponserule"
+        },
+        "types": {
+          "autoresponserule": {
+            "directoryName": "autoResponseRules",
+            "id": "autoresponserule",
+            "name": "AutoResponseRule",
+            "suffix": "autoResponseRule",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "autoResponseRule"
+          }
+        }
+      },
+      "directoryName": "autoResponseRules",
+      "id": "autoresponserules",
+      "inFolder": false,
+      "name": "AutoResponseRules",
+      "strictDirectoryName": false,
+      "suffix": "autoResponseRules"
+    },
+    "batchcalcjobdefinition": {
+      "directoryName": "batchCalcJobDefinitions",
+      "id": "batchcalcjobdefinition",
+      "inFolder": false,
+      "name": "BatchCalcJobDefinition",
+      "strictDirectoryName": false,
+      "suffix": "batchCalcJobDefinition"
+    },
+    "batchprocessjobdefinition": {
+      "directoryName": "batchProcessJobDefinitions",
+      "id": "batchprocessjobdefinition",
+      "name": "BatchProcessJobDefinition",
+      "strictDirectoryName": false,
+      "suffix": "batchProcessJobDefinition"
+    },
+    "benefitaction": {
+      "directoryName": "benefitActions",
+      "id": "benefitaction",
+      "name": "BenefitAction",
+      "strictDirectoryName": false,
+      "suffix": "benefitAction"
+    },
+    "blacklistedconsumer": {
+      "directoryName": "blacklistedConsumers",
+      "id": "blacklistedconsumer",
+      "inFolder": false,
+      "name": "BlacklistedConsumer",
+      "strictDirectoryName": false,
+      "suffix": "blacklistedConsumer"
+    },
+    "bldgenrgyintensitycnfg": {
+      "directoryName": "buildingEnergyIntensityConfigs",
+      "id": "bldgenrgyintensitycnfg",
+      "inFolder": false,
+      "name": "BldgEnrgyIntensityCnfg",
+      "strictDirectoryName": false,
+      "suffix": "buildingEnergyIntensityConfig"
+    },
+    "bot": {
+      "children": {
+        "directories": {
+          "botVersions": "botversion"
+        },
+        "suffixes": {
+          "botVersion": "botversion"
+        },
+        "types": {
+          "botversion": {
+            "directoryName": "botVersions",
+            "id": "botversion",
+            "name": "BotVersion",
+            "suffix": "botVersion"
+          }
+        }
+      },
+      "directoryName": "bots",
+      "id": "bot",
+      "inFolder": false,
+      "name": "Bot",
+      "strategies": {
+        "adapter": "decomposed",
+        "decomposition": "topLevel",
+        "transformer": "decomposed"
+      },
+      "strictDirectoryName": true,
+      "suffix": "bot"
+    },
+    "botblock": {
+      "directoryName": "botBlocks",
+      "id": "botblock",
+      "inFolder": false,
+      "name": "BotBlock",
+      "strictDirectoryName": true,
+      "suffix": "botBlock"
+    },
+    "bottemplate": {
+      "directoryName": "botTemplates",
+      "id": "bottemplate",
+      "inFolder": false,
+      "name": "BotTemplate",
+      "strictDirectoryName": true,
+      "suffix": "botTemplate"
+    },
+    "brandingset": {
+      "directoryName": "brandingSets",
+      "id": "brandingset",
+      "inFolder": false,
+      "name": "BrandingSet",
+      "strictDirectoryName": false,
+      "suffix": "brandingSet"
+    },
+    "briefcasedefinition": {
+      "directoryName": "briefcaseDefinitions",
+      "id": "briefcasedefinition",
+      "name": "BriefcaseDefinition",
+      "strictDirectoryName": false,
+      "suffix": "briefcaseDefinition"
+    },
+    "businessprocessfeedbackconfiguration": {
+      "directoryName": "businessProcessFeedbackConfigurations",
+      "id": "businessprocessfeedbackconfiguration",
+      "name": "BusinessProcessFeedbackConfiguration",
+      "strictDirectoryName": false,
+      "suffix": "businessProcessFeedbackConfiguration"
+    },
+    "businessprocessgroup": {
+      "directoryName": "businessProcessGroups",
+      "id": "businessprocessgroup",
+      "name": "BusinessProcessGroup",
+      "strictDirectoryName": false,
+      "suffix": "businessProcessGroup"
+    },
+    "businessprocesstypedefinition": {
+      "directoryName": "BusinessProcessTypeDefinitions",
+      "id": "businessprocesstypedefinition",
+      "inFolder": false,
+      "name": "BusinessProcessTypeDefinition",
+      "strictDirectoryName": false,
+      "suffix": "businessProcessTypeDefinition"
+    },
+    "callcenter": {
+      "directoryName": "callCenters",
+      "id": "callcenter",
+      "inFolder": false,
+      "name": "CallCenter",
+      "strictDirectoryName": false,
+      "suffix": "callCenter"
+    },
+    "callcenterroutingmap": {
+      "directoryName": "callCenterRoutingMaps",
+      "id": "callcenterroutingmap",
+      "inFolder": false,
+      "name": "CallCenterRoutingMap",
+      "suffix": "callCenterRoutingMap"
+    },
+    "callcoachingmediaprovider": {
+      "directoryName": "callCoachingMediaProviders",
+      "id": "callcoachingmediaprovider",
+      "inFolder": false,
+      "name": "CallCoachingMediaProvider",
+      "strictDirectoryName": false,
+      "suffix": "callCoachingMediaProvider"
+    },
+    "callctragentfavtrfrdest": {
+      "directoryName": "callCtrAgentFavTrfrDests",
+      "id": "callctragentfavtrfrdest",
+      "inFolder": false,
+      "name": "CallCtrAgentFavTrfrDest",
+      "strictDirectoryName": false,
+      "suffix": "callCtrAgentFavTrfrDest"
+    },
+    "campaigninfluencemodel": {
+      "directoryName": "campaignInfluenceModels",
+      "id": "campaigninfluencemodel",
+      "inFolder": false,
+      "name": "CampaignInfluenceModel",
+      "suffix": "campaignInfluenceModel"
+    },
+    "canvasmetadata": {
+      "directoryName": "Canvases",
+      "id": "canvasmetadata",
+      "inFolder": false,
+      "name": "CanvasMetadata",
+      "strictDirectoryName": false,
+      "suffix": "Canvas"
+    },
+    "carebenefitverifysettings": {
+      "directoryName": "careBenefitVerifySettings",
+      "id": "carebenefitverifysettings",
+      "inFolder": false,
+      "name": "CareBenefitVerifySettings",
+      "suffix": "careBenefitVerifySettings"
+    },
+    "carelimittype": {
+      "directoryName": "careLimitTypes",
+      "id": "carelimittype",
+      "inFolder": false,
+      "name": "CareLimitType",
+      "strictDirectoryName": false,
+      "suffix": "careLimitType"
+    },
+    "careproviderafflroleconfig": {
+      "directoryName": "careProviderAfflRoleConfigs",
+      "id": "careproviderafflroleconfig",
+      "inFolder": false,
+      "name": "CareProviderAfflRoleConfig",
+      "strictDirectoryName": false,
+      "suffix": "careProviderAfflRoleConfig"
+    },
+    "careprovidersearchconfig": {
+      "directoryName": "careProviderSearchConfigs",
+      "id": "careprovidersearchconfig",
+      "name": "CareProviderSearchConfig",
+      "strictDirectoryName": false,
+      "suffix": "careProviderSearchConfig"
+    },
+    "carerequestconfiguration": {
+      "directoryName": "careRequestConfigurations",
+      "id": "carerequestconfiguration",
+      "inFolder": false,
+      "name": "CareRequestConfiguration",
+      "suffix": "careRequestConfiguration"
+    },
+    "caresystemfieldmapping": {
+      "directoryName": "careSystemFieldMappings",
+      "id": "caresystemfieldmapping",
+      "name": "CareSystemFieldMapping",
+      "strictDirectoryName": false,
+      "suffix": "careSystemFieldMapping"
+    },
+    "casesubjectparticle": {
+      "directoryName": "CaseSubjectParticles",
+      "id": "casesubjectparticle",
+      "inFolder": false,
+      "name": "CaseSubjectParticle",
+      "strictDirectoryName": false,
+      "suffix": "CaseSubjectParticle"
+    },
+    "certificate": {
+      "directoryName": "certs",
+      "id": "certificate",
+      "inFolder": false,
+      "name": "Certificate",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "crt"
+    },
+    "channellayout": {
+      "directoryName": "channelLayouts",
+      "id": "channellayout",
+      "inFolder": false,
+      "name": "ChannelLayout",
+      "strictDirectoryName": false,
+      "suffix": "channelLayout"
+    },
+    "channelobjectlinkingrule": {
+      "directoryName": "ChannelObjectLinkingRules",
+      "id": "channelobjectlinkingrule",
+      "name": "ChannelObjectLinkingRule",
+      "strictDirectoryName": false,
+      "suffix": "ChannelObjectLinkingRule"
+    },
+    "chatterextension": {
+      "directoryName": "ChatterExtensions",
+      "id": "chatterextension",
+      "inFolder": false,
+      "name": "ChatterExtension",
+      "strictDirectoryName": false,
+      "suffix": "ChatterExtension"
+    },
+    "clausecatgconfiguration": {
+      "directoryName": "clauseCatgConfigurations",
+      "id": "clausecatgconfiguration",
+      "inFolder": false,
+      "name": "ClauseCatgConfiguration",
+      "strictDirectoryName": false,
+      "suffix": "clauseCatgConfiguration"
+    },
+    "cleandataservice": {
+      "directoryName": "cleanDataServices",
+      "id": "cleandataservice",
+      "inFolder": false,
+      "name": "CleanDataService",
+      "strictDirectoryName": false,
+      "suffix": "cleanDataService"
+    },
+    "cmsconnectsource": {
+      "directoryName": "cmsConnectSource",
+      "id": "cmsconnectsource",
+      "inFolder": false,
+      "name": "CMSConnectSource",
+      "strictDirectoryName": false,
+      "suffix": "cmsConnectSource"
+    },
+    "commandaction": {
+      "directoryName": "commandActions",
+      "id": "commandaction",
+      "inFolder": false,
+      "name": "CommandAction",
+      "suffix": "commandaction"
+    },
+    "community": {
+      "directoryName": "communities",
+      "id": "community",
+      "inFolder": false,
+      "name": "Community",
+      "strictDirectoryName": false,
+      "suffix": "community"
+    },
+    "communitytemplatedefinition": {
+      "directoryName": "communityTemplateDefinitions",
+      "id": "communitytemplatedefinition",
+      "inFolder": false,
+      "name": "CommunityTemplateDefinition",
+      "strictDirectoryName": false,
+      "suffix": "communityTemplateDefinition"
+    },
+    "communitythemedefinition": {
+      "directoryName": "communityThemeDefinitions",
+      "id": "communitythemedefinition",
+      "inFolder": false,
+      "name": "CommunityThemeDefinition",
+      "strictDirectoryName": false,
+      "suffix": "communityThemeDefinition"
+    },
+    "connectedapp": {
+      "directoryName": "connectedApps",
+      "id": "connectedapp",
+      "inFolder": false,
+      "name": "ConnectedApp",
+      "strictDirectoryName": false,
+      "suffix": "connectedApp"
+    },
+    "contentasset": {
+      "directoryName": "contentassets",
+      "id": "contentasset",
+      "inFolder": false,
+      "name": "ContentAsset",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "asset"
+    },
+    "contextdefinition": {
+      "directoryName": "contextDefinitions",
+      "id": "contextdefinition",
+      "inFolder": false,
+      "name": "ContextDefinition",
+      "strictDirectoryName": false,
+      "suffix": "contextDefinition"
+    },
+    "conversationchanneldefinition": {
+      "directoryName": "conversationChannelDefinitions",
+      "id": "conversationchanneldefinition",
+      "inFolder": false,
+      "name": "ConversationChannelDefinition",
+      "strictDirectoryName": false,
+      "suffix": "ConversationChannelDefinition"
+    },
+    "conversationmessagedefinition": {
+      "directoryName": "conversationMessageDefinitions",
+      "id": "conversationmessagedefinition",
+      "inFolder": false,
+      "name": "ConversationMessageDefinition",
+      "strictDirectoryName": false,
+      "suffix": "conversationMessageDefinition"
+    },
+    "conversationvendorfielddef": {
+      "directoryName": "ConversationVendorFieldDefinitions",
+      "id": "conversationvendorfielddef",
+      "name": "ConversationVendorFieldDef",
+      "strictDirectoryName": false,
+      "suffix": "ConversationVendorFieldDefinition"
+    },
+    "conversationvendorinfo": {
+      "directoryName": "ConversationVendorInformation",
+      "id": "conversationvendorinfo",
+      "name": "ConversationVendorInfo",
+      "strictDirectoryName": false,
+      "suffix": "ConversationVendorInformation"
+    },
+    "corswhitelistorigin": {
+      "directoryName": "corsWhitelistOrigins",
+      "id": "corswhitelistorigin",
+      "inFolder": false,
+      "name": "CorsWhitelistOrigin",
+      "strictDirectoryName": false,
+      "suffix": "corsWhitelistOrigin"
+    },
+    "csptrustedsite": {
+      "directoryName": "cspTrustedSites",
+      "id": "csptrustedsite",
+      "inFolder": false,
+      "name": "CspTrustedSite",
+      "strictDirectoryName": false,
+      "suffix": "cspTrustedSite"
+    },
+    "customapplication": {
+      "directoryName": "applications",
+      "id": "customapplication",
+      "inFolder": false,
+      "name": "CustomApplication",
+      "strictDirectoryName": false,
+      "suffix": "app",
+      "supportsWildcardAndName": true
+    },
+    "customapplicationcomponent": {
+      "directoryName": "customApplicationComponents",
+      "id": "customapplicationcomponent",
+      "inFolder": false,
+      "name": "CustomApplicationComponent",
+      "suffix": "customApplicationComponent"
+    },
+    "customdatatype": {
+      "directoryName": "datatypes",
+      "id": "customdatatype",
+      "inFolder": false,
+      "name": "CustomDataType",
+      "suffix": "datatype"
+    },
+    "customexperience": {
+      "directoryName": "customExperiences",
+      "id": "customexperience",
+      "inFolder": false,
+      "name": "CustomExperience",
+      "suffix": "customExperience"
+    },
+    "customfeedfilter": {
+      "directoryName": "feedFilters",
+      "id": "customfeedfilter",
+      "inFolder": false,
+      "name": "CustomFeedFilter",
+      "suffix": "feedFilter"
+    },
+    "customhelpmenusection": {
+      "directoryName": "customHelpMenuSections",
+      "id": "customhelpmenusection",
+      "inFolder": false,
+      "name": "CustomHelpMenuSection",
+      "strictDirectoryName": false,
+      "suffix": "customHelpMenuSection"
+    },
+    "customindex": {
+      "directoryName": "customindex",
+      "id": "customindex",
+      "inFolder": false,
+      "name": "CustomIndex",
+      "strictDirectoryName": false,
+      "suffix": "indx"
+    },
+    "customlabels": {
+      "children": {
+        "directories": {
+          "labels": "customlabel"
+        },
+        "suffixes": {
+          "labels": "customlabel"
+        },
+        "types": {
+          "customlabel": {
+            "directoryName": "labels",
+            "id": "customlabel",
+            "ignoreParentName": true,
+            "name": "CustomLabel",
+            "suffix": "labels",
+            "supportsWildcardAndName": true,
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "labels"
+          }
+        }
+      },
+      "directoryName": "labels",
+      "id": "customlabels",
+      "ignoreParsedFullName": true,
+      "inFolder": false,
+      "name": "CustomLabels",
+      "strategies": {
+        "adapter": "default",
+        "recomposition": "startEmpty",
+        "transformer": "nonDecomposed"
+      },
+      "strictDirectoryName": false,
+      "suffix": "labels"
+    },
+    "custommetadata": {
+      "directoryName": "customMetadata",
+      "id": "custommetadata",
+      "inFolder": false,
+      "name": "CustomMetadata",
+      "strictDirectoryName": false,
+      "suffix": "md",
+      "supportsWildcardAndName": true
+    },
+    "customnotificationtype": {
+      "directoryName": "notificationtypes",
+      "id": "customnotificationtype",
+      "inFolder": false,
+      "name": "CustomNotificationType",
+      "strictDirectoryName": false,
+      "suffix": "notiftype"
+    },
+    "customobject": {
+      "children": {
+        "directories": {
+          "businessProcesses": "businessprocess",
+          "compactLayouts": "compactlayout",
+          "fieldSets": "fieldset",
+          "fields": "customfield",
+          "indexes": "index",
+          "listViews": "listview",
+          "recordTypes": "recordtype",
+          "sharingReasons": "sharingreason",
+          "validationRules": "validationrule",
+          "webLinks": "weblink"
+        },
+        "suffixes": {
+          "businessProcess": "businessprocess",
+          "compactLayout": "compactlayout",
+          "field": "customfield",
+          "fieldSet": "fieldset",
+          "index": "index",
+          "indexe": "index",
+          "listView": "listview",
+          "recordType": "recordtype",
+          "sharingReason": "sharingreason",
+          "validationRule": "validationrule",
+          "webLink": "weblink"
+        },
+        "types": {
+          "businessprocess": {
+            "directoryName": "businessProcesses",
+            "id": "businessprocess",
+            "name": "BusinessProcess",
+            "suffix": "businessProcess"
+          },
+          "compactlayout": {
+            "directoryName": "compactLayouts",
+            "id": "compactlayout",
+            "name": "CompactLayout",
+            "suffix": "compactLayout"
+          },
+          "customfield": {
+            "directoryName": "fields",
+            "id": "customfield",
+            "name": "CustomField",
+            "suffix": "field"
+          },
+          "fieldset": {
+            "directoryName": "fieldSets",
+            "id": "fieldset",
+            "name": "FieldSet",
+            "suffix": "fieldSet"
+          },
+          "index": {
+            "directoryName": "indexes",
+            "id": "index",
+            "legacySuffix": "indexe",
+            "name": "Index",
+            "suffix": "index"
+          },
+          "listview": {
+            "directoryName": "listViews",
+            "id": "listview",
+            "name": "ListView",
+            "suffix": "listView"
+          },
+          "recordtype": {
+            "directoryName": "recordTypes",
+            "id": "recordtype",
+            "name": "RecordType",
+            "suffix": "recordType"
+          },
+          "sharingreason": {
+            "directoryName": "sharingReasons",
+            "id": "sharingreason",
+            "name": "SharingReason",
+            "suffix": "sharingReason"
+          },
+          "validationrule": {
+            "directoryName": "validationRules",
+            "id": "validationrule",
+            "name": "ValidationRule",
+            "suffix": "validationRule"
+          },
+          "weblink": {
+            "directoryName": "webLinks",
+            "id": "weblink",
+            "name": "WebLink",
+            "suffix": "webLink"
+          }
+        }
+      },
+      "directoryName": "objects",
+      "id": "customobject",
+      "inFolder": false,
+      "name": "CustomObject",
+      "strategies": {
+        "adapter": "decomposed",
+        "decomposition": "folderPerType",
+        "transformer": "decomposed"
+      },
+      "strictDirectoryName": true,
+      "suffix": "object",
+      "supportsWildcardAndName": true
+    },
+    "customobjecttranslation": {
+      "children": {
+        "directories": {
+          "fields": "customfieldtranslation"
+        },
+        "suffixes": {
+          "fieldTranslation": "customfieldtranslation"
+        },
+        "types": {
+          "customfieldtranslation": {
+            "directoryName": "fields",
+            "id": "customfieldtranslation",
+            "isAddressable": false,
+            "name": "CustomFieldTranslation",
+            "suffix": "fieldTranslation",
+            "unaddressableWithoutParent": true,
+            "uniqueIdElement": "name"
+          }
+        }
+      },
+      "directoryName": "objectTranslations",
+      "id": "customobjecttranslation",
+      "inFolder": false,
+      "name": "CustomObjectTranslation",
+      "strategies": {
+        "adapter": "decomposed",
+        "decomposition": "topLevel",
+        "transformer": "decomposed"
+      },
+      "strictDirectoryName": true,
+      "suffix": "objectTranslation",
+      "supportsWildcardAndName": true
+    },
+    "custompageweblink": {
+      "directoryName": "weblinks",
+      "id": "custompageweblink",
+      "inFolder": false,
+      "legacySuffix": "custompageweblink",
+      "name": "CustomPageWebLink",
+      "strictDirectoryName": false,
+      "suffix": "weblink"
+    },
+    "custompermission": {
+      "directoryName": "customPermissions",
+      "id": "custompermission",
+      "inFolder": false,
+      "name": "CustomPermission",
+      "strictDirectoryName": false,
+      "suffix": "customPermission"
+    },
+    "customsite": {
+      "directoryName": "sites",
+      "id": "customsite",
+      "inFolder": false,
+      "name": "CustomSite",
+      "strictDirectoryName": true,
+      "suffix": "site"
+    },
+    "customtab": {
+      "directoryName": "tabs",
+      "id": "customtab",
+      "inFolder": false,
+      "name": "CustomTab",
+      "strictDirectoryName": false,
+      "suffix": "tab",
+      "supportsWildcardAndName": true
+    },
+    "dashboard": {
+      "directoryName": "dashboards",
+      "folderType": "dashboardfolder",
+      "id": "dashboard",
+      "inFolder": true,
+      "name": "Dashboard",
+      "strictDirectoryName": false,
+      "suffix": "dashboard"
+    },
+    "dashboardfolder": {
+      "directoryName": "dashboards",
+      "folderContentType": "dashboard",
+      "id": "dashboardfolder",
+      "inFolder": false,
+      "name": "DashboardFolder",
+      "strictDirectoryName": false,
+      "suffix": "dashboardFolder"
+    },
+    "datacalcinsighttemplate": {
+      "directoryName": "dataCalcInsightTemplates",
+      "id": "datacalcinsighttemplate",
+      "name": "DataCalcInsightTemplate",
+      "strictDirectoryName": false,
+      "suffix": "dataCalcInsightTemplate"
+    },
+    "datacategorygroup": {
+      "directoryName": "datacategorygroups",
+      "id": "datacategorygroup",
+      "inFolder": false,
+      "name": "DataCategoryGroup",
+      "strictDirectoryName": false,
+      "suffix": "datacategorygroup"
+    },
+    "dataconnectoringestapi": {
+      "directoryName": "dataConnectorIngestApis",
+      "id": "dataconnectoringestapi",
+      "inFolder": false,
+      "name": "DataConnectorIngestApi",
+      "strictDirectoryName": false,
+      "suffix": "dataConnectorIngestApi"
+    },
+    "dataconnectors3": {
+      "directoryName": "s3DataConnectors",
+      "id": "dataconnectors3",
+      "name": "DataConnectorS3",
+      "strictDirectoryName": false,
+      "suffix": "s3DataConnector"
+    },
+    "datakitobjectdependency": {
+      "directoryName": "dataKitObjectDependencies",
+      "id": "datakitobjectdependency",
+      "inFolder": false,
+      "name": "DataKitObjectDependency",
+      "suffix": "dataKitObjectDependency"
+    },
+    "datakitobjecttemplate": {
+      "directoryName": "dataKitObjectTemplates",
+      "id": "datakitobjecttemplate",
+      "name": "DataKitObjectTemplate",
+      "strictDirectoryName": false,
+      "suffix": "dataKitObjectTemplate"
+    },
+    "datapackagekitdefinition": {
+      "directoryName": "dataPackageKitDefinitions",
+      "id": "datapackagekitdefinition",
+      "name": "DataPackageKitDefinition",
+      "strictDirectoryName": false,
+      "suffix": "dataPackageKitDefinition"
+    },
+    "datapackagekitobject": {
+      "directoryName": "DataPackageKitObjects",
+      "id": "datapackagekitobject",
+      "name": "DataPackageKitObject",
+      "strictDirectoryName": false,
+      "suffix": "DataPackageKitObject"
+    },
+    "datapipeline": {
+      "directoryName": "dataPipelines",
+      "id": "datapipeline",
+      "inFolder": false,
+      "name": "DataPipeline",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "suffix": "dataPipeline"
+    },
+    "datasource": {
+      "directoryName": "mktDataSources",
+      "id": "datasource",
+      "name": "DataSource",
+      "strictDirectoryName": true,
+      "suffix": "dataSource"
+    },
+    "datasourcebundledefinition": {
+      "directoryName": "dataSourceBundleDefinitions",
+      "id": "datasourcebundledefinition",
+      "name": "DataSourceBundleDefinition",
+      "strictDirectoryName": false,
+      "suffix": "dataSourceBundleDefinition"
+    },
+    "datasourceobject": {
+      "directoryName": "dataSourceObjects",
+      "id": "datasourceobject",
+      "name": "DataSourceObject",
+      "strictDirectoryName": false,
+      "suffix": "dataSourceObject"
+    },
+    "datasourcetenant": {
+      "directoryName": "dataSourceTenants",
+      "id": "datasourcetenant",
+      "inFolder": false,
+      "name": "DataSourceTenant",
+      "strictDirectoryName": false,
+      "suffix": "dataSourceTenant"
+    },
+    "datasrcdatamodelfieldmap": {
+      "directoryName": "dataSrcDataModelFieldMaps",
+      "id": "datasrcdatamodelfieldmap",
+      "name": "DataSrcDataModelFieldMap",
+      "strictDirectoryName": false,
+      "suffix": "dataSrcDataModelFieldMap"
+    },
+    "datastreamdefinition": {
+      "directoryName": "dataStreamDefinitions",
+      "id": "datastreamdefinition",
+      "name": "DataStreamDefinition",
+      "strictDirectoryName": false,
+      "suffix": "dataStreamDefinition"
+    },
+    "datastreamtemplate": {
+      "directoryName": "dataStreamTemplates",
+      "id": "datastreamtemplate",
+      "name": "DataStreamTemplate",
+      "strictDirectoryName": false,
+      "suffix": "dataStreamTemplate"
+    },
+    "dataweaveresource": {
+      "directoryName": "dw",
+      "id": "dataweaveresource",
+      "inFolder": false,
+      "name": "DataWeaveResource",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "dwl"
+    },
+    "decisionmatrixdefinition": {
+      "directoryName": "decisionMatrixDefinition",
+      "id": "decisionmatrixdefinition",
+      "inFolder": false,
+      "name": "DecisionMatrixDefinition",
+      "strictDirectoryName": false,
+      "suffix": "decisionMatrixDefinition"
+    },
+    "decisionmatrixdefinitionversion": {
+      "directoryName": "decisionMatrixVersion",
+      "id": "decisionmatrixdefinitionversion",
+      "inFolder": false,
+      "name": "DecisionMatrixDefinitionVersion",
+      "strictDirectoryName": false,
+      "suffix": "decisionMatrixVersion"
+    },
+    "decisiontable": {
+      "directoryName": "decisionTables",
+      "id": "decisiontable",
+      "name": "DecisionTable",
+      "strictDirectoryName": false,
+      "suffix": "decisionTable"
+    },
+    "decisiontabledatasetlink": {
+      "directoryName": "decisionTableDatasetLinks",
+      "id": "decisiontabledatasetlink",
+      "name": "DecisionTableDatasetLink",
+      "strictDirectoryName": false,
+      "suffix": "decisionTableDatasetLink"
+    },
+    "delegategroup": {
+      "directoryName": "delegateGroups",
+      "id": "delegategroup",
+      "inFolder": false,
+      "name": "DelegateGroup",
+      "strictDirectoryName": false,
+      "suffix": "delegateGroup"
+    },
+    "digitalexperiencebundle": {
+      "children": {
+        "directories": {
+          "digitalExperiences": "digitalexperience"
+        },
+        "suffixes": {
+          "digitalExperience": "digitalexperience"
+        },
+        "types": {
+          "digitalexperience": {
+            "directoryName": "digitalExperiences",
+            "id": "digitalexperience",
+            "metaFileSuffix": "_meta.json",
+            "name": "DigitalExperience",
+            "strategies": {
+              "adapter": "digitalExperience"
+            },
+            "suffix": "digitalExperience",
+            "supportsPartialDelete": true
+          }
+        }
+      },
+      "directoryName": "digitalExperiences",
+      "id": "digitalexperiencebundle",
+      "inFolder": false,
+      "name": "DigitalExperienceBundle",
+      "strategies": {
+        "adapter": "digitalExperience"
+      },
+      "suffix": "digitalExperience",
+      "supportsPartialDelete": true,
+      "supportsWildcardAndName": true
+    },
+    "digitalexperienceconfig": {
+      "directoryName": "digitalExperienceConfigs",
+      "id": "digitalexperienceconfig",
+      "inFolder": false,
+      "name": "DigitalExperienceConfig",
+      "strictDirectoryName": false,
+      "suffix": "digitalExperienceConfig"
+    },
+    "disclosuredefinition": {
+      "directoryName": "disclosureDefinitions",
+      "id": "disclosuredefinition",
+      "inFolder": false,
+      "name": "DisclosureDefinition",
+      "strictDirectoryName": false,
+      "suffix": "disclosureDefinition"
+    },
+    "disclosuredefinitionversion": {
+      "directoryName": "disclosureDefinitionVersions",
+      "id": "disclosuredefinitionversion",
+      "inFolder": false,
+      "name": "DisclosureDefinitionVersion",
+      "strictDirectoryName": false,
+      "suffix": "disclosureDefinitionVersion"
+    },
+    "disclosuretype": {
+      "directoryName": "disclosureTypes",
+      "id": "disclosuretype",
+      "inFolder": false,
+      "name": "DisclosureType",
+      "strictDirectoryName": false,
+      "suffix": "disclosureType"
+    },
+    "discoveryaimodel": {
+      "directoryName": "discovery",
+      "id": "discoveryaimodel",
+      "name": "DiscoveryAIModel",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "model"
+    },
+    "discoverygoal": {
+      "directoryName": "discovery",
+      "id": "discoverygoal",
+      "name": "DiscoveryGoal",
+      "strictDirectoryName": false,
+      "suffix": "goal"
+    },
+    "discoverystory": {
+      "directoryName": "discovery",
+      "id": "discoverystory",
+      "inFolder": false,
+      "name": "DiscoveryStory",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "story"
+    },
+    "document": {
+      "directoryName": "documents",
+      "folderType": "documentfolder",
+      "id": "document",
+      "inFolder": true,
+      "name": "Document",
+      "strategies": {
+        "adapter": "mixedContent"
+      },
+      "strictDirectoryName": true,
+      "suffix": "document"
+    },
+    "documentcategory": {
+      "directoryName": "documentCategory",
+      "id": "documentcategory",
+      "inFolder": false,
+      "name": "DocumentCategory",
+      "strictDirectoryName": false,
+      "suffix": "documentCategory"
+    },
+    "documentcategorydocumenttype": {
+      "directoryName": "documentCategoryDocumentTypes",
+      "id": "documentcategorydocumenttype",
+      "inFolder": false,
+      "name": "DocumentCategoryDocumentType",
+      "strictDirectoryName": false,
+      "suffix": "documentCategoryDocumentType"
+    },
+    "documentfolder": {
+      "directoryName": "documents",
+      "folderContentType": "document",
+      "id": "documentfolder",
+      "inFolder": false,
+      "name": "DocumentFolder",
+      "strictDirectoryName": false,
+      "suffix": "documentFolder"
+    },
+    "documentgenerationsetting": {
+      "directoryName": "documentGenerationSettings",
+      "id": "documentgenerationsetting",
+      "inFolder": false,
+      "name": "DocumentGenerationSetting",
+      "suffix": "documentGenerationSetting"
+    },
+    "documenttype": {
+      "directoryName": "documentTypes",
+      "id": "documenttype",
+      "name": "DocumentType",
+      "strictDirectoryName": false,
+      "suffix": "documentType"
+    },
+    "duplicaterule": {
+      "directoryName": "duplicateRules",
+      "id": "duplicaterule",
+      "inFolder": false,
+      "name": "DuplicateRule",
+      "strictDirectoryName": false,
+      "suffix": "duplicateRule"
+    },
+    "dynamictrigger": {
+      "directoryName": "dynamicTriggers",
+      "id": "dynamictrigger",
+      "name": "DynamicTrigger",
+      "strictDirectoryName": false,
+      "suffix": "dynamicTrigger"
+    },
+    "eclairgeodata": {
+      "directoryName": "eclair",
+      "id": "eclairgeodata",
+      "inFolder": false,
+      "name": "EclairGeoData",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "geodata"
+    },
+    "emailfolder": {
+      "directoryName": "email",
+      "folderContentType": "emailtemplate",
+      "id": "emailfolder",
+      "inFolder": false,
+      "name": "EmailFolder",
+      "strictDirectoryName": false,
+      "suffix": "emailFolder"
+    },
+    "emailservicesfunction": {
+      "directoryName": "emailservices",
+      "id": "emailservicesfunction",
+      "inFolder": false,
+      "name": "EmailServicesFunction",
+      "strictDirectoryName": true,
+      "suffix": "xml"
+    },
+    "emailtemplate": {
+      "directoryName": "email",
+      "folderType": "emailfolder",
+      "id": "emailtemplate",
+      "inFolder": true,
+      "name": "EmailTemplate",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "email"
+    },
+    "emailtemplatefolder": {
+      "aliasFor": "emailfolder",
+      "directoryName": "email",
+      "folderContentType": "emailtemplate",
+      "id": "emailtemplatefolder",
+      "inFolder": false,
+      "name": "EmailTemplateFolder",
+      "strictDirectoryName": false,
+      "suffix": "emailTemplateFolder"
+    },
+    "embeddedservicebranding": {
+      "directoryName": "EmbeddedServiceBranding",
+      "id": "embeddedservicebranding",
+      "inFolder": false,
+      "name": "EmbeddedServiceBranding",
+      "strictDirectoryName": false,
+      "suffix": "EmbeddedServiceBranding"
+    },
+    "embeddedserviceconfig": {
+      "directoryName": "EmbeddedServiceConfig",
+      "id": "embeddedserviceconfig",
+      "inFolder": false,
+      "name": "EmbeddedServiceConfig",
+      "strictDirectoryName": false,
+      "suffix": "EmbeddedServiceConfig"
+    },
+    "embeddedservicefieldservice": {
+      "directoryName": "EmbeddedServiceFieldService",
+      "id": "embeddedservicefieldservice",
+      "inFolder": false,
+      "name": "EmbeddedServiceFieldService",
+      "suffix": "EmbeddedServiceFieldService"
+    },
+    "embeddedserviceflowconfig": {
+      "directoryName": "EmbeddedServiceFlowConfig",
+      "id": "embeddedserviceflowconfig",
+      "inFolder": false,
+      "name": "EmbeddedServiceFlowConfig",
+      "strictDirectoryName": false,
+      "suffix": "EmbeddedServiceFlowConfig"
+    },
+    "embeddedserviceliveagent": {
+      "directoryName": "EmbeddedServiceLiveAgent",
+      "id": "embeddedserviceliveagent",
+      "inFolder": false,
+      "name": "EmbeddedServiceLiveAgent",
+      "suffix": "EmbeddedServiceLiveAgent"
+    },
+    "embeddedservicemenusettings": {
+      "directoryName": "EmbeddedServiceMenuSettings",
+      "id": "embeddedservicemenusettings",
+      "inFolder": false,
+      "name": "EmbeddedServiceMenuSettings",
+      "strictDirectoryName": false,
+      "suffix": "EmbeddedServiceMenuSettings"
+    },
+    "enablementmeasuredefinition": {
+      "directoryName": "enablementMeasureDefinitions",
+      "id": "enablementmeasuredefinition",
+      "inFolder": false,
+      "name": "EnablementMeasureDefinition",
+      "strictDirectoryName": false,
+      "suffix": "enablementMeasureDefinition"
+    },
+    "enablementprogramdefinition": {
+      "directoryName": "enablementProgramDefinitions",
+      "id": "enablementprogramdefinition",
+      "inFolder": false,
+      "name": "EnablementProgramDefinition",
+      "strictDirectoryName": false,
+      "suffix": "enablementProgramDefinition"
+    },
+    "enblprogramtasksubcategory": {
+      "directoryName": "enblProgramTaskSubCategories",
+      "id": "enblprogramtasksubcategory",
+      "inFolder": false,
+      "name": "EnblProgramTaskSubCategory",
+      "strictDirectoryName": false,
+      "suffix": "enblProgramTaskSubCategory"
+    },
+    "entitlementprocess": {
+      "directoryName": "entitlementProcesses",
+      "id": "entitlementprocess",
+      "inFolder": false,
+      "name": "EntitlementProcess",
+      "suffix": "entitlementProcess"
+    },
+    "entitlementtemplate": {
+      "directoryName": "entitlementTemplates",
+      "id": "entitlementtemplate",
+      "inFolder": false,
+      "name": "EntitlementTemplate",
+      "suffix": "entitlementTemplate"
+    },
+    "entityimplements": {
+      "directoryName": "entityImplements",
+      "id": "entityimplements",
+      "inFolder": false,
+      "name": "EntityImplements",
+      "strictDirectoryName": false,
+      "suffix": "entityImplements"
+    },
+    "escalationrules": {
+      "children": {
+        "directories": {
+          "escalationRules": "escalationrule"
+        },
+        "suffixes": {
+          "escalationRule": "escalationrule"
+        },
+        "types": {
+          "escalationrule": {
+            "directoryName": "escalationRules",
+            "id": "escalationrule",
+            "name": "EscalationRule",
+            "suffix": "escalationRule",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "escalationRule"
+          }
+        }
+      },
+      "directoryName": "escalationRules",
+      "id": "escalationrules",
+      "inFolder": false,
+      "name": "EscalationRules",
+      "strictDirectoryName": false,
+      "suffix": "escalationRules"
+    },
+    "esignatureconfig": {
+      "directoryName": "eSignatureConfigs",
+      "id": "esignatureconfig",
+      "inFolder": false,
+      "name": "ESignatureConfig",
+      "strictDirectoryName": false,
+      "suffix": "eSignatureConfig"
+    },
+    "esignatureenvelopeconfig": {
+      "directoryName": "eSignatureEnvelopeConfigs",
+      "id": "esignatureenvelopeconfig",
+      "inFolder": false,
+      "name": "ESignatureEnvelopeConfig",
+      "strictDirectoryName": false,
+      "suffix": "eSignatureEnvelopeConfig"
+    },
+    "eventdelivery": {
+      "directoryName": "eventDeliveries",
+      "id": "eventdelivery",
+      "inFolder": false,
+      "name": "EventDelivery",
+      "suffix": "delivery"
+    },
+    "eventrelayconfig": {
+      "directoryName": "eventRelays",
+      "id": "eventrelayconfig",
+      "inFolder": false,
+      "name": "EventRelayConfig",
+      "strictDirectoryName": false,
+      "suffix": "eventRelay"
+    },
+    "eventsubscription": {
+      "directoryName": "eventSubscriptions",
+      "id": "eventsubscription",
+      "inFolder": false,
+      "name": "EventSubscription",
+      "suffix": "subscription"
+    },
+    "eventtype": {
+      "directoryName": "eventTypes",
+      "id": "eventtype",
+      "inFolder": false,
+      "name": "EventType",
+      "suffix": "eventType"
+    },
+    "experiencebundle": {
+      "directoryName": "experiences",
+      "id": "experiencebundle",
+      "inFolder": false,
+      "name": "ExperienceBundle",
+      "strategies": {
+        "adapter": "mixedContent"
+      },
+      "strictDirectoryName": true,
+      "supportsPartialDelete": true
+    },
+    "experiencepropertytypebundle": {
+      "directoryName": "experiencePropertyTypeBundles",
+      "id": "experiencepropertytypebundle",
+      "inFolder": false,
+      "metaFileSuffix": "schema.json",
+      "name": "ExperiencePropertyTypeBundle",
+      "strategies": {
+        "adapter": "bundle"
+      },
+      "strictDirectoryName": true,
+      "supportsPartialDelete": true
+    },
+    "explainabilityactiondefinition": {
+      "directoryName": "ExplainabilityActionDefinitions",
+      "id": "explainabilityactiondefinition",
+      "inFolder": false,
+      "name": "ExplainabilityActionDefinition",
+      "strictDirectoryName": false,
+      "suffix": "explainabilityActionDefinition"
+    },
+    "explainabilityactionversion": {
+      "directoryName": "ExplainabilityActionVersions",
+      "id": "explainabilityactionversion",
+      "inFolder": false,
+      "name": "ExplainabilityActionVersion",
+      "strictDirectoryName": false,
+      "suffix": "explainabilityActionVersion"
+    },
+    "explainabilitymsgtemplate": {
+      "directoryName": "ExplainabilityMsgTemplates",
+      "id": "explainabilitymsgtemplate",
+      "inFolder": false,
+      "name": "ExplainabilityMsgTemplate",
+      "strictDirectoryName": false,
+      "suffix": "explainabilityMsgTemplate"
+    },
+    "expressionsetdefinition": {
+      "directoryName": "expressionSetDefinition",
+      "id": "expressionsetdefinition",
+      "inFolder": false,
+      "name": "ExpressionSetDefinition",
+      "strictDirectoryName": false,
+      "suffix": "expressionSetDefinition"
+    },
+    "expressionsetdefinitionversion": {
+      "directoryName": "expressionSetVersion",
+      "id": "expressionsetdefinitionversion",
+      "inFolder": false,
+      "name": "ExpressionSetDefinitionVersion",
+      "strictDirectoryName": false,
+      "suffix": "expressionSetVersion"
+    },
+    "expressionsetmessagetoken": {
+      "directoryName": "expressionSetMessageToken",
+      "id": "expressionsetmessagetoken",
+      "inFolder": false,
+      "name": "ExpressionSetMessageToken",
+      "strictDirectoryName": false,
+      "suffix": "expressionSetMessageToken"
+    },
+    "expressionsetobjectalias": {
+      "directoryName": "expressionSetObjectAlias",
+      "id": "expressionsetobjectalias",
+      "name": "ExpressionSetObjectAlias",
+      "strictDirectoryName": false,
+      "suffix": "expressionSetObjectAlias"
+    },
+    "extdatatranobjecttemplate": {
+      "children": {
+        "directories": {
+          "extDataTranFieldTemplates": "extdatatranfieldtemplate"
+        },
+        "suffixes": {
+          "extDataTranFieldTemplate": "extdatatranfieldtemplate"
+        },
+        "types": {
+          "extdatatranfieldtemplate": {
+            "directoryName": "extDataTranFieldTemplates",
+            "id": "extdatatranfieldtemplate",
+            "name": "extDataTranFieldTemplate",
+            "suffix": "extDataTranFieldTemplate"
+          }
+        }
+      },
+      "directoryName": "extDataTranObjectTemplates",
+      "id": "extdatatranobjecttemplate",
+      "name": "ExtDataTranObjectTemplate",
+      "strictDirectoryName": false,
+      "suffix": "extDataTranObjectTemplate"
+    },
+    "externalaimodel": {
+      "directoryName": "externalAIModels",
+      "id": "externalaimodel",
+      "inFolder": false,
+      "name": "ExternalAIModel",
+      "strictDirectoryName": false,
+      "suffix": "externalAIModel"
+    },
+    "externalclientapplication": {
+      "directoryName": "externalClientApps",
+      "id": "externalclientapplication",
+      "inFolder": false,
+      "name": "ExternalClientApplication",
+      "strictDirectoryName": false,
+      "suffix": "eca"
+    },
+    "externalcredential": {
+      "directoryName": "externalCredentials",
+      "id": "externalcredential",
+      "inFolder": false,
+      "name": "ExternalCredential",
+      "strictDirectoryName": false,
+      "suffix": "externalCredential"
+    },
+    "externaldataconnector": {
+      "directoryName": "externalDataConnectors",
+      "id": "externaldataconnector",
+      "name": "ExternalDataConnector",
+      "strictDirectoryName": false,
+      "suffix": "externalDataConnector"
+    },
+    "externaldatasource": {
+      "directoryName": "dataSources",
+      "id": "externaldatasource",
+      "inFolder": false,
+      "name": "ExternalDataSource",
+      "strictDirectoryName": false,
+      "suffix": "dataSource"
+    },
+    "externalserviceregistration": {
+      "directoryName": "externalServiceRegistrations",
+      "id": "externalserviceregistration",
+      "inFolder": false,
+      "name": "ExternalServiceRegistration",
+      "strictDirectoryName": false,
+      "suffix": "externalServiceRegistration"
+    },
+    "extlclntappconfigurablepolicies": {
+      "directoryName": "extlClntAppPolicies",
+      "id": "extlclntappconfigurablepolicies",
+      "inFolder": false,
+      "name": "ExtlClntAppConfigurablePolicies",
+      "strictDirectoryName": false,
+      "suffix": "ecaPlcy"
+    },
+    "extlclntappglobaloauthsettings": {
+      "directoryName": "extlClntAppGlobalOauthSets",
+      "id": "extlclntappglobaloauthsettings",
+      "inFolder": false,
+      "name": "ExtlClntAppGlobalOauthSettings",
+      "strictDirectoryName": false,
+      "suffix": "ecaGlblOauth"
+    },
+    "extlclntappmobileconfigurablepolicies": {
+      "directoryName": "extlClntAppMobilePolicies",
+      "id": "extlclntappmobileconfigurablepolicies",
+      "inFolder": false,
+      "name": "ExtlClntAppMobileConfigurablePolicies",
+      "strictDirectoryName": false,
+      "suffix": "ecaMobilePlcy"
+    },
+    "extlclntappmobilesettings": {
+      "directoryName": "extlClntAppMobileSettings",
+      "id": "extlclntappmobilesettings",
+      "inFolder": false,
+      "name": "ExtlClntAppMobileSettings",
+      "strictDirectoryName": false,
+      "suffix": "ecaMobile"
+    },
+    "extlclntappnotificationsettings": {
+      "directoryName": "extlClntAppNotifSettings",
+      "id": "extlclntappnotificationsettings",
+      "inFolder": false,
+      "name": "ExtlClntAppNotificationSettings",
+      "strictDirectoryName": false,
+      "suffix": "ecaNotifications"
+    },
+    "extlclntappoauthconfigurablepolicies": {
+      "directoryName": "extlClntAppOauthPolicies",
+      "id": "extlclntappoauthconfigurablepolicies",
+      "inFolder": false,
+      "name": "ExtlClntAppOauthConfigurablePolicies",
+      "strictDirectoryName": false,
+      "suffix": "ecaOauthPlcy"
+    },
+    "extlclntappoauthsettings": {
+      "directoryName": "extlClntAppOauthSettings",
+      "id": "extlclntappoauthsettings",
+      "inFolder": false,
+      "name": "ExtlClntAppOauthSettings",
+      "strictDirectoryName": false,
+      "suffix": "ecaOauth"
+    },
+    "extlclntappsampleconfigurablepolicies": {
+      "directoryName": "extlClntAppSamplePolicies",
+      "id": "extlclntappsampleconfigurablepolicies",
+      "inFolder": false,
+      "name": "ExtlClntAppSampleConfigurablePolicies",
+      "strictDirectoryName": false,
+      "suffix": "ecaSmplPlcy"
+    },
+    "extlclntappsamplesettings": {
+      "directoryName": "extlClntAppSampleSettings",
+      "id": "extlclntappsamplesettings",
+      "inFolder": false,
+      "name": "ExtlClntAppSampleSettings",
+      "strictDirectoryName": false,
+      "suffix": "ecaSmpl"
+    },
+    "featureparameterboolean": {
+      "directoryName": "featureParameters",
+      "id": "featureparameterboolean",
+      "inFolder": false,
+      "name": "FeatureParameterBoolean",
+      "suffix": "featureParameterBoolean"
+    },
+    "featureparameterdate": {
+      "directoryName": "featureParameters",
+      "id": "featureparameterdate",
+      "inFolder": false,
+      "name": "FeatureParameterDate",
+      "suffix": "featureParameterDate"
+    },
+    "featureparameterinteger": {
+      "directoryName": "featureParameters",
+      "id": "featureparameterinteger",
+      "inFolder": false,
+      "name": "FeatureParameterInteger",
+      "suffix": "featureParameterInteger"
+    },
+    "fieldrestrictionrule": {
+      "directoryName": "fieldRestrictionRules",
+      "id": "fieldrestrictionrule",
+      "inFolder": false,
+      "name": "FieldRestrictionRule",
+      "strictDirectoryName": true,
+      "suffix": "rule"
+    },
+    "fieldservicemobileextension": {
+      "directoryName": "fieldServiceMobileExtensions",
+      "id": "fieldservicemobileextension",
+      "name": "FieldServiceMobileExtension",
+      "strictDirectoryName": false,
+      "suffix": "fieldServiceMobileExtension"
+    },
+    "fieldsrctrgtrelationship": {
+      "directoryName": "fieldSrcTrgtRelationships",
+      "id": "fieldsrctrgtrelationship",
+      "name": "FieldSrcTrgtRelationship",
+      "strictDirectoryName": false,
+      "suffix": "fieldSrcTrgtRelationship"
+    },
+    "flexipage": {
+      "directoryName": "flexipages",
+      "id": "flexipage",
+      "inFolder": false,
+      "name": "FlexiPage",
+      "strictDirectoryName": false,
+      "suffix": "flexipage"
+    },
+    "flow": {
+      "directoryName": "flows",
+      "id": "flow",
+      "inFolder": false,
+      "name": "Flow",
+      "strictDirectoryName": false,
+      "suffix": "flow",
+      "supportsWildcardAndName": true
+    },
+    "flowcategory": {
+      "directoryName": "flowCategories",
+      "id": "flowcategory",
+      "inFolder": false,
+      "name": "FlowCategory",
+      "strictDirectoryName": false,
+      "suffix": "flowCategory"
+    },
+    "flowdefinition": {
+      "directoryName": "flowDefinitions",
+      "id": "flowdefinition",
+      "inFolder": false,
+      "name": "FlowDefinition",
+      "strictDirectoryName": false,
+      "suffix": "flowDefinition",
+      "supportsWildcardAndName": true
+    },
+    "flowtest": {
+      "directoryName": "flowtests",
+      "id": "flowtest",
+      "inFolder": false,
+      "name": "FlowTest",
+      "strictDirectoryName": false,
+      "suffix": "flowtest"
+    },
+    "forecastingfilter": {
+      "directoryName": "forecastingFilters",
+      "id": "forecastingfilter",
+      "inFolder": false,
+      "name": "ForecastingFilter",
+      "strictDirectoryName": false,
+      "suffix": "forecastingFilter"
+    },
+    "forecastingfiltercondition": {
+      "directoryName": "forecastingFilterConditions",
+      "id": "forecastingfiltercondition",
+      "inFolder": false,
+      "name": "ForecastingFilterCondition",
+      "strictDirectoryName": false,
+      "suffix": "forecastingFilterCondition"
+    },
+    "forecastinggroup": {
+      "directoryName": "forecastingGroups",
+      "id": "forecastinggroup",
+      "inFolder": false,
+      "name": "ForecastingGroup",
+      "strictDirectoryName": false,
+      "suffix": "forecastingGroup"
+    },
+    "forecastingsourcedefinition": {
+      "directoryName": "forecastingSourceDefinitions",
+      "id": "forecastingsourcedefinition",
+      "inFolder": false,
+      "name": "ForecastingSourceDefinition",
+      "suffix": "forecastingSourceDefinition"
+    },
+    "forecastingtype": {
+      "directoryName": "forecastingTypes",
+      "id": "forecastingtype",
+      "inFolder": false,
+      "name": "ForecastingType",
+      "suffix": "forecastingType"
+    },
+    "forecastingtypesource": {
+      "directoryName": "forecastingTypeSources",
+      "id": "forecastingtypesource",
+      "inFolder": false,
+      "name": "ForecastingTypeSource",
+      "suffix": "forecastingTypeSource"
+    },
+    "form": {
+      "children": {
+        "directories": {
+          "formSections": "formsection"
+        },
+        "suffixes": {
+          "formSection": "formsection"
+        },
+        "types": {
+          "formsection": {
+            "directoryName": "formSections",
+            "id": "formsection",
+            "name": "FormSection",
+            "suffix": "formSection"
+          }
+        }
+      },
+      "directoryName": "forms",
+      "id": "form",
+      "inFolder": false,
+      "name": "Form",
+      "suffix": "form"
+    },
+    "fueltype": {
+      "directoryName": "fuelTypes",
+      "id": "fueltype",
+      "inFolder": false,
+      "name": "FuelType",
+      "strictDirectoryName": false,
+      "suffix": "fuelType"
+    },
+    "fueltypesustnuom": {
+      "directoryName": "fuelTypeSustnUoms",
+      "id": "fueltypesustnuom",
+      "inFolder": false,
+      "name": "FuelTypeSustnUom",
+      "strictDirectoryName": false,
+      "suffix": "fuelTypeSustnUom"
+    },
+    "functionreference": {
+      "directoryName": "functions",
+      "id": "functionreference",
+      "name": "FunctionReference",
+      "strictDirectoryName": false,
+      "suffix": "function"
+    },
+    "fundraisingconfig": {
+      "directoryName": "fundraisingConfigs",
+      "id": "fundraisingconfig",
+      "inFolder": false,
+      "name": "FundraisingConfig",
+      "strictDirectoryName": false,
+      "suffix": "fundraisingConfig"
+    },
+    "gatewayproviderpaymentmethodtype": {
+      "directoryName": "gatewayProviderPaymentMethodTypes",
+      "id": "gatewayproviderpaymentmethodtype",
+      "name": "GatewayProviderPaymentMethodType",
+      "strictDirectoryName": false,
+      "suffix": "gatewayProviderPaymentMethodType"
+    },
+    "genaifunction": {
+      "directoryName": "genAiFunctions",
+      "id": "genaifunction",
+      "inFolder": false,
+      "name": "GenAiFunction",
+      "suffix": "genAiFunction"
+    },
+    "genaiplanner": {
+      "directoryName": "genAiPlanners",
+      "id": "genaiplanner",
+      "inFolder": false,
+      "name": "GenAiPlanner",
+      "suffix": "genAiPlanner"
+    },
+    "genaiprompttemplate": {
+      "directoryName": "genAiPromptTemplates",
+      "id": "genaiprompttemplate",
+      "inFolder": false,
+      "name": "GenAiPromptTemplate",
+      "strictDirectoryName": false,
+      "suffix": "genAiPromptTemplate"
+    },
+    "genaiprompttemplateactv": {
+      "directoryName": "genAiPromptTemplateActivations",
+      "id": "genaiprompttemplateactv",
+      "inFolder": false,
+      "name": "GenAiPromptTemplateActv",
+      "strictDirectoryName": false,
+      "suffix": "genAiPromptTemplateActivation"
+    },
+    "globalpicklist": {
+      "directoryName": "globalPicklists",
+      "id": "globalpicklist",
+      "inFolder": false,
+      "name": "GlobalPicklist",
+      "suffix": "globalPicklist"
+    },
+    "globalvalueset": {
+      "directoryName": "globalValueSets",
+      "id": "globalvalueset",
+      "inFolder": false,
+      "name": "GlobalValueSet",
+      "strictDirectoryName": false,
+      "suffix": "globalValueSet",
+      "supportsWildcardAndName": true
+    },
+    "globalvaluesettranslation": {
+      "directoryName": "globalValueSetTranslations",
+      "id": "globalvaluesettranslation",
+      "inFolder": false,
+      "name": "GlobalValueSetTranslation",
+      "strictDirectoryName": false,
+      "suffix": "globalValueSetTranslation",
+      "supportsWildcardAndName": true
+    },
+    "group": {
+      "directoryName": "groups",
+      "id": "group",
+      "inFolder": false,
+      "name": "Group",
+      "strictDirectoryName": false,
+      "suffix": "group"
+    },
+    "homepagecomponent": {
+      "directoryName": "homePageComponents",
+      "id": "homepagecomponent",
+      "inFolder": false,
+      "name": "HomePageComponent",
+      "strictDirectoryName": false,
+      "suffix": "homePageComponent"
+    },
+    "homepagelayout": {
+      "directoryName": "homePageLayouts",
+      "id": "homepagelayout",
+      "inFolder": false,
+      "name": "HomePageLayout",
+      "strictDirectoryName": false,
+      "suffix": "homePageLayout"
+    },
+    "icon": {
+      "directoryName": "icons",
+      "id": "icon",
+      "name": "Icon",
+      "strictDirectoryName": false,
+      "suffix": "icon"
+    },
+    "identityverificationprocdef": {
+      "directoryName": "IdentityVerificationProcDefs",
+      "id": "identityverificationprocdef",
+      "inFolder": false,
+      "name": "IdentityVerificationProcDef",
+      "strictDirectoryName": false,
+      "suffix": "IdentityVerificationProcDef"
+    },
+    "iframewhitelisturlsettings": {
+      "directoryName": "iframeWhiteListUrlSettings",
+      "id": "iframewhitelisturlsettings",
+      "inFolder": false,
+      "name": "IframeWhiteListUrlSettings",
+      "strictDirectoryName": false,
+      "suffix": "iframeWhiteListUrlSettings"
+    },
+    "inboundcertificate": {
+      "directoryName": "inboundCertificates",
+      "id": "inboundcertificate",
+      "inFolder": false,
+      "name": "InboundCertificate",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "inboundCertificate"
+    },
+    "inboundnetworkconnection": {
+      "directoryName": "inboundNetworkConnections",
+      "id": "inboundnetworkconnection",
+      "inFolder": false,
+      "name": "InboundNetworkConnection",
+      "strictDirectoryName": false,
+      "suffix": "inboundNetworkConnection"
+    },
+    "industriesmanufacturingsettings": {
+      "directoryName": "IndustriesManufacturingSettings",
+      "id": "industriesmanufacturingsettings",
+      "name": "IndustriesManufacturingSettings",
+      "strictDirectoryName": true,
+      "suffix": "settings"
+    },
+    "insighttype": {
+      "directoryName": "insightTypes",
+      "id": "insighttype",
+      "inFolder": false,
+      "name": "InsightType",
+      "suffix": "insightType"
+    },
+    "installedpackage": {
+      "directoryName": "installedPackages",
+      "id": "installedpackage",
+      "inFolder": false,
+      "name": "InstalledPackage",
+      "strictDirectoryName": false,
+      "suffix": "installedPackage"
+    },
+    "integrationhubsettings": {
+      "directoryName": "integrationHub",
+      "id": "integrationhubsettings",
+      "inFolder": false,
+      "name": "IntegrationHubSettings",
+      "strictDirectoryName": true,
+      "suffix": "settings"
+    },
+    "integrationhubsettingstype": {
+      "directoryName": "integrationHub",
+      "id": "integrationhubsettingstype",
+      "inFolder": false,
+      "name": "IntegrationHubSettingsType",
+      "suffix": "type"
+    },
+    "integrationproviderdef": {
+      "directoryName": "integrationProviderDefinitions",
+      "id": "integrationproviderdef",
+      "inFolder": false,
+      "name": "IntegrationProviderDef",
+      "strictDirectoryName": false,
+      "suffix": "integrationProviderDefinition"
+    },
+    "internaldataconnector": {
+      "directoryName": "internalDataConnectors",
+      "id": "internaldataconnector",
+      "inFolder": false,
+      "name": "InternalDataConnector",
+      "strictDirectoryName": false,
+      "suffix": "internalDataConnector"
+    },
+    "internalorganization": {
+      "directoryName": "internalOrganizations",
+      "id": "internalorganization",
+      "inFolder": false,
+      "name": "InternalOrganization",
+      "suffix": "internalOrganization"
+    },
+    "ipaddressrange": {
+      "directoryName": "IPAddressRanges",
+      "id": "ipaddressrange",
+      "inFolder": false,
+      "name": "IPAddressRange",
+      "strictDirectoryName": false,
+      "suffix": "IPAddressRange"
+    },
+    "keywordlist": {
+      "directoryName": "moderation",
+      "id": "keywordlist",
+      "inFolder": false,
+      "name": "KeywordList",
+      "strictDirectoryName": false,
+      "suffix": "keywords"
+    },
+    "layout": {
+      "directoryName": "layouts",
+      "id": "layout",
+      "inFolder": false,
+      "name": "Layout",
+      "strictDirectoryName": false,
+      "suffix": "layout",
+      "supportsWildcardAndName": true
+    },
+    "leadconvertsettings": {
+      "directoryName": "LeadConvertSettings",
+      "id": "leadconvertsettings",
+      "inFolder": false,
+      "name": "LeadConvertSettings",
+      "strictDirectoryName": false,
+      "suffix": "LeadConvertSetting"
+    },
+    "learningitemtype": {
+      "directoryName": "learningItemTypes",
+      "id": "learningitemtype",
+      "inFolder": false,
+      "name": "LearningItemType",
+      "strictDirectoryName": false,
+      "suffix": "learningItemType"
+    },
+    "letterhead": {
+      "directoryName": "letterhead",
+      "id": "letterhead",
+      "inFolder": false,
+      "name": "Letterhead",
+      "strictDirectoryName": false,
+      "suffix": "letter",
+      "supportsWildcardAndName": true
+    },
+    "licensedefinition": {
+      "directoryName": "licenseDefinitions",
+      "id": "licensedefinition",
+      "inFolder": false,
+      "name": "LicenseDefinition",
+      "suffix": "licenseDefinition"
+    },
+    "lightningbolt": {
+      "directoryName": "lightningBolts",
+      "id": "lightningbolt",
+      "inFolder": false,
+      "name": "LightningBolt",
+      "strictDirectoryName": false,
+      "suffix": "lightningBolt"
+    },
+    "lightningcomponentbundle": {
+      "directoryName": "lwc",
+      "id": "lightningcomponentbundle",
+      "inFolder": false,
+      "name": "LightningComponentBundle",
+      "strategies": {
+        "adapter": "bundle"
+      },
+      "strictDirectoryName": true,
+      "supportsPartialDelete": true
+    },
+    "lightningexperiencetheme": {
+      "directoryName": "lightningExperienceThemes",
+      "id": "lightningexperiencetheme",
+      "inFolder": false,
+      "name": "LightningExperienceTheme",
+      "strictDirectoryName": false,
+      "suffix": "lightningExperienceTheme"
+    },
+    "lightningmessagechannel": {
+      "directoryName": "messageChannels",
+      "id": "lightningmessagechannel",
+      "inFolder": false,
+      "name": "LightningMessageChannel",
+      "strictDirectoryName": false,
+      "suffix": "messageChannel"
+    },
+    "lightningonboardingconfig": {
+      "directoryName": "lightningOnboardingConfigs",
+      "id": "lightningonboardingconfig",
+      "inFolder": false,
+      "name": "LightningOnboardingConfig",
+      "strictDirectoryName": false,
+      "suffix": "lightningOnboardingConfig"
+    },
+    "livechatagentconfig": {
+      "directoryName": "liveChatAgentConfigs",
+      "id": "livechatagentconfig",
+      "inFolder": false,
+      "name": "LiveChatAgentConfig",
+      "suffix": "liveChatAgentConfig"
+    },
+    "livechatbutton": {
+      "directoryName": "liveChatButtons",
+      "id": "livechatbutton",
+      "inFolder": false,
+      "name": "LiveChatButton",
+      "suffix": "liveChatButton"
+    },
+    "livechatdeployment": {
+      "directoryName": "liveChatDeployments",
+      "id": "livechatdeployment",
+      "inFolder": false,
+      "name": "LiveChatDeployment",
+      "suffix": "liveChatDeployment"
+    },
+    "livechatsensitivedatarule": {
+      "directoryName": "liveChatSensitiveDataRule",
+      "id": "livechatsensitivedatarule",
+      "inFolder": false,
+      "name": "LiveChatSensitiveDataRule",
+      "suffix": "liveChatSensitiveDataRule"
+    },
+    "locationuse": {
+      "directoryName": "locationUses",
+      "id": "locationuse",
+      "inFolder": false,
+      "name": "LocationUse",
+      "strictDirectoryName": false,
+      "suffix": "locationUse"
+    },
+    "loyaltyprogramsetup": {
+      "directoryName": "loyaltyProgramSetups",
+      "id": "loyaltyprogramsetup",
+      "name": "LoyaltyProgramSetup",
+      "strictDirectoryName": false,
+      "suffix": "loyaltyProgramSetup"
+    },
+    "managedcontenttype": {
+      "directoryName": "managedContentTypes",
+      "id": "managedcontenttype",
+      "inFolder": false,
+      "name": "ManagedContentType",
+      "strictDirectoryName": false,
+      "suffix": "managedContentType"
+    },
+    "managedeventsubscription": {
+      "directoryName": "managedEventSubscriptions",
+      "id": "managedeventsubscription",
+      "inFolder": false,
+      "name": "ManagedEventSubscription",
+      "strictDirectoryName": false,
+      "suffix": "managedEventSubscription"
+    },
+    "managedtopics": {
+      "children": {
+        "directories": {
+          "managedTopics": "managedtopic"
+        },
+        "suffixes": {
+          "managedTopic": "managedtopic"
+        },
+        "types": {
+          "managedtopic": {
+            "directoryName": "managedTopics",
+            "id": "managedtopic",
+            "name": "ManagedTopic",
+            "suffix": "managedTopic"
+          }
+        }
+      },
+      "directoryName": "managedTopics",
+      "id": "managedtopics",
+      "inFolder": false,
+      "name": "ManagedTopics",
+      "strictDirectoryName": false,
+      "suffix": "managedTopics"
+    },
+    "marketingappextension": {
+      "directoryName": "marketingappextensions",
+      "id": "marketingappextension",
+      "inFolder": false,
+      "name": "MarketingAppExtension",
+      "suffix": "marketingappextension"
+    },
+    "marketingresourcetype": {
+      "directoryName": "marketingResourceType",
+      "id": "marketingresourcetype",
+      "inFolder": false,
+      "name": "MarketingResourceType",
+      "suffix": "marketingResourceType"
+    },
+    "marketsegmentdefinition": {
+      "directoryName": "marketSegmentDefinitions",
+      "id": "marketsegmentdefinition",
+      "inFolder": false,
+      "name": "MarketSegmentDefinition",
+      "strictDirectoryName": false,
+      "suffix": "marketSegmentDefinition"
+    },
+    "matchingrules": {
+      "children": {
+        "directories": {
+          "matchingRules": "matchingrule"
+        },
+        "suffixes": {
+          "matchingRule": "matchingrule"
+        },
+        "types": {
+          "matchingrule": {
+            "directoryName": "matchingRules",
+            "id": "matchingrule",
+            "name": "MatchingRule",
+            "suffix": "matchingRule",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "matchingRules"
+          }
+        }
+      },
+      "directoryName": "matchingRules",
+      "id": "matchingrules",
+      "inFolder": false,
+      "name": "MatchingRules",
+      "strictDirectoryName": false,
+      "suffix": "matchingRule"
+    },
+    "messagingchannel": {
+      "directoryName": "messagingChannels",
+      "id": "messagingchannel",
+      "inFolder": false,
+      "name": "MessagingChannel",
+      "strictDirectoryName": false,
+      "suffix": "messagingChannel"
+    },
+    "mfgprogramtemplate": {
+      "directoryName": "MfgProgramTemplate",
+      "id": "mfgprogramtemplate",
+      "inFolder": false,
+      "name": "MfgProgramTemplate",
+      "strictDirectoryName": false,
+      "suffix": "mfgProgramTemplate"
+    },
+    "milestonetype": {
+      "directoryName": "milestoneTypes",
+      "id": "milestonetype",
+      "inFolder": false,
+      "name": "MilestoneType",
+      "suffix": "milestoneType"
+    },
+    "mktcalcinsightobjectdef": {
+      "directoryName": "mktCalcInsightObjectDefs",
+      "id": "mktcalcinsightobjectdef",
+      "inFolder": false,
+      "name": "MktCalcInsightObjectDef",
+      "suffix": "mktCalcInsightObjectDef"
+    },
+    "mktdatatranobject": {
+      "children": {
+        "directories": {
+          "mktDataTranFields": "mktdatatranfield"
+        },
+        "suffixes": {
+          "mktDataTranField": "mktdatatranfield"
+        },
+        "types": {
+          "mktdatatranfield": {
+            "directoryName": "mktDataTranFields",
+            "id": "mktdatatranfield",
+            "name": "MktDataTranField",
+            "suffix": "mktDataTranField"
+          }
+        }
+      },
+      "directoryName": "mktDataTranObjects",
+      "id": "mktdatatranobject",
+      "name": "MktDataTranObject",
+      "strictDirectoryName": false,
+      "suffix": "mktDataTranObject"
+    },
+    "mldatadefinition": {
+      "directoryName": "mlDataDefinitions",
+      "id": "mldatadefinition",
+      "inFolder": false,
+      "name": "MLDataDefinition",
+      "strictDirectoryName": false,
+      "suffix": "mlDataDefinition"
+    },
+    "mldomain": {
+      "directoryName": "mlDomains",
+      "id": "mldomain",
+      "inFolder": false,
+      "name": "MlDomain",
+      "suffix": "mlDomain"
+    },
+    "mlpredictiondefinition": {
+      "directoryName": "mlPredictions",
+      "id": "mlpredictiondefinition",
+      "inFolder": false,
+      "name": "MLPredictionDefinition",
+      "strictDirectoryName": false,
+      "suffix": "mlPrediction"
+    },
+    "mlrecommendationdefinition": {
+      "directoryName": "mlRecommendations",
+      "id": "mlrecommendationdefinition",
+      "inFolder": false,
+      "name": "MLRecommendationDefinition",
+      "suffix": "mlRecommendation"
+    },
+    "mobileapplicationdetail": {
+      "directoryName": "MobileApplicationDetails",
+      "id": "mobileapplicationdetail",
+      "inFolder": false,
+      "name": "MobileApplicationDetail",
+      "strictDirectoryName": false,
+      "suffix": "MobileApplicationDetail"
+    },
+    "mobilesecurityassignment": {
+      "directoryName": "mobileSecurityAssignments",
+      "id": "mobilesecurityassignment",
+      "inFolder": false,
+      "name": "MobileSecurityAssignment",
+      "strictDirectoryName": false,
+      "suffix": "mobileSecurityAssignment"
+    },
+    "mobilesecuritypolicy": {
+      "directoryName": "mobileSecurityPolicies",
+      "id": "mobilesecuritypolicy",
+      "inFolder": false,
+      "name": "MobileSecurityPolicy",
+      "strictDirectoryName": false,
+      "suffix": "mobileSecurityPolicy"
+    },
+    "mobilesecuritypolicyset": {
+      "directoryName": "mobileSecurityPolicySets",
+      "id": "mobilesecuritypolicyset",
+      "inFolder": false,
+      "name": "MobileSecurityPolicySet",
+      "strictDirectoryName": false,
+      "suffix": "mobileSecurityPolicySet"
+    },
+    "mobsecuritycertpinconfig": {
+      "directoryName": "mobSecurityCertPinConfigs",
+      "id": "mobsecuritycertpinconfig",
+      "inFolder": false,
+      "name": "MobSecurityCertPinConfig",
+      "strictDirectoryName": false,
+      "suffix": "mobSecurityCertPinConfig"
+    },
+    "moderationrule": {
+      "directoryName": "moderation",
+      "id": "moderationrule",
+      "inFolder": false,
+      "name": "ModerationRule",
+      "strictDirectoryName": false,
+      "suffix": "rule"
+    },
+    "mutingpermissionset": {
+      "directoryName": "mutingpermissionsets",
+      "id": "mutingpermissionset",
+      "inFolder": false,
+      "name": "MutingPermissionSet",
+      "strictDirectoryName": false,
+      "suffix": "mutingpermissionset"
+    },
+    "mydomaindiscoverablelogin": {
+      "directoryName": "myDomainDiscoverableLogins",
+      "id": "mydomaindiscoverablelogin",
+      "inFolder": false,
+      "name": "MyDomainDiscoverableLogin",
+      "strictDirectoryName": false,
+      "suffix": "myDomainDiscoverableLogin"
+    },
+    "namedcredential": {
+      "directoryName": "namedCredentials",
+      "id": "namedcredential",
+      "inFolder": false,
+      "name": "NamedCredential",
+      "strictDirectoryName": false,
+      "suffix": "namedCredential"
+    },
+    "navigationmenu": {
+      "directoryName": "navigationMenus",
+      "id": "navigationmenu",
+      "inFolder": false,
+      "name": "NavigationMenu",
+      "strictDirectoryName": false,
+      "suffix": "navigationMenu"
+    },
+    "network": {
+      "directoryName": "networks",
+      "id": "network",
+      "inFolder": false,
+      "name": "Network",
+      "strictDirectoryName": false,
+      "suffix": "network"
+    },
+    "networkbranding": {
+      "directoryName": "networkBranding",
+      "id": "networkbranding",
+      "inFolder": false,
+      "name": "NetworkBranding",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "networkBranding"
+    },
+    "notificationtypeconfig": {
+      "directoryName": "notificationTypeConfig",
+      "id": "notificationtypeconfig",
+      "inFolder": false,
+      "name": "NotificationTypeConfig",
+      "strictDirectoryName": false,
+      "suffix": "config"
+    },
+    "oauthcustomscope": {
+      "directoryName": "oauthcustomscopes",
+      "id": "oauthcustomscope",
+      "inFolder": false,
+      "name": "OauthCustomScope",
+      "strictDirectoryName": false,
+      "suffix": "oauthcustomscope"
+    },
+    "oauthtokenexchangehandler": {
+      "directoryName": "oauthtokenexchangehandlers",
+      "id": "oauthtokenexchangehandler",
+      "inFolder": false,
+      "name": "OauthTokenExchangeHandler",
+      "strictDirectoryName": false,
+      "suffix": "oauthtokenexchangehandler"
+    },
+    "objecthierarchyrelationship": {
+      "directoryName": "ObjectHierarchyRelationship",
+      "id": "objecthierarchyrelationship",
+      "name": "ObjectHierarchyRelationship",
+      "strictDirectoryName": true,
+      "suffix": "settings"
+    },
+    "objectsourcetargetmap": {
+      "directoryName": "objectSourceTargetMaps",
+      "id": "objectsourcetargetmap",
+      "name": "ObjectSourceTargetMap",
+      "strictDirectoryName": false,
+      "suffix": "objectSourceTargetMap"
+    },
+    "ocrsampledocument": {
+      "directoryName": "ocrSampleDocuments",
+      "id": "ocrsampledocument",
+      "name": "OcrSampleDocument",
+      "strictDirectoryName": false,
+      "suffix": "ocrSampleDocument"
+    },
+    "ocrtemplate": {
+      "directoryName": "ocrTemplates",
+      "id": "ocrtemplate",
+      "name": "OcrTemplate",
+      "strictDirectoryName": false,
+      "suffix": "ocrTemplate"
+    },
+    "omnidatatransform": {
+      "directoryName": "omniDataTransforms",
+      "id": "omnidatatransform",
+      "inFolder": false,
+      "name": "OmniDataTransform",
+      "strictDirectoryName": false,
+      "suffix": "rpt"
+    },
+    "omniexttrackingdef": {
+      "directoryName": "OmniExtTrackingDefs",
+      "id": "omniexttrackingdef",
+      "inFolder": false,
+      "name": "OmniExtTrackingDef",
+      "strictDirectoryName": false,
+      "suffix": "OmniExtTrackingDef"
+    },
+    "omniintegrationprocedure": {
+      "directoryName": "omniIntegrationProcedures",
+      "id": "omniintegrationprocedure",
+      "inFolder": false,
+      "name": "OmniIntegrationProcedure",
+      "strictDirectoryName": false,
+      "suffix": "oip"
+    },
+    "omniinteractionaccessconfig": {
+      "directoryName": "OmniInteractionAccessConfig",
+      "id": "omniinteractionaccessconfig",
+      "inFolder": false,
+      "name": "OmniInteractionAccessConfig",
+      "strictDirectoryName": false,
+      "suffix": "omniInteractionAccessConfig"
+    },
+    "omniinteractionconfig": {
+      "directoryName": "OmniInteractionConfig",
+      "id": "omniinteractionconfig",
+      "inFolder": false,
+      "name": "OmniInteractionConfig",
+      "strictDirectoryName": false,
+      "suffix": "omniInteractionConfig"
+    },
+    "omniscript": {
+      "directoryName": "omniScripts",
+      "id": "omniscript",
+      "inFolder": false,
+      "name": "OmniScript",
+      "strictDirectoryName": false,
+      "suffix": "os"
+    },
+    "omnisupervisorconfig": {
+      "directoryName": "omniSupervisorConfigs",
+      "id": "omnisupervisorconfig",
+      "inFolder": false,
+      "name": "OmniSupervisorConfig",
+      "strictDirectoryName": false,
+      "suffix": "omniSupervisorConfig"
+    },
+    "omnitrackinggroup": {
+      "directoryName": "OmniTrackingGroups",
+      "id": "omnitrackinggroup",
+      "inFolder": false,
+      "name": "OmniTrackingGroup",
+      "strictDirectoryName": false,
+      "suffix": "OmniTrackingGroup"
+    },
+    "omniuicard": {
+      "directoryName": "omniUiCard",
+      "id": "omniuicard",
+      "inFolder": false,
+      "name": "OmniUiCard",
+      "strictDirectoryName": false,
+      "suffix": "ouc"
+    },
+    "orchestration": {
+      "directoryName": "iot",
+      "id": "orchestration",
+      "inFolder": false,
+      "name": "Orchestration",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "suffix": "orchestration"
+    },
+    "orchestrationcontext": {
+      "directoryName": "iot",
+      "id": "orchestrationcontext",
+      "inFolder": false,
+      "name": "OrchestrationContext",
+      "suffix": "orchestrationContext"
+    },
+    "outboundnetworkconnection": {
+      "directoryName": "outboundNetworkConnections",
+      "id": "outboundnetworkconnection",
+      "inFolder": false,
+      "name": "OutboundNetworkConnection",
+      "strictDirectoryName": false,
+      "suffix": "outboundNetworkConnection"
+    },
+    "participantrole": {
+      "directoryName": "participantRoles",
+      "id": "participantrole",
+      "name": "ParticipantRole",
+      "strictDirectoryName": false,
+      "suffix": "participantRole"
+    },
+    "pathassistant": {
+      "directoryName": "pathAssistants",
+      "id": "pathassistant",
+      "inFolder": false,
+      "name": "PathAssistant",
+      "strictDirectoryName": false,
+      "suffix": "pathAssistant",
+      "supportsWildcardAndName": true
+    },
+    "paymentgatewayprovider": {
+      "directoryName": "paymentGatewayProviders",
+      "id": "paymentgatewayprovider",
+      "inFolder": false,
+      "name": "PaymentGatewayProvider",
+      "suffix": "paymentGatewayProvider"
+    },
+    "permissionset": {
+      "directoryName": "permissionsets",
+      "id": "permissionset",
+      "inFolder": false,
+      "name": "PermissionSet",
+      "strictDirectoryName": false,
+      "suffix": "permissionset"
+    },
+    "permissionsetgroup": {
+      "directoryName": "permissionsetgroups",
+      "id": "permissionsetgroup",
+      "inFolder": false,
+      "name": "PermissionSetGroup",
+      "strictDirectoryName": false,
+      "suffix": "permissionsetgroup"
+    },
+    "permissionsetlicensedefinition": {
+      "directoryName": "permissionSetLicenseDefinitions",
+      "id": "permissionsetlicensedefinition",
+      "inFolder": false,
+      "name": "PermissionSetLicenseDefinition",
+      "strictDirectoryName": false,
+      "suffix": "permissionSetLicenseDefinition"
+    },
+    "personaccountownerpoweruser": {
+      "directoryName": "personAccountOwnerPowerUsers",
+      "id": "personaccountownerpoweruser",
+      "inFolder": false,
+      "name": "PersonAccountOwnerPowerUser",
+      "strictDirectoryName": false,
+      "suffix": "personAccountOwnerPowerUser"
+    },
+    "pipelineinspmetricconfig": {
+      "directoryName": "pipelineInspMetricConfigs",
+      "id": "pipelineinspmetricconfig",
+      "inFolder": false,
+      "name": "PipelineInspMetricConfig",
+      "strictDirectoryName": false,
+      "suffix": "pipelineInspMetricConfig"
+    },
+    "platformcachepartition": {
+      "directoryName": "cachePartitions",
+      "id": "platformcachepartition",
+      "inFolder": false,
+      "name": "PlatformCachePartition",
+      "strictDirectoryName": false,
+      "suffix": "cachePartition"
+    },
+    "platformeventchannel": {
+      "directoryName": "platformEventChannels",
+      "id": "platformeventchannel",
+      "inFolder": false,
+      "name": "PlatformEventChannel",
+      "strictDirectoryName": false,
+      "suffix": "platformEventChannel"
+    },
+    "platformeventchannelmember": {
+      "directoryName": "platformEventChannelMembers",
+      "id": "platformeventchannelmember",
+      "inFolder": false,
+      "name": "PlatformEventChannelMember",
+      "strictDirectoryName": false,
+      "suffix": "platformEventChannelMember"
+    },
+    "platformeventsubscriberconfig": {
+      "directoryName": "PlatformEventSubscriberConfigs",
+      "id": "platformeventsubscriberconfig",
+      "inFolder": false,
+      "name": "PlatformEventSubscriberConfig",
+      "strictDirectoryName": false,
+      "suffix": "platformEventSubscriberConfig"
+    },
+    "portal": {
+      "directoryName": "portals",
+      "id": "portal",
+      "inFolder": false,
+      "name": "Portal",
+      "suffix": "portal"
+    },
+    "posttemplate": {
+      "directoryName": "postTemplates",
+      "id": "posttemplate",
+      "inFolder": false,
+      "name": "PostTemplate",
+      "strictDirectoryName": false,
+      "suffix": "postTemplate"
+    },
+    "presencedeclinereason": {
+      "directoryName": "presenceDeclineReasons",
+      "id": "presencedeclinereason",
+      "inFolder": false,
+      "name": "PresenceDeclineReason",
+      "suffix": "presenceDeclineReason"
+    },
+    "presenceuserconfig": {
+      "directoryName": "presenceUserConfigs",
+      "id": "presenceuserconfig",
+      "inFolder": false,
+      "name": "PresenceUserConfig",
+      "suffix": "presenceUserConfig"
+    },
+    "pricingactionparameters": {
+      "directoryName": "pricingActionParameters",
+      "id": "pricingactionparameters",
+      "inFolder": false,
+      "name": "PricingActionParameters",
+      "strictDirectoryName": false,
+      "suffix": "pricingActionParameters"
+    },
+    "pricingrecipe": {
+      "directoryName": "pricingRecipes",
+      "id": "pricingrecipe",
+      "name": "PricingRecipe",
+      "strictDirectoryName": false,
+      "suffix": "pricingRecipe"
+    },
+    "processflowmigration": {
+      "directoryName": "processflowmigrations",
+      "id": "processflowmigration",
+      "inFolder": false,
+      "name": "ProcessFlowMigration",
+      "strictDirectoryName": false,
+      "suffix": "processflowmigration"
+    },
+    "productattributeset": {
+      "directoryName": "productAttributeSets",
+      "id": "productattributeset",
+      "inFolder": false,
+      "name": "ProductAttributeSet",
+      "strictDirectoryName": false,
+      "suffix": "productAttributeSet"
+    },
+    "productspecificationtypedefinition": {
+      "directoryName": "productSpecificationTypeDefinitions",
+      "id": "productspecificationtypedefinition",
+      "inFolder": false,
+      "name": "ProductSpecificationTypeDefinition",
+      "strictDirectoryName": false,
+      "suffix": "productSpecificationTypeDefinition"
+    },
+    "profile": {
+      "directoryName": "profiles",
+      "id": "profile",
+      "inFolder": false,
+      "name": "Profile",
+      "strictDirectoryName": false,
+      "suffix": "profile"
+    },
+    "profilepasswordpolicy": {
+      "directoryName": "profilePasswordPolicies",
+      "id": "profilepasswordpolicy",
+      "inFolder": false,
+      "name": "ProfilePasswordPolicy",
+      "strictDirectoryName": false,
+      "suffix": "profilePasswordPolicy"
+    },
+    "profilesessionsetting": {
+      "directoryName": "profileSessionSettings",
+      "id": "profilesessionsetting",
+      "inFolder": false,
+      "name": "ProfileSessionSetting",
+      "strictDirectoryName": false,
+      "suffix": "profileSessionSetting"
+    },
+    "prompt": {
+      "directoryName": "prompts",
+      "id": "prompt",
+      "inFolder": false,
+      "name": "Prompt",
+      "strictDirectoryName": false,
+      "suffix": "prompt"
+    },
+    "queue": {
+      "directoryName": "queues",
+      "id": "queue",
+      "inFolder": false,
+      "name": "Queue",
+      "strictDirectoryName": false,
+      "suffix": "queue"
+    },
+    "queueroutingconfig": {
+      "directoryName": "queueRoutingConfigs",
+      "id": "queueroutingconfig",
+      "inFolder": false,
+      "name": "QueueRoutingConfig",
+      "suffix": "queueRoutingConfig"
+    },
+    "quickaction": {
+      "directoryName": "quickActions",
+      "id": "quickaction",
+      "inFolder": false,
+      "name": "QuickAction",
+      "strictDirectoryName": false,
+      "suffix": "quickAction",
+      "supportsWildcardAndName": true
+    },
+    "recommendationstrategy": {
+      "directoryName": "recommendationStrategies",
+      "id": "recommendationstrategy",
+      "inFolder": false,
+      "name": "RecommendationStrategy",
+      "strictDirectoryName": false,
+      "suffix": "recommendationStrategy"
+    },
+    "recordactiondeployment": {
+      "directoryName": "recordActionDeployments",
+      "id": "recordactiondeployment",
+      "inFolder": false,
+      "name": "RecordActionDeployment",
+      "strictDirectoryName": false,
+      "suffix": "deployment"
+    },
+    "recordaggregationdefinition": {
+      "directoryName": "RecordAggregationDefinitions",
+      "id": "recordaggregationdefinition",
+      "inFolder": false,
+      "name": "RecordAggregationDefinition",
+      "strictDirectoryName": false,
+      "suffix": "RecordAggregationDefinition"
+    },
+    "recordalertcategory": {
+      "directoryName": "recordAlertCategories",
+      "id": "recordalertcategory",
+      "inFolder": false,
+      "name": "RecordAlertCategory",
+      "strictDirectoryName": false,
+      "suffix": "recordAlertCategory"
+    },
+    "recordalertdatasource": {
+      "directoryName": "recordAlertDataSources",
+      "id": "recordalertdatasource",
+      "inFolder": false,
+      "name": "RecordAlertDataSource",
+      "strictDirectoryName": false,
+      "suffix": "recordAlertDataSource"
+    },
+    "recordalerttemplate": {
+      "directoryName": "recordAlertTemplates",
+      "id": "recordalerttemplate",
+      "inFolder": false,
+      "name": "RecordAlertTemplate",
+      "strictDirectoryName": false,
+      "suffix": "recordAlertTemplate"
+    },
+    "redirectwhitelisturl": {
+      "directoryName": "redirectWhitelistUrls",
+      "id": "redirectwhitelisturl",
+      "inFolder": false,
+      "name": "RedirectWhitelistUrl",
+      "strictDirectoryName": false,
+      "suffix": "redirectWhitelistUrl"
+    },
+    "registeredexternalservice": {
+      "directoryName": "registeredExternalServices",
+      "id": "registeredexternalservice",
+      "inFolder": false,
+      "name": "RegisteredExternalService",
+      "strictDirectoryName": false,
+      "suffix": "registeredExternalService"
+    },
+    "relationshipgraphdefinition": {
+      "directoryName": "relationshipGraphDefinitions",
+      "id": "relationshipgraphdefinition",
+      "inFolder": false,
+      "name": "RelationshipGraphDefinition",
+      "strictDirectoryName": false,
+      "suffix": "relationshipGraphDefinition"
+    },
+    "remotesitesetting": {
+      "directoryName": "remoteSiteSettings",
+      "id": "remotesitesetting",
+      "inFolder": false,
+      "name": "RemoteSiteSetting",
+      "strictDirectoryName": false,
+      "suffix": "remoteSite",
+      "supportsWildcardAndName": true
+    },
+    "report": {
+      "directoryName": "reports",
+      "folderType": "reportfolder",
+      "id": "report",
+      "inFolder": true,
+      "name": "Report",
+      "strictDirectoryName": false,
+      "suffix": "report"
+    },
+    "reportfolder": {
+      "directoryName": "reports",
+      "folderContentType": "report",
+      "id": "reportfolder",
+      "inFolder": false,
+      "name": "ReportFolder",
+      "strictDirectoryName": false,
+      "suffix": "reportFolder"
+    },
+    "reporttype": {
+      "directoryName": "reportTypes",
+      "id": "reporttype",
+      "inFolder": false,
+      "name": "ReportType",
+      "strictDirectoryName": false,
+      "suffix": "reportType",
+      "supportsWildcardAndName": true
+    },
+    "restrictionrule": {
+      "directoryName": "restrictionRules",
+      "id": "restrictionrule",
+      "name": "RestrictionRule",
+      "strictDirectoryName": true,
+      "suffix": "rule"
+    },
+    "retrievalsummarydefinition": {
+      "directoryName": "RetrievalSummaryDefinitions",
+      "id": "retrievalsummarydefinition",
+      "inFolder": false,
+      "name": "RetrievalSummaryDefinition",
+      "strictDirectoryName": false,
+      "suffix": "RetrievalSummaryDefinition"
+    },
+    "role": {
+      "directoryName": "roles",
+      "id": "role",
+      "inFolder": false,
+      "name": "Role",
+      "strictDirectoryName": false,
+      "suffix": "role"
+    },
+    "salesagreementsettings": {
+      "directoryName": "salesAgreementSettings",
+      "id": "salesagreementsettings",
+      "name": "SalesAgreementSettings",
+      "strictDirectoryName": false,
+      "suffix": "salesAgreementSetting"
+    },
+    "samlssoconfig": {
+      "directoryName": "samlssoconfigs",
+      "id": "samlssoconfig",
+      "inFolder": false,
+      "name": "SamlSsoConfig",
+      "strictDirectoryName": false,
+      "suffix": "samlssoconfig"
+    },
+    "schedulingobjective": {
+      "directoryName": "SchedulingObjectives",
+      "id": "schedulingobjective",
+      "inFolder": false,
+      "name": "SchedulingObjective",
+      "strictDirectoryName": false,
+      "suffix": "schedulingObjective"
+    },
+    "schedulingrule": {
+      "directoryName": "SchedulingRules",
+      "id": "schedulingrule",
+      "name": "SchedulingRule",
+      "strictDirectoryName": false,
+      "suffix": "schedulingRule"
+    },
+    "scontrol": {
+      "directoryName": "scontrols",
+      "id": "scontrol",
+      "inFolder": false,
+      "name": "Scontrol",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "scf"
+    },
+    "scorecategory": {
+      "directoryName": "scoreCategories",
+      "id": "scorecategory",
+      "inFolder": false,
+      "name": "ScoreCategory",
+      "suffix": "scoreCategory"
+    },
+    "searchableobjdatasyncinfo": {
+      "directoryName": "SearchableObjDataSyncInfoSettings",
+      "id": "searchableobjdatasyncinfo",
+      "inFolder": false,
+      "name": "SearchableObjDataSyncInfo",
+      "strictDirectoryName": false,
+      "suffix": "SearchableObjDataSyncInfoSetting"
+    },
+    "searchcriteriaconfiguration": {
+      "directoryName": "SearchCriteriaConfigurationSettings",
+      "id": "searchcriteriaconfiguration",
+      "inFolder": false,
+      "name": "SearchCriteriaConfiguration",
+      "strictDirectoryName": false,
+      "suffix": "SearchCriteriaConfigurationSetting"
+    },
+    "searchcustomization": {
+      "directoryName": "searchCustomizations",
+      "id": "searchcustomization",
+      "inFolder": false,
+      "name": "SearchCustomization",
+      "strictDirectoryName": false,
+      "suffix": "searchCustomization"
+    },
+    "searchorgwideobjectconfig": {
+      "directoryName": "searchOrgWideConfiguration",
+      "id": "searchorgwideobjectconfig",
+      "inFolder": false,
+      "name": "SearchOrgWideObjectConfig",
+      "strictDirectoryName": false,
+      "suffix": "searchOrgWideObjectConfig"
+    },
+    "serviceaisetupdefinition": {
+      "directoryName": "serviceAISetupDescriptions",
+      "id": "serviceaisetupdefinition",
+      "inFolder": false,
+      "name": "ServiceAISetupDefinition",
+      "strictDirectoryName": false,
+      "suffix": "serviceAISetupDescription"
+    },
+    "serviceaisetupfield": {
+      "directoryName": "serviceAISetupFields",
+      "id": "serviceaisetupfield",
+      "inFolder": false,
+      "name": "ServiceAISetupField",
+      "strictDirectoryName": false,
+      "suffix": "serviceAISetupField"
+    },
+    "servicechannel": {
+      "directoryName": "serviceChannels",
+      "id": "servicechannel",
+      "inFolder": false,
+      "name": "ServiceChannel",
+      "suffix": "serviceChannel"
+    },
+    "servicepresencestatus": {
+      "directoryName": "servicePresenceStatuses",
+      "id": "servicepresencestatus",
+      "inFolder": false,
+      "name": "ServicePresenceStatus",
+      "suffix": "servicePresenceStatus"
+    },
+    "serviceprocess": {
+      "directoryName": "serviceprocess",
+      "id": "serviceprocess",
+      "inFolder": false,
+      "name": "ServiceProcess",
+      "strictDirectoryName": false,
+      "suffix": "serviceprocess"
+    },
+    "settings": {
+      "directoryName": "settings",
+      "id": "settings",
+      "inFolder": false,
+      "name": "Settings",
+      "strictDirectoryName": false,
+      "suffix": "settings"
+    },
+    "sharingrules": {
+      "children": {
+        "directories": {
+          "sharingCriteriaRules": "sharingcriteriarule",
+          "sharingGuestRules": "sharingguestrule",
+          "sharingOwnerRules": "sharingownerrule",
+          "sharingTerritoryRules": "sharingterritoryrule"
+        },
+        "suffixes": {
+          "sharingCriteriaRule": "sharingcriteriarule",
+          "sharingGuestRule": "sharingguestrule",
+          "sharingOwnerRule": "sharingownerrule",
+          "sharingTerritoryRule": "sharingterritoryrule"
+        },
+        "types": {
+          "sharingcriteriarule": {
+            "directoryName": "sharingCriteriaRules",
+            "id": "sharingcriteriarule",
+            "name": "SharingCriteriaRule",
+            "suffix": "sharingCriteriaRule",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "sharingCriteriaRules"
+          },
+          "sharingguestrule": {
+            "directoryName": "sharingGuestRules",
+            "id": "sharingguestrule",
+            "name": "SharingGuestRule",
+            "suffix": "sharingGuestRule",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "sharingGuestRules"
+          },
+          "sharingownerrule": {
+            "directoryName": "sharingOwnerRules",
+            "id": "sharingownerrule",
+            "name": "SharingOwnerRule",
+            "suffix": "sharingOwnerRule",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "sharingOwnerRules"
+          },
+          "sharingterritoryrule": {
+            "directoryName": "sharingTerritoryRules",
+            "id": "sharingterritoryrule",
+            "name": "SharingTerritoryRule",
+            "suffix": "sharingTerritoryRule",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "sharingTerritoryRules"
+          }
+        }
+      },
+      "directoryName": "sharingRules",
+      "id": "sharingrules",
+      "inFolder": false,
+      "name": "SharingRules",
+      "strictDirectoryName": false,
+      "suffix": "sharingRules",
+      "supportsWildcardAndName": true
+    },
+    "sharingset": {
+      "directoryName": "sharingSets",
+      "id": "sharingset",
+      "inFolder": false,
+      "name": "SharingSet",
+      "strictDirectoryName": false,
+      "suffix": "sharingSet"
+    },
+    "sitedotcom": {
+      "directoryName": "siteDotComSites",
+      "id": "sitedotcom",
+      "inFolder": false,
+      "name": "SiteDotCom",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": true,
+      "suffix": "site"
+    },
+    "skill": {
+      "directoryName": "skills",
+      "id": "skill",
+      "inFolder": false,
+      "name": "Skill",
+      "suffix": "skill"
+    },
+    "skilltype": {
+      "directoryName": "skilltypes",
+      "id": "skilltype",
+      "inFolder": false,
+      "name": "SkillType",
+      "suffix": "skilltype"
+    },
+    "slackapp": {
+      "directoryName": "slackapps",
+      "id": "slackapp",
+      "inFolder": false,
+      "name": "SlackApp",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "slackapp"
+    },
+    "standardvalueset": {
+      "directoryName": "standardValueSets",
+      "id": "standardvalueset",
+      "inFolder": false,
+      "name": "StandardValueSet",
+      "strictDirectoryName": false,
+      "suffix": "standardValueSet"
+    },
+    "standardvaluesettranslation": {
+      "directoryName": "standardValueSetTranslations",
+      "id": "standardvaluesettranslation",
+      "inFolder": false,
+      "name": "StandardValueSetTranslation",
+      "strictDirectoryName": false,
+      "suffix": "standardValueSetTranslation"
+    },
+    "staticresource": {
+      "directoryName": "staticresources",
+      "id": "staticresource",
+      "inFolder": false,
+      "name": "StaticResource",
+      "strategies": {
+        "adapter": "mixedContent",
+        "transformer": "staticResource"
+      },
+      "strictDirectoryName": true,
+      "suffix": "resource",
+      "supportsPartialDelete": true
+    },
+    "stnryassetenvsrccnfg": {
+      "directoryName": "stationaryAssetEnvSourceConfigs",
+      "id": "stnryassetenvsrccnfg",
+      "inFolder": false,
+      "name": "StnryAssetEnvSrcCnfg",
+      "strictDirectoryName": false,
+      "suffix": "stationaryAssetEnvSourceConfig"
+    },
+    "streamingappdataconnector": {
+      "directoryName": "streamingAppDataConnectors",
+      "id": "streamingappdataconnector",
+      "inFolder": false,
+      "name": "StreamingAppDataConnector",
+      "strictDirectoryName": false,
+      "suffix": "streamingAppDataConnector"
+    },
+    "sustainabilityuom": {
+      "directoryName": "sustainabilityUoms",
+      "id": "sustainabilityuom",
+      "inFolder": false,
+      "name": "SustainabilityUom",
+      "strictDirectoryName": false,
+      "suffix": "sustainabilityUom"
+    },
+    "sustnuomconversion": {
+      "directoryName": "sustnUomConversions",
+      "id": "sustnuomconversion",
+      "inFolder": false,
+      "name": "SustnUomConversion",
+      "strictDirectoryName": false,
+      "suffix": "sustnUomConversion"
+    },
+    "svccatalogcategory": {
+      "directoryName": "svcCatalogCategories",
+      "id": "svccatalogcategory",
+      "inFolder": false,
+      "name": "SvcCatalogCategory",
+      "strictDirectoryName": false,
+      "suffix": "category"
+    },
+    "svccatalogfiltercondition": {
+      "directoryName": "svcCatalogFilterConditions",
+      "id": "svccatalogfiltercondition",
+      "inFolder": false,
+      "name": "SvcCatalogFilterCondition",
+      "strictDirectoryName": false,
+      "suffix": "catalogFilterCondition"
+    },
+    "svccatalogfiltercriteria": {
+      "directoryName": "svcCatalogFilterCriterias",
+      "id": "svccatalogfiltercriteria",
+      "inFolder": false,
+      "name": "SvcCatalogFilterCriteria",
+      "strictDirectoryName": false,
+      "suffix": "catalogFilterCriteria"
+    },
+    "svccatalogfulfillmentflow": {
+      "directoryName": "svcCatalogFulfillmentFlows",
+      "id": "svccatalogfulfillmentflow",
+      "inFolder": false,
+      "name": "SvcCatalogFulfillmentFlow",
+      "strictDirectoryName": false,
+      "suffix": "fulfillmentFlow"
+    },
+    "svccatalogitemdef": {
+      "directoryName": "svcCatalogItems",
+      "id": "svccatalogitemdef",
+      "inFolder": false,
+      "name": "SvcCatalogItemDef",
+      "strictDirectoryName": false,
+      "suffix": "catalogItem"
+    },
+    "svccatalogitemdeffiltrcrit": {
+      "directoryName": "svcCatalogItemDefFiltrCrits",
+      "id": "svccatalogitemdeffiltrcrit",
+      "inFolder": false,
+      "name": "SvcCatalogItemDefFiltrCrit",
+      "strictDirectoryName": false,
+      "suffix": "catalogItemDefFiltrCrit"
+    },
+    "synonymdictionary": {
+      "directoryName": "synonymDictionaries",
+      "id": "synonymdictionary",
+      "inFolder": false,
+      "name": "SynonymDictionary",
+      "strictDirectoryName": false,
+      "suffix": "synonymDictionary"
+    },
+    "territory": {
+      "directoryName": "territories",
+      "id": "territory",
+      "inFolder": false,
+      "name": "Territory",
+      "suffix": "territory"
+    },
+    "territory2": {
+      "directoryName": "territories",
+      "folderType": "territory2model",
+      "id": "territory2",
+      "inFolder": false,
+      "name": "Territory2",
+      "suffix": "territory2"
+    },
+    "territory2model": {
+      "directoryName": "territory2Models",
+      "folderType": "territory2model",
+      "id": "territory2model",
+      "inFolder": false,
+      "name": "Territory2Model",
+      "suffix": "territory2Model"
+    },
+    "territory2rule": {
+      "directoryName": "rules",
+      "folderType": "territory2model",
+      "id": "territory2rule",
+      "inFolder": false,
+      "name": "Territory2Rule",
+      "suffix": "territory2Rule"
+    },
+    "territory2type": {
+      "directoryName": "territory2Types",
+      "id": "territory2type",
+      "inFolder": false,
+      "name": "Territory2Type",
+      "suffix": "territory2Type"
+    },
+    "timelineobjectdefinition": {
+      "directoryName": "timelineObjectDefinitions",
+      "id": "timelineobjectdefinition",
+      "inFolder": false,
+      "name": "TimelineObjectDefinition",
+      "strictDirectoryName": false,
+      "suffix": "timelineObjectDefinition"
+    },
+    "timesheettemplate": {
+      "directoryName": "timeSheetTemplates",
+      "id": "timesheettemplate",
+      "name": "TimeSheetTemplate",
+      "strictDirectoryName": false,
+      "suffix": "timeSheetTemplate"
+    },
+    "topicsforobjects": {
+      "directoryName": "topicsForObjects",
+      "id": "topicsforobjects",
+      "inFolder": false,
+      "name": "TopicsForObjects",
+      "strictDirectoryName": false,
+      "suffix": "topicsForObjects"
+    },
+    "transactionsecuritypolicy": {
+      "directoryName": "transactionSecurityPolicies",
+      "id": "transactionsecuritypolicy",
+      "inFolder": false,
+      "name": "TransactionSecurityPolicy",
+      "suffix": "transactionSecurityPolicy"
+    },
+    "translations": {
+      "directoryName": "translations",
+      "id": "translations",
+      "inFolder": false,
+      "name": "Translations",
+      "suffix": "translation"
+    },
+    "uiobjectrelationconfig": {
+      "directoryName": "uiObjectRelationConfigs",
+      "id": "uiobjectrelationconfig",
+      "inFolder": false,
+      "name": "UIObjectRelationConfig",
+      "suffix": "uiObjectRelationConfig"
+    },
+    "uiplugin": {
+      "directoryName": "uiplugins",
+      "id": "uiplugin",
+      "inFolder": false,
+      "name": "UiPlugin",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "suffix": "uiplugin"
+    },
+    "uiviewdefinition": {
+      "directoryName": "uiviews",
+      "id": "uiviewdefinition",
+      "inFolder": false,
+      "name": "UiViewDefinition",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "uiview"
+    },
+    "useraccesspolicy": {
+      "directoryName": "useraccesspolicies",
+      "id": "useraccesspolicy",
+      "inFolder": false,
+      "name": "UserAccessPolicy",
+      "strictDirectoryName": false,
+      "suffix": "useraccesspolicy"
+    },
+    "userauthcertificate": {
+      "directoryName": "userAuthCertificates",
+      "id": "userauthcertificate",
+      "inFolder": false,
+      "name": "UserAuthCertificate",
+      "suffix": "userAuthCertificate"
+    },
+    "usercriteria": {
+      "directoryName": "userCriteria",
+      "id": "usercriteria",
+      "inFolder": false,
+      "name": "UserCriteria",
+      "strictDirectoryName": false,
+      "suffix": "userCriteria"
+    },
+    "userprofilesearchscope": {
+      "directoryName": "userProfileSearchScopes",
+      "id": "userprofilesearchscope",
+      "inFolder": false,
+      "name": "UserProfileSearchScope",
+      "strictDirectoryName": false,
+      "suffix": "userProfileSearchScope"
+    },
+    "userprovisioningconfig": {
+      "directoryName": "userProvisioningConfigs",
+      "id": "userprovisioningconfig",
+      "inFolder": false,
+      "name": "UserProvisioningConfig",
+      "strictDirectoryName": false,
+      "suffix": "userProvisioningConfig"
+    },
+    "vehicleassetemssnsrccnfg": {
+      "directoryName": "vehicleAssetEmssnSourceConfigs",
+      "id": "vehicleassetemssnsrccnfg",
+      "inFolder": false,
+      "name": "VehicleAssetEmssnSrcCnfg",
+      "strictDirectoryName": false,
+      "suffix": "vehicleAssetEmssnSourceConfig"
+    },
+    "viewdefinition": {
+      "directoryName": "viewdefinitions",
+      "id": "viewdefinition",
+      "inFolder": false,
+      "name": "ViewDefinition",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "view"
+    },
+    "visualizationplugin": {
+      "directoryName": "visualizationPlugins",
+      "id": "visualizationplugin",
+      "inFolder": false,
+      "name": "VisualizationPlugin",
+      "suffix": "visualizationPlugin"
+    },
+    "waveapplication": {
+      "directoryName": "wave",
+      "id": "waveapplication",
+      "inFolder": false,
+      "name": "WaveApplication",
+      "suffix": "wapp"
+    },
+    "wavecomponent": {
+      "directoryName": "wave",
+      "id": "wavecomponent",
+      "inFolder": false,
+      "name": "WaveComponent",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "suffix": "wcomp"
+    },
+    "wavedashboard": {
+      "directoryName": "wave",
+      "id": "wavedashboard",
+      "inFolder": false,
+      "name": "WaveDashboard",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "suffix": "wdash"
+    },
+    "wavedataflow": {
+      "directoryName": "wave",
+      "id": "wavedataflow",
+      "inFolder": false,
+      "name": "WaveDataflow",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "suffix": "wdf"
+    },
+    "wavedataset": {
+      "directoryName": "wave",
+      "id": "wavedataset",
+      "inFolder": false,
+      "name": "WaveDataset",
+      "suffix": "wds"
+    },
+    "wavelens": {
+      "directoryName": "wave",
+      "id": "wavelens",
+      "inFolder": false,
+      "name": "WaveLens",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "suffix": "wlens"
+    },
+    "waverecipe": {
+      "directoryName": "wave",
+      "id": "waverecipe",
+      "inFolder": false,
+      "name": "WaveRecipe",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "suffix": "wdpr"
+    },
+    "wavetemplatebundle": {
+      "directoryName": "waveTemplates",
+      "id": "wavetemplatebundle",
+      "inFolder": false,
+      "name": "WaveTemplateBundle",
+      "strategies": {
+        "adapter": "bundle"
+      },
+      "strictDirectoryName": true,
+      "supportsPartialDelete": true
+    },
+    "wavexmd": {
+      "directoryName": "wave",
+      "id": "wavexmd",
+      "inFolder": false,
+      "name": "WaveXmd",
+      "suffix": "xmd"
+    },
+    "webstorebundle": {
+      "directoryName": "webStoreBundles",
+      "id": "webstorebundle",
+      "inFolder": false,
+      "name": "WebStoreBundle",
+      "strictDirectoryName": false,
+      "suffix": "webStoreBundle"
+    },
+    "webstoretemplate": {
+      "directoryName": "webStoreTemplates",
+      "id": "webstoretemplate",
+      "name": "WebStoreTemplate",
+      "strictDirectoryName": false,
+      "suffix": "webStoreTemplate"
+    },
+    "workflow": {
+      "children": {
+        "directories": {
+          "workflowAlerts": "workflowalert",
+          "workflowFieldUpdates": "workflowfieldupdate",
+          "workflowKnowledgePublishs": "workflowknowledgepublish",
+          "workflowOutboundMessages": "workflowoutboundmessage",
+          "workflowRules": "workflowrule",
+          "workflowSends": "workflowsend",
+          "workflowTasks": "workflowtask"
+        },
+        "suffixes": {
+          "workflowAlert": "workflowalert",
+          "workflowFieldUpdate": "workflowfieldupdate",
+          "workflowKnowledgePublish": "workflowknowledgepublish",
+          "workflowOutboundMessage": "workflowoutboundmessage",
+          "workflowRule": "workflowrule",
+          "workflowSend": "workflowsend",
+          "workflowTask": "workflowtask"
+        },
+        "types": {
+          "workflowalert": {
+            "directoryName": "workflowAlerts",
+            "id": "workflowalert",
+            "name": "WorkflowAlert",
+            "suffix": "workflowAlert",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "alerts"
+          },
+          "workflowfieldupdate": {
+            "directoryName": "workflowFieldUpdates",
+            "id": "workflowfieldupdate",
+            "name": "WorkflowFieldUpdate",
+            "suffix": "workflowFieldUpdate",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "fieldUpdates"
+          },
+          "workflowknowledgepublish": {
+            "directoryName": "workflowKnowledgePublishs",
+            "id": "workflowknowledgepublish",
+            "name": "WorkflowKnowledgePublish",
+            "suffix": "workflowKnowledgePublish",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "knowledgePublishes"
+          },
+          "workflowoutboundmessage": {
+            "directoryName": "workflowOutboundMessages",
+            "id": "workflowoutboundmessage",
+            "name": "WorkflowOutboundMessage",
+            "suffix": "workflowOutboundMessage",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "outboundMessages"
+          },
+          "workflowrule": {
+            "directoryName": "workflowRules",
+            "id": "workflowrule",
+            "name": "WorkflowRule",
+            "suffix": "workflowRule",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "rules"
+          },
+          "workflowsend": {
+            "directoryName": "workflowSends",
+            "id": "workflowsend",
+            "name": "WorkflowSend",
+            "suffix": "workflowSend",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "send"
+          },
+          "workflowtask": {
+            "directoryName": "workflowTasks",
+            "id": "workflowtask",
+            "name": "WorkflowTask",
+            "suffix": "workflowTask",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "tasks"
+          }
+        }
+      },
+      "directoryName": "workflows",
+      "id": "workflow",
+      "inFolder": false,
+      "name": "Workflow",
+      "strictDirectoryName": false,
+      "suffix": "workflow",
+      "supportsWildcardAndName": true
+    },
+    "workskillrouting": {
+      "children": {
+        "directories": {
+          "workSkillRoutingAttributes": "workskillroutingattribute"
+        },
+        "suffixes": {
+          "workSkillRoutingAttribute": "workskillroutingattribute"
+        },
+        "types": {
+          "workskillroutingattribute": {
+            "directoryName": "workSkillRoutingAttributes",
+            "id": "workskillroutingattribute",
+            "name": "WorkSkillRoutingAttribute",
+            "suffix": "workSkillRoutingAttribute"
+          }
+        }
+      },
+      "directoryName": "workSkillRoutings",
+      "id": "workskillrouting",
+      "name": "WorkSkillRouting",
+      "strictDirectoryName": false,
+      "suffix": "workSkillRouting"
+    },
+    "xorghub": {
+      "directoryName": "xorghubs",
+      "id": "xorghub",
+      "inFolder": false,
+      "name": "XOrgHub",
+      "suffix": "xorghub"
+    },
+    "stagedefinition": {
+      "id": "stagedefinition",
+      "name": "StageDefinition",
+      "suffix": "stageDefinition",
+      "directoryName": "stageDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    }
+  }
+}

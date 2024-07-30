@@ -70,137 +70,132 @@ export class ComponentSetBuilder {
    * @param options: options for creating a ComponentSet
    */
 
-  // eslint-disable-next-line complexity
   public static async build(options: ComponentSetOptions): Promise<ComponentSet> {
     const logger = Logger.childFromRoot('componentSetBuilder');
     let componentSet: ComponentSet | undefined;
 
-    const { sourcepath, manifest, metadata, packagenames, apiversion, sourceapiversion, org, projectDir } = options;
-    const registryAccess = new RegistryAccess(undefined, projectDir);
+    const { sourcepath, manifest, metadata, packagenames, org } = options;
+    const registry = new RegistryAccess(undefined, options.projectDir);
 
-    try {
-      if (sourcepath) {
-        logger.debug(`Building ComponentSet from sourcepath: ${sourcepath.join(', ')}`);
-        const fsPaths = sourcepath.map(validateAndResolvePath);
-        componentSet = ComponentSet.fromSource({
-          fsPaths,
-          registry: registryAccess,
-        });
+    if (sourcepath) {
+      logger.debug(`Building ComponentSet from sourcepath: ${sourcepath.join(', ')}`);
+      const fsPaths = sourcepath.map(validateAndResolvePath);
+      componentSet = ComponentSet.fromSource({
+        fsPaths,
+        registry,
+      });
+    }
+
+    // Return empty ComponentSet and use packageNames in the connection via `.retrieve` options
+    if (packagenames) {
+      logger.debug(`Building ComponentSet for packagenames: ${packagenames.toString()}`);
+      componentSet ??= new ComponentSet(undefined, registry);
+    }
+
+    // Resolve manifest with source in package directories.
+    if (manifest) {
+      logger.debug(`Building ComponentSet from manifest: ${manifest.manifestPath}`);
+      assertFileExists(manifest.manifestPath);
+
+      logger.debug(`Searching in packageDir: ${manifest.directoryPaths.join(', ')} for matching metadata`);
+      componentSet = await ComponentSet.fromManifest({
+        manifestPath: manifest.manifestPath,
+        resolveSourcePaths: manifest.directoryPaths,
+        forceAddWildcards: true,
+        destructivePre: manifest.destructiveChangesPre,
+        destructivePost: manifest.destructiveChangesPost,
+        registry,
+      });
+    }
+
+    // Resolve metadata entries with source in package directories.
+    if (metadata) {
+      logger.debug(`Building ComponentSet from metadata: ${metadata.metadataEntries.toString()}`);
+      const directoryPaths = metadata.directoryPaths;
+      componentSet ??= new ComponentSet(undefined, registry);
+      const componentSetFilter = new ComponentSet(undefined, registry);
+
+      // Build a Set of metadata entries
+      metadata.metadataEntries
+        .map(entryToTypeAndName(registry))
+        .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry }))
+        .map(addToComponentSet(componentSet))
+        .map(addToComponentSet(componentSetFilter));
+
+      logger.debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
+
+      // add destructive changes if defined. Because these are deletes, all entries
+      // are resolved to SourceComponents
+      if (metadata.destructiveEntriesPre) {
+        metadata.destructiveEntriesPre
+          .map(entryToTypeAndName(registry))
+          .map(assertNoWildcardInDestructiveEntries)
+          .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry }))
+          .map((mdComponent) => new SourceComponent({ type: mdComponent.type, name: mdComponent.fullName }))
+          .map(addToComponentSet(componentSet, DestructiveChangesType.PRE));
+      }
+      if (metadata.destructiveEntriesPost) {
+        metadata.destructiveEntriesPost
+          .map(entryToTypeAndName(registry))
+          .map(assertNoWildcardInDestructiveEntries)
+          .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry }))
+          .map((mdComponent) => new SourceComponent({ type: mdComponent.type, name: mdComponent.fullName }))
+          .map(addToComponentSet(componentSet, DestructiveChangesType.POST));
       }
 
-      // Return empty ComponentSet and use packageNames in the connection via `.retrieve` options
-      if (packagenames) {
-        logger.debug(`Building ComponentSet for packagenames: ${packagenames.toString()}`);
-        componentSet ??= new ComponentSet(undefined, registryAccess);
-      }
+      const resolvedComponents = ComponentSet.fromSource({
+        fsPaths: directoryPaths,
+        include: componentSetFilter,
+        registry,
+      });
 
-      // Resolve manifest with source in package directories.
-      if (manifest) {
-        logger.debug(`Building ComponentSet from manifest: ${manifest.manifestPath}`);
-        assertFileExists(manifest.manifestPath);
+      if (resolvedComponents.forceIgnoredPaths) {
+        // if useFsForceIgnore = true, then we won't be able to resolve a forceignored path,
+        // which we need to do to get the ignored source component
+        const resolver = new MetadataResolver(registry, undefined, false);
 
-        logger.debug(`Searching in packageDir: ${manifest.directoryPaths.join(', ')} for matching metadata`);
-        componentSet = await ComponentSet.fromManifest({
-          manifestPath: manifest.manifestPath,
-          resolveSourcePaths: manifest.directoryPaths,
-          forceAddWildcards: true,
-          destructivePre: manifest.destructiveChangesPre,
-          destructivePost: manifest.destructiveChangesPost,
-          registry: registryAccess,
-        });
-      }
-
-      // Resolve metadata entries with source in package directories.
-      if (metadata) {
-        logger.debug(`Building ComponentSet from metadata: ${metadata.metadataEntries.toString()}`);
-        const directoryPaths = metadata.directoryPaths;
-        componentSet ??= new ComponentSet(undefined, registryAccess);
-        const componentSetFilter = new ComponentSet(undefined, registryAccess);
-
-        // Build a Set of metadata entries
-        metadata.metadataEntries
-          .map(entryToTypeAndName(registryAccess))
-          .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry: registryAccess }))
-          .map(addToComponentSet(componentSet))
-          .map(addToComponentSet(componentSetFilter));
-
-        logger.debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
-
-        // add destructive changes if defined. Because these are deletes, all entries
-        // are resolved to SourceComponents
-        if (metadata.destructiveEntriesPre) {
-          metadata.destructiveEntriesPre
-            .map(entryToTypeAndName(registryAccess))
-            .map(assertNoWildcardInDestructiveEntries)
-            .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry: registryAccess }))
-            .map((mdComponent) => new SourceComponent({ type: mdComponent.type, name: mdComponent.fullName }))
-            .map(addToComponentSet(componentSet, DestructiveChangesType.PRE));
+        for (const ignoredPath of resolvedComponents.forceIgnoredPaths ?? []) {
+          resolver.getComponentsFromPath(ignoredPath).map((ignored) => {
+            componentSet = componentSet?.filter(
+              (resolved) => !(resolved.fullName === ignored.name && resolved.type === ignored.type)
+            );
+          });
         }
-        if (metadata.destructiveEntriesPost) {
-          metadata.destructiveEntriesPost
-            .map(entryToTypeAndName(registryAccess))
-            .map(assertNoWildcardInDestructiveEntries)
-            .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry: registryAccess }))
-            .map((mdComponent) => new SourceComponent({ type: mdComponent.type, name: mdComponent.fullName }))
-            .map(addToComponentSet(componentSet, DestructiveChangesType.POST));
-        }
-
-        const resolvedComponents = ComponentSet.fromSource({
-          fsPaths: directoryPaths,
-          include: componentSetFilter,
-          registry: registryAccess,
-        });
-
-        if (resolvedComponents.forceIgnoredPaths) {
-          // if useFsForceIgnore = true, then we won't be able to resolve a forceignored path,
-          // which we need to do to get the ignored source component
-          const resolver = new MetadataResolver(registryAccess, undefined, false);
-
-          for (const ignoredPath of resolvedComponents.forceIgnoredPaths ?? []) {
-            resolver.getComponentsFromPath(ignoredPath).map((ignored) => {
-              componentSet = componentSet?.filter(
-                (resolved) => !(resolved.fullName === ignored.name && resolved.type === ignored.type)
-              );
-            });
-          }
-          componentSet.forceIgnoredPaths = resolvedComponents.forceIgnoredPaths;
-        }
-
-        resolvedComponents.toArray().map(addToComponentSet(componentSet));
+        componentSet.forceIgnoredPaths = resolvedComponents.forceIgnoredPaths;
       }
 
-      // Resolve metadata entries with an org connection
-      if (org) {
-        componentSet ??= new ComponentSet(undefined, registryAccess);
+      resolvedComponents.toArray().map(addToComponentSet(componentSet));
+    }
 
-        logger.debug(
-          `Building ComponentSet from targetUsername: ${org.username} ${
-            metadata ? `filtered by metadata: ${metadata.metadataEntries.toString()}` : ''
-          }`
-        );
+    // Resolve metadata entries with an org connection
+    if (org) {
+      componentSet ??= new ComponentSet(undefined, registry);
 
-        const mdMap = metadata
-          ? buildMapFromComponents(metadata.metadataEntries.map(entryToTypeAndName(registryAccess)))
-          : (new Map() as MetadataMap);
+      logger.debug(
+        `Building ComponentSet from targetUsername: ${org.username} ${
+          metadata ? `filtered by metadata: ${metadata.metadataEntries.toString()}` : ''
+        }`
+      );
 
-        const fromConnection = await ComponentSet.fromConnection({
-          usernameOrConnection: (await StateAggregator.getInstance()).aliases.getUsername(org.username) ?? org.username,
-          componentFilter: getOrgComponentFilter(org, mdMap, metadata),
-          metadataTypes: mdMap.size ? Array.from(mdMap.keys()) : undefined,
-          registry: registryAccess,
-        });
+      const mdMap = metadata
+        ? buildMapFromComponents(metadata.metadataEntries.map(entryToTypeAndName(registry)))
+        : (new Map() as MetadataMap);
 
-        fromConnection.toArray().map(addToComponentSet(componentSet));
-      }
-    } catch (e) {
-      return componentSetBuilderErrorHandler(e);
+      const fromConnection = await ComponentSet.fromConnection({
+        usernameOrConnection: (await StateAggregator.getInstance()).aliases.getUsername(org.username) ?? org.username,
+        componentFilter: getOrgComponentFilter(org, mdMap, metadata),
+        metadataTypes: mdMap.size ? Array.from(mdMap.keys()) : undefined,
+        registry,
+      });
+
+      fromConnection.toArray().map(addToComponentSet(componentSet));
     }
 
     // there should have been a componentSet created by this point.
     componentSet = assertComponentSetIsNotUndefined(componentSet);
-    componentSet.apiVersion ??= apiversion;
-    componentSet.sourceApiVersion ??= sourceapiversion;
-    componentSet.projectDirectory = projectDir;
+    componentSet.apiVersion ??= options.apiversion;
+    componentSet.sourceApiVersion ??= options.sourceapiversion;
+    componentSet.projectDirectory = options.projectDir;
 
     logComponents(logger, componentSet);
     return componentSet;
@@ -213,17 +208,6 @@ const addToComponentSet =
     cs.add(cmp, deletionType);
     return cmp;
   };
-
-const componentSetBuilderErrorHandler = (e: unknown): never => {
-  if (e instanceof Error && e.message.includes('Missing metadata type definition in registry for id')) {
-    // to remain generic to catch missing metadata types regardless of parameters, split on '
-    // example message : Missing metadata type definition in registry for id 'NonExistentType'
-    const issueType = e.message.split("'")[1];
-    throw new SfError(`The specified metadata type is unsupported: [${issueType}]`);
-  } else {
-    throw e;
-  }
-};
 
 const validateAndResolvePath = (filepath: string): string => path.resolve(assertFileExists(filepath));
 

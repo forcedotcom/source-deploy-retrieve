@@ -76,7 +76,7 @@ export class MetadataResolver {
       return components;
     }
 
-    for (const fsPath of this.tree.readDirectory(dir).map(fnJoin(dir))) {
+    for (const fsPath of this.tree.readDirectory(dir).map(fnJoin(dir)).reverse()) {
       if (ignore.has(fsPath)) {
         continue;
       }

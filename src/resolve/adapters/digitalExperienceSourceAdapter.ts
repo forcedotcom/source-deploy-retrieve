@@ -67,7 +67,7 @@ export const getDigitalExperienceComponent: MaybeGetComponent =
   ({ path, type }) => {
     // if it's an empty directory, don't include it (e.g., lwc/emptyLWC)
     if (context.tree.isEmptyDirectory(path)) return;
-    const componentRoot = isBundleType(type) ? path : trimNonBundlePathToContentPath(path);
+    const componentRoot = typeIsDEB(type) ? path : trimNonBundlePathToContentPath(path);
     const rootMeta = context.tree.find('metadataXml', basename(componentRoot), componentRoot);
     const rootMetaXml = rootMeta
       ? parseAsRootMetadataXml(type)(rootMeta)
@@ -96,7 +96,7 @@ const getBundleMetadataXmlPath =
   (registry: RegistryAccess) =>
   (type: MetadataType) =>
   (path: string): string => {
-    if (isBundleType(type) && path.endsWith(META_XML_SUFFIX)) {
+    if (typeIsDEB(type) && path.endsWith(META_XML_SUFFIX)) {
       // if this is the bundle type and it ends with -meta.xml, then this is the bundle metadata xml path
       return path;
     }
@@ -105,11 +105,12 @@ const getBundleMetadataXmlPath =
     // 3 because we want 'digitalExperiences' directory, 'baseType' directory and 'bundleName' directory
     const basePath = pathParts.slice(0, typeFolderIndex + 3).join(sep);
     const bundleFileName = pathParts[typeFolderIndex + 2];
-    const suffix = ensureString(isBundleType(type) ? type.suffix : registry.getParentType(type.id)?.suffix);
+    const suffix = ensureString(typeIsDEB(type) ? type.suffix : registry.getParentType(type.id)?.suffix);
     return `${basePath}${sep}${bundleFileName}.${suffix}${META_XML_SUFFIX}`;
   };
 
-const isBundleType = (type: MetadataType): boolean => type.id === 'digitalexperiencebundle';
+/** the type is DEB and not one of its children */
+const typeIsDEB = (type: MetadataType): boolean => type.id === 'digitalexperiencebundle';
 
 const trimNonBundlePathToContentPath = (path: string): string => {
   const pathToContent = dirname(path);
@@ -129,7 +130,7 @@ const trimNonBundlePathToContentPath = (path: string): string => {
 };
 
 const populate: Populate = (context) => (type) => (path, component) => {
-  if (isBundleType(type) && component) {
+  if (typeIsDEB(type) && component) {
     // for top level types we don't need to resolve parent
     return component;
   }

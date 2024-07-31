@@ -647,10 +647,7 @@ describe('MetadataResolver', () => {
             ],
           },
         ]);
-        expect(access.getComponentsFromPath(DECOMPOSED_PATH)).to.deep.equal([
-          DECOMPOSED_CHILD_COMPONENT_1,
-          DECOMPOSED_COMPONENT,
-        ]);
+        expect(access.getComponentsFromPath(DECOMPOSED_PATH)).to.deep.equal([DECOMPOSED_COMPONENT]);
       });
 
       it('should return expected child SourceComponent when given a subdirectory of a folderPerType component', () => {

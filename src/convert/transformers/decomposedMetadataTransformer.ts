@@ -49,7 +49,8 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       };
       if (component.xml && existing.component && !existing.component.xml) {
         // we've already found and created the parent of this component on L~38
-        // but now we have more information about the parent that we didn't have before, so add it
+        // but now we have more information about the parent (xml) that we didn't have before, so add it
+        // TODO: find way to determine which component has more information
         existing.component = component;
       }
       (component.getChildren() ?? []).map((child) => {

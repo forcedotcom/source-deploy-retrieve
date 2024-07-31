@@ -165,9 +165,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
 
     const connection = await this.getConnection();
 
-    // jsforce has an <any> on this
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,no-underscore-dangle
-    await connection.metadata._invoke('cancelDeploy', { id: this.id });
+    await connection.metadata.cancelDeploy(this.id);
   }
 
   protected async pre(): Promise<AsyncResult> {

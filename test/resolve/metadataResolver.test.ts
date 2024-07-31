@@ -784,7 +784,7 @@ describe('MetadataResolver', () => {
         expect(result).to.deep.equal([xmlInFolder.COMPONENTS[0]]);
       });
 
-      it.skip('should resolve child components when present in filter', () => {
+      it('should resolve child components when present in filter', () => {
         const resolver = testUtil.createMetadataResolver(decomposedtoplevel.DECOMPOSED_VIRTUAL_FS);
         const children = decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT.getChildren();
         const componentMappings = children.map((c: SourceComponent) => ({

@@ -39,5 +39,5 @@ export const getBundleComponent: MaybeGetComponent =
     const rootMeta = context.tree.find('metadataXml', basename(componentRoot), componentRoot);
     const rootMetaXml = rootMeta ? parseAsRootMetadataXml(type)(rootMeta) : ensure(parseMetadataXml(path));
     const sourceComponent = getComponent(context)({ type, path, metadataXml: rootMetaXml });
-    return populateMixedContent(context)(type)(path, sourceComponent);
+    return populateMixedContent(context)(type)(componentRoot)(path, sourceComponent);
   };

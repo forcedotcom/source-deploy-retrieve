@@ -47,7 +47,7 @@ export const getMixedContentComponent: GetComponent =
     const rootMeta = findMetadataFromContent(context.tree)(type)(path);
     const rootMetaXml = rootMeta ? parseAsRootMetadataXml(type)(rootMeta) : parseMetadataXml(path);
     const sourceComponent = getComponent(context)({ type, path, metadataXml: rootMetaXml });
-    return populateMixedContent(context)(type)(path, sourceComponent);
+    return populateMixedContent(context)(type)()(path, sourceComponent);
   };
 
 /**
@@ -72,8 +72,9 @@ const findMetadataFromContent =
 export const populateMixedContent =
   (context: AdapterContext) =>
   (type: MetadataType) =>
+  (trimmedPathInput?: string) =>
   (path: SourcePath, component?: SourceComponent): SourceComponent => {
-    const trimmedPath = trimPathToContent(type)(path);
+    const trimmedPath = trimmedPathInput ?? trimPathToContent(type)(path);
     const contentPath =
       trimmedPath === component?.xml
         ? context.tree.find('content', baseName(trimmedPath), dirname(trimmedPath))

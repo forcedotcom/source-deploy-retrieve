@@ -4,23 +4,28 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { dirname, sep, basename } from 'node:path';
+import { dirname, sep } from 'node:path';
 import { Messages } from '@salesforce/core';
-import { ensure } from '@salesforce/ts-types';
-import { ensureString } from '@salesforce/ts-types';
+import { ensure, ensureString } from '@salesforce/ts-types';
+import { SourcePath } from '../../common';
 import type { RegistryAccess } from '../../registry/registryAccess';
 import { MetadataType } from '../../registry/types';
 import { META_XML_SUFFIX } from '../../common/constants';
-import { SourcePath } from '../../common/types';
+// import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
-import { MetadataXml } from '../types';
+// import { MetadataXml } from '../types';
 import { baseName, parentName, parseMetadataXml } from '../../utils/path';
-import { getComponent, parseAsRootMetadataXml } from './baseSourceAdapter';
+import { MetadataXml } from '../types';
+import { getComponent } from './baseSourceAdapter';
 import { MaybeGetComponent, Populate } from './types';
 import { populateMixedContent } from './mixedContentSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
+
+// Bundle hierarchy baseType/spaceApiName/contentType/contentApiName/variantFolders/file
+const DEB_WITH_VARIANTS_DEPTH = 5;
+
 /**
  * Source Adapter for DigitalExperience metadata types. This metadata type is a bundled type of the format
  *
@@ -66,12 +71,11 @@ export const getDigitalExperienceComponent: MaybeGetComponent =
   (context) =>
   ({ path, type }) => {
     // if it's an empty directory, don't include it (e.g., lwc/emptyLWC)
+    // TODO: should there be empty things in DEB?
     if (context.tree.isEmptyDirectory(path)) return;
-    const componentRoot = typeIsDEB(type) ? path : trimNonBundlePathToContentPath(path);
-    const rootMeta = context.tree.find('metadataXml', basename(componentRoot), componentRoot);
-    const rootMetaXml = rootMeta
-      ? parseAsRootMetadataXml(type)(rootMeta)
-      : ensure(parseMetadataXmlForDEB(context.registry)(type)(path));
+
+    const metaFilePath = getBundleMetadataXmlPath(context.registry)(type)(path);
+    const rootMetaXml = ensure(parseMetadataXmlForDEB(context.registry)(type)(metaFilePath));
     const sourceComponent = getComponent(context)({ type, path, metadataXml: rootMetaXml });
     return populate(context)(type)(path, sourceComponent);
   };
@@ -81,6 +85,7 @@ const parseMetadataXmlForDEB =
   (type: MetadataType) =>
   (path: SourcePath): MetadataXml | undefined => {
     const xml = parseMetadataXml(path);
+
     if (xml) {
       return {
         fullName: getBundleName(getBundleMetadataXmlPath(registry)(type)(path)),
@@ -92,6 +97,7 @@ const parseMetadataXmlForDEB =
 
 const getBundleName = (bundlePath: string): string => `${parentName(dirname(bundlePath))}/${parentName(bundlePath)}`;
 
+/** for anything inside DEB, return the bundle's xml path */
 const getBundleMetadataXmlPath =
   (registry: RegistryAccess) =>
   (type: MetadataType) =>
@@ -112,16 +118,16 @@ const getBundleMetadataXmlPath =
 /** the type is DEB and not one of its children */
 const typeIsDEB = (type: MetadataType): boolean => type.id === 'digitalexperiencebundle';
 
-const trimNonBundlePathToContentPath = (path: string): string => {
+export const trimToContentPath = (path: string): string => {
   const pathToContent = dirname(path);
   const parts = pathToContent.split(sep);
   /* Handle mobile or tablet variants.Eg- digitalExperiences/site/lwr11/sfdc_cms__view/home/mobile/mobile.json
      Go back to one level in that case
-     Bundle hierarchy baseType/spaceApiName/contentType/contentApiName/variantFolders/file */
+     Bundle hierarchy baseType/spaceApiName/contentType/contentApiName/variantFolders/file*/
   const digitalExperiencesIndex = parts.indexOf('digitalExperiences');
   if (digitalExperiencesIndex > -1) {
     const depth = parts.length - digitalExperiencesIndex - 1;
-    if (depth === digitalExperienceBundleWithVariantsDepth) {
+    if (depth === DEB_WITH_VARIANTS_DEPTH) {
       parts.pop();
       return parts.join(sep);
     }
@@ -130,11 +136,13 @@ const trimNonBundlePathToContentPath = (path: string): string => {
 };
 
 const populate: Populate = (context) => (type) => (path, component) => {
-  if (typeIsDEB(type) && component) {
+  if (typeIsDEB(type)) {
     // for top level types we don't need to resolve parent
     return component;
   }
-  const source = populateMixedContent(context)(type)(path, component);
+  const trimmedPath = trimToContentPath(path);
+  const source = populateMixedContent(context)(type)(trimmedPath)(path, component);
+
   const parentType = context.registry.getParentType(type.id);
   // we expect source, parentType and content to be defined.
   if (!source || !parentType || !source.content) {
@@ -168,6 +176,3 @@ const populate: Populate = (context) => (type) => (path, component) => {
  * @returns name of type/apiName format
  */
 const calculateNameFromPath = (contentPath: string): string => `${parentName(contentPath)}/${baseName(contentPath)}`;
-
-// Bundle hierarchy baseType/spaceApiName/contentType/contentApiName/variantFolders/file
-const digitalExperienceBundleWithVariantsDepth = 5;

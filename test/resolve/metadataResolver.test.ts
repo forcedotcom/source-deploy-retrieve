@@ -45,7 +45,6 @@ import {
 } from '../mock/type-constants/staticresourceConstant';
 import { META_XML_SUFFIX } from '../../src/common';
 import { DE_METAFILE } from '../mock/type-constants/digitalExperienceBundleConstants';
-import { DECOMPOSED_TOP_LEVEL_XML_NAMES } from '../mock/type-constants/customObjectTranslationConstant';
 import { RegistryTestUtil } from './registryTestUtil';
 
 const testUtil = new RegistryTestUtil();
@@ -637,7 +636,7 @@ describe('MetadataResolver', () => {
         expect(access.getComponentsFromPath(MIXED_CONTENT_DIRECTORY_DIR)).to.deep.equal([component]);
       });
 
-      it('should NOT stop resolution if parent component is resolved', () => {
+      it('should stop resolution if parent component is resolved', () => {
         const access = testUtil.createMetadataResolver(DECOMPOSED_VIRTUAL_FS);
         testUtil.stubAdapters([
           {
@@ -819,7 +818,7 @@ describe('MetadataResolver', () => {
 
         const result = resolver.getComponentsFromPath(decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT_PATH, filter);
 
-        expect(result).to.have.deep.members([DECOMPOSED_TOP_LEVEL_XML_NAMES[0], ...children]);
+        expect(result).to.have.deep.members(children);
       });
 
       it('should resolve directory component if in filter', () => {

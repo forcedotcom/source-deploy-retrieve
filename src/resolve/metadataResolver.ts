@@ -63,6 +63,7 @@ export class MetadataResolver {
     return component ? [component] : [];
   }
 
+  // eslint-disable-next-line complexity
   private getComponentsFromPathRecursive(dir: string, inclusiveFilter?: ComponentSet): SourceComponent[] {
     const dirQueue: string[] = [];
     const components: SourceComponent[] = [];
@@ -76,7 +77,21 @@ export class MetadataResolver {
       return components;
     }
 
-    for (const fsPath of this.tree.readDirectory(dir).map(fnJoin(dir)).reverse()) {
+    const paths = this.tree
+      .readDirectory(dir)
+      .map(fnJoin(dir))
+      // this method isn't truly recursive, we need to sort directories before files so we look as far down as possible
+      // before finding the parent and returning only it
+      .sort((a, b) => {
+        if (this.tree.isDirectory(a) && this.tree.isDirectory(b)) {
+          return 0;
+        } else if (this.tree.isDirectory(a) && !this.tree.isDirectory(b)) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+    for (const fsPath of paths) {
       if (ignore.has(fsPath)) {
         continue;
       }
@@ -104,11 +119,14 @@ export class MetadataResolver {
               }
             }
           }
-          // don't traverse further if not in a root type directory. performance optimization
+          // don't traverse further if not in a root type directory AND we've searched all file paths. performance optimization
           // for mixed content types and ensures we don't add duplicates of the component.
           const typeDir = basename(dirname(component.type.inFolder ? dirname(fsPath) : fsPath));
-          if (component.type.strictDirectoryName && typeDir !== component.type.directoryName) {
+          if (component.type.strictDirectoryName && typeDir !== component.type.directoryName && dirQueue.length === 0) {
             return components;
+          } else if (component.type.strictDirectoryName && typeDir !== component.type.directoryName) {
+            // we found the parent, but still have more dirs to look through
+            break;
           }
         }
       }

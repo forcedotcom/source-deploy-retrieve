@@ -43,7 +43,7 @@ export const getMatchingContentComponent: GetComponent =
   };
 
 const findRootMetadata: FindRootMetadata = (type, path) => {
-  const pathAsRoot = parseAsRootMetadataXml(type)(path);
+  const pathAsRoot = parseAsRootMetadataXml({ type, path });
   if (pathAsRoot) {
     return pathAsRoot;
   }

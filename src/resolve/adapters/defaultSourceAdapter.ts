@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { getComponent as baseGetComponent } from './baseSourceAdapter';
+import { getComponent } from './baseSourceAdapter';
 
 /**
  * The default source adapter. Handles simple types with no additional content.
@@ -20,4 +20,4 @@ import { getComponent as baseGetComponent } from './baseSourceAdapter';
  * ├── bar.ext-meta.xml
  *```
  */
-export const getDefaultComponent = baseGetComponent;
+export const getDefaultComponent = getComponent;

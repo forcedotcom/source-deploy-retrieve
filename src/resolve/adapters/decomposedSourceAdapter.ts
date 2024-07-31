@@ -48,7 +48,7 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 export const getDecomposedComponent: MaybeGetComponent =
   (context) =>
   ({ type, path }) => {
-    let rootMetadata = parseAsRootMetadataXml(type)(path);
+    let rootMetadata = parseAsRootMetadataXml({ type, path });
 
     if (!rootMetadata) {
       const componentRoot = trimPathToContent(type)(path);

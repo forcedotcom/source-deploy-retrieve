@@ -230,7 +230,7 @@ The resolver constructs components based on the rules of such a pattern. It take
 
 1. Determine the associated type by parsing the file suffix. Utilize the registry indexes to determine a type
 2. If the type has a source adapter assigned to it, construct the associated adapter. Otherwise use the default one
-3. Call the adapter’s `getComponent()` method to construct the source component
+3. Call the adapter function to construct the source component
 
 📝 _CAREFULLY_ _consider whether new adapters need to be added. Ideally, we should never have to add another one and new types should follow existing conventions to reduce maintenance burden._
 
@@ -293,8 +293,8 @@ layouts/
 
 ### The `bundleSourceAdapter`
 
-Like the name suggests, this adapter handles bundle types, so `AuraDefinitionBundles`, `LightningWebComponents`. A bundle component has all its source files, including the root metadata xml, contained in its own directory.
-
+Like the name suggests, this adapter handles bundle types, so `AuraDefinitionBundles`, `LightningWebComponents`. A bundle component has all its source files contained in its own directory.
+Most bundle types have a root metadata xml, but it's not required (ex: WaveTemplateBundle) and it might not be an xml file (ExperiencePropertyTypeBundle)
 **Example Structure**:
 
 ```text

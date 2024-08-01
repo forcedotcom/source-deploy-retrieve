@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, sep } from 'node:path';
-import { Messages, SfError } from '@salesforce/core';
+import { Lifecycle, Messages, SfError } from '@salesforce/core';
 import { ensureString } from '@salesforce/ts-types';
 import { MetadataXml } from '../types';
 import { parseMetadataXml, parseNestedFullName } from '../../utils/path';
@@ -13,7 +13,7 @@ import { SourceComponent } from '../sourceComponent';
 import { SourcePath } from '../../common/types';
 import { MetadataType } from '../../registry/types';
 import { RegistryAccess, typeAllowsMetadataWithContent } from '../../registry/registryAccess';
-import { FindRootMetadata, GetComponent } from './types';
+import { FindRootMetadata, MaybeGetComponent } from './types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -76,17 +76,16 @@ export const trimPathToContent =
     return pathParts.slice(0, typeFolderIndex + offset).join(sep);
   };
 
-export const getComponent: GetComponent =
+export const getComponent: MaybeGetComponent =
   (context) =>
   ({ type, path, metadataXml: findRootMetadata = defaultFindRootMetadata }) => {
     // find rootMetadata
     const metadataXml = typeof findRootMetadata === 'function' ? findRootMetadata(type, path) : findRootMetadata;
     if (!metadataXml) {
-      throw SfError.create({
-        message: messages.getMessage('error_parsing_xml', [path, type.name]),
-        name: 'MissingXml',
-      });
+      void Lifecycle.getInstance().emitWarning(messages.getMessage('error_parsing_xml', [path, type.name]));
+      return;
     }
+
     if (context.forceIgnore?.denies(metadataXml.path)) {
       throw SfError.create({
         message: messages.getMessage('error_no_metadata_xml_ignore', [metadataXml.path, path]),

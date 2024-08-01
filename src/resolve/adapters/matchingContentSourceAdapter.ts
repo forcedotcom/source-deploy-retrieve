@@ -38,7 +38,7 @@ const removeMetaXmlSuffix = (fsPath: SourcePath): SourcePath => fsPath.slice(0, 
 export const getMatchingContentComponent: GetComponent =
   (context) =>
   ({ type, path }) => {
-    const sourceComponent = getComponent(context)({ type, path, metadataXml: findRootMetadata });
+    const sourceComponent = ensure(getComponent(context)({ type, path, metadataXml: findRootMetadata }));
     return populate(context)(type)(path, sourceComponent);
   };
 

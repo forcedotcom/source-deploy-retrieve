@@ -81,7 +81,7 @@ export const getDigitalExperienceComponent: MaybeGetComponent =
       ? ensure(parseMetadataXmlForDEB(context.registry)(type)(metaFilePath))
       : ({ path: metaFilePath, fullName: 'foo' } satisfies MetadataXml);
     const sourceComponent = getComponent(context)({ type, path, metadataXml: rootMetaXml });
-    return populate(context)(type)(path, sourceComponent);
+    return sourceComponent ? populate(context)(type)(path, sourceComponent) : undefined;
   };
 
 const getNonDEBRoot = (type: MetadataType, path: SourcePath): SourcePath => {

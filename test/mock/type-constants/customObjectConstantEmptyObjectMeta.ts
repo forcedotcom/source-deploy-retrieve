@@ -4,11 +4,23 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join } from 'node:path';
 import { assert } from 'chai';
 import { baseName } from '../../../src/utils';
 import { registry, SourceComponent, VirtualDirectory } from '../../../src';
 import { XML_NS_URL } from '../../../src/common';
+import {
+  DECOMPOSED_CHILD_DIR_1_PATH,
+  DECOMPOSED_CHILD_DIR,
+  DECOMPOSED_CHILD_DIR_1,
+  DECOMPOSED_CHILD_DIR_PATH,
+  DECOMPOSED_CHILD_XML_NAME_2,
+  DECOMPOSED_PATH,
+  DECOMPOSED_XML_PATH,
+  DECOMPOSED_CHILD_XML_PATH_1,
+  DECOMPOSED_XML_NAME,
+  DECOMPOSED_CHILD_XML_PATH_2,
+  DECOMPOSED_CHILD_XML_NAME_1,
+} from './customObjectConstant';
 
 // Constants for a decomposed type
 const type = registry.types.customobject;
@@ -16,29 +28,13 @@ const type = registry.types.customobject;
 assert(type.children?.types.validationrule);
 assert(type.children.types.customfield);
 
-export const DECOMPOSEDS_PATH = join('path', 'to', 'objects');
-export const DECOMPOSED_PATH = join(DECOMPOSEDS_PATH, 'customObject__c');
-export const DECOMPOSED_XML_NAME = 'customObject__c.object-meta.xml';
-export const DECOMPOSED_XML_PATH = join(DECOMPOSED_PATH, DECOMPOSED_XML_NAME);
-
-export const DECOMPOSED_CHILD_DIR = 'validationRules';
-export const DECOMPOSED_CHILD_DIR_1 = 'fields';
-
-export const DECOMPOSED_CHILD_DIR_PATH = join(DECOMPOSED_PATH, DECOMPOSED_CHILD_DIR);
-export const DECOMPOSED_CHILD_DIR_1_PATH = join(DECOMPOSED_PATH, DECOMPOSED_CHILD_DIR_1);
-
-export const DECOMPOSED_CHILD_XML_NAME_2 = 'myValidationRule.validationRule-meta.xml';
-export const DECOMPOSED_CHILD_XML_PATH_2 = join(DECOMPOSED_CHILD_DIR_PATH, DECOMPOSED_CHILD_XML_NAME_2);
-
-export const DECOMPOSED_CHILD_XML_NAME_1 = 'Fields__c.field-meta.xml';
-export const DECOMPOSED_CHILD_XML_PATH_1 = join(DECOMPOSED_CHILD_DIR_1_PATH, DECOMPOSED_CHILD_XML_NAME_1);
-export const DECOMPOSED_VIRTUAL_FS: VirtualDirectory[] = [
+export const DECOMPOSED_VIRTUAL_FS_EMPTY: VirtualDirectory[] = [
   {
     dirPath: DECOMPOSED_PATH,
     children: [
       {
         name: DECOMPOSED_XML_NAME,
-        data: Buffer.from(`<CustomObject xmlns="${XML_NS_URL}"><fullName>customObject__c</fullName></CustomObject>`),
+        data: Buffer.from(`<CustomObject xmlns="${XML_NS_URL}"></CustomObject>`),
       },
 
       DECOMPOSED_CHILD_DIR,
@@ -64,31 +60,32 @@ export const DECOMPOSED_VIRTUAL_FS: VirtualDirectory[] = [
     ],
   },
 ];
-export const DECOMPOSED_COMPONENT = SourceComponent.createVirtualComponent(
+export const DECOMPOSED_COMPONENT_EMPTY = SourceComponent.createVirtualComponent(
   {
     name: baseName(DECOMPOSED_XML_PATH),
     type,
     xml: DECOMPOSED_XML_PATH,
     content: DECOMPOSED_PATH,
   },
-  DECOMPOSED_VIRTUAL_FS
+  DECOMPOSED_VIRTUAL_FS_EMPTY
 );
 
-export const DECOMPOSED_CHILD_COMPONENT_1 = SourceComponent.createVirtualComponent(
+export const DECOMPOSED_CHILD_COMPONENT_1_EMPTY = SourceComponent.createVirtualComponent(
   {
     name: baseName(DECOMPOSED_CHILD_XML_NAME_1),
     type: type.children.types.customfield,
     xml: DECOMPOSED_CHILD_XML_PATH_1,
-    parent: DECOMPOSED_COMPONENT,
+    parent: DECOMPOSED_COMPONENT_EMPTY,
   },
-  DECOMPOSED_VIRTUAL_FS
+  DECOMPOSED_VIRTUAL_FS_EMPTY
 );
-export const DECOMPOSED_CHILD_COMPONENT_2 = SourceComponent.createVirtualComponent(
+
+export const DECOMPOSED_CHILD_COMPONENT_2_EMPTY = SourceComponent.createVirtualComponent(
   {
     name: baseName(DECOMPOSED_CHILD_XML_NAME_2),
     type: type.children.types.validationrule,
     xml: DECOMPOSED_CHILD_XML_PATH_2,
-    parent: DECOMPOSED_COMPONENT,
+    parent: DECOMPOSED_COMPONENT_EMPTY,
   },
-  DECOMPOSED_VIRTUAL_FS
+  DECOMPOSED_VIRTUAL_FS_EMPTY
 );

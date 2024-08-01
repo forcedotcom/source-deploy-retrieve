@@ -11,6 +11,11 @@ import { assert, expect } from 'chai';
 import { SinonStub } from 'sinon';
 import { AuthInfo, ConfigAggregator, Connection, Lifecycle, Messages, SfProject } from '@salesforce/core';
 import {
+  DECOMPOSED_CHILD_COMPONENT_1_EMPTY,
+  DECOMPOSED_CHILD_COMPONENT_2_EMPTY,
+  DECOMPOSED_COMPONENT_EMPTY,
+} from '../mock/type-constants/customObjectConstantEmptyObjectMeta';
+import {
   ComponentSet,
   ComponentSetBuilder,
   ConnectionResolver,
@@ -972,6 +977,26 @@ describe('ComponentSet', () => {
         {
           name: 'CustomField',
           members: ['MyParent__c.Child__c'],
+        },
+      ]);
+    });
+
+    it('omits empty parents from the package manifest', async () => {
+      const set = new ComponentSet([
+        DECOMPOSED_CHILD_COMPONENT_1_EMPTY,
+        DECOMPOSED_CHILD_COMPONENT_2_EMPTY,
+        DECOMPOSED_COMPONENT_EMPTY,
+      ]);
+      const types = (await set.getObject()).Package.types;
+      expect(types.map((type) => type.name)).to.not.include(DECOMPOSED_COMPONENT_EMPTY.type.name);
+      expect((await set.getObject()).Package.types).to.deep.equal([
+        {
+          name: DECOMPOSED_CHILD_COMPONENT_1_EMPTY.type.name,
+          members: [DECOMPOSED_CHILD_COMPONENT_1_EMPTY.fullName],
+        },
+        {
+          name: DECOMPOSED_CHILD_COMPONENT_2_EMPTY.type.name,
+          members: [DECOMPOSED_CHILD_COMPONENT_2_EMPTY.fullName],
         },
       ]);
     });

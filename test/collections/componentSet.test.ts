@@ -471,7 +471,7 @@ describe('ComponentSet', () => {
         const missingIndex = expected.findIndex((c) => c.fullName === 'c');
         expected.splice(missingIndex, 1);
 
-        expect(result).to.have.deep.members(expected);
+        expect(result).to.deep.equal(expected);
       });
 
       it('should resolve wildcard members by default', async () => {

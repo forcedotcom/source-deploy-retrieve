@@ -287,7 +287,7 @@ describe('MetadataResolver', () => {
             allowContent: false,
           },
         ]);
-        expect(access.getComponentsFromPath(path)).to.have.deep.members(xmlInFolder.COMPONENTS);
+        expect(access.getComponentsFromPath(path)).to.deep.equal(xmlInFolder.COMPONENTS);
       });
 
       it('Should determine type for folder files', () => {
@@ -453,9 +453,7 @@ describe('MetadataResolver', () => {
             componentMappings,
           },
         ]);
-        expect(resolver.getComponentsFromPath(xmlInFolder.COMPONENT_FOLDER_PATH)).to.have.deep.members(
-          xmlInFolder.COMPONENTS
-        );
+        expect(resolver.getComponentsFromPath(xmlInFolder.COMPONENT_FOLDER_PATH)).to.deep.equal(xmlInFolder.COMPONENTS);
       });
 
       it('Should walk all file and directory children', () => {
@@ -523,7 +521,7 @@ describe('MetadataResolver', () => {
             ],
           },
         ]);
-        expect(access.getComponentsFromPath(apexDir)).to.have.deep.members([
+        expect(access.getComponentsFromPath(apexDir)).to.deep.equal([
           matchingContentFile.COMPONENT,
           reportComponent,
           apexComponentB,
@@ -552,7 +550,7 @@ describe('MetadataResolver', () => {
             ],
           },
         ]);
-        expect(access.getComponentsFromPath(mixedContentInFolder.COMPONENT_FOLDER_PATH)).to.have.deep.members([
+        expect(access.getComponentsFromPath(mixedContentInFolder.COMPONENT_FOLDER_PATH)).to.deep.equal([
           mixedContentInFolder.COMPONENTS[0],
           mixedContentInFolder.COMPONENTS[1],
         ]);
@@ -815,7 +813,7 @@ describe('MetadataResolver', () => {
 
         const result = resolver.getComponentsFromPath(decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT_PATH, filter);
 
-        expect(result).to.have.deep.members(children);
+        expect(result).to.deep.equal(children);
       });
 
       it('should resolve directory component if in filter', () => {

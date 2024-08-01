@@ -244,7 +244,7 @@ describe('SourceComponent', () => {
     });
 
     it('should preserve leading zeroes in node values', async () => {
-      const component = COMPONENT;
+      const component = new SourceComponent(COMPONENT);
       env
         .stub(component.tree, 'readFile')
         .resolves(Buffer.from('<MatchingContentFile><test>001</test></MatchingContentFile>'));
@@ -260,7 +260,7 @@ describe('SourceComponent', () => {
     });
 
     it('should parse cdata node values', async () => {
-      const component = COMPONENT;
+      const component = new SourceComponent(COMPONENT);
       env
         .stub(component.tree, 'readFile')
         .resolves(Buffer.from('<MatchingContentFile><test><![CDATA[<p>Hello</p>]]></test></MatchingContentFile>'));
@@ -276,7 +276,7 @@ describe('SourceComponent', () => {
     });
 
     it('should parse attributes of nodes', async () => {
-      const component = COMPONENT;
+      const component = new SourceComponent(COMPONENT);
       env
         .stub(component.tree, 'readFile')
         .resolves(Buffer.from('<MatchingContentFile a="test"><test>something</test></MatchingContentFile>'));

@@ -53,6 +53,7 @@ export class SourceComponent implements MetadataComponent {
   private readonly forceIgnore: ForceIgnore;
   private markedForDelete = false;
   private destructiveChangesType?: DestructiveChangesType;
+  private pathContentMap = new Map<string, string>();
 
   public constructor(
     props: ComponentProperties,
@@ -187,7 +188,8 @@ export class SourceComponent implements MetadataComponent {
   public async parseXml<T extends JsonMap>(xmlFilePath?: string): Promise<T> {
     const xml = xmlFilePath ?? this.xml;
     if (xml) {
-      const contents = (await this.tree.readFile(xml)).toString();
+      const contents = this.pathContentMap.get(xml) ?? (await this.tree.readFile(xml)).toString();
+      this.pathContentMap.set(xml, contents);
       const replacements = this.replacements?.[xml] ?? this.parent?.replacements?.[xml];
       return this.parseAndValidateXML<T>(
         replacements ? await replacementIterations(contents, replacements) : contents,
@@ -200,7 +202,8 @@ export class SourceComponent implements MetadataComponent {
   public parseXmlSync<T extends JsonMap>(xmlFilePath?: string): T {
     const xml = xmlFilePath ?? this.xml;
     if (xml) {
-      const contents = this.tree.readFileSync(xml).toString();
+      const contents = this.pathContentMap.get(xml) ?? this.tree.readFileSync(xml).toString();
+      this.pathContentMap.set(xml, contents);
       return this.parseAndValidateXML(contents, xml);
     }
     return {} as T;

@@ -151,7 +151,7 @@ describe('Recomposition', () => {
         },
       ]);
 
-      expect(readFileSpy.callCount, JSON.stringify(readFileSpy.getCalls(), undefined, 2)).to.equal(1);
+      expect(readFileSpy.callCount, JSON.stringify(readFileSpy.getCalls(), undefined, 2)).to.equal(0);
     });
 
     describe('should only read unique child xml files once per parent for non-decomposed components', () => {
@@ -224,7 +224,7 @@ describe('Recomposition', () => {
 
         await context.recomposition.finalize();
 
-        expect(readFileSpy.callCount, 'readFile() should only be called twice').to.equal(2);
+        expect(readFileSpy.callCount, 'readFile() should only be called twice').to.equal(0);
       });
     });
   });

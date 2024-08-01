@@ -22,6 +22,7 @@ import {
   VIRTUAL_DIR,
   WORKING_DIR,
 } from '../../mock/type-constants/customlabelsConstant';
+import { SourceComponent } from '../../../src';
 
 describe('NonDecomposition', () => {
   const env = createSandbox();
@@ -40,7 +41,7 @@ describe('NonDecomposition', () => {
     } as unknown as SfProject);
   });
   it('should return WriterFormats for claimed children', async () => {
-    const component = nonDecomposed.COMPONENT_1;
+    const component = new SourceComponent(nonDecomposed.COMPONENT_1, TREE);
     const context = new ConvertContext();
     const writeInfos = [
       {
@@ -61,7 +62,7 @@ describe('NonDecomposition', () => {
   });
 
   it('should return WriterFormats when no local files exist', async () => {
-    const component = nonDecomposed.COMPONENT_1;
+    const component = new SourceComponent(nonDecomposed.COMPONENT_1);
     const context = new ConvertContext();
     const [baseName] = component.fullName.split('.');
     const output = join(
@@ -94,7 +95,7 @@ describe('NonDecomposition', () => {
   });
 
   it('should merge unclaimed children to default parent component', async () => {
-    const component = nonDecomposed.COMPONENT_1;
+    const component = new SourceComponent(nonDecomposed.COMPONENT_1);
     const type = component.type;
     const context = new ConvertContext();
 
@@ -120,7 +121,7 @@ describe('NonDecomposition', () => {
   });
 
   it('should merge 1 updated file', async () => {
-    const component = nonDecomposed.COMPONENT_1;
+    const component = new SourceComponent(nonDecomposed.COMPONENT_1, TREE);
     const context = new ConvertContext();
     const type = component.type;
 
@@ -163,7 +164,7 @@ describe('NonDecomposition', () => {
         },
       ],
     } as unknown as SfProject);
-    const component = nonDecomposed.COMPONENT_2;
+    const component = new SourceComponent(nonDecomposed.COMPONENT_2);
     const context = new ConvertContext();
     const type = component.type;
 

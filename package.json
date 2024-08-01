@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "12.1.8",
+  "version": "12.1.9",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
   "author": "Salesforce",
@@ -25,9 +25,9 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^8.2.3",
+    "@salesforce/core": "^8.2.8",
     "@salesforce/kit": "^3.1.6",
-    "@salesforce/ts-types": "^2.0.10",
+    "@salesforce/ts-types": "^2.0.12",
     "fast-levenshtein": "^3.0.0",
     "fast-xml-parser": "^4.3.6",
     "got": "^11.8.6",
@@ -39,9 +39,9 @@
     "proxy-agent": "^6.4.0"
   },
   "devDependencies": {
-    "@jsforce/jsforce-node": "^3.3.1",
-    "@salesforce/cli-plugins-testkit": "^5.3.19",
-    "@salesforce/dev-scripts": "^10.2.2",
+    "@jsforce/jsforce-node": "^3.4.0",
+    "@salesforce/cli-plugins-testkit": "^5.3.20",
+    "@salesforce/dev-scripts": "^10.2.8",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/fast-levenshtein": "^0.0.4",
     "@types/graceful-fs": "^4.1.9",
@@ -49,12 +49,12 @@
     "@types/minimatch": "^5.1.2",
     "deep-equal-in-any-order": "^1.1.19",
     "deepmerge": "^4.3.1",
-    "eslint-plugin-sf-plugin": "^1.18.12",
+    "eslint-plugin-sf-plugin": "^1.20.1",
     "mocha-junit-reporter": "^1.23.3",
     "mocha-snap": "^5.0.0",
     "ts-node": "^10.9.2",
     "ts-patch": "^3.2.1",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.4"
   },
   "scripts": {
     "build": "wireit",

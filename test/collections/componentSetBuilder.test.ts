@@ -249,7 +249,7 @@ describe('ComponentSetBuilder', () => {
         assert.fail('the above should throw an error');
       } catch (e) {
         expect(e).to.not.be.null;
-        expect((e as Error).message).to.include('The specified metadata type is unsupported: [notatype]');
+        expect((e as Error).message).to.include("Missing metadata type definition in registry for id 'NotAType'");
       }
     });
 

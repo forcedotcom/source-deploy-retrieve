@@ -12,7 +12,7 @@ import { JsonMap } from '@salesforce/ts-types';
 import { createWriteStream } from 'graceful-fs';
 import { Logger, Messages, SfError } from '@salesforce/core';
 import { isEmpty } from '@salesforce/kit';
-import { baseName } from '../../utils/path';
+import { baseName, posixify } from '../../utils/path';
 import { WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { SourcePath } from '../../common/types';
@@ -59,8 +59,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       // have to walk the component content. Replacements only happen if set on the component.
       for (const path of component.walkContent()) {
         const replacementStream = getReplacementStreamForReadable(component, path);
-        const relPath = relative(content, path);
-        const relPosixPath = relPath.replace(/\\/g, '/');
+        const relPosixPath = posixify(relative(content, path));
         zip.file(relPosixPath, replacementStream);
       }
 

@@ -11,6 +11,7 @@ import JSZip from 'jszip';
 import fs from 'graceful-fs';
 import { Lifecycle, Messages, SfError } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
+import { posixify } from '../utils/path';
 import { RegistryAccess } from '../registry/registryAccess';
 import { ReplacementEvent } from '../convert/types';
 import { MetadataConverter } from '../convert/metadataConverter';
@@ -311,8 +312,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
             // Add relative file paths to a root of "zip" for MDAPI.
             const relPath = join('zip', relative(mdapiPath, fullPath));
             // Ensure only posix paths are added to zip files
-            const relPosixPath = relPath.replace(/\\/g, '/');
-            zip.file(relPosixPath, fs.createReadStream(fullPath));
+            zip.file(posixify(relPath), fs.createReadStream(fullPath));
           }
         }
       };

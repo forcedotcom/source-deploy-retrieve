@@ -6,6 +6,7 @@
  */
 
 import { basename, dirname, extname, sep, join } from 'node:path';
+import { posix } from 'node:path/posix';
 import { Optional } from '@salesforce/ts-types';
 import { SfdxFileFormat } from '../convert/types';
 import { SourcePath } from '../common/types';
@@ -161,3 +162,5 @@ export const fnJoin =
   (a: string) =>
   (b: string): string =>
     join(a, b);
+
+export const posixify = (f: string): string => f.split(sep).join(posix.sep);

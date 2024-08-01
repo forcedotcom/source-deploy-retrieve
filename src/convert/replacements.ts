@@ -6,11 +6,12 @@
  */
 import { readFile } from 'node:fs/promises';
 import { Transform, Readable } from 'node:stream';
-import { sep, posix, join, isAbsolute } from 'node:path';
+import { join, isAbsolute } from 'node:path';
 import { Lifecycle, Messages, SfError, SfProject } from '@salesforce/core';
 import { minimatch } from 'minimatch';
 import { Env } from '@salesforce/kit';
 import { ensureString, isString } from '@salesforce/ts-types';
+import { posixify } from '../utils/path';
 import { SourcePath } from '../common/types';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MarkedReplacement, ReplacementConfig, ReplacementEvent } from './types';
@@ -199,7 +200,7 @@ export const matchesFile =
   (r: ReplacementConfig): boolean =>
     // filenames will be absolute.  We don't have convenient access to the pkgDirs,
     // so we need to be more open than an exact match
-    (typeof r.filename === 'string' && posixifyPaths(filename).endsWith(r.filename)) ||
+    (typeof r.filename === 'string' && posixify(filename).endsWith(r.filename)) ||
     (typeof r.glob === 'string' && minimatch(filename, `**/${r.glob}`));
 
 /**
@@ -244,8 +245,6 @@ export const stringToRegex = (input: string): RegExp =>
   // being overly conservative
   // eslint-disable-next-line no-useless-escape
   new RegExp(input.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
-
-export const posixifyPaths = (f: string): string => f.split(sep).join(posix.sep);
 
 /** if replaceWithFile is present, resolve it to an absolute path relative to the projectdir */
 const makeAbsolute =

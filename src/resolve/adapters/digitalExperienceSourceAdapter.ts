@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { dirname, sep } from 'node:path';
+import { dirname, sep, join } from 'node:path';
 import { Messages } from '@salesforce/core';
 import { ensure, ensureString } from '@salesforce/ts-types';
 import { SourcePath } from '../../common';
@@ -72,20 +72,31 @@ export const getDigitalExperienceComponent: MaybeGetComponent =
   ({ path, type }) => {
     // if it's an empty directory, don't include it (e.g., lwc/emptyLWC)
     // TODO: should there be empty things in DEB?
-    if (context.tree.isEmptyDirectory(path)) return;
+    if (context.tree.exists(path) && context.tree.isEmptyDirectory(path)) return;
 
-    const metaFilePath = getBundleMetadataXmlPath(context.registry)(type)(path);
-    const rootMetaXml = ensure(parseMetadataXmlForDEB(context.registry)(type)(metaFilePath));
+    const metaFilePath = typeIsDEB(type)
+      ? getBundleMetadataXmlPath(context.registry)(type)(path)
+      : getNonDEBRoot(type, path);
+    const rootMetaXml = typeIsDEB(type)
+      ? ensure(parseMetadataXmlForDEB(context.registry)(type)(metaFilePath))
+      : ({ path: metaFilePath, fullName: 'foo' } satisfies MetadataXml);
     const sourceComponent = getComponent(context)({ type, path, metadataXml: rootMetaXml });
     return populate(context)(type)(path, sourceComponent);
   };
+
+const getNonDEBRoot = (type: MetadataType, path: SourcePath): SourcePath => {
+  // metafile name = metaFileSuffix for DigitalExperience.
+  if (!type.metaFileSuffix) {
+    throw messages.createError('missingMetaFileSuffix', [type.name]);
+  }
+  return join(trimToContentPath(path), type.metaFileSuffix);
+};
 
 const parseMetadataXmlForDEB =
   (registry: RegistryAccess) =>
   (type: MetadataType) =>
   (path: SourcePath): MetadataXml | undefined => {
     const xml = parseMetadataXml(path);
-
     if (xml) {
       return {
         fullName: getBundleName(getBundleMetadataXmlPath(registry)(type)(path)),
@@ -106,6 +117,7 @@ const getBundleMetadataXmlPath =
       // if this is the bundle type and it ends with -meta.xml, then this is the bundle metadata xml path
       return path;
     }
+
     const pathParts = path.split(sep);
     const typeFolderIndex = pathParts.lastIndexOf(type.directoryName);
     // 3 because we want 'digitalExperiences' directory, 'baseType' directory and 'bundleName' directory

@@ -9,8 +9,7 @@ import { assert, expect } from 'chai';
 import { Messages, SfError } from '@salesforce/core';
 import { getMatchingContentComponent } from '../../../src/resolve/adapters/matchingContentSourceAdapter';
 import { matchingContentFile } from '../../mock';
-import { RegistryTestUtil } from '../registryTestUtil';
-import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
+import { ForceIgnore, registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -57,20 +56,14 @@ describe('MatchingContentSourceAdapter', () => {
   });
   describe(' forceignore', () => {
     it('Should throw an error if content file is forceignored', () => {
-      const testUtil = new RegistryTestUtil();
       const path = CONTENT_PATHS[0];
-      const forceIgnore = testUtil.stubForceIgnore({
-        seed: XML_PATHS[0],
-        deny: [path],
-      });
-
-      const fn = getMatchingContentComponent({ registry: registryAccess, tree, forceIgnore });
+      const forceIgnore = new ForceIgnore('', `${path}`);
+      const adapter = getMatchingContentComponent({ registry: registryAccess, tree, forceIgnore });
       assert.throws(
-        () => fn({ path, type }),
+        () => adapter({ path, type }),
         SfError,
         messages.createError('noSourceIgnore', [type.name, path]).message
       );
-      testUtil.restore();
     });
   });
 });

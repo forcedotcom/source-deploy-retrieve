@@ -27,6 +27,7 @@ export const COMPONENTS: SourceComponent[] = COMPONENT_NAMES.map(
       name: `${COMPONENT_FOLDER_NAME}/${name}`,
       type,
       xml: XML_PATHS[index],
+      parentType: folderType,
     })
 );
 

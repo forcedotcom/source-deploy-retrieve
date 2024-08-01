@@ -40,3 +40,11 @@ export const adapterSelector = (type: MetadataType): MaybeGetComponent => {
       );
   }
 };
+
+/**
+ * exported as an object with a function so that a UT can override.
+ * Prefer using adapterSelector directly otherwise
+ */
+export const mockableFactory = {
+  adapterSelector,
+};

@@ -4,11 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join } from 'node:path';
 import { assert, expect, config } from 'chai';
-import fs from 'graceful-fs';
 import { Messages, SfError } from '@salesforce/core';
-import { createSandbox } from 'sinon';
 import { ensureString } from '@salesforce/ts-types';
 import { getMixedContentComponent } from '../../../src/resolve/adapters/mixedContentSourceAdapter';
 import { ForceIgnore, registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
@@ -25,7 +22,6 @@ describe('MixedContentSourceAdapter', () => {
   const registryAccess = new RegistryAccess();
 
   describe('static resource', () => {
-    const env = createSandbox();
     const type = registry.types.staticresource;
 
     it('Should throw ExpectedSourceFilesError if content does not exist', () => {
@@ -44,18 +40,13 @@ describe('MixedContentSourceAdapter', () => {
     });
 
     it('Should throw ExpectedSourceFilesError if ALL folder content is forceignored', () => {
-      const forceIgnorePath = join('mcsa', ForceIgnore.FILE_NAME);
-      const readStub = env.stub(fs, 'readFileSync');
-      readStub.withArgs(forceIgnorePath).returns(mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS.join('\n'));
-
       const tree = new VirtualTreeContainer(mixedContentDirectory.MIXED_CONTENT_DIRECTORY_VIRTUAL_FS);
       const adapter = getMixedContentComponent({
         registry: registryAccess,
         tree,
-        forceIgnore: new ForceIgnore(forceIgnorePath),
+        forceIgnore: new ForceIgnore('', mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS.join('\n')),
       });
 
-      env.restore();
       const path = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[0];
       assert.throws(
         () => adapter({ type, path }),

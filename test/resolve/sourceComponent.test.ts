@@ -36,7 +36,7 @@ import {
   DECOMPOSED_TOP_LEVEL_CHILD_XML_PATHS,
   DECOMPOSED_TOP_LEVEL_COMPONENT,
 } from '../mock/type-constants/customObjectTranslationConstant';
-import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
+import { getDecomposedComponent } from '../../src/resolve/adapters/decomposedSourceAdapter';
 import { DE_METAFILE } from '../mock/type-constants/digitalExperienceBundleConstants';
 import { XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { RegistryTestUtil } from './registryTestUtil';
@@ -426,11 +426,11 @@ describe('SourceComponent', () => {
         },
       ];
       const tree = new VirtualTreeContainer(fsUnexpectedChild);
-      const adapter = new DecomposedSourceAdapter(type, new RegistryAccess(), undefined, tree);
+      const adapter = getDecomposedComponent({ registry: new RegistryAccess(), tree });
       const fsPath = join(decomposed.DECOMPOSED_PATH, 'classes', XML_NAMES[0]);
 
       assert.throws(
-        () => adapter.getComponent(fsPath, false),
+        () => adapter({ type, path: fsPath }),
         SfError,
         messages.getMessage('error_unexpected_child_type', [fsPath, type.name])
       );
@@ -440,14 +440,15 @@ describe('SourceComponent', () => {
   describe('Un-addressable decomposed child (cot/cof)', () => {
     it('gets parent when asked to resolve a child by filePath', () => {
       const expectedTopLevel = DECOMPOSED_TOP_LEVEL_COMPONENT;
-      const adapter = new DecomposedSourceAdapter(
-        expectedTopLevel.type,
-        new RegistryAccess(),
-        undefined,
-        expectedTopLevel.tree
-      );
+      const adapter = getDecomposedComponent({
+        registry: new RegistryAccess(),
+        tree: expectedTopLevel.tree,
+      });
 
-      const result = adapter.getComponent(DECOMPOSED_TOP_LEVEL_CHILD_XML_PATHS[0], true);
+      const result = adapter({
+        type: expectedTopLevel.type,
+        path: DECOMPOSED_TOP_LEVEL_CHILD_XML_PATHS[0],
+      });
       expect(result?.type).to.deep.equal(expectedTopLevel.type);
       expect(result?.xml).to.equal(expectedTopLevel.xml);
     });

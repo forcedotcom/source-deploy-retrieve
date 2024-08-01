@@ -11,7 +11,7 @@ import { RegistryAccess, typeAllowsMetadataWithContent } from '../registry/regis
 import { MetadataType } from '../registry/types';
 import { ComponentSet } from '../collections/componentSet';
 import { META_XML_SUFFIX } from '../common/constants';
-import { adapterSelector } from './adapters/sourceAdapterFactory';
+import { mockableFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
@@ -137,7 +137,7 @@ export class MetadataResolver {
         return;
       }
 
-      return adapterSelector(type)({
+      return mockableFactory.adapterSelector(type)({
         tree: this.tree,
         forceIgnore: this.forceIgnore,
         registry: this.registry,

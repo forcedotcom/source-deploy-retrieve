@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { createSandbox, SinonSandbox } from 'sinon';
-import { ForceIgnore, MetadataResolver, SourcePath, VirtualDirectory, VirtualTreeContainer } from '../../src';
+import { ForceIgnore, SourcePath } from '../../src';
 
 export class RegistryTestUtil {
   private env: SinonSandbox;
@@ -16,12 +16,6 @@ export class RegistryTestUtil {
 
   public restore(): void {
     this.env.restore();
-  }
-
-  // excluded from rules because it's exposed publicly
-  // eslint-disable-next-line class-methods-use-this
-  public createMetadataResolver(virtualFS: VirtualDirectory[], useRealForceIgnore = true): MetadataResolver {
-    return new MetadataResolver(undefined, new VirtualTreeContainer(virtualFS), useRealForceIgnore);
   }
 
   public stubForceIgnore(config: { seed: SourcePath; accept?: SourcePath[]; deny?: SourcePath[] }): ForceIgnore {

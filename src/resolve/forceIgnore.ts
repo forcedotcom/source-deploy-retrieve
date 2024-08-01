@@ -19,9 +19,9 @@ export class ForceIgnore {
   private readonly forceIgnoreDirectory?: string;
   private DEFAULT_IGNORE = ['**/*.dup', '**/.*', '**/package2-descriptor.json', '**/package2-manifest.json'];
 
-  public constructor(forceIgnorePath = '') {
+  public constructor(forceIgnorePath = '', contentsOverride?: string) {
     try {
-      const contents = readFileSync(forceIgnorePath, 'utf-8');
+      const contents = contentsOverride ?? readFileSync(forceIgnorePath, 'utf-8');
       // check if file `.forceignore` exists
       if (contents !== undefined) {
         // check for windows style separators (\) and warn

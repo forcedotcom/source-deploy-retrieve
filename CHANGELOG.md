@@ -1,3 +1,15 @@
+## [12.1.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.9...12.1.10) (2024-08-01)
+
+### Bug Fixes
+
+- manifests for custom object can omit parent ([#1375](https://github.com/forcedotcom/source-deploy-retrieve/issues/1375)) ([8fd9c9e](https://github.com/forcedotcom/source-deploy-retrieve/commit/8fd9c9ec57a8502234c9c2abe0cd528e5107844b))
+
+## [12.1.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.8...12.1.9) (2024-07-31)
+
+### Bug Fixes
+
+- use jsforce's `cancelDeploy` method ([#1380](https://github.com/forcedotcom/source-deploy-retrieve/issues/1380)) ([7d644f2](https://github.com/forcedotcom/source-deploy-retrieve/commit/7d644f215d7c0bcfe413d1fcfafc10122b17a412))
+
 ## [12.1.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.7...12.1.8) (2024-07-19)
 
 ### Bug Fixes

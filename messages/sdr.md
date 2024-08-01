@@ -190,3 +190,16 @@ If the type is available via Metadata API but not in the registry
 
 - Open an issue <https://github.com/forcedotcom/cli/issues>
 - Add the type via PR. Instructions: <https://github.com/forcedotcom/source-deploy-retrieve/blob/main/contributing/metadata.md>
+
+# type_name_suggestions
+
+Confirm the metadata type name is correct. Validate against the registry at:
+<https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/registry/metadataRegistry.json>
+
+If the type is not listed in the registry, check that it has Metadata API support via the Metadata Coverage Report:
+<https://developer.salesforce.com/docs/metadata-coverage>
+
+If the type is available via Metadata API but not in the registry
+
+- Open an issue <https://github.com/forcedotcom/cli/issues>
+- Add the type via PR. Instructions: <https://github.com/forcedotcom/source-deploy-retrieve/blob/main/contributing/metadata.md>

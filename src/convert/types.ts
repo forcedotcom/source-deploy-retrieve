@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { Readable } from 'node:stream';
+import { JsonMap } from '@salesforce/ts-types';
+import { XML_NS_KEY, XML_NS_URL } from '../common/constants';
 import { FileResponseSuccess } from '../client/types';
 import { SourcePath } from '../common/types';
 import { MetadataComponent, SourceComponent } from '../resolve';
@@ -153,3 +155,4 @@ export type ReplacementEvent = {
   filename: string;
   replaced: string;
 };
+export type XmlObj = { [index: string]: { [XML_NS_KEY]: typeof XML_NS_URL } & JsonMap };

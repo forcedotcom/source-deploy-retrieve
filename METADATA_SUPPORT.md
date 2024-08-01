@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v61 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 576/610 supported metadata types.
+Currently, there are 577/608 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -167,11 +167,11 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | DashboardFolder                        | ✅      |                                                                  |
 | DataCalcInsightTemplate                | ✅      |                                                                  |
 | DataCategoryGroup                      | ✅      |                                                                  |
-| DataConnectionParamTmpl                | ❌      | Not supported, but support could be added                        |
 | DataConnectorIngestApi                 | ✅      |                                                                  |
 | DataConnectorS3                        | ✅      |                                                                  |
 | DataDotComSettings                     | ✅      |                                                                  |
 | DataImportManagementSettings           | ✅      |                                                                  |
+| DataKitObjectDependency                | ✅      |                                                                  |
 | DataKitObjectTemplate                  | ✅      |                                                                  |
 | DataPackageKitDefinition               | ✅      |                                                                  |
 | DataPackageKitObject                   | ✅      |                                                                  |
@@ -393,8 +393,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | MilestoneType                          | ✅      |                                                                  |
 | MktCalcInsightObjectDef                | ✅      |                                                                  |
 | MktDataConnection                      | ❌      | Not supported, but support could be added                        |
-| MktDataConnectionCred                  | ❌      | Not supported, but support could be added                        |
-| MktDataConnectionParam                 | ❌      | Not supported, but support could be added                        |
 | MktDataConnectionSrcParam              | ❌      | Not supported, but support could be added                        |
 | MktDataTranObject                      | ✅      |                                                                  |
 | MlDomain                               | ✅      |                                                                  |
@@ -632,7 +630,6 @@ v62 introduces the following new types. Here's their current level of support
 | ChannelRevMgmtSettings              | ✅      |                                                                  |
 | ChoiceList                          | ❌      | Not supported, but support could be added (but not for tracking) |
 | ConversationMessageDefinition       | ✅      |                                                                  |
-| DataKitObjectDependency             | ✅      |                                                                  |
 | EnblProgramTaskSubCategory          | ✅      |                                                                  |
 | ExtlClntAppPushConfigurablePolicies | ❌      | Not supported, but support could be added (but not for tracking) |
 | ExtlClntAppPushSettings             | ✅      |                                                                  |

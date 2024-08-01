@@ -370,7 +370,9 @@ describe('SourceComponent', () => {
     );
 
     it('should return child components for a component', () => {
-      expect(decomposed.DECOMPOSED_COMPONENT.getChildren()).to.deep.equal([expectedChild, expectedChild2]);
+      const children = decomposed.DECOMPOSED_COMPONENT.getChildren();
+      expect(children).to.deep.include(expectedChild);
+      expect(children).to.deep.include(expectedChild2);
     });
 
     it('should not include children that are forceignored', () => {

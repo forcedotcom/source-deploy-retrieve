@@ -10,7 +10,7 @@ import { DecodeableMap } from '../../src/collections/decodeableMap';
 
 // passes on dev-scripts 10.2.2, fails on 10.2.4.  I don't know why.
 // possibly mocha or types/node
-describe.skip('DecodeableMap', () => {
+describe('DecodeableMap', () => {
   let dMap: DecodeableMap<string, string>;
   const layout1_key_encoded = 'Layout-v1%2E1 Layout';
   const layout1_key_decoded = 'Layout-v1.1 Layout';
@@ -28,10 +28,9 @@ describe.skip('DecodeableMap', () => {
   let deleteMapSpy: sinon.SinonSpy;
 
   beforeEach(() => {
-    dMap = new DecodeableMap([
-      [layout1_key_encoded, layout1_value],
-      [layout9_key_decoded, layout9_value],
-    ]);
+    dMap = new DecodeableMap();
+    dMap.set(layout1_key_encoded, layout1_value);
+    dMap.set(layout9_key_decoded, layout9_value);
     hasMapSpy = sandbox.spy(Map.prototype, 'has');
     getMapSpy = sandbox.spy(Map.prototype, 'get');
     setMapSpy = sandbox.spy(Map.prototype, 'set');

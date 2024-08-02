@@ -22,6 +22,8 @@ import { isString } from '@salesforce/ts-types';
  *
  * `decodeableMap.has('layout#Layout__Broker__c-v1%2E1 Broker Layout')` --> returns `true`
  * `decodeableMap.has('layout#Layout__Broker__c-v9.2 Broker Layout')` --> returns `true`
+ *
+ * DO NOT PASS VALUES to the Constructor.  Instantiate the class and use the methods.
  */
 export class DecodeableMap<K extends string, V> extends Map<string, V> {
   // Internal map of decoded keys to encoded keys.

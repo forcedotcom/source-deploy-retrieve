@@ -8,6 +8,7 @@ import { join } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
 
 import { assert, expect } from 'chai';
+import { posixify } from '../../../src/utils/path';
 import { decomposed, mixedContentSingleFile, nestedTypes, xmlInFolder, document } from '../../mock';
 import { getComponent } from '../../../src/resolve/adapters/baseSourceAdapter';
 import { META_XML_SUFFIX } from '../../../src/common';
@@ -55,7 +56,7 @@ describe('BaseSourceAdapter', () => {
   it('should throw an error if a metadata xml file is forceignored', () => {
     const type = registry.getRegistry().types.apexclass;
     const path = join('path', 'to', type.directoryName, `My_Test.${type.suffix}${META_XML_SUFFIX}`);
-    const adapterWithIgnore = getComponent({ tree, registry, forceIgnore: new ForceIgnore('', `${path}`) });
+    const adapterWithIgnore = getComponent({ tree, registry, forceIgnore: new ForceIgnore('', posixify(path)) });
 
     assert.throws(
       () => adapterWithIgnore({ path, type }),

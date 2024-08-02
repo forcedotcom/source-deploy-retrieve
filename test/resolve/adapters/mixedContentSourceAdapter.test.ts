@@ -7,6 +7,7 @@
 import { assert, expect, config } from 'chai';
 import { Messages, SfError } from '@salesforce/core';
 import { ensureString } from '@salesforce/ts-types';
+import { posixify } from '../../../src/utils/path';
 import { getMixedContentComponent } from '../../../src/resolve/adapters/mixedContentSourceAdapter';
 import { ForceIgnore, registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
 import {
@@ -44,7 +45,10 @@ describe('MixedContentSourceAdapter', () => {
       const adapter = getMixedContentComponent({
         registry: registryAccess,
         tree,
-        forceIgnore: new ForceIgnore('', mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS.join('\n')),
+        forceIgnore: new ForceIgnore(
+          '',
+          mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS.map(posixify).join('\n')
+        ),
       });
 
       const path = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[0];

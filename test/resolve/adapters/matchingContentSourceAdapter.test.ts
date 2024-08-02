@@ -7,6 +7,7 @@
 import { join } from 'node:path';
 import { assert, expect } from 'chai';
 import { Messages, SfError } from '@salesforce/core';
+import { posixify } from '../../../src/utils/path';
 import { getMatchingContentComponent } from '../../../src/resolve/adapters/matchingContentSourceAdapter';
 import { matchingContentFile } from '../../mock';
 import { ForceIgnore, registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
@@ -57,7 +58,7 @@ describe('MatchingContentSourceAdapter', () => {
   describe(' forceignore', () => {
     it('Should throw an error if content file is forceignored', () => {
       const path = CONTENT_PATHS[0];
-      const forceIgnore = new ForceIgnore('', `${path}`);
+      const forceIgnore = new ForceIgnore('', `${posixify(path)}`);
       const adapter = getMatchingContentComponent({ registry: registryAccess, tree, forceIgnore });
       assert.throws(
         () => adapter({ path, type }),

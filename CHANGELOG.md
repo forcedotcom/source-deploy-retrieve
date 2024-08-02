@@ -1,3 +1,12 @@
+## [12.1.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.10...12.1.11) (2024-08-02)
+
+
+### Bug Fixes
+
+* recurse through dirs then files ([#1381](https://github.com/forcedotcom/source-deploy-retrieve/issues/1381)) ([f2e79c3](https://github.com/forcedotcom/source-deploy-retrieve/commit/f2e79c3153f9a07f2aaf581ecd4d1b14ea0c0715))
+
+
+
 ## [12.1.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.9...12.1.10) (2024-08-01)
 
 

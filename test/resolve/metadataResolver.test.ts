@@ -9,6 +9,7 @@ import { basename, dirname, join } from 'node:path';
 import { assert, expect } from 'chai';
 import { Messages, SfError } from '@salesforce/core';
 import { ensureString } from '@salesforce/ts-types';
+import { createSandbox } from 'sinon';
 import {
   ComponentSet,
   MetadataResolver,
@@ -288,6 +289,48 @@ describe('MetadataResolver', () => {
           },
         ]);
         expect(access.getComponentsFromPath(path)).to.deep.equal(xmlInFolder.COMPONENTS);
+      });
+
+      it('should parse dirs before files', () => {
+        const path = xmlInFolder.COMPONENT_FOLDER_PATH;
+        const env = createSandbox();
+
+        const access = testUtil.createMetadataResolver([
+          {
+            dirPath: path,
+            children: ['dir1', { name: 'parent.report-meta.xml', data: Buffer.from('Some Data') }],
+          },
+          {
+            dirPath: join(path, 'dir1'),
+            children: [{ name: 'dir1.report-meta.xml', data: Buffer.from('Some Data') }],
+          },
+        ]);
+        // @ts-ignore
+        const isDirSpy = env.spy(access.tree, 'isDirectory');
+
+        const componentMappings = xmlInFolder.COMPONENTS.map((c: SourceComponent) => ({
+          path: ensureString(c.xml),
+          component: c,
+        }));
+        testUtil.stubAdapters([
+          {
+            type: registry.types.report,
+            componentMappings,
+            allowContent: false,
+          },
+        ]);
+        access.getComponentsFromPath(path);
+        // isDirectory is called a few times during recursive parsing, after debugging
+        // we only need to verify calls made in succession are called with dirs, and then files
+        expect([isDirSpy.args[3][0], isDirSpy.args[4][0]]).to.deep.equal([path, join(path, 'parent.report-meta.xml')]);
+        expect([isDirSpy.args[7][0], isDirSpy.args[8][0]]).to.deep.equal([
+          join(path, 'dir1'),
+          join(path, 'parent.report-meta.xml'),
+        ]);
+        expect([isDirSpy.args[10][0], isDirSpy.args[11][0]]).to.deep.equal([
+          join(path, 'dir1'),
+          join(path, 'dir1', 'dir1.report-meta.xml'),
+        ]);
       });
 
       it('Should determine type for folder files', () => {

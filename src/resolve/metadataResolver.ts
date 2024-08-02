@@ -76,7 +76,12 @@ export class MetadataResolver {
       return components;
     }
 
-    for (const fsPath of this.tree.readDirectory(dir).map(fnJoin(dir))) {
+    for (const fsPath of this.tree
+      .readDirectory(dir)
+      .map(fnJoin(dir))
+      // this method isn't truly recursive, we need to sort directories before files so we look as far down as possible
+      // before finding the parent and returning only it - by sorting, we make it as recursive as possible
+      .sort(this.sortDirsFirst)) {
       if (ignore.has(fsPath)) {
         continue;
       }
@@ -117,6 +122,15 @@ export class MetadataResolver {
     return components.concat(dirQueue.flatMap((d) => this.getComponentsFromPathRecursive(d, inclusiveFilter)));
   }
 
+  private sortDirsFirst = (a: string, b: string): number => {
+    if (this.tree.isDirectory(a) && this.tree.isDirectory(b)) {
+      return 0;
+    } else if (this.tree.isDirectory(a) && !this.tree.isDirectory(b)) {
+      return -1;
+    } else {
+      return 1;
+    }
+  };
   private resolveComponent(fsPath: string, isResolvingSource: boolean): SourceComponent | undefined {
     if (this.forceIgnore?.denies(fsPath)) {
       // don't resolve the component if the path is denied

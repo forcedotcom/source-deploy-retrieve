@@ -43,6 +43,17 @@ export abstract class TreeContainer {
       return join(directory, fileName);
     }
   }
+
+  /**
+   * Whether or not a file path is a directory and is empty (has no children) in the container.
+   *
+   * @param fsPath - File path to test
+   * @returns `true` if the path is to a directory
+   */
+  public isEmptyDirectory(fsPath: SourcePath): boolean {
+    return this.isDirectory(fsPath) && this.readDirectory(fsPath).length === 0;
+  }
+
   /**
    * Whether or not a file path exists in the container.
    *
@@ -57,6 +68,7 @@ export abstract class TreeContainer {
    * @returns `true` if the path is to a directory
    */
   public abstract isDirectory(fsPath: SourcePath): boolean;
+
   /**
    * Reads the contents of a directory in the container.
    *

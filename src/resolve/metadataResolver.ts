@@ -7,11 +7,11 @@
 import { basename, dirname, sep } from 'node:path';
 import { Lifecycle, Messages, SfError, Logger } from '@salesforce/core';
 import { extName, fnJoin, parentName, parseMetadataXml } from '../utils/path';
-import { RegistryAccess } from '../registry/registryAccess';
+import { RegistryAccess, typeAllowsMetadataWithContent } from '../registry/registryAccess';
 import { MetadataType } from '../registry/types';
 import { ComponentSet } from '../collections/componentSet';
 import { META_XML_SUFFIX } from '../common/constants';
-import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
+import { mockableFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
@@ -125,16 +125,24 @@ export class MetadataResolver {
     }
     const type = resolveType(this.registry)(this.tree)(fsPath);
     if (type) {
-      const adapter = new SourceAdapterFactory(this.registry, this.tree).getAdapter(type, this.forceIgnore);
       // short circuit the component resolution unless this is a resolve for a
       // source path or allowed content-only path, otherwise the adapter
       // knows how to handle it
-      const shouldResolve =
-        isResolvingSource ||
-        parseAsRootMetadataXml(fsPath) ||
-        !parseAsContentMetadataXml(this.registry)(fsPath) ||
-        !adapter.allowMetadataWithContent();
-      return shouldResolve ? adapter.getComponent(fsPath, isResolvingSource) : undefined;
+      if (
+        !isResolvingSource &&
+        !parseAsRootMetadataXml(fsPath) &&
+        parseAsContentMetadataXml(this.registry)(fsPath) &&
+        typeAllowsMetadataWithContent(type)
+      ) {
+        return;
+      }
+
+      return mockableFactory.adapterSelector(type)({
+        tree: this.tree,
+        forceIgnore: this.forceIgnore,
+        registry: this.registry,
+        isResolvingSource,
+      })({ path: fsPath, type });
     }
 
     if (isProbablyPackageManifest(this.tree)(fsPath)) return undefined;
@@ -351,7 +359,7 @@ const resolveType =
 /**
  * Any file with a registered suffix is potentially a content metadata file.
  *
- * @param registry a metadata registry to resolve types agsinst
+ * @param registry a metadata registry to resolve types against
  */
 const parseAsContentMetadataXml =
   (registry: RegistryAccess) =>

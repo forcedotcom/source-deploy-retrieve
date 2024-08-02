@@ -6,11 +6,11 @@
  */
 import { join } from 'node:path';
 import { assert } from 'chai';
+import { ensure } from '@salesforce/ts-types';
 import { registry, SourceComponent } from '../../../src';
 import { META_XML_SUFFIX } from '../../../src/common';
 
-export const DE_TYPE = registry.types.digitalexperiencebundle.children?.types.digitalexperience;
-assert(DE_TYPE);
+export const DE_TYPE = ensure(registry.types.digitalexperiencebundle.children?.types.digitalexperience);
 export const DEB_TYPE = registry.types.digitalexperiencebundle;
 
 // metafile name = metaFileSuffix for DigitalExperience.

@@ -13,6 +13,7 @@ import { createWriteStream, existsSync, promises as fsPromises } from 'graceful-
 import { JsonMap } from '@salesforce/ts-types';
 import { XMLBuilder } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core';
+import { posixify } from '../utils/path';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { SourcePath } from '../common/types';
 import { XML_COMMENT_PROP_NAME, XML_DECL } from '../common/constants';
@@ -234,8 +235,7 @@ export class ZipWriter extends ComponentWriter {
 
   public addToZip(contents: string | Readable | Buffer, path: SourcePath): void {
     // Ensure only posix paths are added to zip files
-    const posixPath = path.replace(/\\/g, '/');
-    this.zip.file(posixPath, contents);
+    this.zip.file(posixify(path), contents);
   }
 }
 

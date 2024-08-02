@@ -8,6 +8,7 @@
 import { basename, dirname, extname, join, posix, sep } from 'node:path/posix';
 import { SfError } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
+import { posixify } from '../utils/path';
 import { ComponentLike, SourceComponent } from '../resolve';
 import { registry } from '../registry/registry';
 import {
@@ -154,8 +155,9 @@ const hasComponentType = (message: DeployMessage): message is DeployMessage & { 
 
 export const toKey = (component: ComponentLike): string => {
   const type = typeof component.type === 'string' ? component.type : component.type.name;
-  return `${type}#${shouldConvertPaths ? component.fullName.split(sep).join(posix.sep) : component.fullName}`;
+  return `${type}#${shouldConvertPaths ? posixify(component.fullName) : component.fullName}`;
 };
 
 const isTrue = (value: BooleanString): boolean => value === 'true' || value === true;
+
 export const shouldConvertPaths = sep !== posix.sep;

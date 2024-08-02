@@ -13,11 +13,11 @@ import {
   matchesFile,
   replacementIterations,
   stringToRegex,
-  posixifyPaths,
   envFilter,
 } from '../../src/convert/replacements';
 import { matchingContentFile } from '../mock';
 import * as replacementsForMock from '../../src/convert/replacements';
+import { posixify } from '../../src/utils/path';
 
 config.truncateThreshold = 0;
 
@@ -155,7 +155,7 @@ describe('marking replacements on a component', () => {
     assert(cmp.xml);
     const result = await getReplacements(cmp, [
       // spec says filename path should be posix.  The mocks are using join, so on windows they are wrong
-      { filename: posixifyPaths(cmp.xml), stringToReplace: 'foo', replaceWithEnv: 'FOO_REPLACEMENT' },
+      { filename: posixify(cmp.xml), stringToReplace: 'foo', replaceWithEnv: 'FOO_REPLACEMENT' },
     ]);
     expect(result).to.deep.equal({
       [cmp.xml]: [
@@ -171,7 +171,7 @@ describe('marking replacements on a component', () => {
   it('marks string replacements from file', async () => {
     assert(cmp.xml);
     const result = await getReplacements(cmp, [
-      { filename: posixifyPaths(cmp.xml), stringToReplace: 'foo', replaceWithFile: 'bar' },
+      { filename: posixify(cmp.xml), stringToReplace: 'foo', replaceWithFile: 'bar' },
     ]);
     expect(result).to.deep.equal({
       [cmp.xml]: [
@@ -188,7 +188,7 @@ describe('marking replacements on a component', () => {
   it('marks regex replacements on a matching file', async () => {
     assert(cmp.xml);
     const result = await getReplacements(cmp, [
-      { filename: posixifyPaths(cmp.xml), regexToReplace: '.*foo.*', replaceWithEnv: 'FOO_REPLACEMENT' },
+      { filename: posixify(cmp.xml), regexToReplace: '.*foo.*', replaceWithEnv: 'FOO_REPLACEMENT' },
     ]);
     expect(result).to.deep.equal({
       [cmp.xml]: [
@@ -204,8 +204,8 @@ describe('marking replacements on a component', () => {
   it('marks 2 replacements on one file', async () => {
     assert(cmp.xml);
     const result = await getReplacements(cmp, [
-      { filename: posixifyPaths(cmp.xml), stringToReplace: 'foo', replaceWithEnv: 'FOO_REPLACEMENT' },
-      { filename: posixifyPaths(cmp.xml), stringToReplace: 'baz', replaceWithEnv: 'FOO_REPLACEMENT' },
+      { filename: posixify(cmp.xml), stringToReplace: 'foo', replaceWithEnv: 'FOO_REPLACEMENT' },
+      { filename: posixify(cmp.xml), stringToReplace: 'baz', replaceWithEnv: 'FOO_REPLACEMENT' },
     ]);
     expect(result).to.deep.equal({
       [cmp.xml]: [
@@ -253,8 +253,8 @@ describe('marking replacements on a component', () => {
     assert(cmp.content);
     assert(cmp.xml);
     const result = await getReplacements(cmp, [
-      { filename: posixifyPaths(cmp.xml), stringToReplace: 'foo', replaceWithEnv: 'FOO_REPLACEMENT' },
-      { filename: posixifyPaths(cmp.content), stringToReplace: 'foo', replaceWithEnv: 'FOO_REPLACEMENT' },
+      { filename: posixify(cmp.xml), stringToReplace: 'foo', replaceWithEnv: 'FOO_REPLACEMENT' },
+      { filename: posixify(cmp.content), stringToReplace: 'foo', replaceWithEnv: 'FOO_REPLACEMENT' },
     ]);
     expect(result).to.deep.equal({
       [cmp.xml]: [
@@ -280,7 +280,7 @@ describe('marking replacements on a component', () => {
     assert(cmp.xml);
     try {
       await getReplacements(cmp, [
-        { filename: posixifyPaths(cmp.xml), regexToReplace: '.*foo.*', replaceWithEnv: 'BAD_ENV' },
+        { filename: posixify(cmp.xml), regexToReplace: '.*foo.*', replaceWithEnv: 'BAD_ENV' },
       ]);
       assert.fail('should have thrown');
     } catch (e) {
@@ -291,7 +291,7 @@ describe('marking replacements on a component', () => {
     assert(cmp.xml);
     const result = await getReplacements(cmp, [
       {
-        filename: posixifyPaths(cmp.xml),
+        filename: posixify(cmp.xml),
         regexToReplace: '.*foo.*',
         replaceWithEnv: 'BAD_ENV',
         allowUnsetEnvVariable: true,

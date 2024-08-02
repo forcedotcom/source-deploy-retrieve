@@ -51,5 +51,9 @@ export const COMPONENT = SourceComponent.createVirtualComponent(
       dirPath: TYPE_DIRECTORY,
       children: [COMPONENT_NAME],
     },
+    {
+      dirPath: join(TYPE_DIRECTORY, COMPONENT_NAME),
+      children: CONTENT_NAMES,
+    },
   ]
 );

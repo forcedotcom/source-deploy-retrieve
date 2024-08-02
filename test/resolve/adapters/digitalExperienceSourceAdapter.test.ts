@@ -7,7 +7,7 @@
 import { join } from 'node:path';
 import { assert, expect } from 'chai';
 import { RegistryAccess, registry, VirtualTreeContainer, ForceIgnore, SourceComponent } from '../../../src';
-import { DigitalExperienceSourceAdapter } from '../../../src/resolve/adapters/digitalExperienceSourceAdapter';
+import { getDigitalExperienceComponent } from '../../../src/resolve/adapters/digitalExperienceSourceAdapter';
 import { META_XML_SUFFIX } from '../../../src/common';
 import { DE_METAFILE } from '../../mock/type-constants/digitalExperienceBundleConstants';
 
@@ -41,58 +41,49 @@ describe('DigitalExperienceSourceAdapter', () => {
     HOME_VIEW_TABLET_VARIANT_FILE,
   ]);
 
-  const bundleAdapter = new DigitalExperienceSourceAdapter(
-    registry.types.digitalexperiencebundle,
-    registryAccess,
-    forceIgnore,
-    tree
-  );
-
   assert(registry.types.digitalexperiencebundle.children?.types.digitalexperience);
-  const digitalExperienceAdapter = new DigitalExperienceSourceAdapter(
-    registry.types.digitalexperiencebundle.children.types.digitalexperience,
-    registryAccess,
-    forceIgnore,
-    tree
-  );
 
   describe('DigitalExperienceSourceAdapter for DEB', () => {
+    const adapter = getDigitalExperienceComponent({ tree, registry: registryAccess });
+
+    const type = registry.types.digitalexperiencebundle;
     const component = new SourceComponent(
       {
         name: BUNDLE_NAME,
-        type: registry.types.digitalexperiencebundle,
+        type,
         xml: BUNDLE_META_FILE,
       },
       tree
     );
 
     it('should return a SourceComponent for meta xml', () => {
-      expect(bundleAdapter.getComponent(BUNDLE_META_FILE)).to.deep.equal(component);
+      expect(adapter({ type, path: BUNDLE_META_FILE })).to.deep.equal(component);
     });
 
     it('should return a SourceComponent for content and variant json', () => {
-      expect(bundleAdapter.getComponent(HOME_VIEW_CONTENT_FILE)).to.deep.equal(component);
-      expect(bundleAdapter.getComponent(HOME_VIEW_META_FILE)).to.deep.equal(component);
-      expect(bundleAdapter.getComponent(HOME_VIEW_FRENCH_VARIANT_FILE)).to.deep.equal(component);
+      expect(adapter({ type, path: HOME_VIEW_CONTENT_FILE })).to.deep.equal(component);
+      expect(adapter({ type, path: HOME_VIEW_META_FILE })).to.deep.equal(component);
+      expect(adapter({ type, path: HOME_VIEW_FRENCH_VARIANT_FILE })).to.deep.equal(component);
     });
 
     it('should return a SourceComponent for mobile and tablet variant json', () => {
-      expect(bundleAdapter.getComponent(HOME_VIEW_MOBILE_VARIANT_FILE)).to.deep.equal(component);
-      expect(bundleAdapter.getComponent(HOME_VIEW_TABLET_VARIANT_FILE)).to.deep.equal(component);
+      expect(adapter({ type, path: HOME_VIEW_MOBILE_VARIANT_FILE })).to.deep.equal(component);
+      expect(adapter({ type, path: HOME_VIEW_TABLET_VARIANT_FILE })).to.deep.equal(component);
     });
 
     it('should return a SourceComponent when a bundle path is provided', () => {
-      expect(bundleAdapter.getComponent(HOME_VIEW_PATH)).to.deep.equal(component);
-      expect(bundleAdapter.getComponent(BUNDLE_PATH)).to.deep.equal(component);
+      expect(adapter({ type, path: HOME_VIEW_PATH })).to.deep.equal(component);
+      expect(adapter({ type, path: BUNDLE_PATH })).to.deep.equal(component);
     });
   });
 
   describe('DigitalExperienceSourceAdapter for DE', () => {
     assert(registry.types.digitalexperiencebundle.children?.types.digitalexperience);
+    const type = registry.types.digitalexperiencebundle.children?.types.digitalexperience;
     const component = new SourceComponent(
       {
         name: HOME_VIEW_NAME,
-        type: registry.types.digitalexperiencebundle.children.types.digitalexperience,
+        type,
         content: HOME_VIEW_PATH,
         xml: HOME_VIEW_META_FILE,
         parent: new SourceComponent(
@@ -110,15 +101,17 @@ describe('DigitalExperienceSourceAdapter', () => {
       forceIgnore
     );
 
+    const adapter = getDigitalExperienceComponent({ tree, registry: registryAccess });
+
     it('should return a SourceComponent for content and variant json', () => {
-      expect(digitalExperienceAdapter.getComponent(HOME_VIEW_CONTENT_FILE)).to.deep.equal(component);
-      expect(digitalExperienceAdapter.getComponent(HOME_VIEW_META_FILE)).to.deep.equal(component);
-      expect(digitalExperienceAdapter.getComponent(HOME_VIEW_FRENCH_VARIANT_FILE)).to.deep.equal(component);
+      expect(adapter({ type, path: HOME_VIEW_CONTENT_FILE })).to.deep.equal(component);
+      expect(adapter({ type, path: HOME_VIEW_META_FILE })).to.deep.equal(component);
+      expect(adapter({ type, path: HOME_VIEW_FRENCH_VARIANT_FILE })).to.deep.equal(component);
     });
 
     it('should return a SourceComponent for mobile and tablet variant json', () => {
-      expect(digitalExperienceAdapter.getComponent(HOME_VIEW_MOBILE_VARIANT_FILE)).to.deep.equal(component);
-      expect(digitalExperienceAdapter.getComponent(HOME_VIEW_TABLET_VARIANT_FILE)).to.deep.equal(component);
+      expect(adapter({ type, path: HOME_VIEW_MOBILE_VARIANT_FILE })).to.deep.equal(component);
+      expect(adapter({ type, path: HOME_VIEW_TABLET_VARIANT_FILE })).to.deep.equal(component);
     });
   });
 });

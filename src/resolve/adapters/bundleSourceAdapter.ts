@@ -4,9 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SourcePath } from '../../common/types';
-import { SourceComponent } from '../sourceComponent';
-import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
+import { basename } from 'node:path';
+import { parseMetadataXml } from '../../utils';
+import { getComponent, parseAsRootMetadataXml, trimPathToContent } from './baseSourceAdapter';
+import { MaybeGetComponent } from './types';
+import { populateMixedContent } from './mixedContentSourceAdapter';
 
 /**
  * Handles _bundle_ types. A bundle component has all its source files, including the
@@ -26,32 +28,23 @@ import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
  * |   ├── myFoo.js-meta.xml
  *```
  */
-export class BundleSourceAdapter extends MixedContentSourceAdapter {
-  protected ownFolder = true;
 
-  /**
-   * Excludes empty bundle directories.
-   *
-   * e.g.
-   * lwc/
-   * ├── myFoo/
-   * |   ├── myFoo.js
-   * |   ├── myFooStyle.css
-   * |   ├── myFoo.html
-   * |   ├── myFoo.js-meta.xml
-   * ├── emptyLWC/
-   *
-   * so we shouldn't populate with the `emptyLWC` directory
-   *
-   * @param trigger Path that `getComponent` was called with
-   * @param component Component to populate properties on
-   * @protected
-   */
-  protected populate(trigger: SourcePath, component?: SourceComponent): SourceComponent | undefined {
-    if (this.tree.isDirectory(trigger) && !this.tree.readDirectory(trigger)?.length) {
-      // if it's an empty directory, don't include it (e.g., lwc/emptyLWC)
-      return;
+export const getBundleComponent: MaybeGetComponent =
+  (context) =>
+  ({ type, path }) => {
+    // if it's an empty directory, don't include it (e.g., lwc/emptyLWC)
+    // TODO: do we really need these exists checks since we're checking isEmptyDirectory?
+    if (context.tree.exists(path) && context.tree.isEmptyDirectory(path)) return;
+    const componentRoot = trimPathToContent(type)(path);
+    if (type.metaFileSuffix) {
+      // support for ExperiencePropertyTypeBundle, which doesn't have an xml file.  Calls the mixedContent populate without a component
+      return populateMixedContent(context)(type)(componentRoot)(path, undefined);
     }
-    return super.populate(trigger, component);
-  }
-}
+    const rootMeta = context.tree.find('metadataXml', basename(componentRoot), componentRoot);
+    const rootMetaXml = rootMeta ? parseAsRootMetadataXml({ type, path: rootMeta }) : parseMetadataXml(path);
+    if (!rootMetaXml) {
+      return populateMixedContent(context)(type)(componentRoot)(path, undefined);
+    }
+    const sourceComponent = getComponent(context)({ type, path, metadataXml: rootMetaXml });
+    return populateMixedContent(context)(type)(componentRoot)(path, sourceComponent);
+  };

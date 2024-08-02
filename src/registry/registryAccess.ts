@@ -168,3 +168,9 @@ export class RegistryAccess {
     }
   }
 }
+
+/** decomposed and default types are `false`, everything else is true */
+export const typeAllowsMetadataWithContent = (type: MetadataType): boolean =>
+  type.strategies?.adapter !== undefined && // another way of saying default
+  type.strategies.adapter !== 'decomposed' &&
+  type.strategies.adapter !== 'default';

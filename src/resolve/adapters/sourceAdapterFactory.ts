@@ -5,48 +5,46 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { Messages, SfError } from '@salesforce/core';
-import { SourceAdapter } from '../types';
-import { ForceIgnore } from '../forceIgnore';
-import { RegistryAccess } from '../../registry/registryAccess';
 import { MetadataType } from '../../registry/types';
-import { TreeContainer } from '../treeContainers';
-import { BundleSourceAdapter } from './bundleSourceAdapter';
-import { DecomposedSourceAdapter } from './decomposedSourceAdapter';
-import { MatchingContentSourceAdapter } from './matchingContentSourceAdapter';
-import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
-import { DefaultSourceAdapter } from './defaultSourceAdapter';
-import { DigitalExperienceSourceAdapter } from './digitalExperienceSourceAdapter';
+import { getBundleComponent } from './bundleSourceAdapter';
+import { getDecomposedComponent } from './decomposedSourceAdapter';
+import { getMatchingContentComponent } from './matchingContentSourceAdapter';
+import { getMixedContentComponent } from './mixedContentSourceAdapter';
+import { getDefaultComponent } from './defaultSourceAdapter';
+import { getDigitalExperienceComponent } from './digitalExperienceSourceAdapter';
+import { MaybeGetComponent } from './types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
-export class SourceAdapterFactory {
-  private registry: RegistryAccess;
-  private tree: TreeContainer;
-
-  public constructor(registry: RegistryAccess, tree: TreeContainer) {
-    this.registry = registry;
-    this.tree = tree;
+/** Returns a function with a common interface that can resolve the given type */
+export const adapterSelector = (type: MetadataType): MaybeGetComponent => {
+  switch (type.strategies?.adapter) {
+    case 'bundle':
+      return getBundleComponent;
+    case 'decomposed':
+      return getDecomposedComponent;
+    case 'matchingContentFile':
+      return getMatchingContentComponent;
+    case 'mixedContent':
+      return getMixedContentComponent;
+    case 'digitalExperience':
+      return getDigitalExperienceComponent;
+    case 'default':
+    case undefined:
+      return getDefaultComponent;
+    default:
+      throw new SfError(
+        messages.getMessage('error_missing_adapter', [type.strategies?.adapter, type.name]),
+        'RegistryError'
+      );
   }
+};
 
-  public getAdapter(type: MetadataType, forceIgnore = new ForceIgnore()): SourceAdapter {
-    const adapterId = type.strategies?.adapter;
-    switch (adapterId) {
-      case 'bundle':
-        return new BundleSourceAdapter(type, this.registry, forceIgnore, this.tree);
-      case 'decomposed':
-        return new DecomposedSourceAdapter(type, this.registry, forceIgnore, this.tree);
-      case 'matchingContentFile':
-        return new MatchingContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
-      case 'mixedContent':
-        return new MixedContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
-      case 'digitalExperience':
-        return new DigitalExperienceSourceAdapter(type, this.registry, forceIgnore, this.tree);
-      case 'default':
-      case undefined:
-        return new DefaultSourceAdapter(type, this.registry, forceIgnore, this.tree);
-      default:
-        throw new SfError(messages.getMessage('error_missing_adapter', [adapterId, type.name]), 'RegistryError');
-    }
-  }
-}
+/**
+ * exported as an object with a function so that a UT can override.
+ * Prefer using adapterSelector directly otherwise
+ */
+export const mockableFactory = {
+  adapterSelector,
+};

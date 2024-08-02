@@ -4,11 +4,14 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { basename } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
-import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
 import { baseName, parentName, parseMetadataXml } from '../../utils/path';
-import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
+import { parseAsRootMetadataXml, trimPathToContent } from './baseSourceAdapter';
+import { AdapterContext } from './types';
+import { GetComponentInput } from './types';
+import { MaybeGetComponent } from './types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -41,94 +44,85 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
  * |   ├── c.bar-meta.xml
  *```
  */
-export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
-  protected ownFolder = true;
-  protected metadataWithContent = false;
 
-  public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent | undefined {
-    let rootMetadata = super.parseAsRootMetadataXml(path);
+export const getDecomposedComponent: MaybeGetComponent =
+  (context) =>
+  ({ type, path }) => {
+    let rootMetadata = parseAsRootMetadataXml({ type, path });
 
     if (!rootMetadata) {
-      const rootMetadataPath = this.getRootMetadataXmlPath(path);
+      const componentRoot = trimPathToContent(type)(path);
+      const rootMetadataPath = context.tree.find('metadataXml', basename(componentRoot), componentRoot);
       if (rootMetadataPath) {
         rootMetadata = parseMetadataXml(rootMetadataPath);
       }
     }
     let component: SourceComponent | undefined;
     if (rootMetadata) {
-      const componentName = this.type.folderType
+      const componentName = type.folderType
         ? `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`
         : rootMetadata.fullName;
       component = new SourceComponent(
         {
           name: componentName,
-          type: this.type,
+          type,
           xml: rootMetadata.path,
         },
-        this.tree,
-        this.forceIgnore
+        context.tree,
+        context.forceIgnore
       );
     }
-    return this.populate(path, component, isResolvingSource);
-  }
+    return populate(context)({ type, path })(component);
+  };
 
-  /**
-   * If the trigger turns out to be part of an addressable child component, `populate` will build
-   * the child component, set its parent property to the one created by the
-   * `BaseSourceAdapter`, and return the child component instead.
-   */
-  protected populate(
-    trigger: SourcePath,
-    component?: SourceComponent,
-    isResolvingSource?: boolean
-  ): SourceComponent | undefined {
-    const metaXml = parseMetadataXml(trigger);
-    if (metaXml?.suffix) {
-      const pathToContent = this.trimPathToContent(trigger);
-      const childTypeId = this.type.children?.suffixes?.[metaXml.suffix];
-      const triggerIsAChild = !!childTypeId;
-      const strategy = this.type.strategies?.decomposition;
-      if (
-        triggerIsAChild &&
-        this.type.children &&
-        !this.type.children.types[childTypeId].unaddressableWithoutParent &&
-        this.type.children.types[childTypeId].isAddressable !== false
-      ) {
-        if (strategy === 'folderPerType' || strategy === 'topLevel' || isResolvingSource) {
-          const parent =
-            component ??
-            new SourceComponent(
-              {
-                name: strategy === 'folderPerType' ? baseName(pathToContent) : pathToContent,
-                type: this.type,
-              },
-              this.tree,
-              this.forceIgnore
-            );
-          parent.content = pathToContent;
-          return new SourceComponent(
+const populate =
+  (context: AdapterContext) =>
+  ({ type, path }: GetComponentInput) =>
+  (component?: SourceComponent): SourceComponent | undefined => {
+    const metaXml = parseMetadataXml(path);
+    if (!metaXml?.suffix) return component;
+
+    const pathToContent = trimPathToContent(type)(path);
+    const childTypeId = type.children?.suffixes?.[metaXml.suffix];
+    const triggerIsAChild = !!childTypeId;
+    const strategy = type.strategies?.decomposition;
+    if (
+      triggerIsAChild &&
+      type.children &&
+      !type.children.types[childTypeId].unaddressableWithoutParent &&
+      type.children.types[childTypeId].isAddressable !== false
+    ) {
+      if (strategy === 'folderPerType' || strategy === 'topLevel' || context.isResolvingSource) {
+        const parent =
+          component ??
+          new SourceComponent(
             {
-              name: metaXml.fullName,
-              type: this.type.children.types[childTypeId],
-              xml: trigger,
-              parent,
+              name: strategy === 'folderPerType' ? baseName(pathToContent) : pathToContent,
+              type,
             },
-            this.tree,
-            this.forceIgnore
+            context.tree,
+            context.forceIgnore
           );
-        }
-      } else if (!component) {
-        // This is most likely metadata found within a CustomObject folder that is not a
-        // child type of CustomObject. E.g., Layout, SharingRules, ApexClass.
-        throw new SfError(
-          messages.getMessage('error_unexpected_child_type', [trigger, this.type.name]),
-          'TypeInferenceError'
+        parent.content = pathToContent;
+        return new SourceComponent(
+          {
+            name: metaXml.fullName,
+            type: type.children.types[childTypeId],
+            xml: path,
+            parent,
+          },
+          context.tree,
+          context.forceIgnore
         );
       }
-      if (component) {
-        component.content = pathToContent;
-      }
+    } else if (!component) {
+      // This is most likely metadata found within a CustomObject folder that is not a
+      // child type of CustomObject. E.g., Layout, SharingRules, ApexClass.
+      throw new SfError(messages.getMessage('error_unexpected_child_type', [path, type.name]), 'TypeInferenceError');
     }
+    if (component) {
+      component.content = pathToContent;
+    }
+
     return component;
-  }
-}
+  };

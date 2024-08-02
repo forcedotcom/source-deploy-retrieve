@@ -6,77 +6,64 @@
  */
 import { assert, expect } from 'chai';
 import { Messages, SfError } from '@salesforce/core';
-import { MetadataType, registry, RegistryAccess, VirtualTreeContainer } from '../../../src';
-import {
-  BundleSourceAdapter,
-  DecomposedSourceAdapter,
-  DefaultSourceAdapter,
-  MatchingContentSourceAdapter,
-  MixedContentSourceAdapter,
-} from '../../../src/resolve/adapters';
-import { SourceAdapterFactory } from '../../../src/resolve/adapters/sourceAdapterFactory';
-import { DigitalExperienceSourceAdapter } from '../../../src/resolve/adapters/digitalExperienceSourceAdapter';
+import { MetadataType, registry } from '../../../src';
+
+import { getMatchingContentComponent } from '../../../src/resolve/adapters/matchingContentSourceAdapter';
+import { getBundleComponent } from '../../../src/resolve/adapters//bundleSourceAdapter';
+import { getMixedContentComponent } from '../../../src/resolve/adapters//mixedContentSourceAdapter';
+import { getDecomposedComponent } from '../../../src/resolve/adapters//decomposedSourceAdapter';
+import { getDefaultComponent } from '../../../src/resolve/adapters//defaultSourceAdapter';
+import { getDigitalExperienceComponent } from '../../../src/resolve/adapters//digitalExperienceSourceAdapter';
+
+import { adapterSelector } from '../../../src/resolve/adapters/sourceAdapterFactory';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 /**
  * The types being passed to getAdapter don't really matter in these tests. We're
- * just making sure that the adapter is instantiated correctly based on their registry
+ * just making sure that the correct function is returns
  * configuration.
  */
 describe('SourceAdapterFactory', () => {
-  const tree = new VirtualTreeContainer([]);
-  const registryAccess = new RegistryAccess();
-  const factory = new SourceAdapterFactory(registryAccess, tree);
-
   it('Should return DefaultSourceAdapter for type with no assigned AdapterId', () => {
-    const type = registry.types.reportfolder;
-    const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(new DefaultSourceAdapter(type, registryAccess, undefined, tree));
+    const adapter = adapterSelector(registry.types.reportfolder);
+    expect(adapter).to.deep.equal(getDefaultComponent);
   });
 
   it('Should return DefaultSourceAdapter for default AdapterId', () => {
-    const type = registry.types.customlabels;
-    const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(new DefaultSourceAdapter(type, registryAccess, undefined, tree));
+    const adapter = adapterSelector(registry.types.customlabels);
+    expect(adapter).to.deep.equal(getDefaultComponent);
   });
 
   it('Should return MixedContentSourceAdapter for mixedContent AdapterId', () => {
-    const type = registry.types.staticresource;
-    const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(new MixedContentSourceAdapter(type, registryAccess, undefined, tree));
-    tree;
+    const adapter = adapterSelector(registry.types.staticresource);
+    expect(adapter).to.deep.equal(getMixedContentComponent);
   });
 
   it('Should return MatchingContentSourceAdapter for matchingContentFile AdapterId', () => {
-    const type = registry.types.apexclass;
-    const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(new MatchingContentSourceAdapter(type, registryAccess, undefined, tree));
+    const adapter = adapterSelector(registry.types.apexclass);
+    expect(adapter).to.deep.equal(getMatchingContentComponent);
   });
 
   it('Should return DigitalExperienceSourceAdapter for digitalExperience AdapterId', () => {
     assert(registry.types.digitalexperiencebundle.children?.types.digitalexperience);
 
-    const type = registry.types.digitalexperiencebundle;
-    const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(new DigitalExperienceSourceAdapter(type, registryAccess, undefined, tree));
+    const adapter = adapterSelector(registry.types.digitalexperiencebundle);
+    expect(adapter).to.deep.equal(getDigitalExperienceComponent);
 
-    const childType = registry.types.digitalexperiencebundle.children.types.digitalexperience;
-    const childAdapter = factory.getAdapter(childType);
-    expect(childAdapter).to.deep.equal(new DigitalExperienceSourceAdapter(childType, registryAccess, undefined, tree));
+    const childAdapter = adapterSelector(registry.types.digitalexperiencebundle.children.types.digitalexperience);
+    expect(childAdapter).to.deep.equal(getDigitalExperienceComponent);
   });
 
   it('Should return BundleSourceAdapter for bundle AdapterId', () => {
-    const type = registry.types.auradefinitionbundle;
-    const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(new BundleSourceAdapter(type, registryAccess, undefined, tree));
+    const adapter = adapterSelector(registry.types.auradefinitionbundle);
+    expect(adapter).to.deep.equal(getBundleComponent);
   });
 
   it('Should return DecomposedSourceAdapter for decomposed AdapterId', () => {
-    const type = registry.types.customobject;
-    const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(new DecomposedSourceAdapter(type, registryAccess, undefined, tree));
+    const adapter = adapterSelector(registry.types.customobject);
+    expect(adapter).to.deep.equal(getDecomposedComponent);
   });
 
   it('Should throw RegistryError for missing adapter', () => {
@@ -89,7 +76,7 @@ describe('SourceAdapterFactory', () => {
     };
 
     assert.throws(
-      () => factory.getAdapter(type),
+      () => adapterSelector(type),
       SfError,
       messages.getMessage('error_missing_adapter', [type.strategies?.adapter, type.name])
     );

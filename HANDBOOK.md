@@ -230,7 +230,7 @@ The resolver constructs components based on the rules of such a pattern. It take
 
 1. Determine the associated type by parsing the file suffix. Utilize the registry indexes to determine a type
 2. If the type has a source adapter assigned to it, construct the associated adapter. Otherwise use the default one
-3. Call the adapter’s `getComponent()` method to construct the source component
+3. Call the adapter function to construct the source component
 
 📝 _CAREFULLY_ _consider whether new adapters need to be added. Ideally, we should never have to add another one and new types should follow existing conventions to reduce maintenance burden._
 
@@ -263,7 +263,7 @@ We'll continue to see examples of this as we look at the `strategies` that can b
 These strategies are optional, but all have a default transformer, and converter assigned to them, which assumes nothing special needs to be done and that their source and metadata format are identical, _link to these files_.
 Luckily, lots of type use the default transformers and adapters.
 
-The `strategies` property, of a metadatata type entry in the registry, can define four properties, the `adapter`,`transformer`,`decompositon`, and `recomposition`. How SDR uses these values is explained more in detail later on, but we'll go through each of the options for these values, what they do, what behavior they enable, and the types that use them.
+The `strategies` property, of a metadata type entry in the registry, can define four properties, the `adapter`,`transformer`,`decomposition`, and `recomposition`. How SDR uses these values is explained more in detail later on, but we'll go through each of the options for these values, what they do, what behavior they enable, and the types that use them.
 
 The "adapters", or "source adapters", are responsible for understanding how a metadata type should be represented in source format and recognizing that pattern when constructing `Component Sets`
 
@@ -293,8 +293,8 @@ layouts/
 
 ### The `bundleSourceAdapter`
 
-Like the name suggests, this adapter handles bundle types, so `AuraDefinitionBundles`, `LightningWebComponents`. A bundle component has all its source files, including the root metadata xml, contained in its own directory.
-
+Like the name suggests, this adapter handles bundle types, so `AuraDefinitionBundles`, `LightningWebComponents`. A bundle component has all its source files contained in its own directory.
+Most bundle types have a root metadata xml, but it's not required (ex: WaveTemplateBundle) and it might not be an xml file (ExperiencePropertyTypeBundle)
 **Example Structure**:
 
 ```text

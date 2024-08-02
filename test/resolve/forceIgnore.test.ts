@@ -21,6 +21,21 @@ describe('ForceIgnore', () => {
 
   afterEach(() => env.restore());
 
+  describe('contents injections', () => {
+    const newContents = 'force-app/main/default/classes/';
+    it('Should accept an override for the contents of the forceignore file', () => {
+      const forceIgnore = new ForceIgnore('', newContents);
+      expect(forceIgnore.accepts(join('force-app', 'main', 'default', 'classes', 'foo'))).to.be.false;
+    });
+    it('injected contents prevent reading the forceignore file', () => {
+      const readStub = env.stub(fs, 'readFileSync');
+      const forceIgnore = new ForceIgnore(forceIgnorePath, newContents);
+      expect(readStub.called).to.be.false;
+      expect(forceIgnore.accepts(join(forceIgnorePath, 'force-app', 'main', 'default', 'classes', 'foo'))).to.be.false;
+      expect(forceIgnore.accepts(testPath)).to.be.true;
+    });
+  });
+
   it('Should default to not ignoring a file if forceignore is not loaded', () => {
     const path = join('some', 'path');
     const forceIgnore = new ForceIgnore();

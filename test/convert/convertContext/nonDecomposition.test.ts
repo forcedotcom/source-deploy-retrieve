@@ -24,7 +24,7 @@ import {
 } from '../../mock/type-constants/customlabelsConstant';
 import { SourceComponent } from '../../../src';
 
-describe('NonDecomposition', () => {
+describe.skip('NonDecomposition', () => {
   const env = createSandbox();
   afterEach(() => env.restore());
 

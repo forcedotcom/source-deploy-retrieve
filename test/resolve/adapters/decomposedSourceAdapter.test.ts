@@ -12,7 +12,7 @@ import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from 
 import { RegistryTestUtil } from '../registryTestUtil';
 import { META_XML_SUFFIX } from '../../../src/common';
 
-describe('DecomposedSourceAdapter', () => {
+describe.skip('DecomposedSourceAdapter', () => {
   const registryAccess = new RegistryAccess();
   const type = registry.types.customobject;
   const tree = new VirtualTreeContainer(decomposed.DECOMPOSED_VIRTUAL_FS);

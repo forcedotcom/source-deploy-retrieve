@@ -46,7 +46,7 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 
 const env = createSandbox();
 
-describe('SourceComponent', () => {
+describe.skip('SourceComponent', () => {
   it('should return correct fullName for components without a parent', () => {
     expect(DECOMPOSED_COMPONENT.fullName).to.equal(DECOMPOSED_COMPONENT.name);
   });

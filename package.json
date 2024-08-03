@@ -39,7 +39,7 @@
     "proxy-agent": "^6.4.0"
   },
   "devDependencies": {
-    "@jsforce/jsforce-node": "^3.4.0",
+    "@jsforce/jsforce-node": "^3.4.1",
     "@salesforce/cli-plugins-testkit": "^5.3.20",
     "@salesforce/dev-scripts": "^10.2.9",
     "@types/deep-equal-in-any-order": "^1.0.1",

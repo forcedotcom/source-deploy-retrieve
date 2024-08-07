@@ -24,7 +24,7 @@ import {
 } from '../../mock/type-constants/customlabelsConstant';
 import { SourceComponent } from '../../../src';
 
-describe.skip('NonDecomposition', () => {
+describe('NonDecomposition', () => {
   const env = createSandbox();
   afterEach(() => env.restore());
 
@@ -41,7 +41,7 @@ describe.skip('NonDecomposition', () => {
     } as unknown as SfProject);
   });
   it('should return WriterFormats for claimed children', async () => {
-    const component = new SourceComponent(nonDecomposed.COMPONENT_1, TREE);
+    const component = nonDecomposed.COMPONENT_1;
     const context = new ConvertContext();
     const writeInfos = [
       {
@@ -58,6 +58,8 @@ describe.skip('NonDecomposition', () => {
     };
 
     const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
+    // @ts-ignore - because the resulting component will have cache info, and the initial one won't
+    result[0].component.pathContentMap = new Map();
     expect(result).to.deep.equal([{ component, writeInfos }]);
   });
 
@@ -95,7 +97,7 @@ describe.skip('NonDecomposition', () => {
   });
 
   it('should merge unclaimed children to default parent component', async () => {
-    const component = new SourceComponent(nonDecomposed.COMPONENT_1);
+    const component = nonDecomposed.COMPONENT_1;
     const type = component.type;
     const context = new ConvertContext();
 
@@ -116,7 +118,8 @@ describe.skip('NonDecomposition', () => {
     };
 
     const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
-
+    // @ts-ignore - because the resulting component will have cache info, and the initial one won't
+    result[0].component.pathContentMap = new Map();
     expect(result).to.deep.equal([{ component, writeInfos }]);
   });
 
@@ -145,6 +148,8 @@ describe.skip('NonDecomposition', () => {
     };
 
     const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
+    // @ts-ignore - because the resulting component will have cache info, and the initial one won't
+    result[0].component.pathContentMap = new Map();
     expect(result).to.deep.equal([{ component, writeInfos }]);
   });
 
@@ -164,7 +169,7 @@ describe.skip('NonDecomposition', () => {
         },
       ],
     } as unknown as SfProject);
-    const component = new SourceComponent(nonDecomposed.COMPONENT_2);
+    const component = nonDecomposed.COMPONENT_2;
     const context = new ConvertContext();
     const type = component.type;
 
@@ -188,6 +193,8 @@ describe.skip('NonDecomposition', () => {
     };
 
     const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
+    // @ts-ignore - because the resulting component will have cache info, and the initial one won't
+    result[0].component.pathContentMap = new Map();
     expect(result).to.deep.equal([{ component, writeInfos }]);
   });
 });

@@ -12,7 +12,7 @@ import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from 
 import { RegistryTestUtil } from '../registryTestUtil';
 import { META_XML_SUFFIX } from '../../../src/common';
 
-describe.skip('DecomposedSourceAdapter', () => {
+describe('DecomposedSourceAdapter', () => {
   const registryAccess = new RegistryAccess();
   const type = registry.types.customobject;
   const tree = new VirtualTreeContainer(decomposed.DECOMPOSED_VIRTUAL_FS);
@@ -80,6 +80,8 @@ describe.skip('DecomposedSourceAdapter', () => {
     assert(decomposed.DECOMPOSED_CHILD_COMPONENT_1.xml);
     const result = adapter.getComponent(decomposed.DECOMPOSED_CHILD_COMPONENT_1.xml);
 
+    // @ts-ignore - this only failed when running 'yarn test' - parent has cache info the result won't
+    component.parent.pathContentMap = new Map();
     expect(result).to.deep.equal(component);
   });
 

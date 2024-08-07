@@ -125,6 +125,37 @@ describe('Recomposition', () => {
 
     it('should only read parent xml file once for non-decomposed components with children', async () => {
       const component = nonDecomposed.COMPONENT_1;
+      const readFileSpy = env.spy(component.tree, 'readFile');
+
+      const context = new ConvertContext();
+      context.recomposition.transactionState.set(component.fullName, {
+        component,
+        children: new ComponentSet(component.getChildren()),
+      });
+
+      const result = await context.recomposition.finalize();
+      expect(result).to.deep.equal([
+        {
+          component,
+          writeInfos: [
+            {
+              source: new JsToXml({
+                CustomLabels: {
+                  [XML_NS_KEY]: XML_NS_URL,
+                  labels: [CHILD_1_XML, CHILD_2_XML],
+                },
+              }),
+              output: join('labels', 'CustomLabels.labels'),
+            },
+          ],
+        },
+      ]);
+
+      expect(readFileSpy.callCount, JSON.stringify(readFileSpy.getCalls(), undefined, 2)).to.equal(0);
+    });
+
+    it('should not read parent once already read', async () => {
+      const component = nonDecomposed.COMPONENT_1;
       const context = new ConvertContext();
       context.recomposition.transactionState.set(component.fullName, {
         component,
@@ -201,18 +232,21 @@ describe('Recomposition', () => {
           ],
         },
       ];
+      const virtualTree = new VirtualTreeContainer(vDir);
       const component = new SourceComponent(
         { name: customLabelsType.name, type: customLabelsType, xml: parentXmlPath1 },
-        new VirtualTreeContainer(vDir)
+        virtualTree
       );
       const component2 = new SourceComponent(
         { name: 'CustomLabels2', type: customLabelsType, xml: parentXmlPath2 },
-        new VirtualTreeContainer(vDir)
+        virtualTree
       );
 
       it('one main component with multiple parents in transaction state covering all the children', async () => {
         const context = new ConvertContext();
         const compSet = new ComponentSet();
+        const readFileSpy = env.spy(virtualTree, 'readFileSync');
+
         component.getChildren().forEach((child) => compSet.add(child));
         component2.getChildren().forEach((child) => compSet.add(child));
         context.recomposition.transactionState.set(component.fullName, {
@@ -220,7 +254,22 @@ describe('Recomposition', () => {
           children: compSet,
         });
 
-        const readFileSpy = env.spy(VirtualTreeContainer.prototype, 'readFile');
+        await context.recomposition.finalize();
+
+        expect(readFileSpy.callCount, 'readFile() should only be called twice').to.equal(2);
+      });
+
+      it('once the parent/child file content is cached, it wont read them again', async () => {
+        const context = new ConvertContext();
+        const compSet = new ComponentSet();
+
+        component.getChildren().forEach((child) => compSet.add(child));
+        component2.getChildren().forEach((child) => compSet.add(child));
+        context.recomposition.transactionState.set(component.fullName, {
+          component,
+          children: compSet,
+        });
+        const readFileSpy = env.spy(virtualTree, 'readFileSync');
 
         await context.recomposition.finalize();
 

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'node:path';
-import { assert, expect } from 'chai';
+import { assert, config, expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { Messages, SfError } from '@salesforce/core';
 import { decomposed, matchingContentFile, mixedContentDirectory, xmlInFolder } from '../mock';
@@ -41,12 +41,14 @@ import { DE_METAFILE } from '../mock/type-constants/digitalExperienceBundleConst
 import { XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { RegistryTestUtil } from './registryTestUtil';
 
+config.truncateThreshold = 0;
+
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 const env = createSandbox();
 
-describe.skip('SourceComponent', () => {
+describe('SourceComponent', () => {
   it('should return correct fullName for components without a parent', () => {
     expect(DECOMPOSED_COMPONENT.fullName).to.equal(DECOMPOSED_COMPONENT.name);
   });

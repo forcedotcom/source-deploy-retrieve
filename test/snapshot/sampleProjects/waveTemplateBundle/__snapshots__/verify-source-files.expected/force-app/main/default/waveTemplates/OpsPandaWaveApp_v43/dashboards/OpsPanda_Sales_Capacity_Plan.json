@@ -1,0 +1,1926 @@
+{
+  "name" : "OpsPanda_Sales_Capacity_Plan_43_tp",
+  "label" : "OpsPanda Sales Capacity Plan",
+  "description" : "Organize information into vertical sections, with filters across the top.",
+  "folder" : {
+    "id" : "${App.Folder.Id}"
+  },
+  "mobileDisabled" : false,
+  "state" : {
+    "dataSourceLinks" : [ ],
+    "filters" : [ ],
+    "gridLayouts" : [
+  {
+        "name" : "Default",
+        "numColumns" : 12,
+        "pages" : [
+  {
+            "label" : "Untitled",
+            "name" : "page1",
+            "widgets" : [
+  {
+                "colspan" : 12,
+                "column" : 0,
+                "name" : "text_1",
+                "row" : 0,
+                "rowspan" : 1,
+                "widgetStyle" : {
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 12,
+                "column" : 0,
+                "name" : "container_1",
+                "row" : 2,
+                "rowspan" : 7,
+                "widgetStyle" : {
+                  "backgroundColor" : "#FFFFFF",
+                  "borderColor" : "#E6ECF2",
+                  "borderEdges" : [
+  "bottom"
+  ],
+                  "borderRadius" : 0,
+                  "borderWidth" : 2
+                }
+              },
+  {
+                "colspan" : 5,
+                "column" : 0,
+                "name" : "text_2",
+                "row" : 2,
+                "rowspan" : 1,
+                "widgetStyle" : {
+                  "backgroundColor" : "#FFFFFF",
+                  "borderColor" : "#F2F6FA",
+                  "borderEdges" : [
+  "bottom"
+  ],
+                  "borderRadius" : 0,
+                  "borderWidth" : 1
+                }
+              },
+  {
+                "colspan" : 12,
+                "column" : 0,
+                "name" : "container_2",
+                "row" : 9,
+                "rowspan" : 7,
+                "widgetStyle" : {
+                  "backgroundColor" : "#FFFFFF",
+                  "borderColor" : "#E6ECF2",
+                  "borderEdges" : [
+  "bottom"
+  ],
+                  "borderRadius" : 0,
+                  "borderWidth" : 2
+                }
+              },
+  {
+                "colspan" : 5,
+                "column" : 0,
+                "name" : "text_3",
+                "row" : 9,
+                "rowspan" : 1,
+                "widgetStyle" : {
+                  "backgroundColor" : "#FFFFFF",
+                  "borderColor" : "#F2F6FA",
+                  "borderEdges" : [
+  "bottom"
+  ],
+                  "borderRadius" : 0,
+                  "borderWidth" : 1
+                }
+              },
+  {
+                "colspan" : 2,
+                "column" : 0,
+                "name" : "number_5",
+                "row" : 3,
+                "rowspan" : 2,
+                "widgetStyle" : {
+                  "backgroundColor" : "#7D98B3",
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 2,
+                "column" : 0,
+                "name" : "number_8",
+                "row" : 10,
+                "rowspan" : 2,
+                "widgetStyle" : {
+                  "backgroundColor" : "#7D98B3",
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 5,
+                "column" : 2,
+                "name" : "chart_2",
+                "row" : 10,
+                "rowspan" : 6,
+                "widgetStyle" : {
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 12,
+                "column" : 0,
+                "name" : "container_4",
+                "row" : 16,
+                "rowspan" : 7,
+                "widgetStyle" : {
+                  "backgroundColor" : "#FFFFFF",
+                  "borderColor" : "#F2F6FA",
+                  "borderEdges" : [
+  "bottom"
+  ],
+                  "borderRadius" : 0,
+                  "borderWidth" : 2
+                }
+              },
+  {
+                "colspan" : 2,
+                "column" : 0,
+                "name" : "number_11",
+                "row" : 17,
+                "rowspan" : 2,
+                "widgetStyle" : {
+                  "backgroundColor" : "#7D98B3",
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 2,
+                "column" : 0,
+                "name" : "text_6",
+                "row" : 16,
+                "rowspan" : 1,
+                "widgetStyle" : {
+                  "backgroundColor" : "#FFFFFF",
+                  "borderColor" : "#F2F6FA",
+                  "borderEdges" : [
+  "bottom"
+  ],
+                  "borderRadius" : 0,
+                  "borderWidth" : 1
+                }
+              },
+  {
+                "colspan" : 2,
+                "column" : 0,
+                "name" : "number_13",
+                "row" : 7,
+                "rowspan" : 2,
+                "widgetStyle" : {
+                  "backgroundColor" : "#7D98B3",
+                  "borderColor" : "#7D98B3",
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 2,
+                "column" : 0,
+                "name" : "number_14",
+                "row" : 14,
+                "rowspan" : 2,
+                "widgetStyle" : {
+                  "backgroundColor" : "#7D98B3",
+                  "borderColor" : "#7D98B3",
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 1,
+                "column" : 0,
+                "name" : "number_15",
+                "row" : 21,
+                "rowspan" : 2,
+                "widgetStyle" : {
+                  "backgroundColor" : "#7D98B3",
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 3,
+                "column" : 1,
+                "name" : "listselector_1",
+                "row" : 1,
+                "rowspan" : 1,
+                "widgetStyle" : {
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 3,
+                "column" : 4,
+                "name" : "listselector_2",
+                "row" : 1,
+                "rowspan" : 1,
+                "widgetStyle" : {
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 3,
+                "column" : 7,
+                "name" : "listselector_3",
+                "row" : 1,
+                "rowspan" : 1,
+                "widgetStyle" : {
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 5,
+                "column" : 7,
+                "name" : "chart_4",
+                "row" : 9,
+                "rowspan" : 7,
+                "widgetStyle" : {
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 4,
+                "column" : 8,
+                "name" : "chart_5",
+                "row" : 17,
+                "rowspan" : 6,
+                "widgetStyle" : {
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 2,
+                "column" : 0,
+                "name" : "number_1",
+                "row" : 5,
+                "rowspan" : 2,
+                "widgetStyle" : {
+                  "backgroundColor" : "#7D98B3",
+                  "borderColor" : "#7D98B3",
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 5,
+                "column" : 7,
+                "name" : "chart_9",
+                "row" : 3,
+                "rowspan" : 6,
+                "widgetStyle" : {
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 2,
+                "column" : 0,
+                "name" : "number_2",
+                "row" : 19,
+                "rowspan" : 2,
+                "widgetStyle" : {
+                  "backgroundColor" : "#7D98B3",
+                  "borderColor" : "#7D98B3",
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 2,
+                "column" : 2,
+                "name" : "chart_7",
+                "row" : 16,
+                "rowspan" : 3,
+                "widgetStyle" : {
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 2,
+                "column" : 2,
+                "name" : "chart_8",
+                "row" : 19,
+                "rowspan" : 3,
+                "widgetStyle" : {
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 4,
+                "column" : 4,
+                "name" : "chart_10",
+                "row" : 16,
+                "rowspan" : 7,
+                "widgetStyle" : {
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 1,
+                "column" : 1,
+                "name" : "number_3",
+                "row" : 21,
+                "rowspan" : 2,
+                "widgetStyle" : {
+                  "backgroundColor" : "#7D98B3",
+                  "borderColor" : "#E6ECF2",
+                  "borderEdges" : [ ],
+                  "borderRadius" : 0,
+                  "borderWidth" : 1
+                }
+              },
+  {
+                "colspan" : 2,
+                "column" : 0,
+                "name" : "number_4",
+                "row" : 12,
+                "rowspan" : 2,
+                "widgetStyle" : {
+                  "backgroundColor" : "#7D98B3",
+                  "borderColor" : "#E6ECF2",
+                  "borderEdges" : [ ],
+                  "borderRadius" : 0,
+                  "borderWidth" : 1
+                }
+              },
+  {
+                "colspan" : 5,
+                "column" : 2,
+                "name" : "chart_14",
+                "row" : 3,
+                "rowspan" : 6,
+                "widgetStyle" : {
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 2,
+                "column" : 0,
+                "name" : "link_1",
+                "row" : 24,
+                "rowspan" : 1,
+                "widgetStyle" : {
+                  "borderEdges" : [ ]
+                }
+              },
+  {
+                "colspan" : 2,
+                "column" : 3,
+                "name" : "link_3",
+                "row" : 24,
+                "rowspan" : 1,
+                "widgetStyle" : {
+                  "borderEdges" : [ ]
+                }
+              }
+  ]
+          },
+  {
+            "label" : "Page 2",
+            "name" : "451adbf5-f11e-49d2-8793-6ff00549dae6",
+            "widgets" : [
+  {
+                "colspan" : 2,
+                "column" : 2,
+                "name" : "link_2",
+                "row" : 2,
+                "rowspan" : 1,
+                "widgetStyle" : {
+                  "borderEdges" : [ ]
+                }
+              }
+  ]
+          }
+  ],
+        "rowHeight" : "normal",
+        "selectors" : [ ],
+        "style" : {
+          "alignmentX" : "left",
+          "alignmentY" : "top",
+          "backgroundColor" : "#F2F6FA",
+          "cellSpacingX" : 8,
+          "cellSpacingY" : 8,
+          "documentId" : "",
+          "fit" : "original"
+        },
+        "version" : 1.0
+      }
+  ],
+    "layouts" : [ ],
+    "steps" : {
+      "Monthly_Quota_1" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "sum",
+  "Monthly_Quota"
+  ]
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "ID_2" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "count",
+  "ID"
+  ]
+  ],
+            "filters" : [
+  [
+  "HC_Status",
+  [
+  "Existing HC"
+  ],
+  "in"
+  ]
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "HC_Status_1" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "sum",
+  "Monthly_Quota"
+  ]
+  ],
+            "groups" : [
+  "HC_Status"
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "Date_Month_HC_Status_1" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "sum",
+  "Monthly_Quota"
+  ]
+  ],
+            "groups" : [
+  "Date_Month",
+  "HC_Status"
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "stackvbar"
+        }
+      },
+      "HC_Status_2" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "count",
+  "*"
+  ]
+  ],
+            "groups" : [
+  "HC_Status"
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : false,
+        "visualizationParameters" : { }
+      },
+      "ID_3" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "count",
+  "ID"
+  ]
+  ],
+            "filters" : [
+  [
+  "HC_Status",
+  [
+  "Attrition HC"
+  ],
+  "in"
+  ]
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "ID_1" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "pigql" : "q = load \"${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}\"; q = group q by all; q = foreach q generate {{column(ID_2.result, [\"unique_ID\"]).asObject()}}+{{coalesce(column(ID_4.result, [\"unique_ID\"]),0).asObject()}} - {{coalesce(column(ID_3.result, [\"unique_ID\"]),0).asObject()}} as 'Total'; q = limit q 2000;",
+            "measures" : [
+  [
+  "count",
+  "ID",
+  "Total"
+  ]
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "Location_2" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "count",
+  "ID"
+  ],
+  [
+  "sum",
+  "Monthly_Quota"
+  ],
+  [
+  "sum",
+  "Monthly_Planned_Bookings"
+  ]
+  ],
+            "groups" : [
+  "Location"
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "scatter"
+        }
+      },
+      "Type1_Date_Month_1" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "sum",
+  "Monthly_Planned_Bookings"
+  ]
+  ],
+            "groups" : [
+  "Type",
+  "Date_Month"
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "Location_3" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "sum",
+  "Monthly_Planned_Bookings"
+  ]
+  ],
+            "groups" : [
+  "Location"
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "ID_4" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "count",
+  "ID"
+  ]
+  ],
+            "filters" : [
+  [
+  "HC_Status",
+  [
+  "New HC"
+  ],
+  "in"
+  ]
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "Territory_Leaf_3" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "count",
+  "ID"
+  ]
+  ],
+            "groups" : [
+  "Location"
+  ],
+            "filters" : [
+  [
+  "HC_Status",
+  [
+  "Attrition HC"
+  ],
+  "in"
+  ]
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "Quota_Achievement_1" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "avg",
+  "Quota_Achievement"
+  ]
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "Territory_Leaf_2" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "count",
+  "ID"
+  ]
+  ],
+            "groups" : [
+  "Location"
+  ],
+            "filters" : [
+  [
+  "HC_Status",
+  [
+  "Existing HC"
+  ],
+  "in"
+  ]
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "Planned_Bookings_1" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "sum",
+  "Monthly_Planned_Bookings"
+  ]
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "Date_Year_1" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "count",
+  "*"
+  ],
+  [
+  "sum",
+  "Actual_Monthly_Bookings"
+  ]
+  ],
+            "groups" : [
+  "Date_Year"
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "Planned_Bookings_4" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "sum",
+  "Monthly_Planned_Bookings"
+  ]
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "Type_1" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "count",
+  "*"
+  ]
+  ],
+            "groups" : [
+  "Type"
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : false,
+        "visualizationParameters" : { }
+      },
+      "Planned_Bookings_2" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "pigql" : "q = load \"${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}\"; q = group q by all; q = foreach q generate round(({{column(Planned_Bookings_1.result, [\"sum_Monthly_Planned_Bookings\"]).asObject()}}-{{coalesce(column(Planned_Bookings_3.result, [\"sum_Monthly_Planned_Bookings\"]),0).asObject()}})*100/{{coalesce(column(Planned_Bookings_3.result, [\"sum_Monthly_Planned_Bookings\"]),1).asObject()}},2) as 'Growth'; q = limit q 2000;",
+            "measures" : [
+  [
+  "sum",
+  "Planned_Bookings",
+  "Growth"
+  ]
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "Planned_Bookings_3" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "sum",
+  "Monthly_Planned_Bookings"
+  ]
+  ],
+            "filters" : [
+  [
+  "HC_Status",
+  [
+  "Existing HC"
+  ],
+  "in"
+  ]
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      },
+      "Territory_Leaf_4" : {
+        "broadcastFacet" : true,
+        "datasets" : [
+  {
+            "name" : "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+  ],
+        "isGlobal" : false,
+        "label" : "",
+        "query" : {
+          "query" : {
+            "measures" : [
+  [
+  "count",
+  "ID"
+  ]
+  ],
+            "groups" : [
+  "Location"
+  ],
+            "filters" : [
+  [
+  "HC_Status",
+  [
+  "New HC"
+  ],
+  "in"
+  ]
+  ]
+          },
+          "version" : -1.0
+        },
+        "receiveFacet" : true,
+        "selectMode" : "single",
+        "type" : "aggregateflex",
+        "useGlobal" : true,
+        "visualizationParameters" : {
+          "options" : { },
+          "visualizationType" : "hbar"
+        }
+      }
+    },
+    "widgetStyle" : {
+      "backgroundColor" : "rgba(255, 255, 255, 0)",
+      "borderColor" : "#E6ECF2",
+      "borderEdges" : [ ],
+      "borderRadius" : 0,
+      "borderWidth" : 1
+    },
+    "widgets" : {
+      "number_11" : {
+        "parameters" : {
+          "compact" : false,
+          "exploreLink" : true,
+          "measureField" : "unique_ID",
+          "numberColor" : "#FFFFFF",
+          "numberSize" : 32,
+          "step" : "ID_1",
+          "textAlignment" : "right",
+          "title" : "Total Planned Headcount",
+          "titleColor" : "#FFFFFF",
+          "titleSize" : 14
+        },
+        "type" : "number"
+      },
+      "number_8" : {
+        "parameters" : {
+          "compact" : true,
+          "exploreLink" : true,
+          "measureField" : "sum_Monthly_Quota",
+          "numberColor" : "#FFFFFF",
+          "numberSize" : 32,
+          "step" : "Monthly_Quota_1",
+          "textAlignment" : "right",
+          "title" : "Annual Quota",
+          "titleColor" : "#FFFFFF",
+          "titleSize" : 14
+        },
+        "type" : "number"
+      },
+      "number_15" : {
+        "parameters" : {
+          "compact" : false,
+          "exploreLink" : true,
+          "measureField" : "unique_ID",
+          "numberColor" : "#FFFFFF",
+          "numberSize" : 24,
+          "step" : "ID_3",
+          "textAlignment" : "right",
+          "title" : "Attrition",
+          "titleColor" : "#FFFFFF",
+          "titleSize" : 10
+        },
+        "type" : "number"
+      },
+      "number_14" : {
+        "parameters" : {
+          "compact" : false,
+          "exploreLink" : true,
+          "measureField" : "avg_Quota_Achievement",
+          "numberColor" : "#FFFFFF",
+          "numberSize" : 32,
+          "step" : "Quota_Achievement_1",
+          "textAlignment" : "right",
+          "title" : "Planned  Pct Achievement",
+          "titleColor" : "#FFFFFF",
+          "titleSize" : 12
+        },
+        "type" : "number"
+      },
+      "number_13" : {
+        "parameters" : {
+          "compact" : false,
+          "exploreLink" : true,
+          "measureField" : "sum_Planned_Bookings",
+          "numberColor" : "#FFFFFF",
+          "numberSize" : 32,
+          "step" : "Planned_Bookings_2",
+          "textAlignment" : "right",
+          "titleColor" : "#FFFFFF",
+          "titleSize" : 12
+        },
+        "type" : "number"
+      },
+      "container_1" : {
+        "parameters" : {
+          "alignmentX" : "left",
+          "alignmentY" : "top",
+          "documentId" : "",
+          "fit" : "original"
+        },
+        "type" : "container"
+      },
+      "container_2" : {
+        "parameters" : {
+          "alignmentX" : "left",
+          "alignmentY" : "top",
+          "documentId" : "",
+          "fit" : "original"
+        },
+        "type" : "container"
+      },
+      "chart_9" : {
+        "parameters" : {
+          "totalValue" : "computeTotal",
+          "showPoints" : true,
+          "legend" : {
+            "showHeader" : false,
+            "show" : true,
+            "customSize" : "auto",
+            "position" : "bottom-center",
+            "inside" : false
+          },
+          "axisMode" : "multi",
+          "tooltip" : {
+            "showBinLabel" : true,
+            "measures" : "",
+            "showPercentage" : true,
+            "showDimensions" : true,
+            "showMeasures" : true,
+            "customizeTooltip" : false,
+            "dimensions" : ""
+          },
+          "visualizationType" : "time",
+          "missingValue" : "connect",
+          "dashLine" : {
+            "measures" : "",
+            "showDashLine" : false
+          },
+          "exploreLink" : true,
+          "timeAxis" : {
+            "showTitle" : true,
+            "showAxis" : true,
+            "title" : ""
+          },
+          "title" : {
+            "fontSize" : 14,
+            "subtitleFontSize" : 11,
+            "label" : "",
+            "align" : "center",
+            "subtitleLabel" : ""
+          },
+          "trellis" : {
+            "flipLabels" : false,
+            "showGridLines" : true,
+            "size" : [
+  100,
+  100
+  ],
+            "enable" : false,
+            "type" : "x",
+            "parameters" : { },
+            "chartsPerLine" : 4
+          },
+          "totalLabel" : "",
+          "fillArea" : true,
+          "showZero" : true,
+          "measureAxis2" : {
+            "sqrtScale" : false,
+            "showTitle" : true,
+            "showAxis" : true,
+            "title" : "",
+            "customDomain" : {
+              "showDomain" : false
+            }
+          },
+          "measureAxis1" : {
+            "sqrtScale" : false,
+            "showTitle" : true,
+            "showAxis" : true,
+            "title" : "",
+            "customDomain" : {
+              "showDomain" : false
+            }
+          },
+          "valueType" : "none",
+          "step" : "Type1_Date_Month_1",
+          "theme" : "wave",
+          "drawArea" : {
+            "measure" : "",
+            "showDrawArea" : false,
+            "bounding1" : "",
+            "bounding2" : ""
+          }
+        },
+        "type" : "chart"
+      },
+      "container_4" : {
+        "parameters" : {
+          "alignmentX" : "left",
+          "alignmentY" : "top",
+          "documentId" : "",
+          "fit" : "original"
+        },
+        "type" : "container"
+      },
+      "text_3" : {
+        "parameters" : {
+          "fontSize" : 18,
+          "text" : "Current Fiscal Quota Capacity (in $M)",
+          "textAlignment" : "left",
+          "textColor" : "#335779"
+        },
+        "type" : "text"
+      },
+      "text_2" : {
+        "parameters" : {
+          "fontSize" : 18,
+          "text" : "Current Fiscal Year Planned Bookings (in $M) ",
+          "textAlignment" : "left",
+          "textColor" : "#335779"
+        },
+        "type" : "text"
+      },
+      "chart_5" : {
+        "parameters" : {
+          "totalValue" : "computeTotal",
+          "showValues" : true,
+          "positiveColor" : "#0BA976",
+          "tooltip" : {
+            "showBinLabel" : true,
+            "measures" : "",
+            "showPercentage" : true,
+            "showDimensions" : true,
+            "showMeasures" : true,
+            "customizeTooltip" : false,
+            "dimensions" : ""
+          },
+          "visualizationType" : "waterfall",
+          "exploreLink" : true,
+          "trellis" : {
+            "flipLabels" : false,
+            "showGridLines" : true,
+            "size" : [
+  100,
+  100
+  ],
+            "enable" : false,
+            "type" : "x",
+            "parameters" : { },
+            "chartsPerLine" : 4
+          },
+          "title" : {
+            "fontSize" : 14,
+            "subtitleFontSize" : 11,
+            "label" : "",
+            "align" : "center",
+            "subtitleLabel" : ""
+          },
+          "startColor" : "#1674D9",
+          "totalLabel" : "",
+          "measureAxis1" : {
+            "sqrtScale" : false,
+            "showTitle" : true,
+            "showAxis" : true,
+            "title" : "",
+            "customDomain" : {
+              "showDomain" : false
+            }
+          },
+          "totalColor" : "#1674D9",
+          "step" : "HC_Status_1",
+          "theme" : "wave",
+          "negativeColor" : "#E41E42",
+          "dimensionAxis" : {
+            "showTitle" : true,
+            "showAxis" : true,
+            "title" : ""
+          }
+        },
+        "type" : "chart"
+      },
+      "chart_8" : {
+        "parameters" : {
+          "centerText" : "",
+          "totalValue" : "computeTotal",
+          "legend" : {
+            "showHeader" : false,
+            "show" : false,
+            "customSize" : "auto",
+            "position" : "right-top",
+            "inside" : false
+          },
+          "showMeasureTitle" : false,
+          "tooltip" : {
+            "showBinLabel" : true,
+            "measures" : "",
+            "showPercentage" : true,
+            "showDimensions" : true,
+            "showMeasures" : true,
+            "customizeTooltip" : false,
+            "dimensions" : ""
+          },
+          "visualizationType" : "pie",
+          "exploreLink" : true,
+          "title" : {
+            "fontSize" : 14,
+            "subtitleFontSize" : 11,
+            "label" : "Attrition",
+            "align" : "center",
+            "subtitleLabel" : ""
+          },
+          "trellis" : {
+            "flipLabels" : false,
+            "showGridLines" : true,
+            "size" : [
+  100,
+  100
+  ],
+            "enable" : false,
+            "type" : "x",
+            "parameters" : { },
+            "chartsPerLine" : 4
+          },
+          "inner" : 70,
+          "totalLabel" : "",
+          "centerValueType" : "number",
+          "valueType" : "compactNumber",
+          "theme" : "wave",
+          "step" : "Territory_Leaf_3"
+        },
+        "type" : "chart"
+      },
+      "chart_7" : {
+        "parameters" : {
+          "centerText" : "",
+          "totalValue" : "computeTotal",
+          "legend" : {
+            "showHeader" : false,
+            "show" : false,
+            "customSize" : "auto",
+            "position" : "right-top",
+            "inside" : false
+          },
+          "showMeasureTitle" : false,
+          "tooltip" : {
+            "showBinLabel" : true,
+            "measures" : "",
+            "showPercentage" : true,
+            "showDimensions" : true,
+            "showMeasures" : true,
+            "customizeTooltip" : false,
+            "dimensions" : ""
+          },
+          "visualizationType" : "pie",
+          "exploreLink" : false,
+          "title" : {
+            "fontSize" : 14,
+            "subtitleFontSize" : 11,
+            "label" : "New Hires",
+            "align" : "center",
+            "subtitleLabel" : ""
+          },
+          "trellis" : {
+            "flipLabels" : false,
+            "showGridLines" : true,
+            "size" : [
+  100,
+  100
+  ],
+            "enable" : false,
+            "type" : "x",
+            "parameters" : { },
+            "chartsPerLine" : 4
+          },
+          "inner" : 70,
+          "totalLabel" : "",
+          "centerValueType" : "number",
+          "valueType" : "compactNumber",
+          "theme" : "wave",
+          "step" : "Territory_Leaf_4"
+        },
+        "type" : "chart"
+      },
+      "chart_2" : {
+        "parameters" : {
+          "totalValue" : "computeTotal",
+          "legend" : {
+            "showHeader" : true,
+            "show" : true,
+            "customSize" : "auto",
+            "position" : "right-top",
+            "inside" : false
+          },
+          "tooltip" : {
+            "showBinLabel" : true,
+            "measures" : "",
+            "showPercentage" : true,
+            "showDimensions" : true,
+            "showMeasures" : true,
+            "customizeTooltip" : false,
+            "dimensions" : ""
+          },
+          "visualizationType" : "scatter",
+          "exploreLink" : true,
+          "trellis" : {
+            "flipLabels" : false,
+            "showGridLines" : true,
+            "size" : [
+  150,
+  150
+  ],
+            "enable" : false,
+            "type" : "x",
+            "parameters" : { },
+            "chartsPerLine" : 4
+          },
+          "title" : {
+            "fontSize" : 14,
+            "subtitleFontSize" : 11,
+            "label" : "",
+            "align" : "center",
+            "subtitleLabel" : ""
+          },
+          "radiusRatio" : 5,
+          "totalLabel" : "",
+          "x" : {
+            "sqrtScale" : false,
+            "showZero" : true,
+            "showTitle" : true,
+            "showAxis" : true,
+            "title" : "",
+            "customDomain" : {
+              "showDomain" : false
+            }
+          },
+          "y" : {
+            "sqrtScale" : false,
+            "showZero" : true,
+            "showTitle" : true,
+            "showAxis" : true,
+            "title" : "",
+            "customDomain" : {
+              "showDomain" : false
+            }
+          },
+          "step" : "Location_2",
+          "theme" : "wave"
+        },
+        "type" : "chart"
+      },
+      "text_6" : {
+        "parameters" : {
+          "fontSize" : 18,
+          "text" : "Headcount",
+          "textAlignment" : "left",
+          "textColor" : "#335779"
+        },
+        "type" : "text"
+      },
+      "chart_4" : {
+        "parameters" : {
+          "autoFitMode" : "fit",
+          "totalValue" : "computeTotal",
+          "showValues" : true,
+          "legend" : {
+            "showHeader" : true,
+            "show" : true,
+            "customSize" : "auto",
+            "position" : "bottom-center",
+            "inside" : false
+          },
+          "axisMode" : "multi",
+          "tooltip" : {
+            "showBinLabel" : true,
+            "measures" : "",
+            "showPercentage" : true,
+            "showDimensions" : true,
+            "showMeasures" : true,
+            "customizeTooltip" : false,
+            "dimensions" : ""
+          },
+          "visualizationType" : "stackvbar",
+          "exploreLink" : true,
+          "trellis" : {
+            "flipLabels" : false,
+            "showGridLines" : true,
+            "size" : [
+  100,
+  100
+  ],
+            "enable" : false,
+            "type" : "x",
+            "parameters" : { },
+            "chartsPerLine" : 4
+          },
+          "title" : {
+            "fontSize" : 14,
+            "subtitleFontSize" : 11,
+            "label" : "",
+            "align" : "center",
+            "subtitleLabel" : ""
+          },
+          "totalLabel" : "",
+          "measureAxis2" : {
+            "sqrtScale" : false,
+            "showTitle" : true,
+            "showAxis" : true,
+            "title" : "",
+            "customDomain" : {
+              "showDomain" : false
+            }
+          },
+          "measureAxis1" : {
+            "sqrtScale" : false,
+            "showTitle" : true,
+            "showAxis" : true,
+            "title" : "",
+            "customDomain" : {
+              "showDomain" : false
+            }
+          },
+          "normalize" : false,
+          "step" : "Date_Month_HC_Status_1",
+          "theme" : "wave",
+          "dimensionAxis" : {
+            "showTitle" : true,
+            "customSize" : "auto",
+            "showAxis" : true,
+            "title" : "",
+            "icons" : {
+              "useIcons" : false,
+              "iconProps" : {
+                "fit" : "cover",
+                "column" : "",
+                "type" : "round",
+                "parameters" : { }
+              }
+            }
+          }
+        },
+        "type" : "chart"
+      },
+      "listselector_3" : {
+        "parameters" : {
+          "compact" : false,
+          "expanded" : true,
+          "exploreLink" : false,
+          "instant" : true,
+          "measureField" : "none",
+          "step" : "HC_Status_2"
+        },
+        "type" : "listselector"
+      },
+      "listselector_2" : {
+        "parameters" : {
+          "compact" : false,
+          "expanded" : true,
+          "exploreLink" : false,
+          "instant" : true,
+          "measureField" : "none",
+          "step" : "Type_1"
+        },
+        "type" : "listselector"
+      },
+      "text_1" : {
+        "parameters" : {
+          "fontSize" : 24,
+          "text" : "Sales Resource Planning by OpsPanda",
+          "textAlignment" : "center",
+          "textColor" : "#335779"
+        },
+        "type" : "text"
+      },
+      "link_3" : {
+        "parameters" : {
+          "destinationLink" : {
+            "name" : "451adbf5-f11e-49d2-8793-6ff00549dae6"
+          },
+          "destinationType" : "page",
+          "fontSize" : 12,
+          "includeState" : false,
+          "text" : "Page 2",
+          "textAlignment" : "center",
+          "textColor" : "#44A2F5"
+        },
+        "type" : "link"
+      },
+      "link_1" : {
+        "parameters" : {
+          "destinationLink" : {
+            "name" : "${App.Dashboards['OpsPanda Actuals to Quota'].Name}",
+            "namespace" : "${Org.Namespace}"
+          },
+          "destinationType" : "dashboard",
+          "fontSize" : 12,
+          "includeState" : false,
+          "text" : "Actuals To Quota",
+          "textAlignment" : "center",
+          "textColor" : "#44A2F5"
+        },
+        "type" : "link"
+      },
+      "link_2" : {
+        "parameters" : {
+          "destinationLink" : {
+            "name" : "page1"
+          },
+          "destinationType" : "page",
+          "fontSize" : 12,
+          "includeState" : false,
+          "text" : "Page 1",
+          "textAlignment" : "center",
+          "textColor" : "#44A2F5"
+        },
+        "type" : "link"
+      },
+      "number_5" : {
+        "parameters" : {
+          "compact" : true,
+          "exploreLink" : true,
+          "measureField" : "sum_Planned_Bookings",
+          "numberColor" : "#FFFFFF",
+          "numberSize" : 32,
+          "step" : "Planned_Bookings_1",
+          "textAlignment" : "right",
+          "title" : "Planned Bookings",
+          "titleColor" : "#FFFFFF",
+          "titleSize" : 14
+        },
+        "type" : "number"
+      },
+      "number_4" : {
+        "parameters" : {
+          "compact" : true,
+          "exploreLink" : true,
+          "measureField" : "sum_Planned_Bookings",
+          "numberColor" : "#FFFFFF",
+          "numberSize" : 32,
+          "step" : "Planned_Bookings_4",
+          "textAlignment" : "right",
+          "title" : "Planned Bookings",
+          "titleColor" : "#FFFFFF",
+          "titleSize" : 14
+        },
+        "type" : "number"
+      },
+      "number_3" : {
+        "parameters" : {
+          "compact" : false,
+          "exploreLink" : true,
+          "measureField" : "unique_ID",
+          "numberColor" : "#FFFFFF",
+          "numberSize" : 24,
+          "step" : "ID_4",
+          "textAlignment" : "right",
+          "title" : "New",
+          "titleColor" : "#FFFFFF",
+          "titleSize" : 10
+        },
+        "type" : "number"
+      },
+      "number_2" : {
+        "parameters" : {
+          "compact" : false,
+          "exploreLink" : true,
+          "measureField" : "unique_ID",
+          "numberColor" : "#FFFFFF",
+          "numberSize" : 32,
+          "step" : "ID_2",
+          "textAlignment" : "right",
+          "title" : "Existing Headcount",
+          "titleColor" : "#FFFFFF",
+          "titleSize" : 16
+        },
+        "type" : "number"
+      },
+      "number_1" : {
+        "parameters" : {
+          "compact" : true,
+          "exploreLink" : true,
+          "measureField" : "sum_Planned_Bookings",
+          "numberColor" : "#FFFFFF",
+          "numberSize" : 32,
+          "step" : "Planned_Bookings_3",
+          "textAlignment" : "right",
+          "title" : "Baseline Planned Bookings",
+          "titleColor" : "#FFFFFF",
+          "titleSize" : 14
+        },
+        "type" : "number"
+      },
+      "listselector_1" : {
+        "parameters" : {
+          "compact" : false,
+          "expanded" : true,
+          "exploreLink" : false,
+          "instant" : true,
+          "measureField" : "unique_ID",
+          "step" : "Location_2"
+        },
+        "type" : "listselector"
+      },
+      "chart_14" : {
+        "parameters" : {
+          "totalValue" : "computeTotal",
+          "bins" : {
+            "breakpoints" : {
+              "high" : 100,
+              "low" : 0
+            },
+            "bands" : {
+              "high" : {
+                "color" : "#008000",
+                "label" : ""
+              },
+              "low" : {
+                "color" : "#B22222",
+                "label" : ""
+              },
+              "medium" : {
+                "color" : "#ffa500",
+                "label" : ""
+              }
+            }
+          },
+          "legend" : {
+            "showHeader" : true,
+            "show" : true,
+            "customSize" : "auto",
+            "position" : "bottom-center",
+            "inside" : false
+          },
+          "autoZoom" : false,
+          "highColor" : "#1674D9",
+          "lowColor" : "#C5DBF7",
+          "projectionType" : "Mercator",
+          "tooltip" : {
+            "showBinLabel" : true,
+            "measures" : "",
+            "showPercentage" : true,
+            "showDimensions" : true,
+            "showMeasures" : true,
+            "customizeTooltip" : false,
+            "dimensions" : ""
+          },
+          "visualizationType" : "choropleth",
+          "exploreLink" : true,
+          "title" : {
+            "fontSize" : 14,
+            "subtitleFontSize" : 11,
+            "label" : "",
+            "align" : "center",
+            "subtitleLabel" : ""
+          },
+          "binValues" : false,
+          "trellis" : {
+            "flipLabels" : false,
+            "showGridLines" : true,
+            "size" : [
+  100,
+  100
+  ],
+            "enable" : false,
+            "type" : "x",
+            "parameters" : { },
+            "chartsPerLine" : 4
+          },
+          "totalLabel" : "",
+          "step" : "Location_3",
+          "theme" : "wave",
+          "map" : "US States"
+        },
+        "type" : "chart"
+      },
+      "chart_10" : {
+        "parameters" : {
+          "centerText" : "",
+          "totalValue" : "computeTotal",
+          "legend" : {
+            "showHeader" : false,
+            "show" : true,
+            "customSize" : "auto",
+            "position" : "right-top",
+            "inside" : false
+          },
+          "showMeasureTitle" : false,
+          "tooltip" : {
+            "showBinLabel" : true,
+            "measures" : "",
+            "showPercentage" : true,
+            "showDimensions" : true,
+            "showMeasures" : true,
+            "customizeTooltip" : false,
+            "dimensions" : ""
+          },
+          "visualizationType" : "pie",
+          "exploreLink" : true,
+          "title" : {
+            "fontSize" : 14,
+            "subtitleFontSize" : 11,
+            "label" : "Existing Headcount",
+            "align" : "center",
+            "subtitleLabel" : ""
+          },
+          "trellis" : {
+            "flipLabels" : false,
+            "showGridLines" : true,
+            "size" : [
+  100,
+  100
+  ],
+            "enable" : false,
+            "type" : "x",
+            "parameters" : { },
+            "chartsPerLine" : 4
+          },
+          "inner" : 70,
+          "totalLabel" : "",
+          "centerValueType" : "number",
+          "valueType" : "compactNumber",
+          "theme" : "wave",
+          "step" : "Territory_Leaf_2"
+        },
+        "type" : "chart"
+      }
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{ "constants" : [
+  {
+      "name": "StepWidgets",
+      "value": ["number_11","number_8", "number_2", "chart_5","chart_4",
+      "listselector_3","number_15", "chart_2", "chart_9", "chart_14",
+      "number_3","chart_8","number_14", "chart_10", "number_5", "number_4",
+      "listselector_2","number_13","number_1", "chart_7","listselector_1","link_1"]
+    }
+   ],
+  "macros" : [  
+  	{     
+  	  "namespace": "testmacros",
+      "definitions": [
+        {
+          "name": "deleteWidget",
+          "description": "Deletes a widget and any references to the widget.",
+          "parameters": [
+            "widgetName"
+          ],
+          "actions": [
+            {
+              "action": "delete",
+              "path": "$.state.widgets['${p.widgetName}']"
+            },
+            {
+              "action": "delete",
+              "path": "$.state.gridLayouts..pages..widgets[?(@.name=='${p.widgetName}')]"
+            }
+          ]
+        },
+         {
+            "name": "deleteArrayOfWidgets", 
+            "description": "Deletes a set of widgets nodes.", 
+            "parameters": [
+                "nameArray"
+            ], 
+            "actions": [
+                { "action": "eval",  
+                "value": "${array:forEach(p.nameArray, '${testmacros:deleteWidget(var)}')}"}
+            ]
+        }
+        
+        ]
+    }],
+  "rules" : [ {
+      "name": "simplePathRemovals",
+      "appliesTo": [
+        {
+          "type": "dashboard",
+          "name": "OpsPanda_Sales_Capacity_Plan_43_tp"
+        }
+      ],
+      "actions": [
+        {
+          "action": "delete",
+          "condition": "${Variables.simplePath}",
+          "description": "Delete all steps",
+          "path": "$.state.steps.*"
+        },
+        {
+          "action": "eval",
+          "condition": "${Variables.simplePath}",
+          "description": "Delete all widgets with steps",
+          "value": "${testmacros:deleteWidget('number11')}"
+        },
+        {
+          "action": "eval",
+          "condition": "${Variables.simplePath}",
+          "description": "Delete all widgets with steps",
+          "value": "${testmacros:deleteArrayOfWidgets(Constants.StepWidgets)}"
+        }
+       ]
+   }]
+ 
+}

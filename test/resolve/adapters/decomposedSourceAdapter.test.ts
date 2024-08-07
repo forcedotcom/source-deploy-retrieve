@@ -80,6 +80,8 @@ describe('DecomposedSourceAdapter', () => {
     assert(decomposed.DECOMPOSED_CHILD_COMPONENT_1.xml);
     const result = adapter.getComponent(decomposed.DECOMPOSED_CHILD_COMPONENT_1.xml);
 
+    // @ts-ignore - this only failed when running 'yarn test' - parent has cache info the result won't
+    component.parent.pathContentMap = new Map();
     expect(result).to.deep.equal(component);
   });
 

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'node:path';
-import { assert, expect } from 'chai';
+import { assert, config, expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { Messages, SfError } from '@salesforce/core';
 import { decomposed, matchingContentFile, mixedContentDirectory, xmlInFolder } from '../mock';
@@ -40,6 +40,8 @@ import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
 import { DE_METAFILE } from '../mock/type-constants/digitalExperienceBundleConstants';
 import { XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { RegistryTestUtil } from './registryTestUtil';
+
+config.truncateThreshold = 0;
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -244,7 +246,7 @@ describe('SourceComponent', () => {
     });
 
     it('should preserve leading zeroes in node values', async () => {
-      const component = COMPONENT;
+      const component = new SourceComponent(COMPONENT);
       env
         .stub(component.tree, 'readFile')
         .resolves(Buffer.from('<MatchingContentFile><test>001</test></MatchingContentFile>'));
@@ -260,7 +262,7 @@ describe('SourceComponent', () => {
     });
 
     it('should parse cdata node values', async () => {
-      const component = COMPONENT;
+      const component = new SourceComponent(COMPONENT);
       env
         .stub(component.tree, 'readFile')
         .resolves(Buffer.from('<MatchingContentFile><test><![CDATA[<p>Hello</p>]]></test></MatchingContentFile>'));
@@ -276,7 +278,7 @@ describe('SourceComponent', () => {
     });
 
     it('should parse attributes of nodes', async () => {
-      const component = COMPONENT;
+      const component = new SourceComponent(COMPONENT);
       env
         .stub(component.tree, 'readFile')
         .resolves(Buffer.from('<MatchingContentFile a="test"><test>something</test></MatchingContentFile>'));

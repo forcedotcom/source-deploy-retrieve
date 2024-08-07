@@ -1,58 +1,58 @@
 {
-  "templateType" : "app",
-  "label" : "WaveXMD",
-  "name" : "WaveXMD",
-  "assetVersion" : 45.0,
-  "variableDefinition" : "variables.json",
-  "uiDefinition" : "ui.json",
-  "rules" : [
+  "templateType": "app",
+  "label": "WaveXMD",
+  "name": "WaveXMD",
+  "assetVersion": 45.0,
+  "variableDefinition": "variables.json",
+  "uiDefinition": "ui.json",
+  "rules": [
     {
-      "type" : "templateToApp",
-      "file" : "template-to-app-rules.json"
+      "type": "templateToApp",
+      "file": "template-to-app-rules.json"
     },
     {
-      "type" : "appToTemplate",
-      "file" : "app-to-template-rules.json"
+      "type": "appToTemplate",
+      "file": "app-to-template-rules.json"
     }
   ],
-  "releaseInfo" : {
-    "templateVersion" : "1.0",
-    "notesFile" : "releaseNotes.html"
+  "releaseInfo": {
+    "templateVersion": "1.0",
+    "notesFile": "releaseNotes.html"
   },
-  "folderDefinition" : "folder.json",
-  "externalFiles" : [
+  "folderDefinition": "folder.json",
+  "externalFiles": [
     {
-      "label" : "Regional_Sales_Info",
-      "name" : "Regional_Sales_Info",
-      "condition" : "${Variables.Overrides.createAllExternalFiles}",
-      "file" : "external_files/Regional_Sales_Info.csv",
-      "type" : "CSV",
-      "schema" : "external_files/Regional_Sales_Info.json",
-      "userXmd" : "external_files/Regional_Sales_Info_XMD.json",
-      "rows" : 5
+      "label": "Regional_Sales_Info",
+      "name": "Regional_Sales_Info",
+      "condition": "${Variables.Overrides.createAllExternalFiles}",
+      "file": "external_files/Regional_Sales_Info.csv",
+      "type": "CSV",
+      "schema": "external_files/Regional_Sales_Info.json",
+      "userXmd": "external_files/Regional_Sales_Info_XMD.json",
+      "rows": 5
     }
   ],
-  "lenses" : [
+  "lenses": [
     {
-      "label" : "Lens With Xmd",
-      "name" : "Lens_With_Xmd_tp",
-      "condition" : "${Variables.Overrides.createAllLenses}",
-      "file" : "lenses/Lens_With_Xmd.json"
+      "label": "Lens With Xmd",
+      "name": "Lens_With_Xmd_tp",
+      "condition": "${Variables.Overrides.createAllLenses}",
+      "file": "lenses/Lens_With_Xmd.json"
     }
   ],
-  "dashboards" : [ ],
-  "eltDataflows" : [ ],
-  "datasetFiles" : [ ],
-  "storedQueries" : [ ],
-  "imageFiles" : [ ],
-  "extendedTypes" : { },
-  "icons" : {
-    "appBadge" : {
-      "name" : "16.png"
+  "dashboards": [],
+  "eltDataflows": [],
+  "datasetFiles": [],
+  "storedQueries": [],
+  "imageFiles": [],
+  "extendedTypes": {},
+  "icons": {
+    "appBadge": {
+      "name": "16.png"
     },
-    "templateBadge" : {
-      "name" : "default.png"
+    "templateBadge": {
+      "name": "default.png"
     },
-    "templateDetail" : { }
+    "templateDetail": {}
   }
 }

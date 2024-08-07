@@ -1,201 +1,191 @@
 {
-  "name" : "Lens_With_Xmd_tp",
-  "label" : "Lens With Xmd",
-  "folder" : {
-    "id" : "${App.Folder.Id}"
+  "name": "Lens_With_Xmd_tp",
+  "label": "Lens With Xmd",
+  "folder": {
+    "id": "${App.Folder.Id}"
   },
-  "visualizationType" : "hbar",
-  "dateVersion" : 1,
-  "datasets" : [
+  "visualizationType": "hbar",
+  "dateVersion": 1,
+  "datasets": [
     {
-      "id" : "${App.Datasets.Regional_Sales_Info.Id}"
+      "id": "${App.Datasets.Regional_Sales_Info.Id}"
     }
   ],
-  "xmd" : {
-    "measures" : [
+  "xmd": {
+    "measures": [
       {
-        "conditionalFormatting" : {
-          "chartColor" : {
-            "referenceField" : "count",
-            "type" : "static",
-            "parameters" : {
-              "formatValue" : "#E84340"
+        "conditionalFormatting": {
+          "chartColor": {
+            "referenceField": "count",
+            "type": "static",
+            "parameters": {
+              "formatValue": "#E84340"
             }
           }
         },
-        "field" : "aggregateflex.count",
-        "format" : { }
+        "field": "aggregateflex.count",
+        "format": {}
       }
     ],
-    "derivedDimensions" : [ ],
-    "organizations" : [ ],
-    "showDetailsDefaultFields" : [ ],
-    "dates" : [ ],
-    "derivedMeasures" : [ ],
-    "dimensions" : [
+    "derivedDimensions": [],
+    "organizations": [],
+    "showDetailsDefaultFields": [],
+    "dates": [],
+    "derivedMeasures": [],
+    "dimensions": [
       {
-        "recordDisplayFields" : [ ],
-        "conditionalFormatting" : {
-          "chartColor" : {
-            "referenceField" : "count",
-            "type" : "static",
-            "parameters" : {
-              "formatValue" : "#E84340"
+        "recordDisplayFields": [],
+        "conditionalFormatting": {
+          "chartColor": {
+            "referenceField": "count",
+            "type": "static",
+            "parameters": {
+              "formatValue": "#E84340"
             }
           }
         },
-        "salesforceActions" : [ ],
-        "field" : "aggregateflex.ALL",
-        "members" : [ ],
-        "customActions" : [ ]
+        "salesforceActions": [],
+        "field": "aggregateflex.ALL",
+        "members": [],
+        "customActions": []
       }
     ]
   },
-  "state" : {
-    "dataSourceLinks" : [ ],
-    "filters" : [ ],
-    "gridLayouts" : [ ],
-    "layouts" : [ ],
-    "steps" : {
-      "aggregateflex" : {
-        "broadcastFacet" : false,
-        "datasets" : [
+  "state": {
+    "dataSourceLinks": [],
+    "filters": [],
+    "gridLayouts": [],
+    "layouts": [],
+    "steps": {
+      "aggregateflex": {
+        "broadcastFacet": false,
+        "datasets": [
           {
-            "name" : "${App.Datasets.Regional_Sales_Info.Name}"
+            "name": "${App.Datasets.Regional_Sales_Info.Name}"
           }
         ],
-        "isGlobal" : false,
-        "query" : {
-          "query" : {
-            "measures" : [
-              [
-                "count",
-                "*"
-              ]
-            ]
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "measures": [["count", "*"]]
           },
-          "version" : -1.0
+          "version": -1.0
         },
-        "receiveFacet" : false,
-        "selectMode" : "multi",
-        "type" : "aggregateflex",
-        "useGlobal" : true,
-        "visualizationParameters" : {
-          "options" : { },
-          "visualizationType" : "hbar"
+        "receiveFacet": false,
+        "selectMode": "multi",
+        "type": "aggregateflex",
+        "useGlobal": true,
+        "visualizationParameters": {
+          "options": {},
+          "visualizationType": "hbar"
         }
       }
     },
-    "widgets" : {
-      "aggregateflex_chart" : {
-        "parameters" : {
-          "autoFitMode" : "keepLabels",
-          "showValues" : true,
-          "bins" : {
-            "breakpoints" : {
-              "high" : 100,
-              "low" : 0
+    "widgets": {
+      "aggregateflex_chart": {
+        "parameters": {
+          "autoFitMode": "keepLabels",
+          "showValues": true,
+          "bins": {
+            "breakpoints": {
+              "high": 100,
+              "low": 0
             },
-            "bands" : {
-              "high" : {
-                "color" : "#008000",
-                "label" : ""
+            "bands": {
+              "high": {
+                "color": "#008000",
+                "label": ""
               },
-              "low" : {
-                "color" : "#B22222",
-                "label" : ""
+              "low": {
+                "color": "#B22222",
+                "label": ""
               },
-              "medium" : {
-                "color" : "#ffa500",
-                "label" : ""
+              "medium": {
+                "color": "#ffa500",
+                "label": ""
               }
             }
           },
-          "legend" : {
-            "descOrder" : false,
-            "showHeader" : true,
-            "show" : true,
-            "customSize" : "auto",
-            "position" : "right-top",
-            "inside" : false
+          "legend": {
+            "descOrder": false,
+            "showHeader": true,
+            "show": true,
+            "customSize": "auto",
+            "position": "right-top",
+            "inside": false
           },
-          "axisMode" : "multi",
-          "tooltip" : {
-            "showBinLabel" : true,
-            "measures" : "",
-            "showNullValues" : true,
-            "showPercentage" : true,
-            "showDimensions" : true,
-            "showMeasures" : true,
-            "customizeTooltip" : false,
-            "dimensions" : ""
+          "axisMode": "multi",
+          "tooltip": {
+            "showBinLabel": true,
+            "measures": "",
+            "showNullValues": true,
+            "showPercentage": true,
+            "showDimensions": true,
+            "showMeasures": true,
+            "customizeTooltip": false,
+            "dimensions": ""
           },
-          "visualizationType" : "hbar",
-          "exploreLink" : true,
-          "title" : {
-            "fontSize" : 14,
-            "subtitleFontSize" : 11,
-            "label" : "",
-            "align" : "center",
-            "subtitleLabel" : ""
+          "visualizationType": "hbar",
+          "exploreLink": true,
+          "title": {
+            "fontSize": 14,
+            "subtitleFontSize": 11,
+            "label": "",
+            "align": "center",
+            "subtitleLabel": ""
           },
-          "binValues" : false,
-          "trellis" : {
-            "flipLabels" : false,
-            "showGridLines" : true,
-            "size" : [
-              100,
-              100
-            ],
-            "enable" : false,
-            "type" : "x",
-            "chartsPerLine" : 4
+          "binValues": false,
+          "trellis": {
+            "flipLabels": false,
+            "showGridLines": true,
+            "size": [100, 100],
+            "enable": false,
+            "type": "x",
+            "chartsPerLine": 4
           },
-          "columnMap" : {
-            "trellis" : [ ],
-            "dimensionAxis" : [ ],
-            "plots" : [
-              "count"
-            ]
+          "columnMap": {
+            "trellis": [],
+            "dimensionAxis": [],
+            "plots": ["count"]
           },
-          "showActionMenu" : true,
-          "measureAxis2" : {
-            "sqrtScale" : false,
-            "showTitle" : true,
-            "showAxis" : true,
-            "title" : "",
-            "customDomain" : {
-              "showDomain" : false
+          "showActionMenu": true,
+          "measureAxis2": {
+            "sqrtScale": false,
+            "showTitle": true,
+            "showAxis": true,
+            "title": "",
+            "customDomain": {
+              "showDomain": false
             }
           },
-          "measureAxis1" : {
-            "sqrtScale" : false,
-            "showTitle" : true,
-            "showAxis" : true,
-            "title" : "",
-            "customDomain" : {
-              "showDomain" : false
+          "measureAxis1": {
+            "sqrtScale": false,
+            "showTitle": true,
+            "showAxis": true,
+            "title": "",
+            "customDomain": {
+              "showDomain": false
             }
           },
-          "theme" : "wave",
-          "step" : "aggregateflex",
-          "dimensionAxis" : {
-            "showTitle" : true,
-            "customSize" : "auto",
-            "showAxis" : true,
-            "title" : "",
-            "icons" : {
-              "useIcons" : false,
-              "iconProps" : {
-                "fit" : "cover",
-                "column" : "",
-                "type" : "round"
+          "theme": "wave",
+          "step": "aggregateflex",
+          "dimensionAxis": {
+            "showTitle": true,
+            "customSize": "auto",
+            "showAxis": true,
+            "title": "",
+            "icons": {
+              "useIcons": false,
+              "iconProps": {
+                "fit": "cover",
+                "column": "",
+                "type": "round"
               }
             }
           },
-          "applyConditionalFormatting" : true
+          "applyConditionalFormatting": true
         },
-        "type" : "chart"
+        "type": "chart"
       }
     }
   }

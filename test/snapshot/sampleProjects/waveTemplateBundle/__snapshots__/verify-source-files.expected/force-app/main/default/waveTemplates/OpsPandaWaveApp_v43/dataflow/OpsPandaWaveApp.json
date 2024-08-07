@@ -5,39 +5,41 @@
     "101": {
       "action": "sfdcDigest",
       "parameters": {
-        "filterConditions": [{
-          "conditions": [
-            {
-              "field": "IsClosed",
-              "value": "true",
-              "operator": "="
-            },
-            {
-              "field": "IsWon",
-              "value": "true",
-              "operator": "="
-            }
-          ],
-          "operator": "AND"
-        }],
+        "filterConditions": [
+          {
+            "conditions": [
+              {
+                "field": "IsClosed",
+                "value": "true",
+                "operator": "="
+              },
+              {
+                "field": "IsWon",
+                "value": "true",
+                "operator": "="
+              }
+            ],
+            "operator": "AND"
+          }
+        ],
         "fields": [
-          {"name": "ForecastCategory"},
-          {"name": "ForecastCategoryName"},
-          {"name": "LeadSource"},
-          {"name": "Name"},
-          {"name": "Id"},
-          {"name": "Type"},
-          {"name": "AccountId"},
-          {"name": "OwnerId"},
-          {"name": "CloseDate"},
-          {"name": "IsClosed"},
-          {"name": "CreatedDate"},
-          {"name": "Amount"},
-          {"name": "Probability"},
-          {"name": "ExpectedRevenue"},
-          {"name": "LastActivityDate"},
-          {"name": "IsWon"},
-          {"name": "StageName"}
+          { "name": "ForecastCategory" },
+          { "name": "ForecastCategoryName" },
+          { "name": "LeadSource" },
+          { "name": "Name" },
+          { "name": "Id" },
+          { "name": "Type" },
+          { "name": "AccountId" },
+          { "name": "OwnerId" },
+          { "name": "CloseDate" },
+          { "name": "IsClosed" },
+          { "name": "CreatedDate" },
+          { "name": "Amount" },
+          { "name": "Probability" },
+          { "name": "ExpectedRevenue" },
+          { "name": "LastActivityDate" },
+          { "name": "IsWon" },
+          { "name": "StageName" }
         ],
         "object": "Opportunity"
       }
@@ -46,17 +48,17 @@
       "action": "sfdcDigest",
       "parameters": {
         "fields": [
-          {"name": "Id"},
-          {"name": "Name"},
-          {"name": "AccountSource"},
-          {"name": "Type"},
-          {"name": "BillingCountry"},
-          {"name": "BillingState"},
-          {"name": "Industry"},
-          {"name": "NumberOfEmployees"},
-          {"name": "AnnualRevenue"},
-          {"name": "CreatedDate"},
-          {"name": "LastModifiedDate"}
+          { "name": "Id" },
+          { "name": "Name" },
+          { "name": "AccountSource" },
+          { "name": "Type" },
+          { "name": "BillingCountry" },
+          { "name": "BillingState" },
+          { "name": "Industry" },
+          { "name": "NumberOfEmployees" },
+          { "name": "AnnualRevenue" },
+          { "name": "CreatedDate" },
+          { "name": "LastModifiedDate" }
         ],
         "object": "Account"
       }
@@ -65,13 +67,13 @@
       "action": "sfdcDigest",
       "parameters": {
         "fields": [
-          {"name": "IsActive"},
-          {"name": "Alias"},
-          {"name": "Email"},
-          {"name": "Name"},
-          {"name": "CreatedDate"},
-          {"name": "Username"},
-          {"name": "Id"}
+          { "name": "IsActive" },
+          { "name": "Alias" },
+          { "name": "Email" },
+          { "name": "Name" },
+          { "name": "CreatedDate" },
+          { "name": "Username" },
+          { "name": "Id" }
         ],
         "object": "User"
       }
@@ -105,14 +107,7 @@
         "right_key": ["Id"],
         "left": "104",
         "left_key": ["OwnerId"],
-        "right_select": [
-          "IsActive",
-          "Alias",
-          "Email",
-          "Name",
-          "CreatedDate",
-          "Username"
-        ],
+        "right_select": ["IsActive", "Alias", "Email", "Name", "CreatedDate", "Username"],
         "right": "103",
         "relationship": "OwnerId"
       }

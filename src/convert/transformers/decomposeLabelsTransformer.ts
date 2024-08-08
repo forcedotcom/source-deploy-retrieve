@@ -5,12 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import type { CustomLabels, CustomLabel } from '@jsforce/jsforce-node/lib/api/metadata';
+import type { CustomLabel } from '@jsforce/jsforce-node/lib/api/metadata';
 import { SfError } from '@salesforce/core/sfError';
 import { calculateRelativePath } from '../../utils/path';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { ToSourceFormatInput, WriteInfo } from '../types';
 import { JsToXml } from '../streams';
+import { unwrapAndOmitNS } from '../../utils/decomposed';
 import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
 
 /* Use for the metadata type CustomLabels  */
@@ -21,7 +22,7 @@ export class LabelsMetadataTransformer extends DefaultMetadataTransformer {
     const partiallyAppliedPathCalculator = calculateRelativePath('source')({
       self: labelType,
     });
-    const xml = await component.parseXml<CustomLabels>();
+    const xml = unwrapAndOmitNS('CustomLabels')(await component.parseXml()) as { labels: CustomLabel[] };
     // split each label into a separate label file
     return xml.labels.filter(customLabelHasFullName).map((l) => ({
       output:

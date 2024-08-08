@@ -1,4 +1,8 @@
 {
+  "childTypes": {
+    "customlabel": ""
+  },
+  "strictDirectoryNames": {},
   "suffixes": {
     "label": "customlabel",
     "labels": "customlabels"
@@ -10,7 +14,7 @@
       "name": "CustomLabel",
       "strategies": {
         "adapter": "default",
-        "transformer": "label"
+        "transformer": "decomposedLabels"
       },
       "suffix": "label"
     },
@@ -20,7 +24,7 @@
       "name": "CustomLabels",
       "strategies": {
         "adapter": "default",
-        "transformer": "labels"
+        "transformer": "decomposedLabels"
       },
       "suffix": "labels"
     }

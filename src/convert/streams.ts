@@ -72,11 +72,13 @@ export class ComponentConverter extends Transform {
           case 'source':
             if (mergeWith) {
               for (const mergeComponent of mergeWith) {
-                converts.push(transformer.toSourceFormat(chunk, mergeComponent));
+                converts.push(
+                  transformer.toSourceFormat({ component: chunk, mergeWith: mergeComponent, mergeSet: this.mergeSet })
+                );
               }
             }
             if (converts.length === 0) {
-              converts.push(transformer.toSourceFormat(chunk));
+              converts.push(transformer.toSourceFormat({ component: chunk }));
             }
             break;
           case 'metadata':

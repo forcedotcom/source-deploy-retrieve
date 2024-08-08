@@ -1,0 +1,28 @@
+{
+  "suffixes": {
+    "label": "customlabel",
+    "labels": "customlabels"
+  },
+  "types": {
+    "customlabel": {
+      "directoryName": "labels",
+      "id": "customlabel",
+      "name": "CustomLabel",
+      "strategies": {
+        "adapter": "default",
+        "transformer": "label"
+      },
+      "suffix": "label"
+    },
+    "customlabels": {
+      "directoryName": "labels",
+      "id": "customlabels",
+      "name": "CustomLabels",
+      "strategies": {
+        "adapter": "default",
+        "transformer": "labels"
+      },
+      "suffix": "labels"
+    }
+  }
+}

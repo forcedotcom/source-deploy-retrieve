@@ -1,0 +1,13 @@
+{
+  "pages": [
+    {
+      "title": "Do you want to create the minimum viable app?",
+      "variables": [
+        {
+          "name": "simplePath"
+        }
+      ]
+    }
+  ],
+  "displayMessages": []
+}

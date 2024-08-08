@@ -1,0 +1,101 @@
+{
+  "templateType": "app",
+  "label": "Ops Panda Wave App v43",
+  "name": "OpsPandaWaveApp_v43",
+  "assetVersion": 43.0,
+  "tags": ["Financial", "Sales", "Service"],
+  "customAttributes": [
+    { "label": "test", "values": ["one", "two", "three"] },
+    { "label": "test2", "values": ["four", "five", "six"] }
+  ],
+  "variableDefinition": "variables.json",
+  "uiDefinition": "ui.json",
+  "rules": [
+    {
+      "type": "templateToApp",
+      "file": "template-to-app-rules.json"
+    },
+    {
+      "type": "appToTemplate",
+      "file": "app-to-template-rules.json"
+    }
+  ],
+  "releaseInfo": {
+    "templateVersion": "1.1"
+  },
+  "folderDefinition": "folder.json",
+  "externalFiles": [
+    {
+      "name": "OpsPanda_Sales_Capacity_Plan_43",
+      "condition": "${!Variables.simplePath && Variables.Overrides.createAllExternalFiles}",
+      "file": "external_files/OpsPanda_Sales_Capacity_Plan.csv",
+      "type": "CSV",
+      "schema": "external_files/OpsPanda_Sales_Capacity_Plan.json",
+      "userXmd": "external_files/OpsPanda_Sales_Capacity_Plan_XMD.json",
+      "rows": 5
+    }
+  ],
+  "lenses": [],
+  "dashboards": [
+    {
+      "label": "OpsPanda Actuals to Quota",
+      "name": "OpsPanda_Actuals_to_Quota_43_tp",
+      "condition": "${!Variables.simplePath && Variables.Overrides.createAllDashboards}",
+      "file": "dashboards/OpsPanda_Actuals_to_Quota.json"
+    },
+    {
+      "label": "OpsPanda Sales Capacity Plan",
+      "name": "OpsPanda_Sales_Capacity_Plan_43_tp",
+      "condition": "${Variables.Overrides.createAllDashboards}",
+      "file": "dashboards/OpsPanda_Sales_Capacity_Plan.json"
+    }
+  ],
+  "eltDataflows": [
+    {
+      "label": "eltDataflow",
+      "name": "eltDataflow",
+      "condition": "${!Variables.simplePath && Variables.Overrides.createDataflow}",
+      "file": "dataflow/OpsPandaWaveApp.json"
+    }
+  ],
+  "datasetFiles": [
+    {
+      "label": "Opportunities_Closed_Won",
+      "name": "Opportunities_Closed_Won",
+      "condition": "${!Variables.simplePath && Variables.Overrides.createAllDatasetFiles}",
+      "userXmd": "dataset_files/Opportunities_Closed_Won_XMD.json"
+    }
+  ],
+  "storedQueries": [],
+  "imageFiles": [
+    {
+      "name": "einstein_leaning_leftpng3",
+      "condition": "${Variables.Overrides.createAllImages}",
+      "file": "images/images/einstein_leaning_left.png"
+    }
+  ],
+  "icons": {
+    "appBadge": {
+      "name": "16.png"
+    },
+    "templateBadge": {
+      "name": "default.png"
+    },
+    "templateDetail": {},
+    "templatePreviews": [
+      {
+        "name": "default.png",
+        "label": "A default image for the carousel",
+        "description": "THIS IS MY DESCRIPTION.",
+        "namespace": "test"
+      },
+      {
+        "name": "sales.png",
+        "label": "SALES IS AWESOME"
+      },
+      {
+        "name": "service.png"
+      }
+    ]
+  }
+}

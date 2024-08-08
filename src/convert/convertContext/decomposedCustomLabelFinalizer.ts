@@ -7,6 +7,7 @@
 import { join } from 'node:path';
 import { ensure, JsonMap } from '@salesforce/ts-types';
 import type { CustomLabel } from '@jsforce/jsforce-node/lib/api/metadata';
+import { customLabelHasFullName } from '../../utils/metadata';
 import { MetadataType } from '../../registry';
 import { XML_NS_KEY, XML_NS_URL } from '../../common/constants';
 import { JsToXml } from '../streams';
@@ -65,6 +66,11 @@ const generateXml = (children: Map<string, CustomLabel>): JsonMap => ({
   ['CustomLabels']: {
     [XML_NS_KEY]: XML_NS_URL,
     // for CustomLabels, that's `labels`
-    labels: Array.from(children.values()),
+    labels: Array.from(children.values()).filter(customLabelHasFullName).sort(sortLabelsByFullName),
   },
 });
+
+type CustomLabelWithFullName = CustomLabel & { fullName: string };
+
+const sortLabelsByFullName = (a: CustomLabelWithFullName, b: CustomLabelWithFullName): number =>
+  a.fullName.localeCompare(b.fullName);

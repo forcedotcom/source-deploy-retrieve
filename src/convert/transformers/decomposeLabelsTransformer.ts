@@ -6,7 +6,7 @@
  */
 
 import type { CustomLabel } from '@jsforce/jsforce-node/lib/api/metadata';
-import { SfError } from '@salesforce/core/sfError';
+import { customLabelHasFullName } from '../../utils/metadata';
 import { calculateRelativePath } from '../../utils/path';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { ToSourceFormatInput, WriteInfo } from '../types';
@@ -48,10 +48,3 @@ export class LabelMetadataTransformer extends DefaultMetadataTransformer {
 
   // toSourceFormat uses the default (merge them with the existing label)
 }
-
-const customLabelHasFullName = (label: CustomLabel): label is CustomLabel & { fullName: string } => {
-  if (label.fullName === undefined) {
-    throw SfError.create({ message: 'Label does not have a fullName', data: label });
-  }
-  return true;
-};

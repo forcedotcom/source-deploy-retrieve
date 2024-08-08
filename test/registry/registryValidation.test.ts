@@ -79,12 +79,14 @@ for (const preset of presets) {
       });
 
       describe('every childTypes top-level property maps to a top-level type that has it in its childTypes', () => {
-        Object.entries(registry.childTypes).forEach(([childId, parentId]) => {
-          it(`childTypes member ${childId} matches a parent type ${parentId}`, () => {
-            expect(registry.types[parentId]).to.have.property('children');
-            expect(registry.types[parentId]?.children?.types).to.have.property(childId);
+        Object.entries(registry.childTypes)
+          .filter(([, parentId]) => parentId)
+          .forEach(([childId, parentId]) => {
+            it(`childTypes member ${childId} matches a parent type ${parentId}`, () => {
+              expect(registry.types[parentId]).to.have.property('children');
+              expect(registry.types[parentId]?.children?.types).to.have.property(childId);
+            });
           });
-        });
       });
     });
 

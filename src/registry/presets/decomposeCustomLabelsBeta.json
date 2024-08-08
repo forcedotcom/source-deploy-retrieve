@@ -1,44 +1,32 @@
 {
   "childTypes": {
-    "customlabel": "customlabels"
+    "customlabel": ""
   },
+  "strictDirectoryNames": {},
   "suffixes": {
-    "label": "customlabel"
-  },
-  "strictDirectoryNames": {
+    "label": "customlabel",
     "labels": "customlabels"
   },
   "types": {
-    "customlabels": {
-      "children": {
-        "suffixes": {
-          "label": "customlabel"
-        },
-        "types": {
-          "customlabel": {
-            "directoryName": "test",
-            "id": "customlabel",
-            "name": "CustomLabel",
-            "suffix": "label",
-            "isAddressable": false,
-            "supportsWildcardAndName": true,
-            "uniqueIdElement": "fullName",
-            "xmlElementName": "labels"
-          }
-        }
+    "customlabel": {
+      "directoryName": "labels",
+      "id": "customlabel",
+      "name": "CustomLabel",
+      "strategies": {
+        "adapter": "default",
+        "transformer": "decomposedLabels"
       },
-      "strictDirectoryName": true,
+      "suffix": "label"
+    },
+    "customlabels": {
       "directoryName": "labels",
       "id": "customlabels",
-      "ignoreParsedFullName": false,
       "name": "CustomLabels",
       "strategies": {
-        "adapter": "decomposed",
-        "decomposition": "topLevel",
-        "transformer": "decomposed"
+        "adapter": "default",
+        "transformer": "decomposedLabels"
       },
-      "suffix": "labels",
-      "supportsPartialDelete": true
+      "suffix": "labels"
     }
   }
 }

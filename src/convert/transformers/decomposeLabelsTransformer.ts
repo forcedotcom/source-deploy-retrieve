@@ -16,7 +16,7 @@ import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
 
 /* Use for the metadata type CustomLabels  */
 export class LabelsMetadataTransformer extends DefaultMetadataTransformer {
-  // CustomLabels file => CustomLabel
+  /** CustomLabels file => Array of CustomLabel WriteInfo (one for each label) */
   public async toSourceFormat({ component, mergeSet }: ToSourceFormatInput): Promise<WriteInfo[]> {
     const labelType = this.registry.getTypeByName('CustomLabel');
     const partiallyAppliedPathCalculator = calculateRelativePath('source')({
@@ -36,12 +36,13 @@ export class LabelsMetadataTransformer extends DefaultMetadataTransformer {
 
 /* Use for the metadata type CustomLabel */
 export class LabelMetadataTransformer extends DefaultMetadataTransformer {
-  // eslint-disable-next-line @typescript-eslint/require-await, class-methods-use-this, @typescript-eslint/no-unused-vars
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
-    // TODO:
-    // read all each label from the recomposition state, regardless of parents
-    // merge them all to a single CustomLabels file
-    // write the CustomLabels file
+    // only need to do this once
+    this.context.decomposedLabels.customLabelsType ??= this.registry.getTypeByName('CustomLabels');
+    this.context.decomposedLabels.transactionState.customLabelByFullName.set(
+      component.fullName,
+      unwrapAndOmitNS('CustomLabel')(await component.parseXml()) as CustomLabel
+    );
     return [];
   }
 

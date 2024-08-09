@@ -27,7 +27,7 @@ type CustomLabelState = {
  *
  * Inserts unclaimed child components into the parent that belongs to the default package
  */
-export class DecomposedCustomLabelsFinalizer extends ConvertTransactionFinalizer<CustomLabelState> {
+export class DecomposedLabelsFinalizer extends ConvertTransactionFinalizer<CustomLabelState> {
   public transactionState: CustomLabelState = {
     customLabelByFullName: new Map(),
   };

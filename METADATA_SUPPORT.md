@@ -645,6 +645,7 @@ v62 introduces the following new types.  Here's their current level of support
 |PublicKeyCertificateSet|❌|Not supported, but support could be added (but not for tracking)|
 |StageDefinition|✅||
 |UiFormatSpecificationSet|❌|Not supported, but support could be added|
+|WorkflowFlowAutomation|❌|Not supported, but support could be added|
 
 ## Additional Types
 

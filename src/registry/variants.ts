@@ -10,60 +10,89 @@ import { MetadataRegistry } from './types';
 import * as registryData from './metadataRegistry.json';
 import { presetMap } from './presets/presetMap';
 
-export type RegistryLoadInput = {
-  /** The project directory to look at sfdx-project.json file
-   * will default to the current working directory
-   * if no project file is found, the standard registry will be returned without modifications
-   */
-  projectDir?: string;
+type ProjectVariants = {
+  registryCustomizations?: MetadataRegistry;
+  presets?: MetadataRegistry[];
+  projectDir?: never;
 };
+
+export type RegistryLoadInput =
+  | {
+      /** The project directory to look at sfdx-project.json file
+       * will default to the current working directory
+       * if no project file is found, the standard registry will be returned without modifications
+       */
+      projectDir?: string;
+      registryCustomizations?: never;
+      presets?: never;
+    }
+  | ProjectVariants;
 
 /** combine the standard registration with any overrides specific in the sfdx-project.json */
 export const getEffectiveRegistry = (input?: RegistryLoadInput): MetadataRegistry =>
-  deepFreeze(removeEmptyStrings(firstLevelMerge(registryData as MetadataRegistry, loadVariants(input))));
+  deepFreeze(
+    removeEmptyStrings(
+      firstLevelMerge(
+        registryData as MetadataRegistry,
+        mergeVariants(
+          input?.presets?.length ?? input?.registryCustomizations ? input : getProjectVariants(input?.projectDir)
+        )
+      )
+    )
+  );
 
 /** read the project to get additional registry customizations and sourceBehaviorOptions */
-const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry => {
+const getProjectVariants = (projectDir?: string): ProjectVariants => {
   const logger = Logger.childFromRoot('variants');
   const projJson = maybeGetProject(projectDir);
   if (!projJson) {
     logger.debug('no project found, using standard registry');
     // there might not be a project at all and that's ok
-    return emptyRegistry;
+    return {};
   }
 
   // there might not be any customizations in a project, so we default to the emptyRegistry
-  const customizations = projJson.get<MetadataRegistry>('registryCustomizations') ?? emptyRegistry;
-  const sourceBehaviorOptions = [
+  const registryCustomizations = projJson.get<MetadataRegistry>('registryCustomizations') ?? emptyRegistry;
+  const presets = [
     ...new Set([
       // TODO: deprecated, remove this
       ...(projJson.get<string[]>('registryPresets') ?? []),
       ...(projJson.get<string[]>('sourceBehaviorOptions') ?? []),
     ]),
   ];
-  if (Object.keys(customizations.types).length > 0) {
+  if (Object.keys(registryCustomizations.types).length > 0) {
     logger.debug(
-      `found registryCustomizations for types [${Object.keys(customizations.types).join(',')}] in ${projJson.getPath()}`
+      `found registryCustomizations for types [${Object.keys(registryCustomizations.types).join(
+        ','
+      )}] in ${projJson.getPath()}`
     );
   }
-  if (sourceBehaviorOptions.length > 0) {
-    logger.debug(`using sourceBehaviorOptions [${sourceBehaviorOptions.join(',')}] in ${projJson.getPath()}`);
+  if (presets.length > 0) {
+    logger.debug(`using sourceBehaviorOptions [${presets.join(',')}] in ${projJson.getPath()}`);
   }
-  const registryFromPresets = sourceBehaviorOptions.reduce<MetadataRegistry>(
-    (prev, curr) => firstLevelMerge(prev, loadPreset(curr)),
-    emptyRegistry
-  );
-  if (sourceBehaviorOptions.length > 0 || Object.keys(customizations.types).length > 0) {
+  if (presets.length > 0 || Object.keys(registryCustomizations.types).length > 0) {
     void Lifecycle.getInstance().emitTelemetry({
       library: 'SDR',
       eventName: 'RegistryVariants',
-      presetCount: sourceBehaviorOptions.length,
-      presets: sourceBehaviorOptions.join(','),
-      customizationsCount: Object.keys(customizations.types).length,
-      customizationsTypes: Object.keys(customizations.types).join(','),
+      presetCount: presets.length,
+      presets: presets.join(','),
+      customizationsCount: Object.keys(registryCustomizations.types).length,
+      customizationsTypes: Object.keys(registryCustomizations.types).join(','),
     });
   }
-  return firstLevelMerge(registryFromPresets, customizations);
+  return {
+    registryCustomizations,
+    presets: presets.map(loadPreset),
+  };
+};
+
+const mergeVariants = ({ registryCustomizations, presets }: ProjectVariants): MetadataRegistry => {
+  const registryFromPresets = [...(presets ?? []), registryCustomizations ?? emptyRegistry].reduce<MetadataRegistry>(
+    (prev, curr) => firstLevelMerge(prev, curr),
+    emptyRegistry
+  );
+
+  return firstLevelMerge(registryFromPresets, registryCustomizations ?? emptyRegistry);
 };
 
 const maybeGetProject = (projectDir?: string): SfProjectJson | undefined => {

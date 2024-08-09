@@ -160,7 +160,13 @@ export class StandardWriter extends ComponentWriter {
               }
 
               // if there are children, resolve each file. o/w just pick one of the files to resolve
-              if (toResolve.size === 0 || chunk.component.type.children) {
+              // "resolve" means "make these show up in the FileResponses"
+              if (
+                toResolve.size === 0 ||
+                chunk.component.type.children !== undefined ||
+                // make each decomposed label show up in the fileResponses
+                chunk.component.type.strategies?.transformer === 'decomposedLabels'
+              ) {
                 // This is a workaround for a server side ListViews bug where
                 // duplicate components are sent. W-9614275
                 if (toResolve.has(info.output)) {

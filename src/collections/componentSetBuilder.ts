@@ -291,6 +291,9 @@ export const entryToTypeAndName =
     if (type.isAddressable === false && parent !== undefined && !type.unaddressableWithoutParent) {
       throw new Error(`Cannot use this type, instead use ${parent.name}`);
     }
+    if (type.name === 'CustomLabels' && type.strategies?.transformer === 'decomposedLabels') {
+      throw new Error('Use CustomLabel instead of CustomLabels for decomposed labels');
+    }
     return { type, metadataName: name.length ? name.join(':').trim() : '*' };
   };
 

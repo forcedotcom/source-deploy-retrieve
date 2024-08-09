@@ -78,7 +78,7 @@ export class ComponentConverter extends Transform {
               }
             }
             if (converts.length === 0) {
-              converts.push(transformer.toSourceFormat({ component: chunk }));
+              converts.push(transformer.toSourceFormat({ component: chunk, mergeSet: this.mergeSet }));
             }
             break;
           case 'metadata':

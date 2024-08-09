@@ -9,10 +9,10 @@ import { SfError } from '@salesforce/core/sfError';
 import { Messages } from '@salesforce/core/messages';
 import { Lifecycle } from '@salesforce/core/lifecycle';
 
-import { XMLParser, XMLValidator } from 'fast-xml-parser';
+import { XMLValidator } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
-import { XML_COMMENT_PROP_NAME } from '../common/constants';
+import { parser } from '../utils/metadata';
 import { getXmlElement } from '../utils/decomposed';
 import { baseName, baseWithoutSuffixes, parseMetadataXml, calculateRelativePath } from '../utils/path';
 import { replacementIterations } from '../convert/replacements';
@@ -269,16 +269,6 @@ export class SourceComponent implements MetadataComponent {
   }
 
   private parse<T extends JsonMap>(contents: string): T {
-    // include tag attributes and don't parse text node as number
-    const parser = new XMLParser({
-      ignoreAttributes: false,
-      parseTagValue: false,
-      parseAttributeValue: false,
-      cdataPropName: '__cdata',
-      ignoreDeclaration: true,
-      numberParseOptions: { leadingZeros: false, hex: false },
-      commentPropName: XML_COMMENT_PROP_NAME,
-    });
     const parsed = parser.parse(String(contents)) as T;
     const [firstElement] = Object.keys(parsed);
     if (firstElement === this.type.name) {

@@ -7,7 +7,19 @@
 
 import type { CustomLabel } from '@jsforce/jsforce-node/lib/api/metadata';
 import { SfError } from '@salesforce/core';
-import { META_XML_SUFFIX } from '../common';
+import { XMLParser } from 'fast-xml-parser';
+import { META_XML_SUFFIX, XML_COMMENT_PROP_NAME } from '../common/constants';
+
+export const parser = new XMLParser({
+  // include tag attributes and don't parse text node as number
+  ignoreAttributes: false,
+  parseTagValue: false,
+  parseAttributeValue: false,
+  cdataPropName: '__cdata',
+  ignoreDeclaration: true,
+  numberParseOptions: { leadingZeros: false, hex: false },
+  commentPropName: XML_COMMENT_PROP_NAME,
+});
 
 export function generateMetaXML(typeName: string, apiVersion: string, status: string): string {
   let templateResult = '<?xml version="1.0" encoding="UTF-8"?>\n';

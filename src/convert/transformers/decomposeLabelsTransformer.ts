@@ -6,6 +6,7 @@
  */
 
 import type { CustomLabel } from '@jsforce/jsforce-node/lib/api/metadata';
+import { ensureArray } from '@salesforce/kit';
 import { customLabelHasFullName } from '../../utils/metadata';
 import { calculateRelativePath } from '../../utils/path';
 import { SourceComponent } from '../../resolve/sourceComponent';
@@ -22,15 +23,17 @@ export class LabelsMetadataTransformer extends DefaultMetadataTransformer {
     const partiallyAppliedPathCalculator = calculateRelativePath('source')({
       self: labelType,
     });
-    const xml = unwrapAndOmitNS('CustomLabels')(await component.parseXml()) as { labels: CustomLabel[] };
-    // split each label into a separate label file
-    return xml.labels.filter(customLabelHasFullName).map((l) => ({
-      output:
-        // if present in the merge set, use that xml path, otherwise use the default path
-        mergeSet?.getComponentFilenamesByNameAndType({ fullName: l.fullName, type: labelType.name })?.[0] ??
-        partiallyAppliedPathCalculator(l.fullName)(`${l.fullName}.label-meta.xml`),
-      source: new JsToXml({ CustomLabel: l }),
-    }));
+    const xml = unwrapAndOmitNS('CustomLabels')(await component.parseXml()) as { labels: CustomLabel | CustomLabel[] };
+    return ensureArray(xml.labels) // labels could parse to a single object and not an array if there's only 1 label
+      .filter(customLabelHasFullName)
+      .map((l) => ({
+        // split each label into a separate label file
+        output:
+          // if present in the merge set, use that xml path, otherwise use the default path
+          mergeSet?.getComponentFilenamesByNameAndType({ fullName: l.fullName, type: labelType.name })?.[0] ??
+          partiallyAppliedPathCalculator(l.fullName)(`${l.fullName}.label-meta.xml`),
+        source: new JsToXml({ CustomLabel: l }),
+      }));
   }
 }
 

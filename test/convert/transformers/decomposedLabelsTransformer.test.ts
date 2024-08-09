@@ -5,7 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'node:path';
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
+import { parser } from '../../../src/utils/metadata';
+import { stream2buffer } from '../../../src/convert/streams';
+import { DecomposedLabelsFinalizer } from '../../../src/convert/convertContext/decomposedLabelsFinalizer';
 import { ComponentSet } from '../../../src/collections/componentSet';
 import { RegistryAccess } from '../../../src/registry/registryAccess';
 import {
@@ -14,6 +17,7 @@ import {
   ONLY_LABEL_CMP_IN_ANOTHER_DIR_CMP,
   ONLY_LABEL_CMP_IN_DEFAULT_DIR_CMP,
   ONLY_LABEL_NO_DIR_CMP,
+  OTHER_LABEL_CMP,
   THREE_CUSTOM_LABELS_CMP,
 } from '../../mock/type-constants/decomposedCustomLabelsConstant';
 import {
@@ -127,6 +131,44 @@ describe('DecomposedCustomLabelTransformer', () => {
         // component properties are in the state.  We could say the same about the rest of CustomLabel properties
         // but would have to the xml => js and omitNS stuff here to compare
         expect(stateEntry?.fullName).to.deep.equal(component.fullName);
+      });
+    });
+    describe('finalizer', () => {
+      it('single label from source to mdapi', async () => {
+        const component = ONLY_LABEL_CMP_IN_DEFAULT_DIR_CMP;
+        const xf = new LabelMetadataTransformer(regAcc);
+        await xf.toMetadataFormat(component);
+        const finalizer = new DecomposedLabelsFinalizer();
+        finalizer.customLabelsType = regAcc.getTypeByName('CustomLabels');
+        finalizer.transactionState = xf.context.decomposedLabels.transactionState;
+        const result = await finalizer.finalize();
+        expect(result).to.have.length(1);
+        expect(result[0].component.fullName).to.equal('CustomLabels');
+        expect(result[0].component.type.name).to.equal('CustomLabels');
+        expect(result[0].writeInfos).to.have.length(1);
+        assert(result[0].writeInfos[0].source);
+        const contents = (await stream2buffer(result[0].writeInfos[0].source)).toString();
+        expect(parser.parse(contents)).to.deep.equal(await ONE_CUSTOM_LABELS_CMP.parseXml());
+      });
+      it('2 labels from source to mdapi', async () => {
+        const component1 = ONLY_LABEL_CMP_IN_DEFAULT_DIR_CMP;
+        const component2 = OTHER_LABEL_CMP;
+        const xf = new LabelMetadataTransformer(regAcc);
+        await xf.toMetadataFormat(component1);
+        await xf.toMetadataFormat(component2);
+        const finalizer = new DecomposedLabelsFinalizer();
+        finalizer.customLabelsType = regAcc.getTypeByName('CustomLabels');
+        finalizer.transactionState = xf.context.decomposedLabels.transactionState;
+        const result = await finalizer.finalize();
+        expect(result).to.have.length(1);
+        expect(result[0].component.fullName).to.equal('CustomLabels');
+        expect(result[0].component.type.name).to.equal('CustomLabels');
+        // still produces only 1 writeInfo
+        expect(result[0].writeInfos).to.have.length(1);
+        assert(result[0].writeInfos[0].source);
+        const contents = (await stream2buffer(result[0].writeInfos[0].source)).toString();
+        // with 2 labels in it
+        expect(parser.parse(contents).CustomLabels.labels).to.have.length(2);
       });
     });
   });

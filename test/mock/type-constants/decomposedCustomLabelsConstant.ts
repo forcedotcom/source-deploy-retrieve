@@ -171,3 +171,29 @@ export const ONLY_LABEL_NO_DIR_CMP = new SourceComponent(
     },
   ])
 );
+
+export const OTHER_LABEL_CMP = new SourceComponent(
+  {
+    name: 'OtherLabel',
+    type: customLabelType,
+    xml: join('labels', 'OtherLabel.label-meta.xml'),
+  },
+  new VirtualTreeContainer([
+    {
+      dirPath: 'labels',
+      children: [
+        {
+          name: 'OtherLabel.label-meta.xml',
+          data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabel xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fullName>OtherLabel</fullName>
+  <language>en_US</language>
+  <protected>true</protected>
+  <shortDescription>OtherLabel</shortDescription>
+  <value>OtherLabel</value>
+</CustomLabel>`),
+        },
+      ],
+    },
+  ])
+);

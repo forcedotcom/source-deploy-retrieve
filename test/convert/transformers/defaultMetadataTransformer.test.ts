@@ -197,7 +197,7 @@ describe('DefaultMetadataTransformer', () => {
         source: component.tree.stream(component.xml),
       });
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat({ component })).to.deep.equal(expectedInfos);
     });
 
     it('should add in the -meta.xml suffix for components with no content', async () => {
@@ -213,7 +213,7 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat({ component })).to.deep.equal(expectedInfos);
     });
 
     it('should handle components in folders with no content', async () => {
@@ -234,7 +234,7 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat({ component })).to.deep.equal(expectedInfos);
     });
 
     it('should not remove file extension and preserve -meta.xml for DigitalExperienceBundle', async () => {
@@ -263,7 +263,7 @@ describe('DefaultMetadataTransformer', () => {
           ),
         },
       ];
-      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat({ component })).to.deep.equal(expectedInfos);
     });
 
     it('should handle folder components', async () => {
@@ -284,7 +284,7 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat({ component })).to.deep.equal(expectedInfos);
     });
 
     it('should merge output with merge component when content is a directory', async () => {
@@ -322,7 +322,7 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component, mergeWith)).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat({ component, mergeWith })).to.deep.equal(expectedInfos);
     });
 
     it('should merge output with merge component when content is a file', async () => {
@@ -356,7 +356,7 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component, mergeWith)).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat({ component, mergeWith })).to.deep.equal(expectedInfos);
     });
 
     it('should use merge component xml path', async () => {
@@ -371,7 +371,7 @@ describe('DefaultMetadataTransformer', () => {
         []
       );
       assert(typeof component.xml === 'string');
-      expect(await transformer.toSourceFormat(component, mergeWith)).to.deep.contain({
+      expect(await transformer.toSourceFormat({ component, mergeWith })).to.deep.contain({
         output: mergeWith.xml,
         source: component.tree.stream(component.xml),
       });
@@ -388,7 +388,7 @@ describe('DefaultMetadataTransformer', () => {
       );
       assert(typeof component.xml === 'string');
 
-      expect(await transformer.toSourceFormat(component, mergeWith)).to.deep.contain({
+      expect(await transformer.toSourceFormat({ component, mergeWith })).to.deep.contain({
         output: component.getPackageRelativePath(component.xml, 'source'),
         source: component.tree.stream(component.xml),
       });
@@ -411,7 +411,7 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat({ component })).to.deep.equal(expectedInfos);
     });
   });
 });

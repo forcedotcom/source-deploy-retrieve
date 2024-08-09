@@ -140,7 +140,7 @@ export type MetadataType = {
    */
   strategies?: {
     adapter: 'mixedContent' | 'matchingContentFile' | 'decomposed' | 'digitalExperience' | 'bundle' | 'default';
-    transformer?: 'decomposed' | 'staticResource' | 'nonDecomposed' | 'standard';
+    transformer?: 'decomposed' | 'staticResource' | 'nonDecomposed' | 'standard' | 'decomposedLabels';
     decomposition?: 'topLevel' | 'folderPerType';
     recomposition?: 'startEmpty';
   };
@@ -168,6 +168,7 @@ type DirectoryIndex = {
 };
 
 /**
+ * @deprecated.  See the strategies union type on the registry types for the valid names
  * Strategy names for handling component decomposition.
  */
 export const enum DecompositionStrategy {
@@ -182,6 +183,7 @@ export const enum DecompositionStrategy {
 }
 
 /**
+ * @deprecated.  See the strategies union type on the registry types for the valid names
  * Strategy names for handling component recomposition.
  */
 export const enum RecompositionStrategy {
@@ -192,6 +194,7 @@ export const enum RecompositionStrategy {
 }
 
 /**
+ * @deprecated.  See the strategies union type on the registry types for the valid names
  * Strategy names for the type of transformation to use for metadata types.
  */
 export const enum TransformerStrategy {
@@ -199,6 +202,7 @@ export const enum TransformerStrategy {
   Decomposed = 'decomposed',
   StaticResource = 'staticResource',
   NonDecomposed = 'nonDecomposed',
+  DecomposedLabels = 'decomposedLabels',
 }
 
 type Channel = {

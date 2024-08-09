@@ -11,7 +11,6 @@ import { extractUniqueElementValue, getXmlElement, unwrapAndOmitNS } from '../..
 import { MetadataComponent } from '../../resolve/types';
 import { XML_NS_KEY, XML_NS_URL } from '../../common/constants';
 import { ComponentSet } from '../../collections/componentSet';
-import { RecompositionStrategy } from '../../registry/types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { JsToXml } from '../streams';
 import { WriterFormat } from '../types';
@@ -127,7 +126,7 @@ const recompose =
 const getStartingXml =
   (cache: XmlCache) =>
   async (parent: SourceComponent): Promise<JsonMap> =>
-    parent.type.strategies?.recomposition === RecompositionStrategy.StartEmpty
+    parent.type.strategies?.recomposition === 'startEmpty'
       ? {}
       : unwrapAndOmitNS(parent.type.name)(await getXmlFromCache(cache)(parent)) ?? {};
 

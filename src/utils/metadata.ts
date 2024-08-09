@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import type { CustomLabel } from '@jsforce/jsforce-node/lib/api/metadata';
+import { SfError } from '@salesforce/core';
 import { META_XML_SUFFIX } from '../common';
 
 export function generateMetaXML(typeName: string, apiVersion: string, status: string): string {
@@ -25,3 +27,10 @@ export function generateMetaXMLPath(sourcePath: string): string {
 export function trimMetaXmlSuffix(sourcePath: string): string {
   return sourcePath.endsWith(META_XML_SUFFIX) ? sourcePath.replace(META_XML_SUFFIX, '') : sourcePath;
 }
+
+export const customLabelHasFullName = (label: CustomLabel): label is CustomLabel & { fullName: string } => {
+  if (label.fullName === undefined) {
+    throw SfError.create({ message: 'Label does not have a fullName', data: label });
+  }
+  return true;
+};

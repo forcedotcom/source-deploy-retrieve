@@ -20,7 +20,7 @@ export type RegistryLoadInput = {
 
 /** combine the standard registration with any overrides specific in the sfdx-project.json */
 export const getEffectiveRegistry = (input?: RegistryLoadInput): MetadataRegistry =>
-  deepFreeze(firstLevelMerge(registryData as MetadataRegistry, loadVariants(input)));
+  deepFreeze(removeEmptyStrings(firstLevelMerge(registryData as MetadataRegistry, loadVariants(input))));
 
 /** read the project to get additional registry customizations and sourceBehaviorOptions */
 const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry => {
@@ -101,5 +101,19 @@ export const firstLevelMerge = (original: MetadataRegistry, overrides: MetadataR
   types: { ...original.types, ...(overrides.types ?? {}) },
   childTypes: { ...original.childTypes, ...(overrides.childTypes ?? {}) },
   suffixes: { ...original.suffixes, ...(overrides.suffixes ?? {}) },
-  strictDirectoryNames: { ...original.strictDirectoryNames, ...(overrides.strictDirectoryNames ?? {}) },
+  strictDirectoryNames: {
+    ...original.strictDirectoryNames,
+    ...(overrides.strictDirectoryNames ?? {}),
+  },
 });
+
+const removeEmptyStrings = (reg: MetadataRegistry): MetadataRegistry => ({
+  types: reg.types,
+  childTypes: removeEmptyString(reg.childTypes),
+  suffixes: removeEmptyString(reg.suffixes),
+  strictDirectoryNames: removeEmptyString(reg.strictDirectoryNames),
+});
+
+// presets can remove an entry by setting it to an empty string ex: { "childTypes": { "foo": "" } }
+const removeEmptyString = (obj: Record<string, string>): Record<string, string> =>
+  Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== ''));

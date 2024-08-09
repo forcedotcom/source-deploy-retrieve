@@ -10,7 +10,6 @@ import { isPlainObject } from '@salesforce/ts-types';
 import { MetadataComponent } from '../resolve/types';
 import { META_XML_SUFFIX } from '../common/constants';
 import { RegistryAccess } from '../registry/registryAccess';
-import { registry } from '../registry/registry';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -65,7 +64,7 @@ export const filePathsFromMetadataComponent = (
   }
 
   // this needs to be done before the other types because of potential overlaps
-  if (!type.children && Object.keys(registry.childTypes).includes(type.id)) {
+  if (!type.children && Object.keys(registryAccess.getRegistry().childTypes).includes(type.id)) {
     return getDecomposedChildType({ fullName, type }, packageDir);
   }
 
@@ -75,7 +74,7 @@ export const filePathsFromMetadataComponent = (
   }
 
   // basic metadata (with or without folders)
-  if (!type.children && !type.strategies && type.suffix) {
+  if (!type.children && type.suffix && (!type.strategies || type.strategies.transformer === 'decomposedLabels')) {
     return (type.inFolder ?? type.folderType ? generateFolders({ fullName, type }, packageDirWithTypeDir) : []).concat([
       join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`),
     ]);

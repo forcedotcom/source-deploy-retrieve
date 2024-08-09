@@ -14,10 +14,10 @@ import { calculateRelativePath } from '../../utils/path';
 import { ForceIgnore } from '../../resolve/forceIgnore';
 import { extractUniqueElementValue, objectHasSomeRealValues } from '../../utils/decomposed';
 import type { MetadataComponent } from '../../resolve/types';
-import { DecompositionStrategy, type MetadataType } from '../../registry/types';
+import { type MetadataType } from '../../registry/types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { JsToXml } from '../streams';
-import type { WriteInfo, XmlObj } from '../types';
+import type { ToSourceFormatInput, WriteInfo, XmlObj } from '../types';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../common/constants';
 import type { SourcePath } from '../../common/types';
 import { ComponentSet } from '../../collections/componentSet';
@@ -60,7 +60,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     return [];
   }
 
-  public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
+  public async toSourceFormat({ component, mergeWith }: ToSourceFormatInput): Promise<WriteInfo[]> {
     const forceIgnore = component.getForceIgnore();
 
     // if the whole parent is ignored, we won't worry about decomposing things
@@ -265,7 +265,7 @@ const getDefaultOutput = (component: MetadataComponent): SourcePath => {
   // there could be a '.' inside the child name (ex: PermissionSet.FieldPermissions.field uses Obj__c.Field__c)
   const childName = tail.length ? tail.join('.') : undefined;
   const output = join(
-    parent?.type.strategies?.decomposition === DecompositionStrategy.FolderPerType ? type.directoryName : '',
+    parent?.type.strategies?.decomposition === 'folderPerType' ? type.directoryName : '',
     `${childName ?? baseName}.${ensureString(component.type.suffix)}${META_XML_SUFFIX}`
   );
   return join(calculateRelativePath('source')({ self: parent?.type ?? type })(fullName)(baseName), output);

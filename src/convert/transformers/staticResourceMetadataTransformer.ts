@@ -13,7 +13,7 @@ import { createWriteStream } from 'graceful-fs';
 import { Logger, Messages, SfError } from '@salesforce/core';
 import { isEmpty } from '@salesforce/kit';
 import { baseName } from '../../utils/path';
-import { WriteInfo } from '../types';
+import { ToSourceFormatInput, WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { SourcePath } from '../../common/types';
 import { ensureFileExists } from '../../utils/fileSystemHandler';
@@ -97,7 +97,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     ];
   }
 
-  public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
+  public async toSourceFormat({ component, mergeWith }: ToSourceFormatInput): Promise<WriteInfo[]> {
     const { xml, content } = component;
 
     if (!content) {

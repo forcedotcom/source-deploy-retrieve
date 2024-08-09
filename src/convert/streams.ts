@@ -72,11 +72,13 @@ export class ComponentConverter extends Transform {
           case 'source':
             if (mergeWith) {
               for (const mergeComponent of mergeWith) {
-                converts.push(transformer.toSourceFormat(chunk, mergeComponent));
+                converts.push(
+                  transformer.toSourceFormat({ component: chunk, mergeWith: mergeComponent, mergeSet: this.mergeSet })
+                );
               }
             }
             if (converts.length === 0) {
-              converts.push(transformer.toSourceFormat(chunk));
+              converts.push(transformer.toSourceFormat({ component: chunk, mergeSet: this.mergeSet }));
             }
             break;
           case 'metadata':
@@ -158,7 +160,13 @@ export class StandardWriter extends ComponentWriter {
               }
 
               // if there are children, resolve each file. o/w just pick one of the files to resolve
-              if (toResolve.size === 0 || chunk.component.type.children) {
+              // "resolve" means "make these show up in the FileResponses"
+              if (
+                toResolve.size === 0 ||
+                chunk.component.type.children !== undefined ||
+                // make each decomposed label show up in the fileResponses
+                chunk.component.type.strategies?.transformer === 'decomposedLabels'
+              ) {
                 // This is a workaround for a server side ListViews bug where
                 // duplicate components are sent. W-9614275
                 if (toResolve.has(info.output)) {

@@ -6,6 +6,7 @@
  */
 import { Readable } from 'node:stream';
 import { JsonMap } from '@salesforce/ts-types';
+import { ComponentSet } from '../collections/componentSet';
 import { XML_NS_KEY, XML_NS_URL } from '../common/constants';
 import { FileResponseSuccess } from '../client/types';
 import { SourcePath } from '../common/types';
@@ -74,13 +75,19 @@ export type MergeConfig = {
   forceIgnoredPaths?: Set<string>;
 };
 
+export type ToSourceFormatInput = {
+  component: SourceComponent;
+  mergeWith?: SourceComponent;
+  mergeSet?: ComponentSet;
+};
+export type ToSourceFormat = (input: ToSourceFormatInput) => Promise<WriteInfo[]>;
 /**
  * Transforms metadata component files into different SFDX file formats
  */
 export type MetadataTransformer = {
   defaultDirectory?: string;
+  toSourceFormat: ToSourceFormat;
   toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]>;
-  toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]>;
 };
 
 // --------------

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { assert, expect } from 'chai';
-import { DecompositionStrategy, MetadataType, TransformerStrategy } from '../../src/registry/types';
+import { MetadataType } from '../../src/registry/types';
 import { metadataTypes as UnsupportedTypes } from '../../src/registry/nonSupportedTypes';
 import { presets } from './presetTesting';
 
@@ -79,12 +79,14 @@ for (const preset of presets) {
       });
 
       describe('every childTypes top-level property maps to a top-level type that has it in its childTypes', () => {
-        Object.entries(registry.childTypes).forEach(([childId, parentId]) => {
-          it(`childTypes member ${childId} matches a parent type ${parentId}`, () => {
-            expect(registry.types[parentId]).to.have.property('children');
-            expect(registry.types[parentId]?.children?.types).to.have.property(childId);
+        Object.entries(registry.childTypes)
+          .filter(([, parentId]) => parentId)
+          .forEach(([childId, parentId]) => {
+            it(`childTypes member ${childId} matches a parent type ${parentId}`, () => {
+              expect(registry.types[parentId]).to.have.property('children');
+              expect(registry.types[parentId]?.children?.types).to.have.property(childId);
+            });
           });
-        });
       });
     });
 
@@ -324,20 +326,13 @@ for (const preset of presets) {
           .forEach((type) => {
             it(`${type.id} has expected properties`, () => {
               assert(typeof type.strategies?.decomposition === 'string');
-              expect(
-                [DecompositionStrategy.FolderPerType.valueOf(), DecompositionStrategy.TopLevel.valueOf()].includes(
-                  type.strategies.decomposition
-                )
-              ).to.be.true;
+              expect(['folderPerType', 'topLevel'].includes(type.strategies.decomposition)).to.be.true;
               assert(typeof type.strategies?.transformer === 'string');
 
               expect(
-                [
-                  TransformerStrategy.Standard.valueOf(),
-                  TransformerStrategy.Decomposed.valueOf(),
-                  TransformerStrategy.StaticResource.valueOf(),
-                  TransformerStrategy.NonDecomposed.valueOf(),
-                ].includes(type.strategies.transformer)
+                ['decomposed', 'nondecomposed', 'standard', 'staticResource', 'decomposedLabels'].includes(
+                  type.strategies.transformer
+                )
               ).to.be.true;
               expect(type.strategies.recomposition).to.be.undefined;
             });

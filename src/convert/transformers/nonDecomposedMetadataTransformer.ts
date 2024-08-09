@@ -8,8 +8,7 @@
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { Messages } from '@salesforce/core';
-import { WriteInfo } from '../types';
-import { SourceComponent } from '../../resolve/sourceComponent';
+import { ToSourceFormatInput, WriteInfo } from '../types';
 import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -22,7 +21,7 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 export class NonDecomposedMetadataTransformer extends DecomposedMetadataTransformer {
   // streams uses mergeWith for all types.  Removing it would break the interface
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
+  public async toSourceFormat({ component, mergeWith }: ToSourceFormatInput): Promise<WriteInfo[]> {
     // this will only include the incoming (retrieved) labels, not the local file
     const parentXml = await component.parseXml();
     const xmlPathToChildren = `${component.type.name}.${component.type.directoryName}`;

@@ -12,6 +12,7 @@ import { Logger, SfError, Messages } from '@salesforce/core';
 import { expect, assert } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
 import JSZip from 'jszip';
+import { ToSourceFormatInput } from '../../src/convert/types';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { ComponentSet, MetadataResolver, RegistryAccess, SourceComponent, WriteInfo, WriterFormat } from '../../src';
@@ -35,7 +36,7 @@ class TestTransformer extends BaseMetadataTransformer {
   }
   // partial implementation only for tests
   // eslint-disable-next-line class-methods-use-this, @typescript-eslint/require-await
-  public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
+  public async toSourceFormat({ mergeWith }: ToSourceFormatInput): Promise<WriteInfo[]> {
     const output = mergeWith ? mergeWith.content ?? mergeWith.xml : '/type/file.s';
     assert(output);
     return [{ output, source: new Readable() }];
@@ -106,7 +107,7 @@ describe('Streams', () => {
           expect(err).to.be.undefined;
           expect(data).to.deep.equal({
             component,
-            writeInfos: await transformer.toSourceFormat(component),
+            writeInfos: await transformer.toSourceFormat({ component }),
           });
           done();
         } catch (e) {
@@ -133,7 +134,7 @@ describe('Streams', () => {
           expect(err).to.be.undefined;
           expect(data).to.deep.equal({
             component: newComponent,
-            writeInfos: await transformer.toSourceFormat(newComponent, component),
+            writeInfos: await transformer.toSourceFormat({ component: newComponent, mergeWith: component }),
           });
           done();
         } catch (e) {
@@ -162,8 +163,8 @@ describe('Streams', () => {
           expect(err).to.be.undefined;
           expect(data).to.deep.equal({
             component: newComponent,
-            writeInfos: (await transformer.toSourceFormat(newComponent, component)).concat(
-              await transformer.toSourceFormat(newComponent, secondMergeComponent)
+            writeInfos: (await transformer.toSourceFormat({ component: newComponent, mergeWith: component })).concat(
+              await transformer.toSourceFormat({ component: newComponent, mergeWith: secondMergeComponent })
             ),
           });
           done();

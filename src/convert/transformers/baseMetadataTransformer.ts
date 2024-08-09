@@ -20,5 +20,8 @@ export abstract class BaseMetadataTransformer implements MetadataTransformer {
   }
 
   public abstract toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]>;
-  public abstract toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]>;
+  public abstract toSourceFormat(input: {
+    component: SourceComponent;
+    mergeWith?: SourceComponent;
+  }): Promise<WriteInfo[]>;
 }

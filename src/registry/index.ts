@@ -8,10 +8,4 @@ export { registry } from './registry';
 export { standardValueSet } from './standardvalueset';
 export { RegistryAccess } from './registryAccess';
 export { getCurrentApiVersion } from './coverage';
-export {
-  MetadataRegistry,
-  MetadataType,
-  DecompositionStrategy,
-  RecompositionStrategy,
-  TransformerStrategy,
-} from './types';
+export { MetadataRegistry, MetadataType } from './types';

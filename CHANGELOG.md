@@ -1,3 +1,12 @@
+## [12.2.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.2.0...12.2.1) (2024-08-12)
+
+
+### Bug Fixes
+
+* **SC:** cache XML content ([#1383](https://github.com/forcedotcom/source-deploy-retrieve/issues/1383)) ([7b2d8cd](https://github.com/forcedotcom/source-deploy-retrieve/commit/7b2d8cd800b925b9ff2008bd93da7f6b2898b4b0))
+
+
+
 # [12.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.13...12.2.0) (2024-08-12)
 
 

@@ -496,7 +496,8 @@
     "xmd": "wavexmd",
     "xml": "emailservicesfunction",
     "xorghub": "xorghub",
-    "stageDefinition": "stagedefinition"
+    "stageDefinition": "stagedefinition",
+    "uiFormatSpecificationSet": "uiformatspecificationset"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4406,6 +4407,14 @@
       "name": "StageDefinition",
       "suffix": "stageDefinition",
       "directoryName": "stageDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "uiformatspecificationset": {
+      "id": "uiformatspecificationset",
+      "name": "UiFormatSpecificationSet",
+      "suffix": "uiFormatSpecificationSet",
+      "directoryName": "uiFormatSpecificationSets",
       "inFolder": false,
       "strictDirectoryName": false
     }

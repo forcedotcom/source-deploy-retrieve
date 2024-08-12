@@ -371,6 +371,13 @@ export type DeployVersionData = {
   webService: 'SOAP' | 'REST';
 };
 
+/**
+ * Data about a deployment about to be sent to the Metadata API
+ */
+export type DeployData = DeployVersionData & {
+  zipSize: number;
+};
+
 export type RetrieveVersionData = {
   apiVersion: string;
   manifestVersion: string;

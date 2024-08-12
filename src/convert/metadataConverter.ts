@@ -89,6 +89,7 @@ const getResult =
   async (writer: StandardWriter | ZipWriter): Promise<ConvertResult> => {
     // union type discrimination
     if ('addToZip' in writer) {
+      console.log('zip file count =', writer.fileCount);
       const buffer = writer.buffer;
       if (!packagePath) {
         return { packagePath, zipBuffer: buffer };

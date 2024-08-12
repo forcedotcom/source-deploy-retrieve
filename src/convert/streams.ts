@@ -185,6 +185,7 @@ export class StandardWriter extends ComponentWriter {
 export class ZipWriter extends ComponentWriter {
   private zip = JSZip();
   private zipBuffer?: Buffer;
+  public fileCount: number = 0;
 
   public constructor(rootDestination?: SourcePath) {
     super(rootDestination);
@@ -236,6 +237,7 @@ export class ZipWriter extends ComponentWriter {
     // Ensure only posix paths are added to zip files
     const posixPath = path.replace(/\\/g, '/');
     this.zip.file(posixPath, contents);
+    this.fileCount++;
   }
 }
 

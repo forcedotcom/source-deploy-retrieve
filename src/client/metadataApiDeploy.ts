@@ -217,7 +217,8 @@ export class MetadataApiDeploy extends MetadataTransfer<
     const manifestMsg = manifestVersion ? ` in v${manifestVersion} shape` : '';
     const debugMsg = format(`Deploying metadata source%s using ${webService} v${apiVersion}`, manifestMsg);
     this.logger.debug(debugMsg);
-    await LifecycleInstance.emit('apiVersionDeploy', { webService, manifestVersion, apiVersion });
+    const zipSize = zipBuffer.byteLength;
+    await LifecycleInstance.emit('deployData', { webService, manifestVersion, apiVersion, zipSize });
 
     return this.isRestDeploy
       ? connection.metadata.deployRest(zipBuffer, optionsWithoutRest)

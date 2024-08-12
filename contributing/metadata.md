@@ -213,34 +213,31 @@ You can use an existing org for the metadata describe portion of the script by
 
 ## Prerequisites
 
-    1. A sfdx project must exist in local.
-      `sf project generate --name <projectname> --default-package-dir <directory> -x`
-    2. An authorized devhub org must exists
-      `sf org login web -a <alias> -r <localhost url> -d`
-    3. A scratch org must exists with alias `registryBuilder`
-      1. Update `project-scratch-def.json` as per your requirements.
-      2. `sf org create scratch -f config/project-scratch-def.json -a registryBuilder -d`
+1. A sfdx project must exist in local `sf project generate --name <projectname> --default-package-dir <directory> -x`
+1. An authorized devhub org must exists `sf org login web -a <alias> -r <localhost url> -d`
+1. A scratch org must exists with alias `registryBuilder`
+   1. Update `project-scratch-def.json` as per your requirements
+   1. Run `sf org create scratch -f config/project-scratch-def.json -a registryBuilder -d`
 
 ## Steps
 
-    1. Fork SourceDeployRetrieve github repo
-      (https://github.com/forcedotcom/source-deploy-retrieve)
-    2. Clone forked repo in local and checkout a new branch
-    3. Setup Yarn
-      1. Go to the repo directory
-      2. Run `yarn install && yarn build`
-    4. Setup an environment variable by executing command
-      `export RB_EXISTING_ORG=true`
-    5. Execute yarn update command for required metadata entities
-      `yarn update-registry <MetadataEntity1> <MetadataEntity2>`
-    6. Check if respective file(`src/registry/metadataRegistry.json`)
-      got updated. `git status`
+1. Fork [SourceDeployRetrieve github repo](https://github.com/forcedotcom/source-deploy-retrieve)
+1. Clone forked repo in local and checkout a new branch
+1. Setup Yarn
+   1. Go to the repo directory
+   1. Run `yarn install && yarn build`
+1. Setup an environment variable by executing command `export RB_EXISTING_ORG=true`
+1. Execute yarn update command for required metadata entities `yarn update-registry <MetadataEntity1> <MetadataEntity2>`
+1. Check if respective file (`src/registry/metadataRegistry.json`) was updated with `git status`
 
-    Now changes are available in local, we have to link the registry with sfdx project
+Now changes are available in local, we have to link the registry with sfdx project
 
-    8. From SDR git repo directory, run `yarn build; yarn link`
-    9. Clone plugin repo (https://github.com/salesforcecli/plugin-deploy-retrieve)
-    10. Execute `yarn link @salesforce/source-deploy-retrieve` and `sfdx plugins:link .` and `yarn build` from cloned plugin repo directory
+1. From SDR git repo directory, run `yarn build && yarn link`
+1. Clone the [plugin-deploy-retrieve repo](https://github.com/salesforcecli/plugin-deploy-retrieve)
+1. From cloned plugin repo directory execute
+   1. `yarn link @salesforce/source-deploy-retrieve`
+   1. `sfdx plugins:link .`
+   1. `yarn build`
 
-    Registry has been set for your entities, now you can run (e.g.) `sf project deploy start` command for your entities:
-    Proceed to `Manual Testing` section above in this document.
+Registry has been set for your entities, now you can run (e.g.) `sf project deploy start` command for your entities:
+Proceed to `Manual Testing` section above in this document.

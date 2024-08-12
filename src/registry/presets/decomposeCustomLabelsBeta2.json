@@ -1,0 +1,32 @@
+{
+  "childTypes": {
+    "customlabel": ""
+  },
+  "strictDirectoryNames": {},
+  "suffixes": {
+    "label": "customlabel",
+    "labels": "customlabels"
+  },
+  "types": {
+    "customlabel": {
+      "directoryName": "labels",
+      "id": "customlabel",
+      "name": "CustomLabel",
+      "strategies": {
+        "adapter": "default",
+        "transformer": "decomposedLabels"
+      },
+      "suffix": "label"
+    },
+    "customlabels": {
+      "directoryName": "labels",
+      "id": "customlabels",
+      "name": "CustomLabels",
+      "strategies": {
+        "adapter": "default",
+        "transformer": "decomposedLabels"
+      },
+      "suffix": "labels"
+    }
+  }
+}

@@ -9,5 +9,5 @@
   ],
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "60.0",
-  "sourceBehaviorOptions": ["decomposeCustomLabelsBeta"]
+  "sourceBehaviorOptions": ["decomposeCustomLabelsBeta2"]
 }

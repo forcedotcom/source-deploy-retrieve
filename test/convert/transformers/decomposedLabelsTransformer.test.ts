@@ -28,7 +28,7 @@ import { getEffectiveRegistry } from '../../../src/registry/variants';
 import { presetMap } from '../../../src/registry/presets/presetMap';
 
 describe('DecomposedCustomLabelTransformer', () => {
-  const regAcc = new RegistryAccess(getEffectiveRegistry({ presets: [presetMap.get('decomposeCustomLabelsBeta')!] }));
+  const regAcc = new RegistryAccess(getEffectiveRegistry({ presets: [presetMap.get('decomposeCustomLabelsBeta2')!] }));
 
   describe('LabelsMetadataTransformer', () => {
     describe('toSourceFormat', () => {

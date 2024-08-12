@@ -64,10 +64,12 @@ Simple fields (ex: `fullName`) can remain in the top-level `Account.workflow-met
 
 ## `decomposeCustomLabelsBeta`
 
+> This will definitely not become GA. Based on user feedback, we replaced it with `decomposeCustomLabelsBeta2`
+
 CustomLabels are decomposed to a folder named `CustomLabels` the labels are then placed into individual files
 
 metadata format
-`/labels/CustomLabels.customlabes-meta.xml`
+`/labels/CustomLabels.customlabels-meta.xml`
 
 source format
 
@@ -76,4 +78,19 @@ source format
 /labels/CustomLabels/a.label-meta.xml
 /labels/CustomLabels/b.label-meta.xml
 /labels/CustomLabels/c.label-meta.xml
+```
+
+## `decomposeCustomLabelsBeta2`
+
+CustomLabels are decomposed to a folder named `labels`; the labels are then placed into individual files. There is no top-level file.
+
+metadata format
+`/labels/CustomLabels.customlabels-meta.xml`
+
+source format
+
+```txt
+/labels/a.label-meta.xml
+/labels/b.label-meta.xml
+/labels/c.label-meta.xml
 ```

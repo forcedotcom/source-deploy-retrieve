@@ -183,9 +183,9 @@ export class StandardWriter extends ComponentWriter {
 }
 
 export class ZipWriter extends ComponentWriter {
+  public fileCount: number = 0;
   private zip = JSZip();
   private zipBuffer?: Buffer;
-  public fileCount: number = 0;
 
   public constructor(rootDestination?: SourcePath) {
     super(rootDestination);

@@ -43,7 +43,7 @@ export const getEffectiveRegistry = (input?: RegistryLoadInput): MetadataRegistr
 
 /** read the project to get additional registry customizations and sourceBehaviorOptions */
 const getProjectVariants = (projectDir?: string): ProjectVariants => {
-  const logger = Logger.childFromRoot('variants');
+  const logger = Logger.childFromRoot('variants:getProjectVariants');
   const projJson = maybeGetProject(projectDir);
   if (!projJson) {
     logger.debug('no project found, using standard registry');
@@ -60,39 +60,22 @@ const getProjectVariants = (projectDir?: string): ProjectVariants => {
       ...(projJson.get<string[]>('sourceBehaviorOptions') ?? []),
     ]),
   ];
-  if (Object.keys(registryCustomizations.types).length > 0) {
-    logger.debug(
-      `found registryCustomizations for types [${Object.keys(registryCustomizations.types).join(
-        ','
-      )}] in ${projJson.getPath()}`
-    );
-  }
-  if (presets.length > 0) {
-    logger.debug(`using sourceBehaviorOptions [${presets.join(',')}] in ${projJson.getPath()}`);
-  }
-  if (presets.length > 0 || Object.keys(registryCustomizations.types).length > 0) {
-    void Lifecycle.getInstance().emitTelemetry({
-      library: 'SDR',
-      eventName: 'RegistryVariants',
-      presetCount: presets.length,
-      presets: presets.join(','),
-      customizationsCount: Object.keys(registryCustomizations.types).length,
-      customizationsTypes: Object.keys(registryCustomizations.types).join(','),
-    });
-  }
-  return {
-    registryCustomizations,
-    presets: presets.map(loadPreset),
-  };
+  return logProjectVariants(
+    {
+      registryCustomizations,
+      presets: presets.map(loadPreset),
+    },
+    projJson.getPath()
+  );
 };
 
-const mergeVariants = ({ registryCustomizations, presets }: ProjectVariants): MetadataRegistry => {
-  const registryFromPresets = [...(presets ?? []), registryCustomizations ?? emptyRegistry].reduce<MetadataRegistry>(
+const mergeVariants = ({ registryCustomizations = emptyRegistry, presets }: ProjectVariants): MetadataRegistry => {
+  const registryFromPresets = [...(presets ?? []), registryCustomizations].reduce<MetadataRegistry>(
     (prev, curr) => firstLevelMerge(prev, curr),
     emptyRegistry
   );
 
-  return firstLevelMerge(registryFromPresets, registryCustomizations ?? emptyRegistry);
+  return firstLevelMerge(registryFromPresets, registryCustomizations);
 };
 
 const maybeGetProject = (projectDir?: string): SfProjectJson | undefined => {
@@ -123,7 +106,7 @@ const emptyRegistry = {
   childTypes: {},
   suffixes: {},
   strictDirectoryNames: {},
-} satisfies MetadataRegistry;
+} as const satisfies MetadataRegistry;
 
 /** merge the children of the top-level properties (ex: types, suffixes, etc) on 2 registries */
 export const firstLevelMerge = (original: MetadataRegistry, overrides: MetadataRegistry): MetadataRegistry => ({
@@ -146,3 +129,28 @@ const removeEmptyStrings = (reg: MetadataRegistry): MetadataRegistry => ({
 // presets can remove an entry by setting it to an empty string ex: { "childTypes": { "foo": "" } }
 const removeEmptyString = (obj: Record<string, string>): Record<string, string> =>
   Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== ''));
+
+// returns the projectVariants passed in.  Side effects: logger and telemetry only
+const logProjectVariants = (variants: ProjectVariants, projectDir: string): ProjectVariants => {
+  const customizationTypes = Object.keys(variants.registryCustomizations?.types ?? {});
+  const logger = Logger.childFromRoot('variants:logProjectVariants');
+  if (customizationTypes.length) {
+    logger.debug(`found registryCustomizations for types [${customizationTypes.join(',')}] in ${projectDir}`);
+  }
+  if (variants.presets?.length) {
+    logger.debug(`using sourceBehaviorOptions [${variants.presets.join(',')}] in ${projectDir}`);
+  }
+  if (variants?.presets ?? Object.keys(variants.registryCustomizations?.types ?? {}).length > 0) {
+    void Lifecycle.getInstance().emitTelemetry({
+      library: 'SDR',
+      eventName: 'RegistryVariants',
+      presetCount: variants.presets?.length ?? 0,
+      presets: variants.presets?.join(','),
+      customizationsCount: customizationTypes.length,
+      customizationsTypes: customizationTypes.join(','),
+    });
+  } else {
+    logger.debug(`no registryCustomizations or sourceBehaviorOptions found in ${projectDir}`);
+  }
+  return variants;
+};

@@ -140,7 +140,7 @@ const logProjectVariants = (variants: ProjectVariants, projectDir: string): Proj
   if (variants.presets?.length) {
     logger.debug(`using sourceBehaviorOptions [${variants.presets.join(',')}] in ${projectDir}`);
   }
-  if (variants?.presets ?? Object.keys(variants.registryCustomizations?.types ?? {}).length > 0) {
+  if (variants?.presets?.length ?? customizationTypes.length) {
     void Lifecycle.getInstance().emitTelemetry({
       library: 'SDR',
       eventName: 'RegistryVariants',

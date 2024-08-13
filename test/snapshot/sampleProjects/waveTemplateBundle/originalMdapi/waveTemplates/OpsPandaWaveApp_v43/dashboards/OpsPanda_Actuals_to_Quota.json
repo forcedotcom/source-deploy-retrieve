@@ -1,0 +1,1199 @@
+{
+  "name": "OpsPanda_Actuals_to_Quota_43_tp",
+  "label": "OpsPanda Actuals to Quota",
+  "description": "Organize information into vertical sections, with filters across the top.",
+  "folder": {
+    "id": "${App.Folder.Id}"
+  },
+  "mobileDisabled": false,
+  "state": {
+    "dataSourceLinks": [],
+    "filters": [],
+    "gridLayouts": [
+      {
+        "name": "Default",
+        "numColumns": 12,
+        "pages": [
+          {
+            "label": "Untitled",
+            "name": "page1",
+            "widgets": [
+              {
+                "colspan": 9,
+                "column": 2,
+                "name": "text_1",
+                "row": 0,
+                "rowspan": 1,
+                "widgetStyle": {
+                  "borderEdges": []
+                }
+              },
+              {
+                "colspan": 12,
+                "column": 0,
+                "name": "container_1",
+                "row": 2,
+                "rowspan": 7,
+                "widgetStyle": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderColor": "#E6ECF2",
+                  "borderEdges": ["bottom"],
+                  "borderRadius": 0,
+                  "borderWidth": 2
+                }
+              },
+              {
+                "colspan": 2,
+                "column": 0,
+                "name": "text_2",
+                "row": 2,
+                "rowspan": 1,
+                "widgetStyle": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderColor": "#F2F6FA",
+                  "borderEdges": ["bottom"],
+                  "borderRadius": 0,
+                  "borderWidth": 1
+                }
+              },
+              {
+                "colspan": 12,
+                "column": 0,
+                "name": "container_2",
+                "row": 9,
+                "rowspan": 7,
+                "widgetStyle": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderColor": "#E6ECF2",
+                  "borderEdges": ["bottom"],
+                  "borderRadius": 0,
+                  "borderWidth": 2
+                }
+              },
+              {
+                "colspan": 2,
+                "column": 0,
+                "name": "text_3",
+                "row": 9,
+                "rowspan": 1,
+                "widgetStyle": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderColor": "#F2F6FA",
+                  "borderEdges": ["bottom"],
+                  "borderRadius": 0,
+                  "borderWidth": 1
+                }
+              },
+              {
+                "colspan": 2,
+                "column": 0,
+                "name": "number_2",
+                "row": 5,
+                "rowspan": 2,
+                "widgetStyle": {
+                  "backgroundColor": "#7D98B3",
+                  "borderEdges": []
+                }
+              },
+              {
+                "colspan": 2,
+                "column": 0,
+                "name": "number_7",
+                "row": 12,
+                "rowspan": 2,
+                "widgetStyle": {
+                  "backgroundColor": "#7D98B3",
+                  "borderEdges": []
+                }
+              },
+              {
+                "colspan": 2,
+                "column": 0,
+                "name": "number_8",
+                "row": 10,
+                "rowspan": 2,
+                "widgetStyle": {
+                  "backgroundColor": "#7D98B3",
+                  "borderEdges": []
+                }
+              },
+              {
+                "colspan": 4,
+                "column": 8,
+                "name": "chart_2",
+                "row": 2,
+                "rowspan": 7,
+                "widgetStyle": {
+                  "borderEdges": []
+                }
+              },
+              {
+                "colspan": 12,
+                "column": 0,
+                "name": "container_4",
+                "row": 16,
+                "rowspan": 7,
+                "widgetStyle": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderColor": "#F2F6FA",
+                  "borderEdges": ["bottom"],
+                  "borderRadius": 0,
+                  "borderWidth": 2
+                }
+              },
+              {
+                "colspan": 3,
+                "column": 0,
+                "name": "text_6",
+                "row": 16,
+                "rowspan": 1,
+                "widgetStyle": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderColor": "#F2F6FA",
+                  "borderEdges": ["bottom"],
+                  "borderRadius": 0,
+                  "borderWidth": 1
+                }
+              },
+              {
+                "colspan": 2,
+                "column": 0,
+                "name": "number_13",
+                "row": 7,
+                "rowspan": 2,
+                "widgetStyle": {
+                  "backgroundColor": "#7D98B3",
+                  "borderEdges": []
+                }
+              },
+              {
+                "colspan": 2,
+                "column": 0,
+                "name": "number_1",
+                "row": 3,
+                "rowspan": 2,
+                "widgetStyle": {
+                  "backgroundColor": "#7D98B3",
+                  "borderEdges": []
+                }
+              },
+              {
+                "colspan": 2,
+                "column": 0,
+                "name": "number_3",
+                "row": 14,
+                "rowspan": 2,
+                "widgetStyle": {
+                  "backgroundColor": "#7D98B3",
+                  "borderEdges": []
+                }
+              },
+              {
+                "colspan": 6,
+                "column": 2,
+                "name": "chart_1",
+                "row": 2,
+                "rowspan": 7,
+                "widgetStyle": {
+                  "borderEdges": []
+                }
+              },
+              {
+                "colspan": 3,
+                "column": 2,
+                "name": "listselector_1",
+                "row": 1,
+                "rowspan": 1,
+                "widgetStyle": {
+                  "borderEdges": []
+                }
+              },
+              {
+                "colspan": 7,
+                "column": 4,
+                "name": "chart_3",
+                "row": 9,
+                "rowspan": 7,
+                "widgetStyle": {
+                  "borderEdges": []
+                }
+              },
+              {
+                "colspan": 7,
+                "column": 5,
+                "name": "pillbox_1",
+                "row": 1,
+                "rowspan": 1,
+                "widgetStyle": {
+                  "borderEdges": []
+                }
+              },
+              {
+                "colspan": 6,
+                "column": 0,
+                "name": "table_1",
+                "row": 17,
+                "rowspan": 6,
+                "widgetStyle": {
+                  "borderEdges": []
+                }
+              },
+              {
+                "colspan": 6,
+                "column": 6,
+                "name": "chart_4",
+                "row": 16,
+                "rowspan": 7,
+                "widgetStyle": {
+                  "borderEdges": []
+                }
+              },
+              {
+                "colspan": 2,
+                "column": 1,
+                "name": "image_1",
+                "row": 23,
+                "rowspan": 3,
+                "widgetStyle": {
+                  "borderEdges": []
+                }
+              },
+              {
+                "colspan": 12,
+                "column": 0,
+                "name": "navigation_1",
+                "row": 0,
+                "rowspan": 1,
+                "widgetStyle": {
+                  "borderEdges": []
+                }
+              }
+            ]
+          }
+        ],
+        "rowHeight": "normal",
+        "selectors": [],
+        "style": {
+          "alignmentX": "left",
+          "alignmentY": "top",
+          "backgroundColor": "#F2F6FA",
+          "cellSpacingX": 8,
+          "cellSpacingY": 8,
+          "documentId": "",
+          "fit": "original"
+        },
+        "version": 1.0
+      }
+    ],
+    "layouts": [],
+    "steps": {
+      "Location_Territory_CoGroup_2": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.Opportunities_Closed_Won.Alias}"
+          },
+          {
+            "name": "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "pigql": "q = load \"${App.Datasets.Opportunities_Closed_Won.Alias}\";\r\n q = filter q by {{column(ID_3.result, [\"ID\"]).asEquality(\"OwnerId\")}};\r\nr = load \"${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}\";\r\ns= group q by 'OwnerId.Name', r by 'Name';\r\ns= foreach s generate q['OwnerId.Name'] as 'Full Name',  sum(q['Amount']) as 'sum_Amount', r['Name'] as 'Name', sum(r['Monthly_Quota']) as 'Monthly_Quota', round((sum(q['Amount'])/sum(r['Monthly_Quota'])*100),2) as 'Achievement';\r\n",
+            "measures": [
+              ["count", "*", "Monthly_Quota"],
+              ["count", "*", "sum_Amount"],
+              ["count", "*", "Achievement"]
+            ],
+            "groups": ["Full Name"],
+            "filters": [["OwnerId", "{{column(ID_3.result, [\"ID\"]).asObject()}}"]]
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "single",
+        "type": "aggregateflex",
+        "useGlobal": true,
+        "visualizationParameters": {}
+      },
+      "Location_Territory_CoGroup_1": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.Opportunities_Closed_Won.Alias}"
+          },
+          {
+            "name": "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "pigql": "q = load \"${App.Datasets.Opportunities_Closed_Won.Alias}\";\r\n q = filter q by {{column(ID_3.result, [\"ID\"]).asEquality(\"OwnerId\")}};\r\nr = load \"${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}\";\r\ns= group q by 'AccountId.BillingState',r by 'Location';\r\ns= foreach s generate q['AccountId.BillingState'] as 'State', sum(q['Amount']) as 'sum_Amount', r['Location'] as 'Location',  sum(r['Monthly_Quota']) as 'Monthly_Quota',sum(q['Amount'])-sum(r['Monthly_Quota']) as 'Variance';\r\n",
+            "measures": [
+              ["count", "*", "Monthly_Quota"],
+              ["count", "*", "sum_Amount"]
+            ],
+            "groups": ["State"],
+            "filters": [["OwnerId", "{{column(ID_3.result, [\"ID\"]).asObject()}}"]]
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "single",
+        "type": "aggregateflex",
+        "useGlobal": true,
+        "visualizationParameters": {}
+      },
+      "Amount_1": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.Opportunities_Closed_Won.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "measures": [["sum", "Amount"]],
+            "filters": [["OwnerId", "{{column(ID_3.result, [\"ID\"]).asObject()}}"]]
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "single",
+        "type": "aggregateflex",
+        "useGlobal": true,
+        "visualizationParameters": {
+          "options": {},
+          "visualizationType": "hbar"
+        }
+      },
+      "Location_Territory_CoGroup_3": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.Opportunities_Closed_Won.Alias}"
+          },
+          {
+            "name": "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "pigql": "q = load \"${App.Datasets.Opportunities_Closed_Won.Alias}\";\r\n q = filter q by {{column(ID_3.result, [\"ID\"]).asEquality(\"OwnerId\")}};\r\nr = load \"${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}\";\r\ns= group q by 'OwnerId.Name', r by 'Name';\r\ns= foreach s generate  r['Name'] as 'Name', sum(r['Monthly_Quota']) as 'Monthly_Quota', round((sum(q['Amount'])/sum(r['Monthly_Quota'])*100),2) as 'Achievement', q['OwnerId.Name'] as 'Full Name',  sum(q['Amount']) as 'sum_Amount';\r\n",
+            "measures": [
+              ["count", "*", "Monthly_Quota"],
+              ["count", "*", "Achievement"],
+              ["count", "*", "sum_Amount"]
+            ],
+            "groups": ["Full Name"],
+            "filters": [["OwnerId", "{{column(ID_3.result, [\"ID\"]).asObject()}}"]]
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "single",
+        "type": "aggregateflex",
+        "useGlobal": true,
+        "visualizationParameters": {}
+      },
+      "Amount_2": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.Opportunities_Closed_Won.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "measures": [["sum", "Amount"]],
+            "filters": [["OwnerId", "{{column(ID_3.result, [\"ID\"]).asObject()}}"]]
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "single",
+        "type": "aggregateflex",
+        "useGlobal": true,
+        "visualizationParameters": {
+          "options": {},
+          "visualizationType": "hbar"
+        }
+      },
+      "Monthly_Quota_1": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "measures": [["sum", "Monthly_Quota"]]
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "single",
+        "type": "aggregateflex",
+        "useGlobal": true,
+        "visualizationParameters": {
+          "options": {},
+          "visualizationType": "hbar"
+        }
+      },
+      "ID_3": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "measures": [["count", "*"]],
+            "groups": ["ID"],
+            "filters": []
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "single",
+        "type": "aggregateflex",
+        "useGlobal": false,
+        "visualizationParameters": {
+          "options": {},
+          "visualizationType": "hbar"
+        }
+      },
+      "Amount_3": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.Opportunities_Closed_Won.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "pigql": "q = load \"${App.Datasets.Opportunities_Closed_Won.Alias}\"; q = group q by all; q = foreach q generate round(({{column(Amount_1.result, [\"sum_Amount\"]).asObject()}})*100/{{column(Monthly_Quota_1.result, [\"sum_Monthly_Quota\"]).asObject()}},2) as 'Achievement'; q = limit q 2000;",
+            "measures": [["sum", "Amount", "Achievement"]]
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "single",
+        "type": "aggregateflex",
+        "useGlobal": true,
+        "visualizationParameters": {
+          "options": {},
+          "visualizationType": "hbar"
+        }
+      },
+      "ID_Type1_Location_1": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "measures": [["count", "*"]],
+            "groups": ["ID", "Type", "Location"]
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "single",
+        "type": "aggregateflex",
+        "useGlobal": true,
+        "visualizationParameters": {
+          "options": {},
+          "visualizationType": "hbar"
+        }
+      },
+      "BillingState_2": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.Opportunities_Closed_Won.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "measures": [["sum", "Amount"]],
+            "groups": ["AccountId.BillingState"],
+            "filters": [["OwnerId", "{{column(ID_3.result, [\"ID\"]).asObject()}}"]]
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "single",
+        "type": "aggregateflex",
+        "useGlobal": true,
+        "visualizationParameters": {
+          "options": {},
+          "visualizationType": "hbar"
+        }
+      },
+      "Planned_Bookings_1": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "measures": [["sum", "Monthly_Planned_Bookings"]]
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "single",
+        "type": "aggregateflex",
+        "useGlobal": true,
+        "visualizationParameters": {
+          "options": {},
+          "visualizationType": "hbar"
+        }
+      },
+      "Type_1": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "measures": [["count", "*"]],
+            "groups": ["Type"]
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "single",
+        "type": "aggregateflex",
+        "useGlobal": false,
+        "visualizationParameters": {}
+      },
+      "all_1": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "pigql": "q = load \"${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}\"; q = foreach q generate round(100*{{column(Amount_1.result, [\"sum_Amount\"]).asObject()}}/{{column(Planned_Bookings_1.result, [\"sum_Monthly_Planned_Bookings\"]).asObject()}},2) as 'Actuals to Plan'; q = limit q 2000;",
+            "measures": [["count", "*", "Actuals to Plan"]]
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "single",
+        "type": "aggregateflex",
+        "useGlobal": true,
+        "visualizationParameters": {
+          "options": {},
+          "visualizationType": "hbar"
+        }
+      },
+      "all_2": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "measures": [["count", "*"]]
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "single",
+        "type": "aggregateflex",
+        "useGlobal": true,
+        "visualizationParameters": {
+          "options": {},
+          "visualizationType": "hbar"
+        }
+      },
+      "CloseDate_Month_Date_1": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.Opportunities_Closed_Won.Alias}"
+          },
+          {
+            "name": "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "pigql": "q = load \"${App.Datasets.Opportunities_Closed_Won.Alias}\";\r\n q = filter q by {{column(ID_3.result, [\"ID\"]).asEquality(\"OwnerId\")}};\r\n r = load \"${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}\";\r\ns= group q by 'CloseDate_Month', r by 'Date_Month';\r\ns= foreach s generate q['CloseDate_Month'] as 'CloseDate_Month', sum(q['Amount']) as 'sum_Amount', r['Date_Month'] as 'Date_Month',  sum(r['Monthly_Quota']) as 'Monthly_Quota';\r\n",
+            "measures": [
+              ["count", "*", "Monthly_Quota"],
+              ["count", "*", "sum_Amount"]
+            ],
+            "groups": ["CloseDate_Month"]
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "single",
+        "type": "aggregateflex",
+        "useGlobal": true,
+        "visualizationParameters": {}
+      },
+      "Location_1": {
+        "broadcastFacet": true,
+        "datasets": [
+          {
+            "name": "${App.Datasets.OpsPanda_Sales_Capacity_Plan_43.Alias}"
+          }
+        ],
+        "isGlobal": false,
+        "query": {
+          "query": {
+            "measures": [["count", "*"]],
+            "groups": ["Location"]
+          },
+          "version": -1.0
+        },
+        "receiveFacet": true,
+        "selectMode": "multi",
+        "type": "aggregateflex",
+        "useGlobal": true,
+        "visualizationParameters": {}
+      }
+    },
+    "widgetStyle": {
+      "backgroundColor": "rgba(255, 255, 255, 0)",
+      "borderColor": "#E6ECF2",
+      "borderEdges": [],
+      "borderRadius": 0,
+      "borderWidth": 1
+    },
+    "widgets": {
+      "text_1": {
+        "parameters": {
+          "fontSize": 24,
+          "text": "OpsPanda Actuals to Plan",
+          "textAlignment": "center",
+          "textColor": "#335779"
+        },
+        "type": "text"
+      },
+      "number_8": {
+        "parameters": {
+          "compact": true,
+          "exploreLink": true,
+          "measureField": "sum_Amount",
+          "numberColor": "#FFFFFF",
+          "numberSize": 32,
+          "step": "Amount_2",
+          "textAlignment": "right",
+          "title": "Amount",
+          "titleColor": "#FFFFFF",
+          "titleSize": 16
+        },
+        "type": "number"
+      },
+      "number_7": {
+        "parameters": {
+          "compact": true,
+          "exploreLink": true,
+          "measureField": "sum_Monthly_Quota",
+          "numberColor": "#FFFFFF",
+          "numberSize": 32,
+          "step": "Monthly_Quota_1",
+          "textAlignment": "right",
+          "title": "Quota to Date",
+          "titleColor": "#FFFFFF",
+          "titleSize": 14
+        },
+        "type": "number"
+      },
+      "number_13": {
+        "parameters": {
+          "compact": false,
+          "exploreLink": true,
+          "measureField": "count",
+          "numberColor": "#FFFFFF",
+          "numberSize": 32,
+          "step": "all_1",
+          "textAlignment": "right",
+          "titleColor": "#FFFFFF",
+          "titleSize": 14
+        },
+        "type": "number"
+      },
+      "table_1": {
+        "parameters": {
+          "borderColor": "#e0e5ee",
+          "borderWidth": 1,
+          "cell": {
+            "backgroundColor": "#ffffff",
+            "fontColor": "#16325c",
+            "fontSize": 12
+          },
+          "columnProperties": {},
+          "columns": [],
+          "customBulkActions": [],
+          "exploreLink": false,
+          "header": {
+            "backgroundColor": "#f4f6f9",
+            "fontColor": "#16325c",
+            "fontSize": 12
+          },
+          "innerMajorBorderColor": "#a8b7c7",
+          "innerMinorBorderColor": "#e0e5ee",
+          "maxColumnWidth": 300,
+          "minColumnWidth": 40,
+          "mode": "variable",
+          "numberOfLines": 1,
+          "pivoted": false,
+          "step": "Location_Territory_CoGroup_2",
+          "verticalPadding": 8
+        },
+        "type": "table"
+      },
+      "number_3": {
+        "parameters": {
+          "compact": false,
+          "exploreLink": true,
+          "measureField": "sum_Amount",
+          "numberColor": "#FFFFFF",
+          "numberSize": 32,
+          "step": "Amount_3",
+          "textAlignment": "right",
+          "titleColor": "#FFFFFF",
+          "titleSize": 14
+        },
+        "type": "number"
+      },
+      "container_1": {
+        "parameters": {
+          "alignmentX": "left",
+          "alignmentY": "top",
+          "documentId": "",
+          "fit": "original"
+        },
+        "type": "container"
+      },
+      "number_2": {
+        "parameters": {
+          "compact": true,
+          "exploreLink": true,
+          "measureField": "sum_Planned_Bookings",
+          "numberColor": "#FFFFFF",
+          "numberSize": 32,
+          "step": "Planned_Bookings_1",
+          "textAlignment": "right",
+          "title": "Planned Bookings",
+          "titleColor": "#FFFFFF",
+          "titleSize": 16
+        },
+        "type": "number"
+      },
+      "container_2": {
+        "parameters": {
+          "alignmentX": "left",
+          "alignmentY": "top",
+          "documentId": "",
+          "fit": "original"
+        },
+        "type": "container"
+      },
+      "number_1": {
+        "parameters": {
+          "compact": true,
+          "exploreLink": true,
+          "measureField": "sum_Amount",
+          "numberColor": "#FFFFFF",
+          "numberSize": 32,
+          "step": "Amount_1",
+          "textAlignment": "right",
+          "title": "Sum of Amount",
+          "titleColor": "#FFFFFF",
+          "titleSize": 14
+        },
+        "type": "number"
+      },
+      "pillbox_1": {
+        "parameters": {
+          "compact": false,
+          "exploreLink": false,
+          "measureField": "count",
+          "step": "Type_1"
+        },
+        "type": "pillbox"
+      },
+      "container_4": {
+        "parameters": {
+          "alignmentX": "left",
+          "alignmentY": "top",
+          "documentId": "",
+          "fit": "original"
+        },
+        "type": "container"
+      },
+      "text_3": {
+        "parameters": {
+          "fontSize": 18,
+          "text": "Quota Achievement ($)",
+          "textAlignment": "left",
+          "textColor": "#335779"
+        },
+        "type": "text"
+      },
+      "image_1": {
+        "parameters": {
+          "alignmentX": "left",
+          "alignmentY": "top",
+          "fit": "fitheight",
+          "image": {
+            "name": "${App.Images['einstein_leaning_leftpng3'].Name}",
+            "namespace": "${Org.Namespace}"
+          }
+        },
+        "type": "image"
+      },
+      "text_2": {
+        "parameters": {
+          "fontSize": 18,
+          "text": "Actuals to Plan ($)",
+          "textAlignment": "left",
+          "textColor": "#335779"
+        },
+        "type": "text"
+      },
+      "listselector_1": {
+        "parameters": {
+          "compact": false,
+          "exploreLink": false,
+          "instant": true,
+          "measureField": "count",
+          "step": "Location_1",
+          "title": "Location"
+        },
+        "type": "listselector"
+      },
+      "chart_2": {
+        "parameters": {
+          "autoFitMode": "fit",
+          "totalValue": "computeTotal",
+          "showValues": true,
+          "showPoints": true,
+          "legend": {
+            "showHeader": false,
+            "show": true,
+            "customSize": "auto",
+            "position": "bottom-center",
+            "inside": false
+          },
+          "axisMode": "dual",
+          "tooltip": {
+            "showBinLabel": true,
+            "measures": "",
+            "showPercentage": true,
+            "showDimensions": true,
+            "showMeasures": true,
+            "customizeTooltip": false,
+            "dimensions": ""
+          },
+          "visualizationType": "combo",
+          "missingValue": "connect",
+          "showValuesOnLine": false,
+          "exploreLink": false,
+          "trellis": {
+            "flipLabels": false,
+            "showGridLines": true,
+            "size": [100, 100],
+            "enable": false,
+            "type": "x",
+            "parameters": {},
+            "chartsPerLine": 4
+          },
+          "title": {
+            "fontSize": 14,
+            "subtitleFontSize": 11,
+            "label": "Performance to Date",
+            "align": "center",
+            "subtitleLabel": ""
+          },
+          "totalLabel": "",
+          "measureAxis2": {
+            "sqrtScale": false,
+            "showTitle": true,
+            "showAxis": true,
+            "title": "",
+            "customDomain": {
+              "showDomain": false
+            }
+          },
+          "measureAxis1": {
+            "sqrtScale": false,
+            "showTitle": true,
+            "showAxis": true,
+            "title": "",
+            "customDomain": {
+              "showDomain": false
+            }
+          },
+          "step": "CloseDate_Month_Date_1",
+          "theme": "wave",
+          "dimensionAxis": {
+            "showTitle": true,
+            "customSize": "auto",
+            "showAxis": true,
+            "title": "",
+            "icons": {
+              "useIcons": false,
+              "iconProps": {
+                "fit": "cover",
+                "column": "",
+                "type": "round",
+                "parameters": {}
+              }
+            }
+          }
+        },
+        "type": "chart"
+      },
+      "text_6": {
+        "parameters": {
+          "fontSize": 18,
+          "text": "Rep Detail",
+          "textAlignment": "left",
+          "textColor": "#335779"
+        },
+        "type": "text"
+      },
+      "chart_1": {
+        "parameters": {
+          "totalValue": "computeTotal",
+          "legend": {
+            "showHeader": true,
+            "show": true,
+            "customSize": "auto",
+            "position": "bottom-center",
+            "inside": true
+          },
+          "autoZoom": false,
+          "highColor": "#1674D9",
+          "lowColor": "#C5DBF7",
+          "projectionType": "Mercator",
+          "tooltip": {
+            "showBinLabel": true,
+            "measures": "",
+            "showPercentage": true,
+            "showDimensions": true,
+            "showMeasures": true,
+            "customizeTooltip": false,
+            "dimensions": ""
+          },
+          "visualizationType": "bubblemap",
+          "exploreLink": true,
+          "title": {
+            "fontSize": 14,
+            "subtitleFontSize": 11,
+            "label": "Bookings by State",
+            "align": "center",
+            "subtitleLabel": ""
+          },
+          "trellis": {
+            "flipLabels": false,
+            "showGridLines": true,
+            "size": [100, 100],
+            "enable": false,
+            "type": "x",
+            "parameters": {},
+            "chartsPerLine": 4
+          },
+          "radiusRatio": 2,
+          "totalLabel": "",
+          "step": "BillingState_2",
+          "theme": "wave",
+          "map": "US States"
+        },
+        "type": "chart"
+      },
+      "chart_4": {
+        "parameters": {
+          "totalValue": "computeTotal",
+          "legend": {
+            "showHeader": true,
+            "show": false,
+            "customSize": "auto",
+            "position": "right-top",
+            "inside": false
+          },
+          "tooltip": {
+            "showBinLabel": true,
+            "measures": "",
+            "showPercentage": true,
+            "showDimensions": true,
+            "showMeasures": true,
+            "customizeTooltip": false,
+            "dimensions": ""
+          },
+          "visualizationType": "scatter",
+          "exploreLink": false,
+          "title": {
+            "fontSize": 14,
+            "subtitleFontSize": 11,
+            "label": "",
+            "align": "center",
+            "subtitleLabel": ""
+          },
+          "trellis": {
+            "flipLabels": false,
+            "showGridLines": true,
+            "size": [150, 150],
+            "enable": false,
+            "type": "x",
+            "parameters": {},
+            "chartsPerLine": 4
+          },
+          "radiusRatio": 5,
+          "totalLabel": "",
+          "x": {
+            "sqrtScale": false,
+            "showZero": true,
+            "showTitle": true,
+            "showAxis": true,
+            "title": "",
+            "customDomain": {
+              "showDomain": false
+            }
+          },
+          "y": {
+            "sqrtScale": false,
+            "showZero": true,
+            "showTitle": true,
+            "showAxis": true,
+            "title": "",
+            "customDomain": {
+              "showDomain": false
+            }
+          },
+          "step": "Location_Territory_CoGroup_3",
+          "theme": "wave"
+        },
+        "type": "chart"
+      },
+      "chart_3": {
+        "parameters": {
+          "autoFitMode": "fit",
+          "totalValue": "computeTotal",
+          "showValues": true,
+          "legend": {
+            "showHeader": true,
+            "show": false,
+            "customSize": "auto",
+            "position": "bottom-center",
+            "inside": false
+          },
+          "showMeasureTitle": true,
+          "tooltip": {
+            "showBinLabel": true,
+            "measures": "",
+            "showPercentage": true,
+            "showDimensions": true,
+            "showMeasures": true,
+            "customizeTooltip": false,
+            "dimensions": ""
+          },
+          "visualizationType": "pyramid",
+          "exploreLink": false,
+          "title": {
+            "fontSize": 14,
+            "subtitleFontSize": 11,
+            "label": "",
+            "align": "center",
+            "subtitleLabel": ""
+          },
+          "trellis": {
+            "flipLabels": false,
+            "showGridLines": true,
+            "size": [100, 100],
+            "enable": false,
+            "type": "x",
+            "parameters": {},
+            "chartsPerLine": 4
+          },
+          "totalLabel": "",
+          "showMeasure": true,
+          "measureAxis2": {
+            "sqrtScale": false,
+            "title": "",
+            "customDomain": {
+              "showDomain": false
+            }
+          },
+          "measureAxis1": {
+            "sqrtScale": false,
+            "referenceLine": {
+              "color": "rgb(0, 161, 224)",
+              "value": 0
+            },
+            "referenceLines": [
+              {
+                "color": "rgb(0, 161, 224)",
+                "value": 0
+              }
+            ],
+            "title": "",
+            "customDomain": {
+              "showDomain": false
+            }
+          },
+          "step": "Location_Territory_CoGroup_1",
+          "theme": "wave",
+          "rightColor": "#e16032",
+          "leftColor": "#52b7d8",
+          "dimensionAxis": {
+            "customSize": "auto",
+            "showAxis": true
+          }
+        },
+        "type": "chart"
+      },
+      "navigation_1": {
+        "parameters": {
+          "fontSize": 14,
+          "selectedTab": {
+            "backgroundColor": "#FFFFFF",
+            "borderColor": "#E84340",
+            "borderEdges": ["bottom"],
+            "borderWidth": 2,
+            "textColor": "#0070D2"
+          },
+          "tabCount": 5,
+          "textColor": "#091A3E"
+        },
+        "type": "navigation"
+      }
+    }
+  }
+}

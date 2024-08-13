@@ -1,3 +1,30 @@
+## [12.2.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.2.0...12.2.1) (2024-08-12)
+
+
+### Bug Fixes
+
+* **SC:** cache XML content ([#1383](https://github.com/forcedotcom/source-deploy-retrieve/issues/1383)) ([7b2d8cd](https://github.com/forcedotcom/source-deploy-retrieve/commit/7b2d8cd800b925b9ff2008bd93da7f6b2898b4b0))
+
+
+
+# [12.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.13...12.2.0) (2024-08-12)
+
+
+### Features
+
+* **condFormat:** add UiFormatSpecificationSet to metadataRegistry ([#1397](https://github.com/forcedotcom/source-deploy-retrieve/issues/1397)) ([9e9dd8b](https://github.com/forcedotcom/source-deploy-retrieve/commit/9e9dd8b533fac95c4091ff8f76d8e3b790276d67))
+
+
+
+## [12.1.13](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.12...12.1.13) (2024-08-11)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 8.2.8 to 8.3.0 ([#1396](https://github.com/forcedotcom/source-deploy-retrieve/issues/1396)) ([e0e03c8](https://github.com/forcedotcom/source-deploy-retrieve/commit/e0e03c80e8bbed9a396824a5e4dc8c84d29349f6))
+
+
+
 ## [12.1.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.11...12.1.12) (2024-08-04)
 
 

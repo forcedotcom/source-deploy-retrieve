@@ -631,6 +631,7 @@ v62 introduces the following new types.  Here's their current level of support
 |BillingSettings|✅||
 |ChannelRevMgmtSettings|✅||
 |ChoiceList|❌|Not supported, but support could be added (but not for tracking)|
+|ConvIntelligenceSignalRule|❌|Not supported, but support could be added|
 |ConversationMessageDefinition|✅||
 |EnblProgramTaskSubCategory|✅||
 |ExtlClntAppPushConfigurablePolicies|❌|Not supported, but support could be added (but not for tracking)|
@@ -643,7 +644,8 @@ v62 introduces the following new types.  Here's their current level of support
 |PublicKeyCertificate|❌|Not supported, but support could be added (but not for tracking)|
 |PublicKeyCertificateSet|❌|Not supported, but support could be added (but not for tracking)|
 |StageDefinition|✅||
-|UiFormatSpecificationSet|❌|Not supported, but support could be added|
+|UiFormatSpecificationSet|✅||
+|WorkflowFlowAutomation|❌|Not supported, but support could be added|
 
 ## Additional Types
 

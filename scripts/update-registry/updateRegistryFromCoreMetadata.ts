@@ -30,7 +30,7 @@ const logMissingEntry =
 
 (async () => {
   const missingTypes = await whatTypesNeedDescribe();
-  const missingTypesAsDescribeResult = await getMissingTypesFromDescribe(missingTypes);
-  console.log(missingTypesAsDescribeResult);
-  registryUpdate(missingTypesAsDescribeResult);
+  const missingTypesAsDescribeEntry = await getMissingTypesFromDescribe(missingTypes);
+  console.log(missingTypesAsDescribeEntry);
+  registryUpdate(missingTypesAsDescribeEntry);
 })();

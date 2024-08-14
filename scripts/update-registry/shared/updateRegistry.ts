@@ -2,8 +2,8 @@ import { MetadataRegistry } from '../../../src/registry/types';
 import { DescribeEntry } from './types';
 import * as fs from 'fs';
 import { env } from '@salesforce/kit';
-import { getCoverage, getCurrentApiVersion } from 'src/registry/coverage';
-import { getMissingTypes } from 'test/utils/getMissingTypes';
+import { getCoverage, getCurrentApiVersion } from '../../../src/registry/coverage';
+import { getMissingTypes } from '../../../test/utils/getMissingTypes';
 
 export const registry = JSON.parse(
   fs.readFileSync('./src/registry/metadataRegistry.json', 'utf8')

@@ -118,6 +118,7 @@
     "apt": "actionplantemplate",
     "aq": "assessmentquestion",
     "aqs": "assessmentquestionset",
+    "assessmentConfiguration": "assessmentconfiguration",
     "asset": "contentasset",
     "assignmentRule": "assignmentrule",
     "assignmentRules": "assignmentrules",
@@ -167,6 +168,7 @@
     "cleanDataService": "cleandataservice",
     "cls": "apexclass",
     "cmsConnectSource": "cmsconnectsource",
+    "collection": "waveanalyticassetcollection",
     "commandaction": "commandaction",
     "community": "community",
     "communityTemplateDefinition": "communitytemplatedefinition",
@@ -175,6 +177,8 @@
     "config": "notificationtypeconfig",
     "connectedApp": "connectedapp",
     "contextDefinition": "contextdefinition",
+    "contextUseCaseMapping": "contextusecasemapping",
+    "contractType": "contracttype",
     "conversationMessageDefinition": "conversationmessagedefinition",
     "corsWhitelistOrigin": "corswhitelistorigin",
     "crt": "certificate",
@@ -218,6 +222,7 @@
     "documentFolder": "documentfolder",
     "documentGenerationSetting": "documentgenerationsetting",
     "documentType": "documenttype",
+    "dt": "documenttemplate",
     "duplicateRule": "duplicaterule",
     "dwl": "dataweaveresource",
     "dynamicTrigger": "dynamictrigger",
@@ -235,6 +240,7 @@
     "ecaSmplPlcy": "extlclntappsampleconfigurablepolicies",
     "email": "emailtemplate",
     "emailFolder": "emailfolder",
+    "employeeDataSyncProfile": "employeedatasyncprofile",
     "enablementMeasureDefinition": "enablementmeasuredefinition",
     "enablementProgramDefinition": "enablementprogramdefinition",
     "enblProgramTaskSubCategory": "enblprogramtasksubcategory",
@@ -249,14 +255,17 @@
     "explainabilityActionVersion": "explainabilityactionversion",
     "explainabilityMsgTemplate": "explainabilitymsgtemplate",
     "expressionSetDefinition": "expressionsetdefinition",
-    "expressionSetVersion": "expressionsetdefinitionversion",
     "expressionSetMessageToken": "expressionsetmessagetoken",
     "expressionSetObjectAlias": "expressionsetobjectalias",
+    "expressionSetVersion": "expressionsetdefinitionversion",
     "extDataTranFieldTemplate": "extdatatranfieldtemplate",
     "extDataTranObjectTemplate": "extdatatranobjecttemplate",
     "externalAIModel": "externalaimodel",
+    "externalAuthIdentityProvider": "externalauthidentityprovider",
     "externalCredential": "externalcredential",
     "externalDataConnector": "externaldataconnector",
+    "externalDataTranObject": "externaldatatranobject",
+    "externalDocStorageConfig": "externaldocstorageconfig",
     "externalServiceRegistration": "externalserviceregistration",
     "featureParameterBoolean": "featureparameterboolean",
     "featureParameterDate": "featureparameterdate",
@@ -286,6 +295,7 @@
     "gatewayProviderPaymentMethodType": "gatewayproviderpaymentmethodtype",
     "genAiFunction": "genaifunction",
     "genAiPlanner": "genaiplanner",
+    "genAiPlugin": "genaiplugin",
     "genAiPromptTemplate": "genaiprompttemplate",
     "genAiPromptTemplateActivation": "genaiprompttemplateactv",
     "geodata": "eclairgeodata",
@@ -309,6 +319,7 @@
     "keywords": "keywordlist",
     "labels": "customlabels",
     "layout": "layout",
+    "learningAchievementConfig": "learningachievementconfig",
     "learningItemType": "learningitemtype",
     "letter": "letterhead",
     "licenseDefinition": "licensedefinition",
@@ -335,6 +346,8 @@
     "mfgProgramTemplate": "mfgprogramtemplate",
     "milestoneType": "milestonetype",
     "mktCalcInsightObjectDef": "mktcalcinsightobjectdef",
+    "mktDataConnection": "mktdataconnection",
+    "mktDataConnectionSrcParam": "mktdataconnectionsrcparam",
     "mktDataTranField": "mktdatatranfield",
     "mktDataTranObject": "mktdatatranobject",
     "mlDataDefinition": "mldatadefinition",
@@ -384,13 +397,17 @@
     "platformEventSubscriberConfig": "platformeventsubscriberconfig",
     "policy": "appointmentassignmentpolicy",
     "portal": "portal",
+    "portalDelegablePermissionSet": "portaldelegablepermissionset",
     "postTemplate": "posttemplate",
     "presenceDeclineReason": "presencedeclinereason",
     "presenceUserConfig": "presenceuserconfig",
     "pricingActionParameters": "pricingactionparameters",
     "pricingRecipe": "pricingrecipe",
     "processflowmigration": "processflowmigration",
+    "productAttrDisplayConfig": "productattrdisplayconfig",
     "productAttributeSet": "productattributeset",
+    "productSpecificationRecType": "productspecificationrectype",
+    "productSpecificationType": "productspecificationtype",
     "productSpecificationTypeDefinition": "productspecificationtypedefinition",
     "profile": "profile",
     "profilePasswordPolicy": "profilepasswordpolicy",
@@ -399,12 +416,15 @@
     "queue": "queue",
     "queueRoutingConfig": "queueroutingconfig",
     "quickAction": "quickaction",
+    "recAlrtDataSrcExpSetDef": "recalrtdatasrcexpsetdef",
     "recommendationStrategy": "recommendationstrategy",
     "recordAlertCategory": "recordalertcategory",
     "recordAlertDataSource": "recordalertdatasource",
     "recordAlertTemplate": "recordalerttemplate",
     "redirectWhitelistUrl": "redirectwhitelisturl",
+    "refdash": "referenceddashboard",
     "registeredExternalService": "registeredexternalservice",
+    "relatedRecordAssocCriteria": "relatedrecordassoccriteria",
     "relationshipGraphDefinition": "relationshipgraphdefinition",
     "remoteSite": "remotesitesetting",
     "report": "report",
@@ -439,6 +459,7 @@
     "skilltype": "skilltype",
     "slackapp": "slackapp",
     "snapshot": "analyticsnapshot",
+    "stageDefinition": "stagedefinition",
     "standardValueSet": "standardvalueset",
     "standardValueSetTranslation": "standardvaluesettranslation",
     "stationaryAssetEnvSourceConfig": "stnryassetenvsrccnfg",
@@ -462,6 +483,7 @@
     "translation": "translations",
     "trigger": "apextrigger",
     "type": "integrationhubsettingstype",
+    "uiFormatSpecificationSet": "uiformatspecificationset",
     "uiObjectRelationConfig": "uiobjectrelationconfig",
     "uiplugin": "uiplugin",
     "uiview": "uiviewdefinition",
@@ -472,6 +494,7 @@
     "useraccesspolicy": "useraccesspolicy",
     "vehicleAssetEmssnSourceConfig": "vehicleassetemssnsrccnfg",
     "view": "viewdefinition",
+    "virtualVisitConfig": "virtualvisitconfig",
     "visualizationPlugin": "visualizationplugin",
     "wapp": "waveapplication",
     "wcomp": "wavecomponent",
@@ -495,9 +518,7 @@
     "workflowTask": "workflowtask",
     "xmd": "wavexmd",
     "xml": "emailservicesfunction",
-    "xorghub": "xorghub",
-    "stageDefinition": "stagedefinition",
-    "uiFormatSpecificationSet": "uiformatspecificationset"
+    "xorghub": "xorghub"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -822,6 +843,14 @@
       "name": "ApprovalProcess",
       "strictDirectoryName": false,
       "suffix": "approvalProcess"
+    },
+    "assessmentconfiguration": {
+      "directoryName": "AssessmentConfigurations",
+      "id": "assessmentconfiguration",
+      "inFolder": false,
+      "name": "AssessmentConfiguration",
+      "strictDirectoryName": false,
+      "suffix": "assessmentConfiguration"
     },
     "assessmentquestion": {
       "directoryName": "AssessmentQuestions",
@@ -1293,6 +1322,22 @@
       "name": "ContextDefinition",
       "strictDirectoryName": false,
       "suffix": "contextDefinition"
+    },
+    "contextusecasemapping": {
+      "directoryName": "contextUseCaseMappings",
+      "id": "contextusecasemapping",
+      "inFolder": false,
+      "name": "ContextUseCaseMapping",
+      "strictDirectoryName": false,
+      "suffix": "contextUseCaseMapping"
+    },
+    "contracttype": {
+      "directoryName": "contractTypes",
+      "id": "contracttype",
+      "inFolder": false,
+      "name": "ContractType",
+      "strictDirectoryName": false,
+      "suffix": "contractType"
     },
     "conversationchanneldefinition": {
       "directoryName": "conversationChannelDefinitions",
@@ -1937,6 +1982,17 @@
       "name": "DocumentGenerationSetting",
       "suffix": "documentGenerationSetting"
     },
+    "documenttemplate": {
+      "directoryName": "documentTemplates",
+      "id": "documenttemplate",
+      "inFolder": false,
+      "name": "DocumentTemplate",
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
+      "strictDirectoryName": false,
+      "suffix": "dt"
+    },
     "documenttype": {
       "directoryName": "documentTypes",
       "id": "documenttype",
@@ -2054,6 +2110,14 @@
       "name": "EmbeddedServiceMenuSettings",
       "strictDirectoryName": false,
       "suffix": "EmbeddedServiceMenuSettings"
+    },
+    "employeedatasyncprofile": {
+      "directoryName": "employeeDataSyncProfiles",
+      "id": "employeedatasyncprofile",
+      "inFolder": false,
+      "name": "EmployeeDataSyncProfile",
+      "strictDirectoryName": false,
+      "suffix": "employeeDataSyncProfile"
     },
     "enablementmeasuredefinition": {
       "directoryName": "enablementMeasureDefinitions",
@@ -2281,6 +2345,14 @@
       "strictDirectoryName": false,
       "suffix": "externalAIModel"
     },
+    "externalauthidentityprovider": {
+      "directoryName": "externalAuthIdentityProviders",
+      "id": "externalauthidentityprovider",
+      "inFolder": false,
+      "name": "ExternalAuthIdentityProvider",
+      "strictDirectoryName": false,
+      "suffix": "externalAuthIdentityProvider"
+    },
     "externalclientapplication": {
       "directoryName": "externalClientApps",
       "id": "externalclientapplication",
@@ -2311,6 +2383,22 @@
       "name": "ExternalDataSource",
       "strictDirectoryName": false,
       "suffix": "dataSource"
+    },
+    "externaldatatranobject": {
+      "directoryName": "externalDataTranObjects",
+      "id": "externaldatatranobject",
+      "inFolder": false,
+      "name": "ExternalDataTranObject",
+      "strictDirectoryName": false,
+      "suffix": "externalDataTranObject"
+    },
+    "externaldocstorageconfig": {
+      "directoryName": "externalDocStorageConfigs",
+      "id": "externaldocstorageconfig",
+      "inFolder": false,
+      "name": "ExternalDocStorageConfig",
+      "strictDirectoryName": false,
+      "suffix": "externalDocStorageConfig"
     },
     "externalserviceregistration": {
       "directoryName": "externalServiceRegistrations",
@@ -2597,6 +2685,14 @@
       "name": "GenAiPlanner",
       "suffix": "genAiPlanner"
     },
+    "genaiplugin": {
+      "directoryName": "genAiPlugins",
+      "id": "genaiplugin",
+      "inFolder": false,
+      "name": "GenAiPlugin",
+      "strictDirectoryName": false,
+      "suffix": "genAiPlugin"
+    },
     "genaiprompttemplate": {
       "directoryName": "genAiPromptTemplates",
       "id": "genaiprompttemplate",
@@ -2796,6 +2892,14 @@
       "name": "LeadConvertSettings",
       "strictDirectoryName": false,
       "suffix": "LeadConvertSetting"
+    },
+    "learningachievementconfig": {
+      "directoryName": "learningAchievementConfigs",
+      "id": "learningachievementconfig",
+      "inFolder": false,
+      "name": "LearningAchievementConfig",
+      "strictDirectoryName": false,
+      "suffix": "learningAchievementConfig"
     },
     "learningitemtype": {
       "directoryName": "learningItemTypes",
@@ -3024,6 +3128,22 @@
       "inFolder": false,
       "name": "MktCalcInsightObjectDef",
       "suffix": "mktCalcInsightObjectDef"
+    },
+    "mktdataconnection": {
+      "directoryName": "mktDataConnections",
+      "id": "mktdataconnection",
+      "inFolder": false,
+      "name": "MktDataConnection",
+      "strictDirectoryName": false,
+      "suffix": "mktDataConnection"
+    },
+    "mktdataconnectionsrcparam": {
+      "directoryName": "mktDataConnectionSrcParams",
+      "id": "mktdataconnectionsrcparam",
+      "inFolder": false,
+      "name": "MktDataConnectionSrcParam",
+      "strictDirectoryName": false,
+      "suffix": "mktDataConnectionSrcParam"
     },
     "mktdatatranobject": {
       "children": {
@@ -3428,6 +3548,14 @@
       "name": "Portal",
       "suffix": "portal"
     },
+    "portaldelegablepermissionset": {
+      "directoryName": "portalDelegablePermissionSet",
+      "id": "portaldelegablepermissionset",
+      "inFolder": false,
+      "name": "PortalDelegablePermissionSet",
+      "strictDirectoryName": false,
+      "suffix": "portalDelegablePermissionSet"
+    },
     "posttemplate": {
       "directoryName": "postTemplates",
       "id": "posttemplate",
@@ -3473,6 +3601,14 @@
       "strictDirectoryName": false,
       "suffix": "processflowmigration"
     },
+    "productattrdisplayconfig": {
+      "directoryName": "productAttrDisplayConfigs",
+      "id": "productattrdisplayconfig",
+      "inFolder": false,
+      "name": "ProductAttrDisplayConfig",
+      "strictDirectoryName": false,
+      "suffix": "productAttrDisplayConfig"
+    },
     "productattributeset": {
       "directoryName": "productAttributeSets",
       "id": "productattributeset",
@@ -3480,6 +3616,22 @@
       "name": "ProductAttributeSet",
       "strictDirectoryName": false,
       "suffix": "productAttributeSet"
+    },
+    "productspecificationrectype": {
+      "directoryName": "productSpecificationRecTypes",
+      "id": "productspecificationrectype",
+      "inFolder": false,
+      "name": "ProductSpecificationRecType",
+      "strictDirectoryName": false,
+      "suffix": "productSpecificationRecType"
+    },
+    "productspecificationtype": {
+      "directoryName": "productSpecificationTypes",
+      "id": "productspecificationtype",
+      "inFolder": false,
+      "name": "ProductSpecificationType",
+      "strictDirectoryName": false,
+      "suffix": "productSpecificationType"
     },
     "productspecificationtypedefinition": {
       "directoryName": "productSpecificationTypeDefinitions",
@@ -3545,6 +3697,14 @@
       "suffix": "quickAction",
       "supportsWildcardAndName": true
     },
+    "recalrtdatasrcexpsetdef": {
+      "directoryName": "recAlrtDataSrcExpSetDefs",
+      "id": "recalrtdatasrcexpsetdef",
+      "inFolder": false,
+      "name": "RecAlrtDataSrcExpSetDef",
+      "strictDirectoryName": false,
+      "suffix": "recAlrtDataSrcExpSetDef"
+    },
     "recommendationstrategy": {
       "directoryName": "recommendationStrategies",
       "id": "recommendationstrategy",
@@ -3601,6 +3761,14 @@
       "strictDirectoryName": false,
       "suffix": "redirectWhitelistUrl"
     },
+    "referenceddashboard": {
+      "directoryName": "wave",
+      "id": "referenceddashboard",
+      "inFolder": false,
+      "name": "ReferencedDashboard",
+      "strictDirectoryName": false,
+      "suffix": "refdash"
+    },
     "registeredexternalservice": {
       "directoryName": "registeredExternalServices",
       "id": "registeredexternalservice",
@@ -3608,6 +3776,14 @@
       "name": "RegisteredExternalService",
       "strictDirectoryName": false,
       "suffix": "registeredExternalService"
+    },
+    "relatedrecordassoccriteria": {
+      "directoryName": "relatedRecordAssocCriteria",
+      "id": "relatedrecordassoccriteria",
+      "inFolder": false,
+      "name": "RelatedRecordAssocCriteria",
+      "strictDirectoryName": false,
+      "suffix": "relatedRecordAssocCriteria"
     },
     "relationshipgraphdefinition": {
       "directoryName": "relationshipGraphDefinitions",
@@ -3903,6 +4079,14 @@
       "strictDirectoryName": false,
       "suffix": "slackapp"
     },
+    "stagedefinition": {
+      "directoryName": "stageDefinitions",
+      "id": "stagedefinition",
+      "inFolder": false,
+      "name": "StageDefinition",
+      "strictDirectoryName": false,
+      "suffix": "stageDefinition"
+    },
     "standardvalueset": {
       "directoryName": "standardValueSets",
       "id": "standardvalueset",
@@ -4095,6 +4279,14 @@
       "name": "Translations",
       "suffix": "translation"
     },
+    "uiformatspecificationset": {
+      "directoryName": "uiFormatSpecificationSets",
+      "id": "uiformatspecificationset",
+      "inFolder": false,
+      "name": "UiFormatSpecificationSet",
+      "strictDirectoryName": false,
+      "suffix": "uiFormatSpecificationSet"
+    },
     "uiobjectrelationconfig": {
       "directoryName": "uiObjectRelationConfigs",
       "id": "uiobjectrelationconfig",
@@ -4181,12 +4373,28 @@
       "strictDirectoryName": false,
       "suffix": "view"
     },
+    "virtualvisitconfig": {
+      "directoryName": "VirtualVisitConfigs",
+      "id": "virtualvisitconfig",
+      "inFolder": false,
+      "name": "VirtualVisitConfig",
+      "strictDirectoryName": false,
+      "suffix": "virtualVisitConfig"
+    },
     "visualizationplugin": {
       "directoryName": "visualizationPlugins",
       "id": "visualizationplugin",
       "inFolder": false,
       "name": "VisualizationPlugin",
       "suffix": "visualizationPlugin"
+    },
+    "waveanalyticassetcollection": {
+      "directoryName": "wave",
+      "id": "waveanalyticassetcollection",
+      "inFolder": false,
+      "name": "WaveAnalyticAssetCollection",
+      "strictDirectoryName": false,
+      "suffix": "collection"
     },
     "waveapplication": {
       "directoryName": "wave",
@@ -4401,22 +4609,6 @@
       "inFolder": false,
       "name": "XOrgHub",
       "suffix": "xorghub"
-    },
-    "stagedefinition": {
-      "id": "stagedefinition",
-      "name": "StageDefinition",
-      "suffix": "stageDefinition",
-      "directoryName": "stageDefinitions",
-      "inFolder": false,
-      "strictDirectoryName": false
-    },
-    "uiformatspecificationset": {
-      "id": "uiformatspecificationset",
-      "name": "UiFormatSpecificationSet",
-      "suffix": "uiFormatSpecificationSet",
-      "directoryName": "uiFormatSpecificationSets",
-      "inFolder": false,
-      "strictDirectoryName": false
     }
   }
 }

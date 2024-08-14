@@ -43,7 +43,7 @@ export {
   PackageOptions,
   RetrieveOptions,
   DeployVersionData,
-  DeployData,
+  DeployZipData,
   RetrieveVersionData,
   MetadataApiRetrieveOptions,
 } from './types';

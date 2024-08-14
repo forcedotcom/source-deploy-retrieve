@@ -372,10 +372,11 @@ export type DeployVersionData = {
 };
 
 /**
- * Data about a deployment about to be sent to the Metadata API
+ * Data about a deployment zip file being sent to the Metadata API.
  */
-export type DeployData = DeployVersionData & {
+export type DeployZipData = {
   zipSize: number;
+  zipFileCount: number;
 };
 
 export type RetrieveVersionData = {

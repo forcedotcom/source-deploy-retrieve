@@ -207,7 +207,10 @@ export class MetadataApiDeploy extends MetadataTransfer<
         })
     );
 
-    const [zipBuffer] = await Promise.all([this.getZipBuffer(), this.maybeSaveTempDirectory('metadata')]);
+    const [{ zipBuffer, zipFileCount }] = await Promise.all([
+      this.getZipBuffer(),
+      this.maybeSaveTempDirectory('metadata'),
+    ]);
     // SDR modifies what the mdapi expects by adding a rest param
     const { rest, ...optionsWithoutRest } = this.options.apiOptions ?? {};
 
@@ -217,8 +220,16 @@ export class MetadataApiDeploy extends MetadataTransfer<
     const manifestMsg = manifestVersion ? ` in v${manifestVersion} shape` : '';
     const debugMsg = format(`Deploying metadata source%s using ${webService} v${apiVersion}`, manifestMsg);
     this.logger.debug(debugMsg);
+
+    // Event and Debug output for the zip file used for deploy
     const zipSize = zipBuffer.byteLength;
-    await LifecycleInstance.emit('deployData', { webService, manifestVersion, apiVersion, zipSize });
+    let zipMessage = `Deployment zip file size = ${zipSize} Bytes`;
+    if (zipFileCount) {
+      zipMessage += ` containing ${zipFileCount} files`;
+    }
+    this.logger.debug(zipMessage);
+    await LifecycleInstance.emit('apiVersionDeploy', { webService, manifestVersion, apiVersion });
+    await LifecycleInstance.emit('deployZipData', { zipSize, zipFileCount });
 
     return this.isRestDeploy
       ? connection.metadata.deployRest(zipBuffer, optionsWithoutRest)
@@ -293,14 +304,17 @@ export class MetadataApiDeploy extends MetadataTransfer<
     return deployResult;
   }
 
-  private async getZipBuffer(): Promise<Buffer> {
+  private async getZipBuffer(): Promise<{ zipBuffer: Buffer; zipFileCount?: number }> {
     const mdapiPath = this.options.mdapiPath;
+
+    // Zip a directory of metadata format source
     if (mdapiPath) {
       if (!fs.existsSync(mdapiPath) || !fs.lstatSync(mdapiPath).isDirectory()) {
         throw messages.createError('error_directory_not_found_or_not_directory', [mdapiPath]);
       }
 
       const zip = JSZip();
+      let zipFileCount = 0;
 
       const zipDirRecursive = (dir: string): void => {
         const dirents = fs.readdirSync(dir, { withFileTypes: true });
@@ -314,33 +328,38 @@ export class MetadataApiDeploy extends MetadataTransfer<
             // Ensure only posix paths are added to zip files
             const relPosixPath = relPath.replace(/\\/g, '/');
             zip.file(relPosixPath, fs.createReadStream(fullPath));
+            zipFileCount++;
           }
         }
       };
       this.logger.debug('Zipping directory for metadata deploy:', mdapiPath);
       zipDirRecursive(mdapiPath);
 
-      return zip.generateAsync({
-        type: 'nodebuffer',
-        compression: 'DEFLATE',
-        compressionOptions: { level: 9 },
-      });
+      return {
+        zipBuffer: await zip.generateAsync({
+          type: 'nodebuffer',
+          compression: 'DEFLATE',
+          compressionOptions: { level: 9 },
+        }),
+        zipFileCount,
+      };
     }
-    // read the zip into a buffer
+    // Read a zip of metadata format source into a buffer
     if (this.options.zipPath) {
       if (!fs.existsSync(this.options.zipPath)) {
         throw new SfError(messages.getMessage('error_path_not_found', [this.options.zipPath]));
       }
       // does encoding matter for zip files? I don't know
-      return fs.promises.readFile(this.options.zipPath);
+      return { zipBuffer: await fs.promises.readFile(this.options.zipPath) };
     }
+    // Convert a ComponentSet of metadata in source format and zip
     if (this.options.components && this.components) {
       const converter = new MetadataConverter(this.registry);
-      const { zipBuffer } = await converter.convert(this.components, 'metadata', { type: 'zip' });
+      const { zipBuffer, zipFileCount } = await converter.convert(this.components, 'metadata', { type: 'zip' });
       if (!zipBuffer) {
         throw new SfError(messages.getMessage('zipBufferError'));
       }
-      return zipBuffer;
+      return { zipBuffer, zipFileCount };
     }
     throw new Error('Options should include components, zipPath, or mdapiPath');
   }

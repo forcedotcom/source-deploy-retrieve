@@ -183,6 +183,9 @@ export class StandardWriter extends ComponentWriter {
 }
 
 export class ZipWriter extends ComponentWriter {
+  /**
+   * Count of files (not directories) added to the zip file.
+   */
   public fileCount: number = 0;
   private zip = JSZip();
   private zipBuffer?: Buffer;

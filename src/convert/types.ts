@@ -108,6 +108,10 @@ export type ConvertResult = {
    */
   zipBuffer?: Buffer;
   /**
+   * When a zip buffer is created, this is the number of files in the zip.
+   */
+  zipFileCount?: number;
+  /**
    * Converted source components. Not set if archiving the package.
    */
   converted?: SourceComponent[];

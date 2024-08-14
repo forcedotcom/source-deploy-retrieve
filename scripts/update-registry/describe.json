@@ -1,0 +1,4803 @@
+{
+  "AIApplication": {
+    "directoryName": "aiApplications",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AIApplication",
+    "suffix": "ai"
+  },
+  "AIApplicationConfig": {
+    "directoryName": "aiApplicationConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AIApplicationConfig",
+    "suffix": "aiapplicationconfig"
+  },
+  "AIReplyRecommendationsSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AIReplyRecommendationsSettings",
+    "suffix": "settings"
+  },
+  "AIScoringModelDefVersion": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AIScoringModelDefVersion"
+  },
+  "AIScoringModelDefinition": {
+    "directoryName": "aiScoringModelDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AIScoringModelDefinition",
+    "suffix": "aiScoringModelDefinition"
+  },
+  "AIUsecaseDefinition": {
+    "directoryName": "aiUsecaseDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AIUsecaseDefinition",
+    "suffix": "aiUsecaseDefinitions"
+  },
+  "AccountForecastSettings": {
+    "directoryName": "AccountForecastSettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AccountForecastSettings",
+    "suffix": "accountForecastSetting"
+  },
+  "AccountIntelligenceSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AccountIntelligenceSettings",
+    "suffix": "settings"
+  },
+  "AccountRelationshipShareRule": {
+    "directoryName": "accountRelationshipShareRules",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AccountRelationshipShareRule",
+    "suffix": "accountRelationshipShareRule"
+  },
+  "AccountSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AccountSettings",
+    "suffix": "settings"
+  },
+  "AccountingFieldMapping": {
+    "directoryName": "accountingFieldMappings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AccountingFieldMapping",
+    "suffix": "accountingFieldMapping"
+  },
+  "AccountingModelConfig": {
+    "directoryName": "accountingModelConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AccountingModelConfig",
+    "suffix": "accountingModelConfig"
+  },
+  "AccountingSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AccountingSettings",
+    "suffix": "settings"
+  },
+  "AcctMgrTargetSettings": {
+    "directoryName": "acctMgrTargetSettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AcctMgrTargetSettings",
+    "suffix": "acctMgrTargetSetting"
+  },
+  "ActionLauncherItemDef": {
+    "directoryName": "ActionLauncherItemDef",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ActionLauncherItemDef",
+    "suffix": "actionLauncherItemDef"
+  },
+  "ActionLinkGroupTemplate": {
+    "directoryName": "actionLinkGroupTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ActionLinkGroupTemplate",
+    "suffix": "actionLinkGroupTemplate"
+  },
+  "ActionPlanTemplate": {
+    "directoryName": "actionPlanTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ActionPlanTemplate",
+    "suffix": "apt"
+  },
+  "ActionableEventOrchDef": {
+    "directoryName": "ActionableEventOrchDefSettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ActionableEventOrchDef",
+    "suffix": "settings"
+  },
+  "ActionableEventTypeDef": {
+    "directoryName": "ActionableEventTypeDefSettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ActionableEventTypeDef",
+    "suffix": "settings"
+  },
+  "ActionableListDefinition": {
+    "directoryName": "actionableListDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ActionableListDefinition",
+    "suffix": "actionableListDefinition"
+  },
+  "ActionsSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ActionsSettings",
+    "suffix": "settings"
+  },
+  "ActivationPlatform": {
+    "directoryName": "activationPlatforms",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ActivationPlatform",
+    "suffix": "activationPlatform"
+  },
+  "ActivitiesSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ActivitiesSettings",
+    "suffix": "settings"
+  },
+  "ActnblListKeyPrfmIndDef": {
+    "directoryName": "actnblListKeyPrfmIndDefs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ActnblListKeyPrfmIndDef",
+    "suffix": "actnblListKeyPrfmIndDef"
+  },
+  "AddressSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AddressSettings",
+    "suffix": "settings"
+  },
+  "AdvAccountForecastSet": {
+    "directoryName": "AdvAccountForecastSet",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AdvAccountForecastSet",
+    "suffix": "advAccountForecastSet"
+  },
+  "AdvAcctForecastDimSource": {
+    "directoryName": "AdvAcctForecastDimSource",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AdvAcctForecastDimSource",
+    "suffix": "advAcctForecastDimSource"
+  },
+  "AdvAcctForecastPeriodGroup": {
+    "directoryName": "AdvAcctForecastPeriodGroup",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AdvAcctForecastPeriodGroup",
+    "suffix": "advAcctForecastPeriodGroup"
+  },
+  "AffinityScoreDefinition": {
+    "directoryName": "affinityScoreDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AffinityScoreDefinition",
+    "suffix": "affinityScoreDefinition"
+  },
+  "Ai4mSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Ai4mSettings",
+    "suffix": "settings"
+  },
+  "AnalyticSnapshot": {
+    "directoryName": "analyticSnapshots",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AnalyticSnapshot",
+    "suffix": "snapshot"
+  },
+  "AnalyticsSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AnalyticsSettings",
+    "suffix": "settings"
+  },
+  "AnimationRule": {
+    "directoryName": "animationRules",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AnimationRule",
+    "suffix": "animationRule"
+  },
+  "ApexClass": {
+    "directoryName": "classes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "ApexClass",
+    "suffix": "cls"
+  },
+  "ApexComponent": {
+    "directoryName": "components",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "ApexComponent",
+    "suffix": "component"
+  },
+  "ApexEmailNotifications": {
+    "directoryName": "apexEmailNotifications",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ApexEmailNotifications",
+    "suffix": "notifications"
+  },
+  "ApexPage": {
+    "directoryName": "pages",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "ApexPage",
+    "suffix": "page"
+  },
+  "ApexSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ApexSettings",
+    "suffix": "settings"
+  },
+  "ApexTestSuite": {
+    "directoryName": "testSuites",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ApexTestSuite",
+    "suffix": "testSuite"
+  },
+  "ApexTrigger": {
+    "directoryName": "triggers",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "ApexTrigger",
+    "suffix": "trigger"
+  },
+  "AppAnalyticsSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AppAnalyticsSettings",
+    "suffix": "settings"
+  },
+  "AppExperienceSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AppExperienceSettings",
+    "suffix": "settings"
+  },
+  "AppMenu": {
+    "directoryName": "appMenus",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AppMenu",
+    "suffix": "appMenu"
+  },
+  "ApplicationRecordTypeConfig": {
+    "directoryName": "ApplicationRecordTypeConfig",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ApplicationRecordTypeConfig",
+    "suffix": "applicationRecordTypeConfig"
+  },
+  "ApplicationSubtypeDefinition": {
+    "directoryName": "ApplicationSubtypeDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ApplicationSubtypeDefinition",
+    "suffix": "applicationSubtypeDefinition"
+  },
+  "AppointmentAssignmentPolicy": {
+    "directoryName": "appointmentAssignmentPolicies",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AppointmentAssignmentPolicy",
+    "suffix": "policy"
+  },
+  "AppointmentSchedulingPolicy": {
+    "directoryName": "appointmentSchedulingPolicies",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AppointmentSchedulingPolicy",
+    "suffix": "policy"
+  },
+  "ApprovalProcess": {
+    "directoryName": "approvalProcesses",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ApprovalProcess",
+    "suffix": "approvalProcess"
+  },
+  "AssessmentConfiguration": {
+    "directoryName": "AssessmentConfigurations",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AssessmentConfiguration",
+    "suffix": "assessmentConfiguration"
+  },
+  "AssessmentQuestion": {
+    "directoryName": "AssessmentQuestions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AssessmentQuestion",
+    "suffix": "aq"
+  },
+  "AssessmentQuestionSet": {
+    "directoryName": "AssessmentQuestionSets",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AssessmentQuestionSet",
+    "suffix": "aqs"
+  },
+  "AssignmentRules": {
+    "directoryName": "assignmentRules",
+    "hasChildren": true,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AssignmentRules",
+    "suffix": "assignmentRules"
+  },
+  "AssistantContextItem": {
+    "directoryName": "assistantContextItems",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AssistantContextItem",
+    "suffix": "assistantContextItem"
+  },
+  "AssistantDefinition": {
+    "directoryName": "assistantDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AssistantDefinition",
+    "suffix": "assistantDefinition"
+  },
+  "AssistantSkillQuickAction": {
+    "directoryName": "assistantSkillQuickActions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AssistantSkillQuickAction",
+    "suffix": "assistantSkillQuickAction"
+  },
+  "AssistantSkillSobjectAction": {
+    "directoryName": "assistantSkillSobjectActions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AssistantSkillSobjectAction",
+    "suffix": "assistantSkillSobjectAction"
+  },
+  "AssistantVersion": {
+    "directoryName": "assistantVersions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AssistantVersion",
+    "suffix": "assistantVersion"
+  },
+  "AssociationEngineSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AssociationEngineSettings",
+    "suffix": "settings"
+  },
+  "Audience": {
+    "directoryName": "audience",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Audience",
+    "suffix": "audience"
+  },
+  "AuraDefinitionBundle": {
+    "directoryName": "aura",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AuraDefinitionBundle"
+  },
+  "AuthProvider": {
+    "directoryName": "authproviders",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AuthProvider",
+    "suffix": "authprovider"
+  },
+  "AutoResponseRules": {
+    "directoryName": "autoResponseRules",
+    "hasChildren": true,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AutoResponseRules",
+    "suffix": "autoResponseRules"
+  },
+  "AutomatedContactsSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "AutomatedContactsSettings",
+    "suffix": "settings"
+  },
+  "BatchCalcJobDefinition": {
+    "directoryName": "batchCalcJobDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BatchCalcJobDefinition",
+    "suffix": "batchCalcJobDefinition"
+  },
+  "BatchProcessJobDefinition": {
+    "directoryName": "batchProcessJobDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BatchProcessJobDefinition",
+    "suffix": "batchProcessJobDefinition"
+  },
+  "BenefitAction": {
+    "directoryName": "benefitActions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BenefitAction",
+    "suffix": "benefitAction"
+  },
+  "BlacklistedConsumer": {
+    "directoryName": "blacklistedConsumers",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BlacklistedConsumer",
+    "suffix": "blacklistedConsumer"
+  },
+  "BldgEnrgyIntensityCnfg": {
+    "directoryName": "buildingEnergyIntensityConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BldgEnrgyIntensityCnfg",
+    "suffix": "buildingEnergyIntensityConfig"
+  },
+  "BlockchainSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BlockchainSettings",
+    "suffix": "settings"
+  },
+  "Bot": {
+    "directoryName": "bots",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Bot",
+    "suffix": "bot"
+  },
+  "BotBlock": {
+    "directoryName": "botBlocks",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BotBlock",
+    "suffix": "botBlock"
+  },
+  "BotBlockVersion": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BotBlockVersion"
+  },
+  "BotSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BotSettings",
+    "suffix": "settings"
+  },
+  "BotTemplate": {
+    "directoryName": "botTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BotTemplate",
+    "suffix": "botTemplate"
+  },
+  "BotVersion": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BotVersion"
+  },
+  "BranchManagementSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BranchManagementSettings",
+    "suffix": "settings"
+  },
+  "BrandingSet": {
+    "directoryName": "brandingSets",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BrandingSet",
+    "suffix": "brandingSet"
+  },
+  "BriefcaseDefinition": {
+    "directoryName": "briefcaseDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BriefcaseDefinition",
+    "suffix": "briefcaseDefinition"
+  },
+  "BusinessHoursSettings": {
+    "directoryName": "settings",
+    "hasChildren": true,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BusinessHoursSettings",
+    "suffix": "settings"
+  },
+  "BusinessProcess": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BusinessProcess"
+  },
+  "BusinessProcessGroup": {
+    "directoryName": "businessProcessGroups",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BusinessProcessGroup",
+    "suffix": "businessProcessGroup"
+  },
+  "BusinessProcessTypeDefinition": {
+    "directoryName": "BusinessProcessTypeDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "BusinessProcessTypeDefinition",
+    "suffix": "businessProcessTypeDefinition"
+  },
+  "CMSConnectSource": {
+    "directoryName": "cmsConnectSource",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CMSConnectSource",
+    "suffix": "cmsConnectSource"
+  },
+  "CallCenter": {
+    "directoryName": "callCenters",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CallCenter",
+    "suffix": "callCenter"
+  },
+  "CallCenterRoutingMap": {
+    "directoryName": "callCenterRoutingMaps",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CallCenterRoutingMap",
+    "suffix": "callCenterRoutingMap"
+  },
+  "CallCoachingMediaProvider": {
+    "directoryName": "callCoachingMediaProviders",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CallCoachingMediaProvider",
+    "suffix": "callCoachingMediaProvider"
+  },
+  "CampaignInfluenceModel": {
+    "directoryName": "campaignInfluenceModels",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CampaignInfluenceModel",
+    "suffix": "campaignInfluenceModel"
+  },
+  "CampaignSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CampaignSettings",
+    "suffix": "settings"
+  },
+  "CanvasMetadata": {
+    "directoryName": "Canvases",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CanvasMetadata",
+    "suffix": "Canvas"
+  },
+  "CareBenefitVerifySettings": {
+    "directoryName": "careBenefitVerifySettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CareBenefitVerifySettings",
+    "suffix": "careBenefitVerifySettings"
+  },
+  "CareLimitType": {
+    "directoryName": "careLimitTypes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CareLimitType",
+    "suffix": "careLimitType"
+  },
+  "CareProviderAfflRoleConfig": {
+    "directoryName": "careProviderAfflRoleConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CareProviderAfflRoleConfig",
+    "suffix": "careProviderAfflRoleConfig"
+  },
+  "CareProviderSearchConfig": {
+    "directoryName": "careProviderSearchConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CareProviderSearchConfig",
+    "suffix": "careProviderSearchConfig"
+  },
+  "CareRequestConfiguration": {
+    "directoryName": "careRequestConfigurations",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CareRequestConfiguration",
+    "suffix": "careRequestConfiguration"
+  },
+  "CareSystemFieldMapping": {
+    "directoryName": "careSystemFieldMappings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CareSystemFieldMapping",
+    "suffix": "careSystemFieldMapping"
+  },
+  "CaseSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CaseSettings",
+    "suffix": "settings"
+  },
+  "CaseSubjectParticle": {
+    "directoryName": "CaseSubjectParticles",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CaseSubjectParticle",
+    "suffix": "CaseSubjectParticle"
+  },
+  "Certificate": {
+    "directoryName": "certs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "Certificate",
+    "suffix": "crt"
+  },
+  "ChannelLayout": {
+    "directoryName": "channelLayouts",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ChannelLayout",
+    "suffix": "channelLayout"
+  },
+  "ChannelObjectLinkingRule": {
+    "directoryName": "ChannelObjectLinkingRules",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ChannelObjectLinkingRule",
+    "suffix": "ChannelObjectLinkingRule"
+  },
+  "ChatterAnswersSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ChatterAnswersSettings",
+    "suffix": "settings"
+  },
+  "ChatterEmailsMDSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ChatterEmailsMDSettings",
+    "suffix": "settings"
+  },
+  "ChatterExtension": {
+    "directoryName": "ChatterExtensions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ChatterExtension",
+    "suffix": "ChatterExtension"
+  },
+  "ChatterSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ChatterSettings",
+    "suffix": "settings"
+  },
+  "ClaimFinancialSettings": {
+    "directoryName": "ClaimFinancialSettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ClaimFinancialSettings",
+    "suffix": "claimFinancialSettings"
+  },
+  "ClaimMgmtFoundationEnabledSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ClaimMgmtFoundationEnabledSettings",
+    "suffix": "settings"
+  },
+  "ClauseCatgConfiguration": {
+    "directoryName": "clauseCatgConfigurations",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ClauseCatgConfiguration",
+    "suffix": "clauseCatgConfiguration"
+  },
+  "CleanDataService": {
+    "directoryName": "cleanDataServices",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CleanDataService",
+    "suffix": "cleanDataService"
+  },
+  "CodeBuilderSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CodeBuilderSettings",
+    "suffix": "settings"
+  },
+  "CollectionsDashboardSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CollectionsDashboardSettings",
+    "suffix": "settings"
+  },
+  "CommandAction": {
+    "directoryName": "commandActions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CommandAction",
+    "suffix": "commandaction"
+  },
+  "CommerceSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CommerceSettings",
+    "suffix": "settings"
+  },
+  "CommsServiceConsoleSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CommsServiceConsoleSettings",
+    "suffix": "settings"
+  },
+  "CommunitiesSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CommunitiesSettings",
+    "suffix": "settings"
+  },
+  "Community": {
+    "directoryName": "communities",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Community",
+    "suffix": "community"
+  },
+  "CommunityTemplateDefinition": {
+    "directoryName": "communityTemplateDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CommunityTemplateDefinition",
+    "suffix": "communityTemplateDefinition"
+  },
+  "CommunityThemeDefinition": {
+    "directoryName": "communityThemeDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CommunityThemeDefinition",
+    "suffix": "communityThemeDefinition"
+  },
+  "CompactLayout": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CompactLayout"
+  },
+  "CompanySettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CompanySettings",
+    "suffix": "settings"
+  },
+  "ConnectedApp": {
+    "directoryName": "connectedApps",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ConnectedApp",
+    "suffix": "connectedApp"
+  },
+  "ConnectedAppSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ConnectedAppSettings",
+    "suffix": "settings"
+  },
+  "ContentAsset": {
+    "directoryName": "contentassets",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "ContentAsset",
+    "suffix": "asset"
+  },
+  "ContentSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ContentSettings",
+    "suffix": "settings"
+  },
+  "ContextDefinition": {
+    "directoryName": "contextDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ContextDefinition",
+    "suffix": "contextDefinition"
+  },
+  "ContextUseCaseMapping": {
+    "directoryName": "contextUseCaseMappings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ContextUseCaseMapping",
+    "suffix": "contextUseCaseMapping"
+  },
+  "ContractSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ContractSettings",
+    "suffix": "settings"
+  },
+  "ContractType": {
+    "directoryName": "contractTypes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ContractType",
+    "suffix": "contractType"
+  },
+  "ConversationChannelDefinition": {
+    "directoryName": "conversationChannelDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ConversationChannelDefinition",
+    "suffix": "ConversationChannelDefinition"
+  },
+  "ConversationServiceIntegrationSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ConversationServiceIntegrationSettings",
+    "suffix": "settings"
+  },
+  "ConversationVendorInfo": {
+    "directoryName": "ConversationVendorInformation",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ConversationVendorInfo",
+    "suffix": "ConversationVendorInformation"
+  },
+  "ConversationalIntelligenceSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ConversationalIntelligenceSettings",
+    "suffix": "settings"
+  },
+  "CorsWhitelistOrigin": {
+    "directoryName": "corsWhitelistOrigins",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CorsWhitelistOrigin",
+    "suffix": "corsWhitelistOrigin"
+  },
+  "CspTrustedSite": {
+    "directoryName": "cspTrustedSites",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CspTrustedSite",
+    "suffix": "cspTrustedSite"
+  },
+  "CurrencySettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CurrencySettings",
+    "suffix": "settings"
+  },
+  "CustomAddressFieldSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomAddressFieldSettings",
+    "suffix": "settings"
+  },
+  "CustomApplication": {
+    "directoryName": "applications",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomApplication",
+    "suffix": "app"
+  },
+  "CustomApplicationComponent": {
+    "directoryName": "customApplicationComponents",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomApplicationComponent",
+    "suffix": "customApplicationComponent"
+  },
+  "CustomFeedFilter": {
+    "directoryName": "feedFilters",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomFeedFilter",
+    "suffix": "feedFilter"
+  },
+  "CustomField": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomField"
+  },
+  "CustomHelpMenuSection": {
+    "directoryName": "customHelpMenuSections",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomHelpMenuSection",
+    "suffix": "customHelpMenuSection"
+  },
+  "CustomIndex": {
+    "directoryName": "customindex",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomIndex",
+    "suffix": "indx"
+  },
+  "CustomLabels": {
+    "directoryName": "labels",
+    "hasChildren": true,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomLabels",
+    "suffix": "labels"
+  },
+  "CustomMetadata": {
+    "directoryName": "customMetadata",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomMetadata",
+    "suffix": "md"
+  },
+  "CustomNotificationType": {
+    "directoryName": "notificationtypes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomNotificationType",
+    "suffix": "notiftype"
+  },
+  "CustomObject": {
+    "directoryName": "objects",
+    "hasChildren": true,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomObject",
+    "suffix": "object"
+  },
+  "CustomObjectTranslation": {
+    "directoryName": "objectTranslations",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomObjectTranslation",
+    "suffix": "objectTranslation"
+  },
+  "CustomPageWebLink": {
+    "directoryName": "weblinks",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomPageWebLink",
+    "suffix": "weblink"
+  },
+  "CustomPermission": {
+    "directoryName": "customPermissions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomPermission",
+    "suffix": "customPermission"
+  },
+  "CustomSite": {
+    "directoryName": "sites",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomSite",
+    "suffix": "site"
+  },
+  "CustomTab": {
+    "directoryName": "tabs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomTab",
+    "suffix": "tab"
+  },
+  "CustomValue": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomValue"
+  },
+  "CustomerDataPlatformSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomerDataPlatformSettings",
+    "suffix": "settings"
+  },
+  "CustomizablePropensityScoringSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "CustomizablePropensityScoringSettings",
+    "suffix": "settings"
+  },
+  "Dashboard": {
+    "directoryName": "dashboards",
+    "hasChildren": false,
+    "inFolder": true,
+    "metaFile": false,
+    "name": "Dashboard",
+    "suffix": "dashboard"
+  },
+  "DashboardFolder": {
+    "directoryName": "dashboards",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DashboardFolder",
+    "suffix": ""
+  },
+  "DataCalcInsightTemplate": {
+    "directoryName": "dataCalcInsightTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataCalcInsightTemplate",
+    "suffix": "dataCalcInsightTemplate"
+  },
+  "DataCategoryGroup": {
+    "directoryName": "datacategorygroups",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataCategoryGroup",
+    "suffix": "datacategorygroup"
+  },
+  "DataConnectionParamTmpl": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataConnectionParamTmpl"
+  },
+  "DataConnectorIngestApi": {
+    "directoryName": "dataConnectorIngestApis",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataConnectorIngestApi",
+    "suffix": "dataConnectorIngestApi"
+  },
+  "DataConnectorS3": {
+    "directoryName": "s3DataConnectors",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataConnectorS3",
+    "suffix": "s3DataConnector"
+  },
+  "DataDotComSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataDotComSettings",
+    "suffix": "settings"
+  },
+  "DataImportManagementSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataImportManagementSettings",
+    "suffix": "settings"
+  },
+  "DataKitObjectTemplate": {
+    "directoryName": "dataKitObjectTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataKitObjectTemplate",
+    "suffix": "dataKitObjectTemplate"
+  },
+  "DataPackageKitDefinition": {
+    "directoryName": "dataPackageKitDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataPackageKitDefinition",
+    "suffix": "dataPackageKitDefinition"
+  },
+  "DataPackageKitObject": {
+    "directoryName": "DataPackageKitObjects",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataPackageKitObject",
+    "suffix": "DataPackageKitObject"
+  },
+  "DataSource": {
+    "directoryName": "mktDataSources",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataSource",
+    "suffix": "dataSource"
+  },
+  "DataSourceBundleDefinition": {
+    "directoryName": "dataSourceBundleDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataSourceBundleDefinition",
+    "suffix": "dataSourceBundleDefinition"
+  },
+  "DataSourceObject": {
+    "directoryName": "dataSourceObjects",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataSourceObject",
+    "suffix": "dataSourceObject"
+  },
+  "DataSourceTenant": {
+    "directoryName": "dataSourceTenants",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataSourceTenant",
+    "suffix": "dataSourceTenant"
+  },
+  "DataSrcDataModelFieldMap": {
+    "directoryName": "dataSrcDataModelFieldMaps",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataSrcDataModelFieldMap",
+    "suffix": "dataSrcDataModelFieldMap"
+  },
+  "DataStreamDefinition": {
+    "directoryName": "dataStreamDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataStreamDefinition",
+    "suffix": "dataStreamDefinition"
+  },
+  "DataStreamTemplate": {
+    "directoryName": "dataStreamTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DataStreamTemplate",
+    "suffix": "dataStreamTemplate"
+  },
+  "DataWeaveResource": {
+    "directoryName": "dw",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "DataWeaveResource",
+    "suffix": "dwl"
+  },
+  "DecisionMatrixDefinition": {
+    "directoryName": "decisionMatrixDefinition",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DecisionMatrixDefinition",
+    "suffix": "decisionMatrixDefinition"
+  },
+  "DecisionMatrixDefinitionVersion": {
+    "directoryName": "decisionMatrixVersion",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DecisionMatrixDefinitionVersion",
+    "suffix": "decisionMatrixVersion"
+  },
+  "DecisionTable": {
+    "directoryName": "decisionTables",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DecisionTable",
+    "suffix": "decisionTable"
+  },
+  "DecisionTableDatasetLink": {
+    "directoryName": "decisionTableDatasetLinks",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DecisionTableDatasetLink",
+    "suffix": "decisionTableDatasetLink"
+  },
+  "DelegateGroup": {
+    "directoryName": "delegateGroups",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DelegateGroup",
+    "suffix": "delegateGroup"
+  },
+  "DeploymentSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DeploymentSettings",
+    "suffix": "settings"
+  },
+  "DevHubSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DevHubSettings",
+    "suffix": "settings"
+  },
+  "DigitalExperience": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DigitalExperience"
+  },
+  "DigitalExperienceBundle": {
+    "directoryName": "digitalExperiences",
+    "hasChildren": true,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "DigitalExperienceBundle",
+    "suffix": "digitalExperience"
+  },
+  "DigitalExperienceConfig": {
+    "directoryName": "digitalExperienceConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DigitalExperienceConfig",
+    "suffix": "digitalExperienceConfig"
+  },
+  "DisclosureDefinition": {
+    "directoryName": "disclosureDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DisclosureDefinition",
+    "suffix": "disclosureDefinition"
+  },
+  "DisclosureDefinitionVersion": {
+    "directoryName": "disclosureDefinitionVersions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DisclosureDefinitionVersion",
+    "suffix": "disclosureDefinitionVersion"
+  },
+  "DisclosureType": {
+    "directoryName": "disclosureTypes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DisclosureType",
+    "suffix": "disclosureType"
+  },
+  "DiscoveryAIModel": {
+    "directoryName": "discovery",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "DiscoveryAIModel",
+    "suffix": "model"
+  },
+  "DiscoveryGoal": {
+    "directoryName": "discovery",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DiscoveryGoal",
+    "suffix": "goal"
+  },
+  "DiscoverySettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DiscoverySettings",
+    "suffix": "settings"
+  },
+  "DiscoveryStory": {
+    "directoryName": "discovery",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "DiscoveryStory",
+    "suffix": "story"
+  },
+  "Document": {
+    "directoryName": "documents",
+    "hasChildren": false,
+    "inFolder": true,
+    "metaFile": false,
+    "name": "Document"
+  },
+  "DocumentCategory": {
+    "directoryName": "documentCategory",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DocumentCategory",
+    "suffix": "documentCategory"
+  },
+  "DocumentCategoryDocumentType": {
+    "directoryName": "documentCategoryDocumentTypes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DocumentCategoryDocumentType",
+    "suffix": "documentCategoryDocumentType"
+  },
+  "DocumentChecklistSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DocumentChecklistSettings",
+    "suffix": "settings"
+  },
+  "DocumentFolder": {
+    "directoryName": "documents",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DocumentFolder",
+    "suffix": ""
+  },
+  "DocumentGenerationSetting": {
+    "directoryName": "documentGenerationSettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DocumentGenerationSetting",
+    "suffix": "documentGenerationSetting"
+  },
+  "DocumentTemplate": {
+    "directoryName": "documentTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "DocumentTemplate",
+    "suffix": "dt"
+  },
+  "DocumentType": {
+    "directoryName": "documentTypes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DocumentType",
+    "suffix": "documentType"
+  },
+  "DuplicateRule": {
+    "directoryName": "duplicateRules",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DuplicateRule",
+    "suffix": "duplicateRule"
+  },
+  "DynamicFormsSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DynamicFormsSettings",
+    "suffix": "settings"
+  },
+  "DynamicFulfillmentOrchestratorSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "DynamicFulfillmentOrchestratorSettings",
+    "suffix": "settings"
+  },
+  "EACSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EACSettings",
+    "suffix": "settings"
+  },
+  "ESignatureConfig": {
+    "directoryName": "eSignatureConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ESignatureConfig",
+    "suffix": "eSignatureConfig"
+  },
+  "ESignatureEnvelopeConfig": {
+    "directoryName": "eSignatureEnvelopeConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ESignatureEnvelopeConfig",
+    "suffix": "eSignatureEnvelopeConfig"
+  },
+  "EclairGeoData": {
+    "directoryName": "eclair",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "EclairGeoData",
+    "suffix": "geodata"
+  },
+  "EinsteinAISettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EinsteinAISettings",
+    "suffix": "settings"
+  },
+  "EinsteinAgentSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EinsteinAgentSettings",
+    "suffix": "settings"
+  },
+  "EinsteinAssistantSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EinsteinAssistantSettings",
+    "suffix": "settings"
+  },
+  "EinsteinCopilotSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EinsteinCopilotSettings",
+    "suffix": "settings"
+  },
+  "EinsteinDealInsightsSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EinsteinDealInsightsSettings",
+    "suffix": "settings"
+  },
+  "EinsteinDocumentCaptureSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EinsteinDocumentCaptureSettings",
+    "suffix": "settings"
+  },
+  "EinsteinGptSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EinsteinGptSettings",
+    "suffix": "settings"
+  },
+  "EmailAdministrationSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EmailAdministrationSettings",
+    "suffix": "settings"
+  },
+  "EmailFolder": {
+    "directoryName": "email",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EmailFolder",
+    "suffix": ""
+  },
+  "EmailIntegrationSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EmailIntegrationSettings",
+    "suffix": "settings"
+  },
+  "EmailServicesFunction": {
+    "directoryName": "emailservices",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EmailServicesFunction",
+    "suffix": "xml"
+  },
+  "EmailTemplate": {
+    "directoryName": "email",
+    "hasChildren": false,
+    "inFolder": true,
+    "metaFile": false,
+    "name": "EmailTemplate",
+    "suffix": "email"
+  },
+  "EmailTemplateFolder": {
+    "directoryName": "email",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EmailTemplateFolder",
+    "suffix": ""
+  },
+  "EmailTemplateSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EmailTemplateSettings",
+    "suffix": "settings"
+  },
+  "EmbeddedServiceBranding": {
+    "directoryName": "EmbeddedServiceBranding",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EmbeddedServiceBranding",
+    "suffix": "EmbeddedServiceBranding"
+  },
+  "EmbeddedServiceConfig": {
+    "directoryName": "EmbeddedServiceConfig",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EmbeddedServiceConfig",
+    "suffix": "EmbeddedServiceConfig"
+  },
+  "EmbeddedServiceFlowConfig": {
+    "directoryName": "EmbeddedServiceFlowConfig",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EmbeddedServiceFlowConfig",
+    "suffix": "EmbeddedServiceFlowConfig"
+  },
+  "EmbeddedServiceLiveAgent": {
+    "directoryName": "EmbeddedServiceLiveAgent",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EmbeddedServiceLiveAgent",
+    "suffix": "EmbeddedServiceLiveAgent"
+  },
+  "EmbeddedServiceMenuSettings": {
+    "directoryName": "EmbeddedServiceMenuSettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EmbeddedServiceMenuSettings",
+    "suffix": "EmbeddedServiceMenuSettings"
+  },
+  "EmployeeDataSyncProfile": {
+    "directoryName": "employeeDataSyncProfiles",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EmployeeDataSyncProfile",
+    "suffix": "employeeDataSyncProfile"
+  },
+  "EmployeeFieldAccessSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EmployeeFieldAccessSettings",
+    "suffix": "settings"
+  },
+  "EmployeeUserSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EmployeeUserSettings",
+    "suffix": "settings"
+  },
+  "EnablementMeasureDefinition": {
+    "directoryName": "enablementMeasureDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EnablementMeasureDefinition",
+    "suffix": "enablementMeasureDefinition"
+  },
+  "EnablementProgramDefinition": {
+    "directoryName": "enablementProgramDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EnablementProgramDefinition",
+    "suffix": "enablementProgramDefinition"
+  },
+  "EnhancedNotesSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EnhancedNotesSettings",
+    "suffix": "settings"
+  },
+  "EntitlementProcess": {
+    "directoryName": "entitlementProcesses",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EntitlementProcess",
+    "suffix": "entitlementProcess"
+  },
+  "EntitlementSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EntitlementSettings",
+    "suffix": "settings"
+  },
+  "EntitlementTemplate": {
+    "directoryName": "entitlementTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EntitlementTemplate",
+    "suffix": "entitlementTemplate"
+  },
+  "EscalationRules": {
+    "directoryName": "escalationRules",
+    "hasChildren": true,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EscalationRules",
+    "suffix": "escalationRules"
+  },
+  "EssentialsSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EssentialsSettings",
+    "suffix": "settings"
+  },
+  "EventLogObjectSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EventLogObjectSettings",
+    "suffix": "settings"
+  },
+  "EventSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "EventSettings",
+    "suffix": "settings"
+  },
+  "ExperienceBundle": {
+    "directoryName": "experiences",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExperienceBundle"
+  },
+  "ExperienceBundleSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExperienceBundleSettings",
+    "suffix": "settings"
+  },
+  "ExperiencePropertyTypeBundle": {
+    "directoryName": "experiencePropertyTypeBundles",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExperiencePropertyTypeBundle",
+    "suffix": "experiencePropertyTypeBundle"
+  },
+  "ExplainabilityActionDefinition": {
+    "directoryName": "ExplainabilityActionDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExplainabilityActionDefinition",
+    "suffix": "explainabilityActionDefinition"
+  },
+  "ExplainabilityActionVersion": {
+    "directoryName": "ExplainabilityActionVersions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExplainabilityActionVersion",
+    "suffix": "explainabilityActionVersion"
+  },
+  "ExplainabilityMsgTemplate": {
+    "directoryName": "ExplainabilityMsgTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExplainabilityMsgTemplate",
+    "suffix": "explainabilityMsgTemplate"
+  },
+  "ExpressionSetDefinition": {
+    "directoryName": "expressionSetDefinition",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExpressionSetDefinition",
+    "suffix": "expressionSetDefinition"
+  },
+  "ExpressionSetDefinitionVersion": {
+    "directoryName": "expressionSetVersion",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExpressionSetDefinitionVersion",
+    "suffix": "expressionSetVersion"
+  },
+  "ExpressionSetObjectAlias": {
+    "directoryName": "expressionSetObjectAlias",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExpressionSetObjectAlias",
+    "suffix": "expressionSetObjectAlias"
+  },
+  "ExtDataTranFieldTemplate": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExtDataTranFieldTemplate"
+  },
+  "ExtDataTranObjectTemplate": {
+    "directoryName": "extDataTranObjectTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExtDataTranObjectTemplate",
+    "suffix": "extDataTranObjectTemplate"
+  },
+  "ExternalAIModel": {
+    "directoryName": "externalAIModels",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExternalAIModel",
+    "suffix": "externalAIModel"
+  },
+  "ExternalAuthIdentityProvider": {
+    "directoryName": "externalAuthIdentityProviders",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExternalAuthIdentityProvider",
+    "suffix": "externalAuthIdentityProvider"
+  },
+  "ExternalClientAppSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExternalClientAppSettings",
+    "suffix": "settings"
+  },
+  "ExternalClientApplication": {
+    "directoryName": "externalClientApps",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExternalClientApplication",
+    "suffix": "eca"
+  },
+  "ExternalCredential": {
+    "directoryName": "externalCredentials",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExternalCredential",
+    "suffix": "externalCredential"
+  },
+  "ExternalDataConnector": {
+    "directoryName": "externalDataConnectors",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExternalDataConnector",
+    "suffix": "externalDataConnector"
+  },
+  "ExternalDataSource": {
+    "directoryName": "dataSources",
+    "hasChildren": true,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExternalDataSource",
+    "suffix": "dataSource"
+  },
+  "ExternalDataSrcDescriptor": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExternalDataSrcDescriptor"
+  },
+  "ExternalDataTranField": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExternalDataTranField"
+  },
+  "ExternalDataTranObject": {
+    "directoryName": "externalDataTranObjects",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExternalDataTranObject",
+    "suffix": "externalDataTranObject"
+  },
+  "ExternalDocStorageConfig": {
+    "directoryName": "externalDocStorageConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExternalDocStorageConfig",
+    "suffix": "externalDocStorageConfig"
+  },
+  "ExternalServiceRegistration": {
+    "directoryName": "externalServiceRegistrations",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExternalServiceRegistration",
+    "suffix": "externalServiceRegistration"
+  },
+  "ExtlClntAppConfigurablePolicies": {
+    "directoryName": "extlClntAppPolicies",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExtlClntAppConfigurablePolicies",
+    "suffix": "ecaPlcy"
+  },
+  "ExtlClntAppGlobalOauthSettings": {
+    "directoryName": "extlClntAppGlobalOauthSets",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExtlClntAppGlobalOauthSettings",
+    "suffix": "ecaGlblOauth"
+  },
+  "ExtlClntAppMobileConfigurablePolicies": {
+    "directoryName": "extlClntAppMobilePolicies",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExtlClntAppMobileConfigurablePolicies",
+    "suffix": "ecaMobilePlcy"
+  },
+  "ExtlClntAppMobileSettings": {
+    "directoryName": "extlClntAppMobileSettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExtlClntAppMobileSettings",
+    "suffix": "ecaMobile"
+  },
+  "ExtlClntAppNotificationSettings": {
+    "directoryName": "extlClntAppNotifSettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExtlClntAppNotificationSettings",
+    "suffix": "ecaNotifications"
+  },
+  "ExtlClntAppOauthConfigurablePolicies": {
+    "directoryName": "extlClntAppOauthPolicies",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExtlClntAppOauthConfigurablePolicies",
+    "suffix": "ecaOauthPlcy"
+  },
+  "ExtlClntAppOauthSettings": {
+    "directoryName": "extlClntAppOauthSettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ExtlClntAppOauthSettings",
+    "suffix": "ecaOauth"
+  },
+  "FeatureParameterBoolean": {
+    "directoryName": "featureParameters",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FeatureParameterBoolean",
+    "suffix": "featureParameterBoolean"
+  },
+  "FeatureParameterDate": {
+    "directoryName": "featureParameters",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FeatureParameterDate",
+    "suffix": "featureParameterDate"
+  },
+  "FeatureParameterInteger": {
+    "directoryName": "featureParameters",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FeatureParameterInteger",
+    "suffix": "featureParameterInteger"
+  },
+  "FieldRestrictionRule": {
+    "directoryName": "fieldRestrictionRules",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FieldRestrictionRule",
+    "suffix": "rule"
+  },
+  "FieldServiceMobileExtension": {
+    "directoryName": "fieldServiceMobileExtensions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "FieldServiceMobileExtension",
+    "suffix": "fieldServiceMobileExtension"
+  },
+  "FieldServiceSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FieldServiceSettings",
+    "suffix": "settings"
+  },
+  "FieldSet": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FieldSet"
+  },
+  "FieldSrcTrgtRelationship": {
+    "directoryName": "fieldSrcTrgtRelationships",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FieldSrcTrgtRelationship",
+    "suffix": "fieldSrcTrgtRelationship"
+  },
+  "FileUploadAndDownloadSecuritySettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FileUploadAndDownloadSecuritySettings",
+    "suffix": "settings"
+  },
+  "FilesConnectSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FilesConnectSettings",
+    "suffix": "settings"
+  },
+  "FlexiPage": {
+    "directoryName": "flexipages",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FlexiPage",
+    "suffix": "flexipage"
+  },
+  "Flow": {
+    "directoryName": "flows",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Flow",
+    "suffix": "flow"
+  },
+  "FlowCategory": {
+    "directoryName": "flowCategories",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FlowCategory",
+    "suffix": "flowCategory"
+  },
+  "FlowDefinition": {
+    "directoryName": "flowDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FlowDefinition",
+    "suffix": "flowDefinition"
+  },
+  "FlowSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FlowSettings",
+    "suffix": "settings"
+  },
+  "FlowTest": {
+    "directoryName": "flowtests",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FlowTest",
+    "suffix": "flowtest"
+  },
+  "ForecastingFilter": {
+    "directoryName": "forecastingFilters",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ForecastingFilter",
+    "suffix": "forecastingFilter"
+  },
+  "ForecastingFilterCondition": {
+    "directoryName": "forecastingFilterConditions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ForecastingFilterCondition",
+    "suffix": "forecastingFilterCondition"
+  },
+  "ForecastingGroup": {
+    "directoryName": "forecastingGroups",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ForecastingGroup",
+    "suffix": "forecastingGroup"
+  },
+  "ForecastingObjectListSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ForecastingObjectListSettings",
+    "suffix": "settings"
+  },
+  "ForecastingSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ForecastingSettings",
+    "suffix": "settings"
+  },
+  "ForecastingSourceDefinition": {
+    "directoryName": "forecastingSourceDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ForecastingSourceDefinition",
+    "suffix": "forecastingSourceDefinition"
+  },
+  "ForecastingType": {
+    "directoryName": "forecastingTypes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ForecastingType",
+    "suffix": "forecastingType"
+  },
+  "ForecastingTypeSource": {
+    "directoryName": "forecastingTypeSources",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ForecastingTypeSource",
+    "suffix": "forecastingTypeSource"
+  },
+  "FormulaSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FormulaSettings",
+    "suffix": "settings"
+  },
+  "FuelType": {
+    "directoryName": "fuelTypes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FuelType",
+    "suffix": "fuelType"
+  },
+  "FuelTypeSustnUom": {
+    "directoryName": "fuelTypeSustnUoms",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FuelTypeSustnUom",
+    "suffix": "fuelTypeSustnUom"
+  },
+  "FunctionReference": {
+    "directoryName": "functions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FunctionReference",
+    "suffix": "function"
+  },
+  "FundraisingConfig": {
+    "directoryName": "fundraisingConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "FundraisingConfig",
+    "suffix": "fundraisingConfig"
+  },
+  "GatewayProviderPaymentMethodType": {
+    "directoryName": "gatewayProviderPaymentMethodTypes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "GatewayProviderPaymentMethodType",
+    "suffix": "gatewayProviderPaymentMethodType"
+  },
+  "GenAiFunction": {
+    "directoryName": "genAiFunctions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "GenAiFunction",
+    "suffix": "genAiFunction"
+  },
+  "GenAiPlanner": {
+    "directoryName": "genAiPlanners",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "GenAiPlanner",
+    "suffix": "genAiPlanner"
+  },
+  "GenAiPlugin": {
+    "directoryName": "genAiPlugins",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "GenAiPlugin",
+    "suffix": "genAiPlugin"
+  },
+  "GenAiPluginInstructionDef": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "GenAiPluginInstructionDef"
+  },
+  "GlobalValueSet": {
+    "directoryName": "globalValueSets",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "GlobalValueSet",
+    "suffix": "globalValueSet"
+  },
+  "GlobalValueSetTranslation": {
+    "directoryName": "globalValueSetTranslations",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "GlobalValueSetTranslation",
+    "suffix": "globalValueSetTranslation"
+  },
+  "GoogleAppsSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "GoogleAppsSettings",
+    "suffix": "settings"
+  },
+  "Group": {
+    "directoryName": "groups",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Group",
+    "suffix": "group"
+  },
+  "HighVelocitySalesSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "HighVelocitySalesSettings",
+    "suffix": "settings"
+  },
+  "HomePageComponent": {
+    "directoryName": "homePageComponents",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "HomePageComponent",
+    "suffix": "homePageComponent"
+  },
+  "HomePageLayout": {
+    "directoryName": "homePageLayouts",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "HomePageLayout",
+    "suffix": "homePageLayout"
+  },
+  "IPAddressRange": {
+    "directoryName": "IPAddressRanges",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IPAddressRange",
+    "suffix": "IPAddressRange"
+  },
+  "Icon": {
+    "directoryName": "icons",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Icon",
+    "suffix": "icon"
+  },
+  "IdeasSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IdeasSettings",
+    "suffix": "settings"
+  },
+  "IdentityProviderSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IdentityProviderSettings",
+    "suffix": "settings"
+  },
+  "IdentityVerificationProcDef": {
+    "directoryName": "IdentityVerificationProcDefs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IdentityVerificationProcDef",
+    "suffix": "IdentityVerificationProcDef"
+  },
+  "IframeWhiteListUrlSettings": {
+    "directoryName": "iframeWhiteListUrlSettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IframeWhiteListUrlSettings",
+    "suffix": "iframeWhiteListUrlSettings"
+  },
+  "InboundCertificate": {
+    "directoryName": "inboundCertificates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "InboundCertificate",
+    "suffix": "inboundCertificate"
+  },
+  "InboundNetworkConnection": {
+    "directoryName": "inboundNetworkConnections",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "InboundNetworkConnection",
+    "suffix": "inboundNetworkConnection"
+  },
+  "IncidentMgmtSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IncidentMgmtSettings",
+    "suffix": "settings"
+  },
+  "IncludeEstTaxInQuoteCPQSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IncludeEstTaxInQuoteCPQSettings",
+    "suffix": "settings"
+  },
+  "IncludeEstTaxInQuoteSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IncludeEstTaxInQuoteSettings",
+    "suffix": "settings"
+  },
+  "Index": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Index"
+  },
+  "IndustriesAutomotiveSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IndustriesAutomotiveSettings",
+    "suffix": "settings"
+  },
+  "IndustriesContextSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IndustriesContextSettings",
+    "suffix": "settings"
+  },
+  "IndustriesEinsteinFeatureSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IndustriesEinsteinFeatureSettings",
+    "suffix": "settings"
+  },
+  "IndustriesEventOrchSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IndustriesEventOrchSettings",
+    "suffix": "settings"
+  },
+  "IndustriesFieldServiceSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IndustriesFieldServiceSettings",
+    "suffix": "settings"
+  },
+  "IndustriesGamificationSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IndustriesGamificationSettings",
+    "suffix": "settings"
+  },
+  "IndustriesLoyaltySettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IndustriesLoyaltySettings",
+    "suffix": "settings"
+  },
+  "IndustriesManufacturingSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IndustriesManufacturingSettings",
+    "suffix": "settings"
+  },
+  "IndustriesPricingSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IndustriesPricingSettings",
+    "suffix": "settings"
+  },
+  "IndustriesSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IndustriesSettings",
+    "suffix": "settings"
+  },
+  "IndustriesUnifiedPromotionsSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IndustriesUnifiedPromotionsSettings",
+    "suffix": "settings"
+  },
+  "InstalledPackage": {
+    "directoryName": "installedPackages",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "InstalledPackage",
+    "suffix": "installedPackage"
+  },
+  "IntegrationProviderDef": {
+    "directoryName": "integrationProviderDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IntegrationProviderDef",
+    "suffix": "integrationProviderDefinition"
+  },
+  "InterestTaggingSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "InterestTaggingSettings",
+    "suffix": "settings"
+  },
+  "InternalDataConnector": {
+    "directoryName": "internalDataConnectors",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "InternalDataConnector",
+    "suffix": "internalDataConnector"
+  },
+  "InvLatePymntRiskCalcSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "InvLatePymntRiskCalcSettings",
+    "suffix": "settings"
+  },
+  "InventorySettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "InventorySettings",
+    "suffix": "settings"
+  },
+  "InvocableActionSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "InvocableActionSettings",
+    "suffix": "settings"
+  },
+  "IoTSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "IoTSettings",
+    "suffix": "settings"
+  },
+  "KeywordList": {
+    "directoryName": "moderation",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "KeywordList",
+    "suffix": "keywords"
+  },
+  "KnowledgeGenerationSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "KnowledgeGenerationSettings",
+    "suffix": "settings"
+  },
+  "KnowledgeSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "KnowledgeSettings",
+    "suffix": "settings"
+  },
+  "LanguageSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LanguageSettings",
+    "suffix": "settings"
+  },
+  "LargeQuotesandOrdersForRlmSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LargeQuotesandOrdersForRlmSettings",
+    "suffix": "settings"
+  },
+  "Layout": {
+    "directoryName": "layouts",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Layout",
+    "suffix": "layout"
+  },
+  "LeadConfigSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LeadConfigSettings",
+    "suffix": "settings"
+  },
+  "LeadConvertSettings": {
+    "directoryName": "LeadConvertSettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LeadConvertSettings",
+    "suffix": "LeadConvertSetting"
+  },
+  "LearningAchievementConfig": {
+    "directoryName": "learningAchievementConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LearningAchievementConfig",
+    "suffix": "learningAchievementConfig"
+  },
+  "Letterhead": {
+    "directoryName": "letterhead",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Letterhead",
+    "suffix": "letter"
+  },
+  "LicensingSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LicensingSettings",
+    "suffix": "settings"
+  },
+  "LightningBolt": {
+    "directoryName": "lightningBolts",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LightningBolt",
+    "suffix": "lightningBolt"
+  },
+  "LightningComponentBundle": {
+    "directoryName": "lwc",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LightningComponentBundle"
+  },
+  "LightningExperienceSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LightningExperienceSettings",
+    "suffix": "settings"
+  },
+  "LightningExperienceTheme": {
+    "directoryName": "lightningExperienceThemes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LightningExperienceTheme",
+    "suffix": "lightningExperienceTheme"
+  },
+  "LightningMessageChannel": {
+    "directoryName": "messageChannels",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LightningMessageChannel",
+    "suffix": "messageChannel"
+  },
+  "LightningOnboardingConfig": {
+    "directoryName": "lightningOnboardingConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LightningOnboardingConfig",
+    "suffix": "lightningOnboardingConfig"
+  },
+  "ListView": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ListView"
+  },
+  "LiveAgentSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LiveAgentSettings",
+    "suffix": "settings"
+  },
+  "LiveChatAgentConfig": {
+    "directoryName": "liveChatAgentConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LiveChatAgentConfig",
+    "suffix": "liveChatAgentConfig"
+  },
+  "LiveChatButton": {
+    "directoryName": "liveChatButtons",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LiveChatButton",
+    "suffix": "liveChatButton"
+  },
+  "LiveChatDeployment": {
+    "directoryName": "liveChatDeployments",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LiveChatDeployment",
+    "suffix": "liveChatDeployment"
+  },
+  "LiveChatSensitiveDataRule": {
+    "directoryName": "liveChatSensitiveDataRule",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LiveChatSensitiveDataRule",
+    "suffix": "liveChatSensitiveDataRule"
+  },
+  "LiveMessageSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LiveMessageSettings",
+    "suffix": "settings"
+  },
+  "LocationUse": {
+    "directoryName": "locationUses",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LocationUse",
+    "suffix": "locationUse"
+  },
+  "LoyaltyProgramSetup": {
+    "directoryName": "loyaltyProgramSetups",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "LoyaltyProgramSetup",
+    "suffix": "loyaltyProgramSetup"
+  },
+  "MacroSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MacroSettings",
+    "suffix": "settings"
+  },
+  "MailMergeSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MailMergeSettings",
+    "suffix": "settings"
+  },
+  "ManagedContentType": {
+    "directoryName": "managedContentTypes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ManagedContentType",
+    "suffix": "managedContentType"
+  },
+  "ManagedEventSubscription": {
+    "directoryName": "managedEventSubscriptions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ManagedEventSubscription",
+    "suffix": "managedEventSubscription"
+  },
+  "ManagedTopics": {
+    "directoryName": "managedTopics",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ManagedTopics",
+    "suffix": "managedTopics"
+  },
+  "MapsAndLocationSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MapsAndLocationSettings",
+    "suffix": "settings"
+  },
+  "MarketSegmentDefinition": {
+    "directoryName": "marketSegmentDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MarketSegmentDefinition",
+    "suffix": "marketSegmentDefinition"
+  },
+  "MarketingAppExtActivity": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MarketingAppExtActivity"
+  },
+  "MarketingAppExtension": {
+    "directoryName": "marketingappextensions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MarketingAppExtension",
+    "suffix": "marketingappextension"
+  },
+  "MatchingRules": {
+    "directoryName": "matchingRules",
+    "hasChildren": true,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MatchingRules",
+    "suffix": "matchingRule"
+  },
+  "MediaAdSalesSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MediaAdSalesSettings",
+    "suffix": "settings"
+  },
+  "MeetingsSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MeetingsSettings",
+    "suffix": "settings"
+  },
+  "MessagingChannel": {
+    "directoryName": "messagingChannels",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MessagingChannel",
+    "suffix": "messagingChannel"
+  },
+  "MfgProgramTemplate": {
+    "directoryName": "MfgProgramTemplate",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MfgProgramTemplate",
+    "suffix": "mfgProgramTemplate"
+  },
+  "MfgServiceConsoleSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MfgServiceConsoleSettings",
+    "suffix": "settings"
+  },
+  "MilestoneType": {
+    "directoryName": "milestoneTypes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MilestoneType",
+    "suffix": "milestoneType"
+  },
+  "MktCalcInsightObjectDef": {
+    "directoryName": "mktCalcInsightObjectDefs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MktCalcInsightObjectDef",
+    "suffix": "mktCalcInsightObjectDef"
+  },
+  "MktDataConnection": {
+    "directoryName": "mktDataConnections",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MktDataConnection",
+    "suffix": "mktDataConnection"
+  },
+  "MktDataConnectionCred": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MktDataConnectionCred"
+  },
+  "MktDataConnectionParam": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MktDataConnectionParam"
+  },
+  "MktDataConnectionSrcParam": {
+    "directoryName": "mktDataConnectionSrcParams",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MktDataConnectionSrcParam",
+    "suffix": "mktDataConnectionSrcParam"
+  },
+  "MktDataTranObject": {
+    "directoryName": "mktDataTranObjects",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MktDataTranObject",
+    "suffix": "mktDataTranObject"
+  },
+  "MlDomain": {
+    "directoryName": "mlDomains",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MlDomain",
+    "suffix": "mlDomain"
+  },
+  "MobSecurityCertPinConfig": {
+    "directoryName": "mobSecurityCertPinConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MobSecurityCertPinConfig",
+    "suffix": "mobSecurityCertPinConfig"
+  },
+  "MobileApplicationDetail": {
+    "directoryName": "MobileApplicationDetails",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MobileApplicationDetail",
+    "suffix": "MobileApplicationDetail"
+  },
+  "MobileSecurityAssignment": {
+    "directoryName": "mobileSecurityAssignments",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MobileSecurityAssignment",
+    "suffix": "mobileSecurityAssignment"
+  },
+  "MobileSecurityPolicy": {
+    "directoryName": "mobileSecurityPolicies",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MobileSecurityPolicy",
+    "suffix": "mobileSecurityPolicy"
+  },
+  "MobileSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MobileSettings",
+    "suffix": "settings"
+  },
+  "ModerationRule": {
+    "directoryName": "moderation",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ModerationRule",
+    "suffix": "rule"
+  },
+  "MutingPermissionSet": {
+    "directoryName": "mutingpermissionsets",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MutingPermissionSet",
+    "suffix": "mutingpermissionset"
+  },
+  "MyDomainDiscoverableLogin": {
+    "directoryName": "myDomainDiscoverableLogins",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MyDomainDiscoverableLogin",
+    "suffix": "myDomainDiscoverableLogin"
+  },
+  "MyDomainSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "MyDomainSettings",
+    "suffix": "settings"
+  },
+  "NameSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "NameSettings",
+    "suffix": "settings"
+  },
+  "NamedCredential": {
+    "directoryName": "namedCredentials",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "NamedCredential",
+    "suffix": "namedCredential"
+  },
+  "NavigationMenu": {
+    "directoryName": "navigationMenus",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "NavigationMenu",
+    "suffix": "navigationMenu"
+  },
+  "Network": {
+    "directoryName": "networks",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Network",
+    "suffix": "network"
+  },
+  "NetworkBranding": {
+    "directoryName": "networkBranding",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "NetworkBranding",
+    "suffix": "networkBranding"
+  },
+  "NotificationTypeConfig": {
+    "directoryName": "notificationTypeConfig",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "NotificationTypeConfig",
+    "suffix": "config"
+  },
+  "NotificationsSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "NotificationsSettings",
+    "suffix": "settings"
+  },
+  "OauthCustomScope": {
+    "directoryName": "oauthcustomscopes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OauthCustomScope",
+    "suffix": "oauthcustomscope"
+  },
+  "OauthOidcSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OauthOidcSettings",
+    "suffix": "settings"
+  },
+  "OauthTokenExchangeHandler": {
+    "directoryName": "oauthtokenexchangehandlers",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OauthTokenExchangeHandler",
+    "suffix": "oauthtokenexchangehandler"
+  },
+  "ObjectHierarchyRelationship": {
+    "directoryName": "ObjectHierarchyRelationship",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ObjectHierarchyRelationship",
+    "suffix": "settings"
+  },
+  "ObjectLinkingSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ObjectLinkingSettings",
+    "suffix": "settings"
+  },
+  "ObjectSourceTargetMap": {
+    "directoryName": "objectSourceTargetMaps",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ObjectSourceTargetMap",
+    "suffix": "objectSourceTargetMap"
+  },
+  "OcrSampleDocument": {
+    "directoryName": "ocrSampleDocuments",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OcrSampleDocument",
+    "suffix": "ocrSampleDocument"
+  },
+  "OcrTemplate": {
+    "directoryName": "ocrTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OcrTemplate",
+    "suffix": "ocrTemplate"
+  },
+  "OmniChannelPricingSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OmniChannelPricingSettings",
+    "suffix": "settings"
+  },
+  "OmniChannelSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OmniChannelSettings",
+    "suffix": "settings"
+  },
+  "OmniDataTransform": {
+    "directoryName": "omniDataTransforms",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OmniDataTransform",
+    "suffix": "rpt"
+  },
+  "OmniExtTrackingDef": {
+    "directoryName": "OmniExtTrackingDefs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OmniExtTrackingDef",
+    "suffix": "OmniExtTrackingDef"
+  },
+  "OmniIntegrationProcedure": {
+    "directoryName": "omniIntegrationProcedures",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OmniIntegrationProcedure",
+    "suffix": "oip"
+  },
+  "OmniInteractionAccessConfig": {
+    "directoryName": "OmniInteractionAccessConfig",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OmniInteractionAccessConfig",
+    "suffix": "omniInteractionAccessConfig"
+  },
+  "OmniInteractionConfig": {
+    "directoryName": "OmniInteractionConfig",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OmniInteractionConfig",
+    "suffix": "omniInteractionConfig"
+  },
+  "OmniScript": {
+    "directoryName": "omniScripts",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OmniScript",
+    "suffix": "os"
+  },
+  "OmniSupervisorConfig": {
+    "directoryName": "omniSupervisorConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OmniSupervisorConfig",
+    "suffix": "omniSupervisorConfig"
+  },
+  "OmniTrackingGroup": {
+    "directoryName": "OmniTrackingGroups",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OmniTrackingGroup",
+    "suffix": "OmniTrackingGroup"
+  },
+  "OmniUiCard": {
+    "directoryName": "omniUiCard",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OmniUiCard",
+    "suffix": "ouc"
+  },
+  "OnlineSalesSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OnlineSalesSettings",
+    "suffix": "settings"
+  },
+  "OpportunityScoreSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OpportunityScoreSettings",
+    "suffix": "settings"
+  },
+  "OpportunitySettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OpportunitySettings",
+    "suffix": "settings"
+  },
+  "OrderManagementSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OrderManagementSettings",
+    "suffix": "settings"
+  },
+  "OrderSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OrderSettings",
+    "suffix": "settings"
+  },
+  "OrgSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OrgSettings",
+    "suffix": "settings"
+  },
+  "OutboundNetworkConnection": {
+    "directoryName": "outboundNetworkConnections",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "OutboundNetworkConnection",
+    "suffix": "outboundNetworkConnection"
+  },
+  "PardotEinsteinSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PardotEinsteinSettings",
+    "suffix": "settings"
+  },
+  "PardotSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PardotSettings",
+    "suffix": "settings"
+  },
+  "ParticipantRole": {
+    "directoryName": "participantRoles",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ParticipantRole",
+    "suffix": "participantRole"
+  },
+  "PartyDataModelSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PartyDataModelSettings",
+    "suffix": "settings"
+  },
+  "PathAssistant": {
+    "directoryName": "pathAssistants",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PathAssistant",
+    "suffix": "pathAssistant"
+  },
+  "PathAssistantSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PathAssistantSettings",
+    "suffix": "settings"
+  },
+  "PaymentGatewayProvider": {
+    "directoryName": "paymentGatewayProviders",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PaymentGatewayProvider",
+    "suffix": "paymentGatewayProvider"
+  },
+  "PaymentsManagementEnabledSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PaymentsManagementEnabledSettings",
+    "suffix": "settings"
+  },
+  "PaymentsSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PaymentsSettings",
+    "suffix": "settings"
+  },
+  "PermissionSet": {
+    "directoryName": "permissionsets",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PermissionSet",
+    "suffix": "permissionset"
+  },
+  "PermissionSetGroup": {
+    "directoryName": "permissionsetgroups",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PermissionSetGroup",
+    "suffix": "permissionsetgroup"
+  },
+  "PermissionSetLicenseDefinition": {
+    "directoryName": "permissionSetLicenseDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PermissionSetLicenseDefinition",
+    "suffix": "permissionSetLicenseDefinition"
+  },
+  "PersonAccountOwnerPowerUser": {
+    "directoryName": "personAccountOwnerPowerUsers",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PersonAccountOwnerPowerUser",
+    "suffix": "personAccountOwnerPowerUser"
+  },
+  "PicklistSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PicklistSettings",
+    "suffix": "settings"
+  },
+  "PicklistValue": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PicklistValue"
+  },
+  "PipelineInspMetricConfig": {
+    "directoryName": "pipelineInspMetricConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PipelineInspMetricConfig",
+    "suffix": "pipelineInspMetricConfig"
+  },
+  "PlatformCachePartition": {
+    "directoryName": "cachePartitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PlatformCachePartition",
+    "suffix": "cachePartition"
+  },
+  "PlatformEventChannel": {
+    "directoryName": "platformEventChannels",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PlatformEventChannel",
+    "suffix": "platformEventChannel"
+  },
+  "PlatformEventChannelMember": {
+    "directoryName": "platformEventChannelMembers",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PlatformEventChannelMember",
+    "suffix": "platformEventChannelMember"
+  },
+  "PlatformEventSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PlatformEventSettings",
+    "suffix": "settings"
+  },
+  "PlatformEventSubscriberConfig": {
+    "directoryName": "PlatformEventSubscriberConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PlatformEventSubscriberConfig",
+    "suffix": "platformEventSubscriberConfig"
+  },
+  "PlatformSlackSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PlatformSlackSettings",
+    "suffix": "settings"
+  },
+  "PortalDelegablePermissionSet": {
+    "directoryName": "portalDelegablePermissionSet",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PortalDelegablePermissionSet",
+    "suffix": "portalDelegablePermissionSet"
+  },
+  "PortalsSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PortalsSettings",
+    "suffix": "settings"
+  },
+  "PostTemplate": {
+    "directoryName": "postTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PostTemplate",
+    "suffix": "postTemplate"
+  },
+  "PredictionBuilderSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PredictionBuilderSettings",
+    "suffix": "settings"
+  },
+  "PresenceDeclineReason": {
+    "directoryName": "presenceDeclineReasons",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PresenceDeclineReason",
+    "suffix": "presenceDeclineReason"
+  },
+  "PresenceUserConfig": {
+    "directoryName": "presenceUserConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PresenceUserConfig",
+    "suffix": "presenceUserConfig"
+  },
+  "PricingActionParameters": {
+    "directoryName": "pricingActionParameters",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PricingActionParameters",
+    "suffix": "pricingActionParameters"
+  },
+  "PricingRecipe": {
+    "directoryName": "pricingRecipe",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PricingRecipe",
+    "suffix": "pricingRecipe"
+  },
+  "PrivacySettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "PrivacySettings",
+    "suffix": "settings"
+  },
+  "ProcessFlowMigration": {
+    "directoryName": "processflowmigrations",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ProcessFlowMigration",
+    "suffix": "processflowmigration"
+  },
+  "ProductAttrDisplayConfig": {
+    "directoryName": "productAttrDisplayConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ProductAttrDisplayConfig",
+    "suffix": "productAttrDisplayConfig"
+  },
+  "ProductAttributeSet": {
+    "directoryName": "productAttributeSets",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ProductAttributeSet",
+    "suffix": "productAttributeSet"
+  },
+  "ProductConfiguratorSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ProductConfiguratorSettings",
+    "suffix": "settings"
+  },
+  "ProductSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ProductSettings",
+    "suffix": "settings"
+  },
+  "ProductSpecificationRecType": {
+    "directoryName": "productSpecificationRecTypes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ProductSpecificationRecType",
+    "suffix": "productSpecificationRecType"
+  },
+  "ProductSpecificationType": {
+    "directoryName": "productSpecificationTypes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ProductSpecificationType",
+    "suffix": "productSpecificationType"
+  },
+  "Profile": {
+    "directoryName": "profiles",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Profile",
+    "suffix": "profile"
+  },
+  "ProfilePasswordPolicy": {
+    "directoryName": "profilePasswordPolicies",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ProfilePasswordPolicy",
+    "suffix": "profilePasswordPolicy"
+  },
+  "ProfileSessionSetting": {
+    "directoryName": "profileSessionSettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ProfileSessionSetting",
+    "suffix": "profileSessionSetting"
+  },
+  "Prompt": {
+    "directoryName": "prompts",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Prompt",
+    "suffix": "prompt"
+  },
+  "Queue": {
+    "directoryName": "queues",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Queue",
+    "suffix": "queue"
+  },
+  "QueueRoutingConfig": {
+    "directoryName": "queueRoutingConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "QueueRoutingConfig",
+    "suffix": "queueRoutingConfig"
+  },
+  "QuickAction": {
+    "directoryName": "quickActions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "QuickAction",
+    "suffix": "quickAction"
+  },
+  "QuickTextSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "QuickTextSettings",
+    "suffix": "settings"
+  },
+  "QuoteSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "QuoteSettings",
+    "suffix": "settings"
+  },
+  "RealTimeEventSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RealTimeEventSettings",
+    "suffix": "settings"
+  },
+  "RecAlrtDataSrcExpSetDef": {
+    "directoryName": "recAlrtDataSrcExpSetDefs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RecAlrtDataSrcExpSetDef",
+    "suffix": "recAlrtDataSrcExpSetDef"
+  },
+  "RecommendationBuilderSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RecommendationBuilderSettings",
+    "suffix": "settings"
+  },
+  "RecommendationStrategy": {
+    "directoryName": "recommendationStrategies",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RecommendationStrategy",
+    "suffix": "recommendationStrategy"
+  },
+  "RecordActionDeployment": {
+    "directoryName": "recordActionDeployments",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RecordActionDeployment",
+    "suffix": "deployment"
+  },
+  "RecordAggregationDefinition": {
+    "directoryName": "RecordAggregationDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RecordAggregationDefinition",
+    "suffix": "RecordAggregationDefinition"
+  },
+  "RecordAlertCategory": {
+    "directoryName": "recordAlertCategories",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RecordAlertCategory",
+    "suffix": "recordAlertCategory"
+  },
+  "RecordAlertDataSource": {
+    "directoryName": "recordAlertDataSources",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RecordAlertDataSource",
+    "suffix": "recordAlertDataSource"
+  },
+  "RecordAlertTemplate": {
+    "directoryName": "recordAlertTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RecordAlertTemplate",
+    "suffix": "recordAlertTemplate"
+  },
+  "RecordPageSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RecordPageSettings",
+    "suffix": "settings"
+  },
+  "RecordType": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RecordType"
+  },
+  "RedirectWhitelistUrl": {
+    "directoryName": "redirectWhitelistUrls",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RedirectWhitelistUrl",
+    "suffix": "redirectWhitelistUrl"
+  },
+  "ReferencedDashboard": {
+    "directoryName": "wave",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ReferencedDashboard",
+    "suffix": "refdash"
+  },
+  "ReferralMarketingSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ReferralMarketingSettings",
+    "suffix": "settings"
+  },
+  "RegisteredExternalService": {
+    "directoryName": "registeredExternalServices",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RegisteredExternalService",
+    "suffix": "registeredExternalService"
+  },
+  "RelatedRecordAssocCriteria": {
+    "directoryName": "relatedRecordAssocCriteria",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RelatedRecordAssocCriteria",
+    "suffix": "relatedRecordAssocCriteria"
+  },
+  "RelationshipGraphDefinition": {
+    "directoryName": "relationshipGraphDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RelationshipGraphDefinition",
+    "suffix": "relationshipGraphDefinition"
+  },
+  "RemoteSiteSetting": {
+    "directoryName": "remoteSiteSettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RemoteSiteSetting",
+    "suffix": "remoteSite"
+  },
+  "Report": {
+    "directoryName": "reports",
+    "hasChildren": false,
+    "inFolder": true,
+    "metaFile": false,
+    "name": "Report",
+    "suffix": "report"
+  },
+  "ReportFolder": {
+    "directoryName": "reports",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ReportFolder",
+    "suffix": ""
+  },
+  "ReportType": {
+    "directoryName": "reportTypes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ReportType",
+    "suffix": "reportType"
+  },
+  "RestrictionRule": {
+    "directoryName": "restrictionRules",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RestrictionRule",
+    "suffix": "rule"
+  },
+  "RetailExecutionSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RetailExecutionSettings",
+    "suffix": "settings"
+  },
+  "RetrievalSummaryDefinition": {
+    "directoryName": "RetrievalSummaryDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RetrievalSummaryDefinition",
+    "suffix": "RetrievalSummaryDefinition"
+  },
+  "RevenueManagementSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "RevenueManagementSettings",
+    "suffix": "settings"
+  },
+  "Role": {
+    "directoryName": "roles",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Role",
+    "suffix": "role"
+  },
+  "SalesAgreementSettings": {
+    "directoryName": "salesAgreementSettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SalesAgreementSettings",
+    "suffix": "salesAgreementSetting"
+  },
+  "SalesWorkQueueSettings": {
+    "directoryName": "salesworkqueuesettings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SalesWorkQueueSettings",
+    "suffix": "salesworkqueuesetting"
+  },
+  "SamlSsoConfig": {
+    "directoryName": "samlssoconfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SamlSsoConfig",
+    "suffix": "samlssoconfig"
+  },
+  "SandboxSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SandboxSettings",
+    "suffix": "settings"
+  },
+  "SceGlobalModelOptOutSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SceGlobalModelOptOutSettings",
+    "suffix": "settings"
+  },
+  "SchedulingObjective": {
+    "directoryName": "SchedulingObjectives",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SchedulingObjective",
+    "suffix": "schedulingObjective"
+  },
+  "SchedulingRule": {
+    "directoryName": "SchedulingRules",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SchedulingRule",
+    "suffix": "schedulingRule"
+  },
+  "SchemaSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SchemaSettings",
+    "suffix": "settings"
+  },
+  "ScoreCategory": {
+    "directoryName": "scoreCategories",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ScoreCategory",
+    "suffix": "scoreCategory"
+  },
+  "SearchCustomization": {
+    "directoryName": "searchCustomizations",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SearchCustomization",
+    "suffix": "searchCustomization"
+  },
+  "SearchOrgWideObjectConfig": {
+    "directoryName": "searchOrgWideConfiguration",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SearchOrgWideObjectConfig",
+    "suffix": "searchOrgWideObjectConfig"
+  },
+  "SearchSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SearchSettings",
+    "suffix": "settings"
+  },
+  "SecuritySettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SecuritySettings",
+    "suffix": "settings"
+  },
+  "ServiceAISetupDefinition": {
+    "directoryName": "serviceAISetupDescriptions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ServiceAISetupDefinition",
+    "suffix": "serviceAISetupDescription"
+  },
+  "ServiceAISetupField": {
+    "directoryName": "serviceAISetupFields",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ServiceAISetupField",
+    "suffix": "serviceAISetupField"
+  },
+  "ServiceChannel": {
+    "directoryName": "serviceChannels",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ServiceChannel",
+    "suffix": "serviceChannel"
+  },
+  "ServiceCloudVoiceSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ServiceCloudVoiceSettings",
+    "suffix": "settings"
+  },
+  "ServicePresenceStatus": {
+    "directoryName": "servicePresenceStatuses",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ServicePresenceStatus",
+    "suffix": "servicePresenceStatus"
+  },
+  "ServiceProcess": {
+    "directoryName": "serviceprocess",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ServiceProcess",
+    "suffix": "serviceprocess"
+  },
+  "ServiceSetupAssistantSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ServiceSetupAssistantSettings",
+    "suffix": "settings"
+  },
+  "SharingCriteriaRule": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SharingCriteriaRule"
+  },
+  "SharingGuestRule": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SharingGuestRule"
+  },
+  "SharingOwnerRule": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SharingOwnerRule"
+  },
+  "SharingReason": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SharingReason"
+  },
+  "SharingRules": {
+    "directoryName": "sharingRules",
+    "hasChildren": true,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SharingRules",
+    "suffix": "sharingRules"
+  },
+  "SharingSet": {
+    "directoryName": "sharingSets",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SharingSet",
+    "suffix": "sharingSet"
+  },
+  "SharingSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SharingSettings",
+    "suffix": "settings"
+  },
+  "SharingTerritoryRule": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SharingTerritoryRule"
+  },
+  "SiteDotCom": {
+    "directoryName": "siteDotComSites",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "SiteDotCom",
+    "suffix": "site"
+  },
+  "SiteSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SiteSettings",
+    "suffix": "settings"
+  },
+  "Skill": {
+    "directoryName": "skills",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Skill",
+    "suffix": "skill"
+  },
+  "SkillType": {
+    "directoryName": "skilltypes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SkillType",
+    "suffix": "skilltype"
+  },
+  "SlackApp": {
+    "directoryName": "slackapps",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "SlackApp",
+    "suffix": "slackapp"
+  },
+  "SocialCustomerServiceSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SocialCustomerServiceSettings",
+    "suffix": "settings"
+  },
+  "SourceTrackingSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SourceTrackingSettings",
+    "suffix": "settings"
+  },
+  "StandardValue": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "StandardValue"
+  },
+  "StandardValueSet": {
+    "directoryName": "standardValueSets",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "StandardValueSet",
+    "suffix": "standardValueSet"
+  },
+  "StandardValueSetTranslation": {
+    "directoryName": "standardValueSetTranslations",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "StandardValueSetTranslation",
+    "suffix": "standardValueSetTranslation"
+  },
+  "StaticResource": {
+    "directoryName": "staticresources",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "StaticResource",
+    "suffix": "resource"
+  },
+  "StnryAssetEnvSrcCnfg": {
+    "directoryName": "stationaryAssetEnvSourceConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "StnryAssetEnvSrcCnfg",
+    "suffix": "stationaryAssetEnvSourceConfig"
+  },
+  "StreamingAppDataConnector": {
+    "directoryName": "streamingAppDataConnectors",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "StreamingAppDataConnector",
+    "suffix": "streamingAppDataConnector"
+  },
+  "SubscriptionManagementSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SubscriptionManagementSettings",
+    "suffix": "settings"
+  },
+  "SurveySettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SurveySettings",
+    "suffix": "settings"
+  },
+  "SustainabilityUom": {
+    "directoryName": "sustainabilityUoms",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SustainabilityUom",
+    "suffix": "sustainabilityUom"
+  },
+  "SustnUomConversion": {
+    "directoryName": "sustnUomConversions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SustnUomConversion",
+    "suffix": "sustnUomConversion"
+  },
+  "SvcCatalogCategory": {
+    "directoryName": "svcCatalogCategories",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SvcCatalogCategory",
+    "suffix": "category"
+  },
+  "SvcCatalogFilterCriteria": {
+    "directoryName": "svcCatalogFilterCriteria",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SvcCatalogFilterCriteria",
+    "suffix": "filterCriterion"
+  },
+  "SvcCatalogFulfillmentFlow": {
+    "directoryName": "svcCatalogFulfillmentFlows",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SvcCatalogFulfillmentFlow",
+    "suffix": "fulfillmentFlow"
+  },
+  "SvcCatalogItemDef": {
+    "directoryName": "svcCatalogItems",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SvcCatalogItemDef",
+    "suffix": "catalogItem"
+  },
+  "SynonymDictionary": {
+    "directoryName": "synonymDictionaries",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SynonymDictionary",
+    "suffix": "synonymDictionary"
+  },
+  "SystemNotificationSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "SystemNotificationSettings",
+    "suffix": "settings"
+  },
+  "Territory": {
+    "directoryName": "territories",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Territory",
+    "suffix": "territory"
+  },
+  "Territory2": {
+    "directoryName": "territory2Models",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Territory2",
+    "suffix": "territory2"
+  },
+  "Territory2Model": {
+    "directoryName": "territory2Models",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Territory2Model",
+    "suffix": "territory2Model"
+  },
+  "Territory2Rule": {
+    "directoryName": "territory2Models",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Territory2Rule",
+    "suffix": "territory2Rule"
+  },
+  "Territory2Settings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Territory2Settings",
+    "suffix": "settings"
+  },
+  "Territory2Type": {
+    "directoryName": "territory2Types",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Territory2Type",
+    "suffix": "territory2Type"
+  },
+  "TimeSheetTemplate": {
+    "directoryName": "timeSheetTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "TimeSheetTemplate",
+    "suffix": "timeSheetTemplate"
+  },
+  "TimelineObjectDefinition": {
+    "directoryName": "timelineObjectDefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "TimelineObjectDefinition",
+    "suffix": "timelineObjectDefinition"
+  },
+  "TopicsForObjects": {
+    "directoryName": "topicsForObjects",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "TopicsForObjects",
+    "suffix": "topicsForObjects"
+  },
+  "TrailheadSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "TrailheadSettings",
+    "suffix": "settings"
+  },
+  "TransactionSecurityPolicy": {
+    "directoryName": "transactionSecurityPolicies",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "TransactionSecurityPolicy",
+    "suffix": "transactionSecurityPolicy"
+  },
+  "Translations": {
+    "directoryName": "translations",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Translations",
+    "suffix": "translation"
+  },
+  "TrialOrgSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "TrialOrgSettings",
+    "suffix": "settings"
+  },
+  "UIObjectRelationConfig": {
+    "directoryName": "uiObjectRelationConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "UIObjectRelationConfig",
+    "suffix": "uiObjectRelationConfig"
+  },
+  "UiPlugin": {
+    "directoryName": "uiplugins",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "UiPlugin",
+    "suffix": "uiplugin"
+  },
+  "UserAccessPolicy": {
+    "directoryName": "useraccesspolicies",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "UserAccessPolicy",
+    "suffix": "useraccesspolicy"
+  },
+  "UserAuthCertificate": {
+    "directoryName": "userAuthCertificates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "UserAuthCertificate",
+    "suffix": "userAuthCertificate"
+  },
+  "UserCriteria": {
+    "directoryName": "userCriteria",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "UserCriteria",
+    "suffix": "userCriteria"
+  },
+  "UserEngagementSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "UserEngagementSettings",
+    "suffix": "settings"
+  },
+  "UserInterfaceSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "UserInterfaceSettings",
+    "suffix": "settings"
+  },
+  "UserManagementSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "UserManagementSettings",
+    "suffix": "settings"
+  },
+  "UserProfileSearchScope": {
+    "directoryName": "userProfileSearchScopes",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "UserProfileSearchScope",
+    "suffix": "userProfileSearchScope"
+  },
+  "UserProvisioningConfig": {
+    "directoryName": "userProvisioningConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "UserProvisioningConfig",
+    "suffix": "userProvisioningConfig"
+  },
+  "ValidationRule": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "ValidationRule"
+  },
+  "VehicleAssetEmssnSrcCnfg": {
+    "directoryName": "vehicleAssetEmssnSourceConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "VehicleAssetEmssnSrcCnfg",
+    "suffix": "vehicleAssetEmssnSourceConfig"
+  },
+  "ViewDefinition": {
+    "directoryName": "viewdefinitions",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "ViewDefinition",
+    "suffix": "view"
+  },
+  "VirtualVisitConfig": {
+    "directoryName": "VirtualVisitConfigs",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "VirtualVisitConfig",
+    "suffix": "virtualVisitConfig"
+  },
+  "VoiceSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "VoiceSettings",
+    "suffix": "settings"
+  },
+  "WarrantyLifecycleMgmtSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WarrantyLifecycleMgmtSettings",
+    "suffix": "settings"
+  },
+  "WaveAnalyticAssetCollection": {
+    "directoryName": "wave",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WaveAnalyticAssetCollection",
+    "suffix": "collection"
+  },
+  "WaveApplication": {
+    "directoryName": "wave",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WaveApplication",
+    "suffix": "wapp"
+  },
+  "WaveComponent": {
+    "directoryName": "wave",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "WaveComponent",
+    "suffix": "wcomp"
+  },
+  "WaveDashboard": {
+    "directoryName": "wave",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "WaveDashboard",
+    "suffix": "wdash"
+  },
+  "WaveDataflow": {
+    "directoryName": "wave",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "WaveDataflow",
+    "suffix": "wdf"
+  },
+  "WaveDataset": {
+    "directoryName": "wave",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WaveDataset",
+    "suffix": "wds"
+  },
+  "WaveLens": {
+    "directoryName": "wave",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "WaveLens",
+    "suffix": "wlens"
+  },
+  "WaveRecipe": {
+    "directoryName": "wave",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": true,
+    "name": "WaveRecipe",
+    "suffix": "wdpr"
+  },
+  "WaveTemplateBundle": {
+    "directoryName": "waveTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WaveTemplateBundle"
+  },
+  "WaveXmd": {
+    "directoryName": "wave",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WaveXmd",
+    "suffix": "xmd"
+  },
+  "Web3Settings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Web3Settings",
+    "suffix": "settings"
+  },
+  "WebLink": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WebLink"
+  },
+  "WebStoreBundle": {
+    "directoryName": "webStoreBundles",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WebStoreBundle",
+    "suffix": "webStoreBundle"
+  },
+  "WebStoreTemplate": {
+    "directoryName": "webStoreTemplates",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WebStoreTemplate",
+    "suffix": "webStoreTemplate"
+  },
+  "WebToXSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WebToXSettings",
+    "suffix": "settings"
+  },
+  "WorkDotComSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WorkDotComSettings",
+    "suffix": "settings"
+  },
+  "WorkSkillRouting": {
+    "directoryName": "workSkillRoutings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WorkSkillRouting",
+    "suffix": "workSkillRouting"
+  },
+  "Workflow": {
+    "directoryName": "workflows",
+    "hasChildren": true,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "Workflow",
+    "suffix": "workflow"
+  },
+  "WorkflowAlert": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WorkflowAlert"
+  },
+  "WorkflowFieldUpdate": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WorkflowFieldUpdate"
+  },
+  "WorkflowFlowAction": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WorkflowFlowAction"
+  },
+  "WorkflowKnowledgePublish": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WorkflowKnowledgePublish"
+  },
+  "WorkflowOutboundMessage": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WorkflowOutboundMessage"
+  },
+  "WorkflowRule": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WorkflowRule"
+  },
+  "WorkflowSend": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WorkflowSend"
+  },
+  "WorkflowTask": {
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WorkflowTask"
+  },
+  "WorkforceEngagementSettings": {
+    "directoryName": "settings",
+    "hasChildren": false,
+    "inFolder": false,
+    "metaFile": false,
+    "name": "WorkforceEngagementSettings",
+    "suffix": "settings"
+  }
+}

@@ -48,7 +48,6 @@
     "@types/mime": "2.0.3",
     "@types/minimatch": "^5.1.2",
     "deep-equal-in-any-order": "^1.1.19",
-    "deepmerge": "^4.3.1",
     "eslint-plugin-sf-plugin": "^1.20.1",
     "mocha-junit-reporter": "^1.23.3",
     "mocha-snap": "^5.0.0",
@@ -79,7 +78,8 @@
     "test:only": "wireit",
     "test:registry": "mocha ./test/registry/registryCompleteness.test.ts --timeout 50000",
     "test:snapshot": "wireit",
-    "update-registry": "npx ts-node scripts/update-registry/update2.ts",
+    "update-registry-org": "npx ts-node scripts/update-registry/updateRegistryFromOrg.ts",
+    "update-registry-core": "npx ts-node scripts/update-registry/updateRegistryFromCoreMetadata.ts",
     "update-supported-metadata": "npx ts-node scripts/update-registry/update-supported-metadata.ts"
   },
   "lint-staged": {

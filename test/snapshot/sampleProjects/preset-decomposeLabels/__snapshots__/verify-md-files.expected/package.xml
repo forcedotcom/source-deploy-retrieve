@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>CustomLabels</members>
-        <name>CustomLabels</name>
+        <members>DeleteMe</members>
+        <members>KeepMe1</members>
+        <members>KeepMe2</members>
+        <name>CustomLabel</name>
     </types>
     <version>60.0</version>
 </Package>

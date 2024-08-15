@@ -9,8 +9,8 @@ import * as fs from 'node:fs';
 import snap from 'mocha-snap';
 import { expect, config, use } from 'chai';
 import deepEqualInAnyOrder from 'deep-equal-in-any-order';
-import { XMLParser } from 'fast-xml-parser';
 
+import { parser } from '../../../src/utils/metadata';
 import { RegistryAccess } from '../../../src/registry/registryAccess';
 import { MetadataConverter } from '../../../src/convert/metadataConverter';
 import { ComponentSetBuilder } from '../../../src/collections/componentSetBuilder';
@@ -92,18 +92,8 @@ export const sourceToMdapi = async (testDir: string): Promise<string[]> => {
 };
 
 /** checks that the two xml bodies have the same equivalent json (handles out-of-order things, etc) */
-export const compareTwoXml = (file1: string, file2: string): Chai.Assertion => {
-  const parser = new XMLParser({
-    ignoreAttributes: false,
-    parseTagValue: false,
-    parseAttributeValue: false,
-    cdataPropName: '__cdata',
-    ignoreDeclaration: true,
-    numberParseOptions: { leadingZeros: false, hex: false },
-  });
-
-  return expect(parser.parse(file1)).to.deep.equalInAnyOrder(parser.parse(file2));
-};
+export const compareTwoXml = (file1: string, file2: string): Chai.Assertion =>
+  expect(parser.parse(file1)).to.deep.equalInAnyOrder(parser.parse(file2));
 
 /**
  * catches missing files by asserting that two directories have the exact same children

@@ -132,7 +132,7 @@ describe('DecomposedMetadataTransformer', () => {
         },
       });
 
-      const result = await transformer.toSourceFormat(component);
+      const result = await transformer.toSourceFormat({ component });
 
       expect(context.decomposition.transactionState.size).to.equal(0);
       expect(result).to.deep.equal([
@@ -193,7 +193,7 @@ describe('DecomposedMetadataTransformer', () => {
         )
         .returns(false);
 
-      const result = await transformer.toSourceFormat(component);
+      const result = await transformer.toSourceFormat({ component });
 
       expect(context.decomposition.transactionState.size).to.equal(0);
       expect(result).to.deep.equal([
@@ -239,7 +239,7 @@ describe('DecomposedMetadataTransformer', () => {
         },
       });
 
-      const result = await transformer.toSourceFormat(component);
+      const result = await transformer.toSourceFormat({ component });
 
       expect(result).to.deep.equal([
         {
@@ -277,7 +277,7 @@ describe('DecomposedMetadataTransformer', () => {
         },
       });
 
-      const result = await transformer.toSourceFormat(component);
+      const result = await transformer.toSourceFormat({ component });
 
       expect(result).to.deep.equal([
         {
@@ -327,7 +327,7 @@ describe('DecomposedMetadataTransformer', () => {
         },
       });
 
-      const result = await transformer.toSourceFormat(component);
+      const result = await transformer.toSourceFormat({ component });
 
       expect(result).to.deep.equal([
         {
@@ -378,7 +378,7 @@ describe('DecomposedMetadataTransformer', () => {
         },
       });
 
-      const result = await transformer.toSourceFormat(cft, cot);
+      const result = await transformer.toSourceFormat({ component: cft, mergeWith: cot });
 
       expect(result).to.deep.equal([
         {
@@ -417,7 +417,7 @@ describe('DecomposedMetadataTransformer', () => {
       const transformer = new DecomposedMetadataTransformer();
       $$.SANDBOX.stub(component, 'parseXml').resolves({});
 
-      const result = await transformer.toSourceFormat(component);
+      const result = await transformer.toSourceFormat({ component });
 
       expect(result).to.be.an('array').with.lengthOf(1);
       // there will be a file produced, with just the outer type (ex: CustomObject) and the xmlns declaration
@@ -446,7 +446,7 @@ describe('DecomposedMetadataTransformer', () => {
         .withArgs(join('main', 'default', 'objects', 'customObject__c', 'customObject__c.object-meta.xml'))
         .returns(true);
 
-      const result = await transformer.toSourceFormat(component);
+      const result = await transformer.toSourceFormat({ component });
 
       expect(result).to.deep.equal([]);
     });
@@ -472,7 +472,7 @@ describe('DecomposedMetadataTransformer', () => {
         });
 
         const transformer = new DecomposedMetadataTransformer(registryAccess);
-        const result = await transformer.toSourceFormat(componentToConvert, component);
+        const result = await transformer.toSourceFormat({ component: componentToConvert, mergeWith: component });
 
         expect(result).to.deep.equal([
           {
@@ -509,7 +509,7 @@ describe('DecomposedMetadataTransformer', () => {
         });
         const transformer = new DecomposedMetadataTransformer();
 
-        const result = await transformer.toSourceFormat(componentToConvert, component);
+        const result = await transformer.toSourceFormat({ component: componentToConvert, mergeWith: component });
 
         expect(result).to.deep.equal([
           {
@@ -556,7 +556,7 @@ describe('DecomposedMetadataTransformer', () => {
         try {
           // NOTE: it doesn't matter what the first component is for this test since it's all
           // about the child components of the parentComponent.
-          await transformer.toSourceFormat(component, parentComponent);
+          await transformer.toSourceFormat({ component, mergeWith: parentComponent });
           assert(false, 'expected TypeInferenceError to be thrown');
         } catch (err) {
           assert(err instanceof Error);
@@ -590,7 +590,7 @@ describe('DecomposedMetadataTransformer', () => {
         const context = new ConvertContext();
         const transformer = new DecomposedMetadataTransformer(registryAccess, context);
 
-        const result = await transformer.toSourceFormat(component, componentToMerge);
+        const result = await transformer.toSourceFormat({ component, mergeWith: componentToMerge });
         expect(result).to.be.empty;
         expect(
           context.decomposition.transactionState.get(`${mergeComponentChild.type.name}#${mergeComponentChild.fullName}`)
@@ -616,7 +616,7 @@ describe('DecomposedMetadataTransformer', () => {
       it('should defer write operation for parent xml that is not a member of merge component', async () => {
         const { fullName, type } = component;
         const root = join('main', 'default', type.directoryName, fullName);
-        const componentToMerge = SourceComponent.createVirtualComponent(
+        const mergeWith = SourceComponent.createVirtualComponent(
           {
             name: 'a',
             type,
@@ -633,7 +633,7 @@ describe('DecomposedMetadataTransformer', () => {
         const context = new ConvertContext();
         const transformer = new DecomposedMetadataTransformer(registryAccess, context);
 
-        const result = await transformer.toSourceFormat(component, componentToMerge);
+        const result = await transformer.toSourceFormat({ component, mergeWith });
         expect(result).to.be.empty;
         expect(context.decomposition.transactionState.get(`${type.name}#${fullName}`)).to.deep.equal({
           origin: component,

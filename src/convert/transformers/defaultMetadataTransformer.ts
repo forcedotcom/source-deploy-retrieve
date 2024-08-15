@@ -31,7 +31,13 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await, class-methods-use-this
-  public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
+  public async toSourceFormat({
+    component,
+    mergeWith,
+  }: {
+    component: SourceComponent;
+    mergeWith?: SourceComponent;
+  }): Promise<WriteInfo[]> {
     return getWriteInfos(component, 'source', mergeWith);
   }
 }

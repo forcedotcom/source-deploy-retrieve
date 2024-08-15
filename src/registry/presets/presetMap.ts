@@ -8,11 +8,13 @@ import { MetadataRegistry } from '../types';
 
 // we have to import all presets explicitly for VSCE's esbuild bundling process
 import * as decomposeCustomLabelsBeta from './decomposeCustomLabelsBeta.json';
+import * as decomposeCustomLabelsBeta2 from './decomposeCustomLabelsBeta2.json';
 import * as decomposePermissionSetBeta from './decomposePermissionSetBeta.json';
 import * as decomposeSharingRulesBeta from './decomposeSharingRulesBeta.json';
 import * as decomposeWorkflowBeta from './decomposeWorkflowBeta.json';
 
 export const presetMap = new Map<string, MetadataRegistry>([
+  ['decomposeCustomLabelsBeta2', decomposeCustomLabelsBeta2 as MetadataRegistry],
   ['decomposeCustomLabelsBeta', decomposeCustomLabelsBeta as MetadataRegistry],
   ['decomposePermissionSetBeta', decomposePermissionSetBeta as MetadataRegistry],
   ['decomposeSharingRulesBeta', decomposeSharingRulesBeta as MetadataRegistry],

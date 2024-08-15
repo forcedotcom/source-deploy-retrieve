@@ -172,6 +172,16 @@ Be careful when instantiating classes (ex: ComponentSet) that will default a Reg
 
 **Updating presets** If you do need to update a preset to make a breaking change, it's better to copy it to a new preset and give it a unique name (ex: `decomposeFooV2`). This preserves the existing behavior for existing projects with the old preset.
 
+Presets **can** remove strings from the default metadataRegistry by setting values to empty string ex:
+
+```json
+{
+  "childTypes": {
+    "somethingThatIsUsuallyAChild": ""
+  }
+}
+```
+
 ### Querying registry data
 
 While it’s perfectly fine to reference the registry export directly, the `RegistryAccess` class was created to make accessing the object a bit more streamlined. Querying types and searching the registry is oftentimes easier and cleaner this way and contains built-in checking for whether or not a metadata type exists. Here’s a comparison of using each:

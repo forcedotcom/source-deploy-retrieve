@@ -19,6 +19,8 @@ type RegistryIterator = {
 const registriesFromPresets = fs
   .readdirSync(presetFolder, { withFileTypes: true })
   .filter((file) => file.name.endsWith('.json'))
+  // we don't want to test the original preset since it conflicts with the CustomLabelsBeta2
+  .filter((file) => !file.name.endsWith('CustomLabelsBeta.json'))
   .map((file) => ({
     name: file.name,
     registry: JSON.parse(fs.readFileSync(path.join(file.path, file.name), 'utf-8')) as MetadataRegistry,

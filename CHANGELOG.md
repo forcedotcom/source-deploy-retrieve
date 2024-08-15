@@ -1,3 +1,13 @@
+# [12.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.2.1...12.4.0) (2024-08-15)
+
+
+### Features
+
+* bump to 12.3.0 ([#1399](https://github.com/forcedotcom/source-deploy-retrieve/issues/1399)) ([f260283](https://github.com/forcedotcom/source-deploy-retrieve/commit/f26028380d1d3e3647e576fe2cedf430a3dbfe7f))
+* custom label beta 2 ([#1392](https://github.com/forcedotcom/source-deploy-retrieve/issues/1392)) ([51cbe84](https://github.com/forcedotcom/source-deploy-retrieve/commit/51cbe848959f580c1b9a2e6816e8f33e89a2bd64))
+
+
+
 ## [12.2.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.2.0...12.2.1) (2024-08-12)
 
 

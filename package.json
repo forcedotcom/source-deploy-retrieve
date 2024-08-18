@@ -32,7 +32,7 @@
     "fast-xml-parser": "^4.4.1",
     "got": "^11.8.6",
     "graceful-fs": "^4.2.11",
-    "ignore": "^5.3.1",
+    "ignore": "^5.3.2",
     "jszip": "^3.10.1",
     "mime": "2.6.0",
     "minimatch": "^9.0.5",

@@ -23,7 +23,7 @@ yarn update-supported-metadata
 
 ### Path 1: Using Core Metadata
 
-There exists a test in Core [sourcegraph](https://sourcegraph.soma.salesforce.com/perforce.soma.salesforce.com/app/250/patch/core/-/blob/md-common-impl/test/func/java/src/mdcommon/cli/GenerateCLITypeRegistryInfoTest.java) that generates a file [sourcegraph](https://sourcegraph.soma.salesforce.com/perforce.soma.salesforce.com/app/252/patch/core/-/blob/md-common-impl/test/func/results/cli-type-registry-info/cli-type-registry-info.json).
+There exists a test in Core `GenerateCLITypeRegistryInfoTest` that generates a file `cli-type-registry-info.json`.
 
 The test is manually run, the file is committed to `patch`, and the output is manually copied to `../scripts/update-registry/describe.json` in SDR.
 

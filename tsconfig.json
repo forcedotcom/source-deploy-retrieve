@@ -11,7 +11,7 @@
   },
   "include": [
     "./src/**/*.ts",
-    "./scripts/update-registry/*.ts",
+    "./scripts/update-registry/**/*.ts",
     "./src/registry/metadataRegistry.json",
     "./src/registry/stdValueSetRegistry.json",
     "./src/registry/presets/*.json"

@@ -29,8 +29,6 @@ The test is manually run, the file is committed to `patch`, and the output is ma
 
 If your metadata type is simple and already in the file, run `yarn update-registry-org <MetadataEntity1> <MetadataEntity2>` (you'll see warnings if your type is missing or too complex for the script to handle)
 
-Running the script with no params will try to do ALL missing metadata types.
-
 ### Path 2: Using Describe from an Org
 
 > Note: The script asks your org for describe information about your type. Make sure that `sf org list metadata-types` returns the correct information for your type.

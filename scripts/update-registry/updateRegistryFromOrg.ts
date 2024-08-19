@@ -14,7 +14,7 @@ const getMissingTypesAsDescribeResult = async (missingTypes: string[]): Promise<
     ])
   );
   // get the missingTypes from the describe
-  return missingTypes.map(([key]) => metadataObjectsByName.get(key)).filter(isDefined);
+  return missingTypes.map((key) => metadataObjectsByName.get(key)).filter(isDefined);
 };
 
 /** massage for slight differences between the 2 types */

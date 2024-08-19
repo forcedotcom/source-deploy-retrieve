@@ -37,6 +37,7 @@ export const registryUpdate = (missingTypesAsDescribeResult: DescribeEntry[]) =>
       registry.suffixes[suffix] = typeId;
     }
   });
+  console.log('Updated registry with new types:');
   const jsonData = JSON.stringify(registry, null, 2);
   fs.writeFileSync('./src/registry/metadataRegistry.json', jsonData);
 };

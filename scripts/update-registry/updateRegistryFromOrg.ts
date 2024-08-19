@@ -9,12 +9,12 @@ const getMissingTypesAsDescribeResult = async (missingTypes: string[]): Promise<
   const describeResult = await execProm('sf org list metadata-types -o registryBuilder --json');
   const metadataObjectsByName = new Map(
     (JSON.parse(describeResult.stdout).result.metadataObjects as DescribeResult[]).map((describeObj) => [
-      describeObj.xmlName,
+      describeObj.xmlName.toLowerCase(),
       describeObj,
     ])
   );
   // get the missingTypes from the describe
-  return missingTypes.map((key) => metadataObjectsByName.get(key)).filter(isDefined);
+  return missingTypes.map(lowercaseFn).map(getOrWarn(metadataObjectsByName)).filter(isDefined);
 };
 
 /** massage for slight differences between the 2 types */
@@ -33,6 +33,18 @@ const describeResultToDescribeEntry = (describeResult: DescribeResult): Describe
   const missingTypes = await whatTypesNeedDescribe();
 
   const missingTypesAsDescribeResult = await getMissingTypesAsDescribeResult(missingTypes);
-  console.log(missingTypesAsDescribeResult);
   registryUpdate(missingTypesAsDescribeResult.map(describeResultToDescribeEntry));
 })();
+
+const lowercaseFn = (s: string) => s.toLowerCase();
+
+const getOrWarn =
+  <T>(map: Map<string, T>) =>
+  (key: string): T | undefined => {
+    const result = map.get(key);
+    if (result === undefined) {
+      console.warn(`No entry for ${key}`);
+      return;
+    }
+    return result;
+  };

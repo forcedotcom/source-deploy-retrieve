@@ -22,8 +22,9 @@ const getMissingTypesFromDescribe = async (missingTypes: string[]): Promise<Desc
 const logMissingEntry =
   (describe: typeof describeFile) =>
   (typeName: string): DescribeEntry | undefined => {
-    if (describe[typeName]) {
-      return describe[typeName];
+    const [, found] = Object.entries(describe).find(([key]) => key.toLowerCase() === typeName.toLowerCase()) ?? [];
+    if (found !== undefined) {
+      return found;
     }
     console.warn(`No entry for ${typeName}`);
   };
@@ -31,6 +32,9 @@ const logMissingEntry =
 (async () => {
   const missingTypes = await whatTypesNeedDescribe();
   const missingTypesAsDescribeEntry = await getMissingTypesFromDescribe(missingTypes);
-  console.log(missingTypesAsDescribeEntry);
+  (missingTypesAsDescribeEntry.length
+    ? [`Updating types in the registry`, missingTypesAsDescribeEntry]
+    : ['No metadata changes made']
+  ).map((i) => console.log(i));
   registryUpdate(missingTypesAsDescribeEntry);
 })();

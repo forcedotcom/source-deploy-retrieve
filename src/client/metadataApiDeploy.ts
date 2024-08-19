@@ -43,7 +43,8 @@ export class DeployResult implements MetadataTransferResult {
   public constructor(
     public readonly response: MetadataApiDeployStatus,
     public readonly components?: ComponentSet,
-    public readonly replacements = new Map<string, string[]>()
+    public readonly replacements = new Map<string, string[]>(),
+    public readonly zipMeta?: { zipSize: number; zipFileCount?: number }
   ) {}
 
   public getFileResponses(): FileResponse[] {
@@ -97,6 +98,8 @@ export class MetadataApiDeploy extends MetadataTransfer<
   // from the apiOptions and we need it for telemetry.
   private readonly isRestDeploy: boolean;
   private readonly registry: RegistryAccess;
+  private zipSize?: number;
+  private zipFileCount?: number;
 
   public constructor(options: MetadataApiDeployOptions) {
     super(options);
@@ -222,14 +225,15 @@ export class MetadataApiDeploy extends MetadataTransfer<
     this.logger.debug(debugMsg);
 
     // Event and Debug output for the zip file used for deploy
-    const zipSize = zipBuffer.byteLength;
-    let zipMessage = `Deployment zip file size = ${zipSize} Bytes`;
+    this.zipSize = zipBuffer.byteLength;
+    let zipMessage = `Deployment zip file size = ${this.zipSize} Bytes`;
     if (zipFileCount) {
+      this.zipFileCount = zipFileCount;
       zipMessage += ` containing ${zipFileCount} files`;
     }
     this.logger.debug(zipMessage);
     await LifecycleInstance.emit('apiVersionDeploy', { webService, manifestVersion, apiVersion });
-    await LifecycleInstance.emit('deployZipData', { zipSize, zipFileCount });
+    await LifecycleInstance.emit('deployZipData', { zipSize: this.zipSize, zipFileCount });
 
     return this.isRestDeploy
       ? connection.metadata.deployRest(zipBuffer, optionsWithoutRest)
@@ -278,6 +282,8 @@ export class MetadataApiDeploy extends MetadataTransfer<
         numberTestsTotal: result.numberTestsTotal,
         testsTotalTime: result.details?.runTestResult?.totalTime,
         filesWithReplacementsQuantity: this.replacements.size ?? 0,
+        zipSize: this.zipSize ?? 0,
+        zipFileCount: this.zipFileCount ?? 0,
       });
     } catch (err) {
       const error = err as Error;
@@ -290,7 +296,8 @@ export class MetadataApiDeploy extends MetadataTransfer<
     const deployResult = new DeployResult(
       result,
       this.components,
-      new Map(Array.from(this.replacements).map(([k, v]) => [k, Array.from(v)]))
+      new Map(Array.from(this.replacements).map(([k, v]) => [k, Array.from(v)])),
+      { zipSize: this.zipSize ?? 0, zipFileCount: this.zipFileCount }
     );
     // only do event hooks if source, (NOT a metadata format) deploy
     if (this.options.components) {

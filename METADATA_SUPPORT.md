@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v61 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 597/608 supported metadata types.
+Currently, there are 598/611 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -148,7 +148,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | CustomApplication                      | ✅      |                                                  |
 | CustomApplicationComponent             | ✅      |                                                  |
 | CustomFeedFilter                       | ✅      |                                                  |
-| CustomField                            | ❌      | Not supported, but support could be added        |
+| CustomField                            | ✅      |                                                  |
 | CustomHelpMenuSection                  | ✅      |                                                  |
 | CustomIndex                            | ✅      |                                                  |
 | CustomLabels                           | ✅      |                                                  |
@@ -167,6 +167,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | DashboardFolder                        | ✅      |                                                  |
 | DataCalcInsightTemplate                | ✅      |                                                  |
 | DataCategoryGroup                      | ✅      |                                                  |
+| DataConnectionParamTmpl                | ❌      | Not supported, but support could be added        |
 | DataConnectorIngestApi                 | ✅      |                                                  |
 | DataConnectorS3                        | ✅      |                                                  |
 | DataDotComSettings                     | ✅      |                                                  |
@@ -393,6 +394,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | MilestoneType                          | ✅      |                                                  |
 | MktCalcInsightObjectDef                | ✅      |                                                  |
 | MktDataConnection                      | ✅      |                                                  |
+| MktDataConnectionCred                  | ❌      | Not supported, but support could be added        |
+| MktDataConnectionParam                 | ❌      | Not supported, but support could be added        |
 | MktDataConnectionSrcParam              | ✅      |                                                  |
 | MktDataTranObject                      | ✅      |                                                  |
 | MlDomain                               | ✅      |                                                  |
@@ -665,7 +668,6 @@ v62 introduces the following new types. Here's their current level of support
 - CustomDataType
 - CustomExperience
 - CustomLabel
-- Custod
 - CustomFieldTranslation
 - DataPipeline
 - DynamicTrigger

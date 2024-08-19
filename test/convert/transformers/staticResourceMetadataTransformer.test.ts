@@ -222,7 +222,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equalInAnyOrder(expectedInfos);
+      expect(await transformer.toSourceFormat({ component })).to.deep.equalInAnyOrder(expectedInfos);
     });
 
     it('should rename extension from .resource for a fallback mime extension', async () => {
@@ -247,7 +247,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equalInAnyOrder(expectedInfos);
+      expect(await transformer.toSourceFormat({ component })).to.deep.equalInAnyOrder(expectedInfos);
     });
 
     it('should rename extension from .resource for an unsupported mime extension', async () => {
@@ -273,14 +273,14 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equalInAnyOrder(expectedInfos);
+      expect(await transformer.toSourceFormat({ component })).to.deep.equalInAnyOrder(expectedInfos);
     });
 
     it('should ignore components without content', async () => {
       const component = Object.assign({}, mixedContentSingleFile.COMPONENT);
       component.content = undefined;
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal([]);
+      expect(await transformer.toSourceFormat({ component })).to.deep.equal([]);
     });
 
     it('should extract an archive', async () => {
@@ -306,7 +306,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equalInAnyOrder(expectedInfos);
+      expect(await transformer.toSourceFormat({ component })).to.deep.equalInAnyOrder(expectedInfos);
       expect(pipelineStub.callCount).to.equal(1);
       expect(pipelineStub.firstCall.args[1]).to.equal(
         join(
@@ -340,7 +340,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equalInAnyOrder(expectedInfos);
+      expect(await transformer.toSourceFormat({ component })).to.deep.equalInAnyOrder(expectedInfos);
     });
 
     it('should merge output with merge component when content is archive', async () => {
@@ -349,7 +349,7 @@ describe('StaticResourceMetadataTransformer', () => {
       assert(component.xml);
       assert(typeof transformer.defaultDirectory === 'string');
 
-      const mergeComponent = SourceComponent.createVirtualComponent(
+      const mergeWith = SourceComponent.createVirtualComponent(
         {
           name: mixedContentSingleFile.COMPONENT.name,
           type: registry.types.staticresource,
@@ -367,8 +367,8 @@ describe('StaticResourceMetadataTransformer', () => {
           },
         ]
       );
-      assert(mergeComponent.xml);
-      assert(mergeComponent.content);
+      assert(mergeWith.xml);
+      assert(mergeWith.content);
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
           contentType: 'application/zip',
@@ -382,14 +382,14 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(component.xml),
-          output: mergeComponent.xml,
+          output: mergeWith.xml,
         },
       ];
 
-      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat({ component, mergeWith })).to.deep.equal(expectedInfos);
       expect(pipelineStub.callCount).to.equal(1);
       expect(pipelineStub.firstCall.args[1]).to.deep.equal(
-        join(transformer.defaultDirectory, mergeComponent.content, 'b', 'c.css')
+        join(transformer.defaultDirectory, mergeWith.content, 'b', 'c.css')
       );
     });
 
@@ -398,7 +398,7 @@ describe('StaticResourceMetadataTransformer', () => {
       const component = mixedContentSingleFile.COMPONENT;
       assert(component.content);
       assert(component.xml);
-      const mergeComponent = SourceComponent.createVirtualComponent(
+      const mergeWith = SourceComponent.createVirtualComponent(
         {
           name: mixedContentSingleFile.COMPONENT.name,
           type: registry.types.staticresource,
@@ -416,7 +416,7 @@ describe('StaticResourceMetadataTransformer', () => {
           },
         ]
       );
-      assert(mergeComponent.xml);
+      assert(mergeWith.xml);
 
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
@@ -426,15 +426,15 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(component.content),
-          output: `${mergeComponent.content}.txt`,
+          output: `${mergeWith.content}.txt`,
         },
         {
           source: component.tree.stream(component.xml),
-          output: mergeComponent.xml,
+          output: mergeWith.xml,
         },
       ];
 
-      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equalInAnyOrder(expectedInfos);
+      expect(await transformer.toSourceFormat({ component, mergeWith })).to.deep.equalInAnyOrder(expectedInfos);
     });
   });
 });

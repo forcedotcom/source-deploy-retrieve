@@ -91,15 +91,10 @@ export {
   FromSourceOptions,
   FromManifestOptions,
 } from './collections';
-export {
-  RegistryAccess,
-  registry,
-  getCurrentApiVersion,
-  MetadataRegistry,
-  MetadataType,
-  DecompositionStrategy,
-  RecompositionStrategy,
-  TransformerStrategy,
-} from './registry';
+
+export { RegistryAccess, registry, getCurrentApiVersion, MetadataRegistry, MetadataType } from './registry';
+
+// TODO: don't export these strategies
+export { DecompositionStrategy, TransformerStrategy, RecompositionStrategy } from './registry/types';
 
 export { presetMap } from './registry/presets/presetMap';

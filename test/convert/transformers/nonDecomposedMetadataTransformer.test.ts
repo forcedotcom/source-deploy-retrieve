@@ -40,7 +40,7 @@ describe('NonDecomposedMetadataTransformer', () => {
       const context = new ConvertContext();
       const transformer = new NonDecomposedMetadataTransformer(registryAccess, context);
 
-      const result = await transformer.toSourceFormat(component);
+      const result = await transformer.toSourceFormat({ component });
       expect(result).to.deep.equal([]);
       expect(context.decomposition.transactionState).to.deep.equal(new Map());
       expect(context.recomposition.transactionState).to.deep.equal(new Map());
@@ -68,7 +68,7 @@ describe('NonDecomposedMetadataTransformer', () => {
       $$.SANDBOX.stub(componentToConvert, 'parseXml').resolves(nonDecomposed.FULL_XML_CONTENT);
       $$.SANDBOX.stub(componentToConvert, 'parseXmlSync').returns(nonDecomposed.FULL_XML_CONTENT);
 
-      const result = await transformer.toSourceFormat(componentToConvert, component);
+      const result = await transformer.toSourceFormat({ component: componentToConvert, mergeWith: component });
       expect(result).to.deep.equal([]);
       expect(context.nonDecomposition.transactionState).to.deep.equal({
         childrenByUniqueElement: new Map([

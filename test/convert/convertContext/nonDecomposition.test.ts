@@ -22,6 +22,7 @@ import {
   VIRTUAL_DIR,
   WORKING_DIR,
 } from '../../mock/type-constants/customlabelsConstant';
+import { SourceComponent } from '../../../src';
 
 describe('NonDecomposition', () => {
   const env = createSandbox();
@@ -57,11 +58,13 @@ describe('NonDecomposition', () => {
     };
 
     const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
+    // @ts-ignore - because the resulting component will have cache info, and the initial one won't
+    result[0].component.pathContentMap = new Map();
     expect(result).to.deep.equal([{ component, writeInfos }]);
   });
 
   it('should return WriterFormats when no local files exist', async () => {
-    const component = nonDecomposed.COMPONENT_1;
+    const component = new SourceComponent(nonDecomposed.COMPONENT_1);
     const context = new ConvertContext();
     const [baseName] = component.fullName.split('.');
     const output = join(
@@ -115,12 +118,13 @@ describe('NonDecomposition', () => {
     };
 
     const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
-
+    // @ts-ignore - because the resulting component will have cache info, and the initial one won't
+    result[0].component.pathContentMap = new Map();
     expect(result).to.deep.equal([{ component, writeInfos }]);
   });
 
   it('should merge 1 updated file', async () => {
-    const component = nonDecomposed.COMPONENT_1;
+    const component = new SourceComponent(nonDecomposed.COMPONENT_1, TREE);
     const context = new ConvertContext();
     const type = component.type;
 
@@ -144,6 +148,8 @@ describe('NonDecomposition', () => {
     };
 
     const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
+    // @ts-ignore - because the resulting component will have cache info, and the initial one won't
+    result[0].component.pathContentMap = new Map();
     expect(result).to.deep.equal([{ component, writeInfos }]);
   });
 
@@ -187,6 +193,8 @@ describe('NonDecomposition', () => {
     };
 
     const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
+    // @ts-ignore - because the resulting component will have cache info, and the initial one won't
+    result[0].component.pathContentMap = new Map();
     expect(result).to.deep.equal([{ component, writeInfos }]);
   });
 });

@@ -9,10 +9,10 @@ import { SfError } from '@salesforce/core/sfError';
 import { Messages } from '@salesforce/core/messages';
 import { Lifecycle } from '@salesforce/core/lifecycle';
 
-import { XMLParser, XMLValidator } from 'fast-xml-parser';
+import { XMLValidator } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
-import { XML_COMMENT_PROP_NAME } from '../common/constants';
+import { parser } from '../utils/metadata';
 import { getXmlElement } from '../utils/decomposed';
 import { baseName, baseWithoutSuffixes, parseMetadataXml, calculateRelativePath } from '../utils/path';
 import { replacementIterations } from '../convert/replacements';
@@ -53,6 +53,7 @@ export class SourceComponent implements MetadataComponent {
   private readonly forceIgnore: ForceIgnore;
   private markedForDelete = false;
   private destructiveChangesType?: DestructiveChangesType;
+  private pathContentMap = new Map<string, string>();
 
   public constructor(
     props: ComponentProperties,
@@ -187,7 +188,14 @@ export class SourceComponent implements MetadataComponent {
   public async parseXml<T extends JsonMap>(xmlFilePath?: string): Promise<T> {
     const xml = xmlFilePath ?? this.xml;
     if (xml) {
-      const contents = (await this.tree.readFile(xml)).toString();
+      let contents: string;
+      if (this.pathContentMap.has(xml)) {
+        contents = this.pathContentMap.get(xml) as string;
+      } else {
+        contents = (await this.tree.readFile(xml)).toString();
+        this.pathContentMap.set(xml, contents);
+      }
+
       const replacements = this.replacements?.[xml] ?? this.parent?.replacements?.[xml];
       return this.parseAndValidateXML<T>(
         replacements ? await replacementIterations(contents, replacements) : contents,
@@ -200,7 +208,14 @@ export class SourceComponent implements MetadataComponent {
   public parseXmlSync<T extends JsonMap>(xmlFilePath?: string): T {
     const xml = xmlFilePath ?? this.xml;
     if (xml) {
-      const contents = this.tree.readFileSync(xml).toString();
+      let contents: string;
+      if (this.pathContentMap.has(xml)) {
+        contents = this.pathContentMap.get(xml) as string;
+      } else {
+        contents = this.tree.readFileSync(xml).toString();
+        this.pathContentMap.set(xml, contents);
+      }
+
       return this.parseAndValidateXML(contents, xml);
     }
     return {} as T;
@@ -269,16 +284,6 @@ export class SourceComponent implements MetadataComponent {
   }
 
   private parse<T extends JsonMap>(contents: string): T {
-    // include tag attributes and don't parse text node as number
-    const parser = new XMLParser({
-      ignoreAttributes: false,
-      parseTagValue: false,
-      parseAttributeValue: false,
-      cdataPropName: '__cdata',
-      ignoreDeclaration: true,
-      numberParseOptions: { leadingZeros: false, hex: false },
-      commentPropName: XML_COMMENT_PROP_NAME,
-    });
     const parsed = parser.parse(String(contents)) as T;
     const [firstElement] = Object.keys(parsed);
     if (firstElement === this.type.name) {

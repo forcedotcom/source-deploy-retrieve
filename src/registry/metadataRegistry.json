@@ -2679,8 +2679,7 @@
       "strategies": {
         "adapter": "bundle"
       },
-      "strictDirectoryName": true,
-      "supportsPartialDelete": true
+      "strictDirectoryName": true
     },
     "genaiplanner": {
       "directoryName": "genAiPlanners",

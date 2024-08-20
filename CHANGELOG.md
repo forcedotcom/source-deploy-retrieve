@@ -1,3 +1,12 @@
+## [12.5.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.5.0...12.5.1) (2024-08-20)
+
+
+### Bug Fixes
+
+* genAiFunction changes structure to be a bundle ([#1404](https://github.com/forcedotcom/source-deploy-retrieve/issues/1404)) ([a55223f](https://github.com/forcedotcom/source-deploy-retrieve/commit/a55223f581a71fe4b7a8cec51266510686e2df20))
+
+
+
 # [12.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.4.1...12.5.0) (2024-08-19)
 
 

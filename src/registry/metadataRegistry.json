@@ -53,6 +53,7 @@
     "experiencePropertyTypeBundles": "experiencepropertytypebundle",
     "experiences": "experiencebundle",
     "fieldRestrictionRules": "fieldrestrictionrule",
+    "genAiFunctions": "genaifunction",
     "integrationHub": "integrationhubsettings",
     "lwc": "lightningcomponentbundle",
     "mktDataSources": "datasource",
@@ -293,7 +294,6 @@
     "function": "functionreference",
     "fundraisingConfig": "fundraisingconfig",
     "gatewayProviderPaymentMethodType": "gatewayproviderpaymentmethodtype",
-    "genAiFunction": "genaifunction",
     "genAiPlanner": "genaiplanner",
     "genAiPlugin": "genaiplugin",
     "genAiPromptTemplate": "genaiprompttemplate",
@@ -2676,7 +2676,11 @@
       "id": "genaifunction",
       "inFolder": false,
       "name": "GenAiFunction",
-      "suffix": "genAiFunction"
+      "strategies": {
+        "adapter": "bundle"
+      },
+      "strictDirectoryName": true,
+      "supportsPartialDelete": true
     },
     "genaiplanner": {
       "directoryName": "genAiPlanners",

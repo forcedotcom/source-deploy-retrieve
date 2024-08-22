@@ -59,6 +59,11 @@
       "glob": "**/*.css",
       "replaceWithEnv": "THE_REPLACEMENT",
       "stringToReplace": "placeholder"
+    },
+    {
+      "glob": "force-app/main/default/staticresources/ImageTest/**/**",
+      "replaceWithEnv": "THE_REPLACEMENT",
+      "stringToReplace": "placeholder"
     }
   ],
   "sfdcLoginUrl": "https://login.salesforce.com",

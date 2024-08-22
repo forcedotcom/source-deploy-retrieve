@@ -2,42 +2,53 @@
 
 You can view the existing metadata coverage by release using [METADATA_SUPPORT.md](../METADATA_SUPPORT.md)
 
-- It can be updated by running
 - The script runs daily via github actions. You only need to run it if you want to see the results of your registry changes.
+- It can be updated by running
 
 ```shell
 yarn update-supported-metadata
 ```
 
-Got questions?
+## Project Setup
 
-- If you work for Salesforce,
-  - For general questions, post in [#platform-cli](https://salesforce-internal.slack.com/archives/C01LKDT1P6J)
-  - For PR reviews, post in [#platform-cli-collaboration](https://salesforce.enterprise.slack.com/archives/C06V045BZD0)
-- If not, [open an issue](https://github.com/forcedotcom/cli/issues)
+1. Fork [SourceDeployRetrieve github repo](https://github.com/forcedotcom/source-deploy-retrieve)
+1. Clone forked repo in local and checkout a new branch
+1. Setup Yarn
+   1. Go to the repo directory
+   1. Run `yarn install && yarn build`
 
 ## Adding new types to the registry via a script
 
 > NOTE: If you have a “Settings” metadata type, you do not need to follow these instructions. Support for your type is already built into SDR.
 
-To simplify modifying the registry, there's a script.
+### Path 1: Using Core Metadata
 
-> Note: The script depends on being able to create an org that will have your type. If you have a working org, but your type isn't compatible with scratch org, you can [use an existing org](#use-an-existing-org)
+There exists a test in Core `GenerateCLITypeRegistryInfoTest` that generates a file `cli-type-registry-info.json`.
 
-> Note: The script will use your default dev hub. If you don't have one, set one up. If you want to use a different hub, update your default.
+The test is manually run, the file is committed to `patch`, and the output is manually copied to `../scripts/update-registry/describe.json` in SDR.
+
+If your metadata type is simple and already in the file, run `yarn update-registry-org <MetadataEntity1> <MetadataEntity2>` (you'll see warnings if your type is missing or too complex for the script to handle)
+
+### Path 2: Using Describe from an Org
+
+> Note: The script asks your org for describe information about your type. Make sure that `sf org list metadata-types` returns the correct information for your type.
 
 The script will:
 
-1. Look for missing types (similar to the completeness test)
-2. For missing types, generate a project and scratch org that includes the Features/Settings
-3. Run `sf org list metadata-types` to get the describe
-4. Modify the registry to include the newly found types
+1. Look for missing types (similar to the completeness test) OR the types you specify
+1. Run `sf org list metadata-types` to get the describe
+1. Modify the registry to include the newly found types
 
 ```shell
-yarn update-registry YourTypeNameHere
+sf alias set registryBuilder=<the org's username>
+yarn update-registry-org <MetadataEntity1> <MetadataEntity2>
 ```
 
 You can set the environment variable `SF_ORG_API_VERSION` if you want to specify an API version.
+
+### Results
+
+You should see updates to `src/registry/metadataRegistry.json` (check `git status`)
 
 ### What the script can't do
 
@@ -50,6 +61,8 @@ For those situations, refer to another existing type in the registry that you wa
 If that's confusing, it's a great time to reach out to the CLI team.
 
 ## Manual Edits
+
+> only do this if the script can't handle our type OR your type isn't in the CoverageReport yet and the script won't see it
 
 You can do what the script does yourself. As you work, run `./node_modules/mocha/bin/mocha test/registry/registryValidation.test.ts` to check your entries
 
@@ -135,23 +148,31 @@ The completeness is checked by comparing the registry to the metadata coverage r
 
 If you find your types (or the features they require) excluded by `nonSupportedTypes.ts` but think they're ready to go, feel free to remove them from the list.
 
-There are 2 main ways this happens (or ways to make this work if it currently isn't)
-
-1. A feature is available to scratch orgs when it previously wasn't
-1. The metadata coverage report's "settings" were not sufficient to enable your type to appear in the `describe` call.
-
-Fixing those problems not only makes it easier to automate your type's support in the library, but also makes your type usable by customers (features) and fixes your documentation (coverageReport).
-
 ## Manual Testing
 
 Want to make sure your types are working as expected?
 
+### Path 1 (replace the registry in your CLI)
+
+1. find where your CLI has `metadataRegistry.json`. This varies based on how you installed the CLI and your machine. For example, using the installers on a mac, the registry is in ~/.local/share/sf/client/current/node_modules/@salesforce/source-deploy-retrieve/lib/src/registry/metadataRegistry.json
+1. copy your modified registry from SDR over the existing file in your CLI
+
+### Path 2 (patch the registry via registryCustomizations)
+
 1. Create a new project with `sf project generate -n registryTest`
-1. Create a scratch org `sf org create scratch`
+1. Open the generated `sfdx-project.json` and add a property `registryCustomizations`. Its shape is the same as the Metadata Registry, and it is treated as a "patch" for the default registry. If you generated registry changes above, you can add just those changes to `registryCustomizations`.
+   1. suffixes
+   1. strictDirectoryNames (could be empty if your new type doesn't use this)
+   1. childTypes (could be empty if your new type doesn't use this)
+   1. types
+
+### Sample validation
+
+1. Create a scratch org `sf org create scratch` (edit the scratch org definition file if your types needs features/settings)
 1. Open the org and create your types.
-1. Run `sf project deploy preview` and verify the remote add.
+1. Run `sf project retrieve preview` and verify the remote add.
 1. Run `sf project retrieve start` to pull the metadata and examine what is retrieved
-1. Run `sf project deploy preview` and verify the changes were retrieved and no longer appear.
+1. Run `sf project retrieve preview` and verify the changes were retrieved and no longer appear.
 1. Delete the org `sf org delete scratch --no-prompt`
 1. Create a new scratch org. `sf org create scratch`
 1. Push the source `sf project deploy start`
@@ -169,9 +190,9 @@ Target types must be MDAPI addressable on the server. If they aren’t MDAPI add
 
 ## Unit Testing
 
-Reach out to the CLI team for help with unit tests.
-
 [metadataResolver.ts](../test/resolve/metadataResolver.test.ts) is an example of unit testing one behavior (resolving from source files) of a real metadata type.
+
+We don't recommend additional UT for anything the script generated. But if you had a complex type, reach out to the CLI team for help with unit tests.
 
 ## Integration Testing
 
@@ -183,61 +204,9 @@ NUTs live in [plugin-deploy-retrieve](https://github.com/salesforcecli/plugin-de
 
 See [testkit](https://github.com/salesforcecli/cli-plugins-testkit) for examples and usage.
 
-# Tips and Tricks
+## Got questions?
 
-### Work in stages
-
-If you see a whole bunch of new unsupported types, you can "ignore" all the features and work through them in chunks (uncomment a feature at a time) using nonSupportedTypes.ts
-
-If you want to update the registry for only a subset of the currently missing metadata types, add your types as arguments to the script.
-
-```bash
-# normal, update all missing types
-yarn update-registry
-# only update the 2 types listed
-yarn update-registry AssessmentQuestion AssessmentQuestionSet
-```
-
-### DevHub settings
-
-Some metadata types require features which require modifications to the DevHub (licenses, etc) and some may have to stay ignored (ex: a pilot feature you can't enable)
-
-### Use an existing org
-
-You can use an existing org for the metadata describe portion of the script by
-
-1. setting its alias to `registryBuilder`
-2. setting the env `RB_EXISTING_ORG` ex: `RB_EXISTING_ORG=true yarn update-registry`
-
-### Steps to add your metadata in registry
-
-## Prerequisites
-
-1. A sfdx project must exist in local `sf project generate --name <projectname> --default-package-dir <directory> -x`
-1. An authorized devhub org must exists `sf org login web -a <alias> -r <localhost url> -d`
-1. A scratch org must exists with alias `registryBuilder`
-   1. Update `project-scratch-def.json` as per your requirements
-   1. Run `sf org create scratch -f config/project-scratch-def.json -a registryBuilder -d`
-
-## Steps
-
-1. Fork [SourceDeployRetrieve github repo](https://github.com/forcedotcom/source-deploy-retrieve)
-1. Clone forked repo in local and checkout a new branch
-1. Setup Yarn
-   1. Go to the repo directory
-   1. Run `yarn install && yarn build`
-1. Setup an environment variable by executing command `export RB_EXISTING_ORG=true`
-1. Execute yarn update command for required metadata entities `yarn update-registry <MetadataEntity1> <MetadataEntity2>`
-1. Check if respective file (`src/registry/metadataRegistry.json`) was updated with `git status`
-
-Now changes are available in local, we have to link the registry with sfdx project
-
-1. From SDR git repo directory, run `yarn build && yarn link`
-1. Clone the [plugin-deploy-retrieve repo](https://github.com/salesforcecli/plugin-deploy-retrieve)
-1. From cloned plugin repo directory execute
-   1. `yarn link @salesforce/source-deploy-retrieve`
-   1. `sfdx plugins:link .`
-   1. `yarn build`
-
-Registry has been set for your entities, now you can run (e.g.) `sf project deploy start` command for your entities:
-Proceed to `Manual Testing` section above in this document.
+- If you work for Salesforce,
+  - For general questions, post in [#platform-cli](https://salesforce-internal.slack.com/archives/C01LKDT1P6J)
+  - For PR reviews, post in [#platform-cli-collaboration](https://salesforce.enterprise.slack.com/archives/C06V045BZD0)
+- If not, [open an issue](https://github.com/forcedotcom/cli/issues)

@@ -17,8 +17,7 @@ export const getMissingTypes = (
       value.channels.metadataApi.exposed && // if it's not in the mdapi, we don't worry about the registry
       !metadataTypes.includes(key) && // types we should ignore, see the imported file for explanations
       !key.endsWith('Settings') && // individual settings shouldn't be in the registry
-      !hasUnsupportedFeatures(value) && // we don't support these types
-      !value.orgShapes.developer.missingSettings // can't be done because settings are missing
+      !hasUnsupportedFeatures(value) // we don't support these types
   );
   const registryTypeNames = Object.values(registry.types).flatMap((regType) => [
     regType.name,

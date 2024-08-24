@@ -637,6 +637,7 @@ v62 introduces the following new types.  Here's their current level of support
 |ConvIntelligenceSignalRule|❌|Not supported, but support could be added|
 |ConversationMessageDefinition|✅||
 |EnblProgramTaskSubCategory|✅||
+|EvfSettings|✅||
 |ExtlClntAppPushConfigurablePolicies|❌|Not supported, but support could be added (but not for tracking)|
 |ExtlClntAppPushSettings|✅||
 |HerokuIntegrationSettings|✅||

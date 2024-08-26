@@ -92,7 +92,7 @@ describe('ComponentSet', () => {
         { members: ['replaceStuff'], name: 'ApexClass' },
         { members: ['TestObj__c.FieldA__c'], name: 'CustomField' },
         { members: ['TestObj__c'], name: 'CustomObject' },
-        { members: ['Test'], name: 'StaticResource' },
+        { members: ['ImageTest', 'Test'], name: 'StaticResource' },
       ],
       version,
     });

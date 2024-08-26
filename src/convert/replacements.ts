@@ -6,11 +6,12 @@
  */
 import { readFile } from 'node:fs/promises';
 import { Transform, Readable } from 'node:stream';
-import { sep, posix, join, isAbsolute } from 'node:path';
+import { sep, posix, join, isAbsolute, extname } from 'node:path';
 import { Lifecycle, Messages, SfError, SfProject } from '@salesforce/core';
 import { minimatch } from 'minimatch';
 import { Env } from '@salesforce/kit';
 import { ensureString, isString } from '@salesforce/ts-types';
+import { isBinaryFileSync } from 'isbinaryfile';
 import { SourcePath } from '../common/types';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MarkedReplacement, ReplacementConfig, ReplacementEvent } from './types';
@@ -20,14 +21,20 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 
 const fileContentsCache = new Map<string, string>();
 
+// First do a quick check for common text extensions
+// If that fails, confirm that it is not a binary file
+const textExtensions = new Set(['.cls', '.xml', '.json', '.js', '.css', '.html', '.htm', '.txt', '.md']);
+const isTextFile = (path: string): boolean => textExtensions.has(extname(path)) || !isBinaryFileSync(path);
+
 /** If a component has replacements, you get it piped through the replacementStream
  * Otherwise, you'll get the original readable stream
+ * Ignore binary files, they will get corrupted in the replacement process
  */
 export const getReplacementStreamForReadable = (
   component: SourceComponent,
   path: SourcePath
 ): Readable | ReplacementStream =>
-  component.replacements?.[path]
+  component.replacements?.[path] && isTextFile(path)
     ? component.tree.stream(path).pipe(new ReplacementStream(component.replacements?.[path]))
     : component.tree.stream(path);
 

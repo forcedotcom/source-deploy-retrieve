@@ -95,5 +95,29 @@ describe('e2e replacements test', () => {
         }
       }
     });
+    it('skips images in static resources to prevent file corruption', async () => {
+      const srZipPath = path.join(session.project.dir, 'unzipped', 'staticresources', 'ImageTest.resource');
+      expect(fs.existsSync(srZipPath)).to.be.true;
+      const srZip = await JSZip.loadAsync(fs.readFileSync(srZipPath));
+
+      // static resource zip should have 2 files:
+      // 1. test-image.png, 2. test-image.resource-meta.xml
+      expect(Object.entries(srZip.files).length).to.equal(2);
+
+      const imageMeta = srZip.file('test-image.resource-meta.xml');
+      if (imageMeta && !imageMeta.dir) {
+        const content = await imageMeta.async('nodebuffer');
+        const imageMetaAsString = content.toString();
+        expect(imageMetaAsString).to.not.include('placeholder');
+        expect(imageMetaAsString).to.include('foo');
+      }
+
+      const image = srZip.file('test-image.png');
+      if (image && !image.dir) {
+        const content = await image.async('nodebuffer');
+        // The file size would be much larger if it was corrupted via the string replacement method
+        expect(content.byteLength).to.equal(1562121);
+      }
+    });
   });
 });

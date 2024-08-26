@@ -483,6 +483,7 @@ describe('Streams', () => {
         // NOTE: Zips must only contain files with posix paths
         expect(jsZipFileStub.firstCall.args[0]).to.equal('classes/myComponent.cls-meta.xml');
         expect(jsZipFileStub.firstCall.args[1]).to.deep.equal(Buffer.from('hi'));
+        expect(writer.fileCount).to.equal(3);
       });
 
       it('should add entries to zip based on given write infos when zip is in-memory only', async () => {
@@ -495,6 +496,7 @@ describe('Streams', () => {
         });
         expect(jsZipFileStub.firstCall.args[0]).to.equal('classes/myComponent.cls-meta.xml');
         expect(jsZipFileStub.firstCall.args[1]).to.deep.equal(Buffer.from('hi'));
+        expect(writer.fileCount).to.equal(3);
       });
 
       it('should generateAsync zip when stream is finished', async () => {

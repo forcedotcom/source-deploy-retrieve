@@ -156,7 +156,8 @@ describe('MetadataApiDeploy', () => {
 
         await operation.start();
         const result = await operation.pollStatus();
-        const expected = new DeployResult(response, deployedComponents);
+        const zipMeta = { zipSize: 4, zipFileCount: undefined };
+        const expected = new DeployResult(response, deployedComponents, undefined, zipMeta);
 
         expect(result).to.deep.equal(expected);
       });

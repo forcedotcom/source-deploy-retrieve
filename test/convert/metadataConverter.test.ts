@@ -322,6 +322,7 @@ describe('MetadataConverter', () => {
       const result = await converter.convert(components, 'metadata', { type: 'zip' });
 
       expect(result.zipBuffer).to.deep.equal(testBuffer);
+      expect(result.zipFileCount).to.equal(1);
     });
 
     it('should return packagePath in result', async () => {

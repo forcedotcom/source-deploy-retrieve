@@ -91,7 +91,7 @@ const getResult =
     if ('addToZip' in writer) {
       const buffer = writer.buffer;
       if (!packagePath) {
-        return { packagePath, zipBuffer: buffer };
+        return { packagePath, zipBuffer: buffer, zipFileCount: writer.fileCount };
       } else if (buffer) {
         await promises.writeFile(packagePath, buffer);
         return { packagePath };

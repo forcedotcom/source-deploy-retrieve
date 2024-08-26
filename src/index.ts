@@ -44,6 +44,7 @@ export {
   PackageOptions,
   RetrieveOptions,
   DeployVersionData,
+  DeployZipData,
   RetrieveVersionData,
 } from './client';
 export {

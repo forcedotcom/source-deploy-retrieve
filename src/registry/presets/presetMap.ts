@@ -10,6 +10,7 @@ import { MetadataRegistry } from '../types';
 import * as decomposeCustomLabelsBeta from './decomposeCustomLabelsBeta.json';
 import * as decomposeCustomLabelsBeta2 from './decomposeCustomLabelsBeta2.json';
 import * as decomposePermissionSetBeta from './decomposePermissionSetBeta.json';
+import * as decomposePermissionSetBeta2 from './decomposePermissionSetBeta2.json';
 import * as decomposeSharingRulesBeta from './decomposeSharingRulesBeta.json';
 import * as decomposeWorkflowBeta from './decomposeWorkflowBeta.json';
 
@@ -17,6 +18,7 @@ export const presetMap = new Map<string, MetadataRegistry>([
   ['decomposeCustomLabelsBeta2', decomposeCustomLabelsBeta2 as MetadataRegistry],
   ['decomposeCustomLabelsBeta', decomposeCustomLabelsBeta as MetadataRegistry],
   ['decomposePermissionSetBeta', decomposePermissionSetBeta as MetadataRegistry],
+  ['decomposePermissionSetBeta2', decomposePermissionSetBeta2 as MetadataRegistry],
   ['decomposeSharingRulesBeta', decomposeSharingRulesBeta as MetadataRegistry],
   ['decomposeWorkflowBeta', decomposeWorkflowBeta as MetadataRegistry],
 ]);

@@ -31,7 +31,7 @@ jobs:
     secrets: inherit
 
   publish-bundle:
-    if: ${{ success() && needs.getDistTag.outputs.tag != 'beta' }}
+    if: ${{ success() && needs.getDistTag.outputs.tag == '' }}
     uses: ./.github/workflows/releaseWithCoreBundle.yml
     needs: [getDistTag, npm]
     with:

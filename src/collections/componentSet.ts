@@ -443,11 +443,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       addToTypeMap({
         typeMap,
         type: type.folderContentType ? this.registry.getTypeByName(type.folderContentType) : type,
-        fullName:
-          this.registry.getParentType(type.name)?.strategies?.recomposition === 'startEmpty' && fullName.includes('.')
-            ? // they're reassembled like CustomLabels.MyLabel
-              fullName.split('.')[1]
-            : fullName,
+        fullName: constructFullName(this.registry, type, fullName),
         destructiveType,
       });
     });
@@ -737,6 +733,16 @@ const splitOnFirstDelimiter = (input: string): [string, string] => {
   const indexOfSplitChar = input.indexOf(KEY_DELIMITER);
   return [input.substring(0, indexOfSplitChar), input.substring(indexOfSplitChar + 1)];
 };
+
+const constructFullName = (registry: RegistryAccess, type: MetadataType, fullName: string): string =>
+  // InFolder types are different (e.g., Report/ReportFolder). ReportFolders are deployed/retrieved as Reports.
+  // If a ReportFolder is being added append a "/" so the metadata API can identify it as a folder.
+  type.folderContentType && !fullName.endsWith('/')
+    ? `${fullName}/`
+    : registry.getParentType(type.name)?.strategies?.recomposition === 'startEmpty' && fullName.includes('.')
+    ? // they're reassembled like CustomLabels.MyLabel
+      fullName.split('.')[1]
+    : fullName;
 
 /** side effect: mutates the typeMap property */
 const addToTypeMap = ({

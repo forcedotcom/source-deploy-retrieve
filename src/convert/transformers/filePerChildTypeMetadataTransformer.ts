@@ -7,12 +7,11 @@
 
 import { dirname, join } from 'node:path';
 import fs from 'node:fs';
-import { AnyJson, JsonMap, ensureString, isJsonMap } from '@salesforce/ts-types';
-import { ensureArray } from '@salesforce/kit';
+import { AnyJson, JsonMap, ensureString } from '@salesforce/ts-types';
 import { Messages } from '@salesforce/core';
 import { calculateRelativePath } from '../../utils/path';
 import { ForceIgnore } from '../../resolve/forceIgnore';
-import { extractUniqueElementValue, objectHasSomeRealValues } from '../../utils/decomposed';
+import { objectHasSomeRealValues } from '../../utils/decomposed';
 import type { MetadataComponent } from '../../resolve/types';
 import { type MetadataType } from '../../registry/types';
 import { SourceComponent } from '../../resolve/sourceComponent';
@@ -59,7 +58,6 @@ export class FilePerChildTypeMetadataTransformer extends BaseMetadataTransformer
     // noop since the finalizer will push the writes to the component writer
     return [];
   }
-
   public async toSourceFormat({ component, mergeWith }: ToSourceFormatInput): Promise<WriteInfo[]> {
     const forceIgnore = component.getForceIgnore();
 
@@ -77,15 +75,17 @@ export class FilePerChildTypeMetadataTransformer extends BaseMetadataTransformer
     const writeInfosForChildren = composedMetadata
       .filter(hasChildTypeId)
       .map(addChildType)
-      .flatMap(({ tagValue, childType }) =>
-        // iterate each array member if it's Object-like (ex: customField of a CustomObject)
-        ensureArray(tagValue)
-          .filter(isJsonMap)
-          .map(toInfoContainer(mergeWith)(component)(childType))
-          .filter(forceIgnoreAllowsComponent(forceIgnore)) // only process child types that aren't forceignored
-          .map(handleUnaddressableChildAlone(composedMetadata.length)(parentXmlObject)(stateSetter))
-          .flatMap(getChildWriteInfos(stateSetter)(childrenOfMergeComponent))
-      );
+      .map((c) => {
+        if (c.childType.directoryName) {
+          // merge all child types that will end up in the same file
+          return toInfoContainer(mergeWith)(component)(c.childType)(c.tagValue as JsonMap);
+        } else {
+          return toInfoContainer(mergeWith)(component)(c.childType)(c.tagValue as JsonMap);
+        }
+      })
+      .filter(forceIgnoreAllowsComponent(forceIgnore))
+      .map(handleUnaddressableChildAlone(composedMetadata.length)(parentXmlObject)(stateSetter))
+      .flatMap(getChildWriteInfos(stateSetter)(childrenOfMergeComponent));
 
     const writeInfoForParent = mergeWith
       ? getWriteInfosFromMerge(mergeWith)(stateSetter)(parentXmlObject)(component)
@@ -150,7 +150,9 @@ const getChildWriteInfos =
   (stateSetter: StateSetter) =>
   (childrenOfMergeComponent: ComponentSet) =>
   ({ mergeWith, childComponent, value, entryName }: InfoContainer): WriteInfo[] => {
-    const source = objectToSource(childComponent.type.name)(value);
+    const source = objectToSource(childComponent.parent!.type.name)(childComponent.type.name)(
+      value as unknown as JsonMap[]
+    );
     // if there's nothing to merge with, push write operation now to default location
     if (!mergeWith) {
       return [{ source, output: getDefaultOutput(childComponent) }];
@@ -265,9 +267,10 @@ const getDefaultOutput = (component: MetadataComponent): SourcePath => {
   // there could be a '.' inside the child name (ex: PermissionSet.FieldPermissions.field uses Obj__c.Field__c)
   const childName = tail.length ? tail.join('.') : undefined;
   const output = join(
-    parent?.type.strategies?.decomposition === 'folderPerType' ? type.directoryName : '',
+    parent?.type.strategies?.decomposition === 'filePerType' ? type.directoryName : '',
     `${childName ?? baseName}.${ensureString(component.type.suffix)}${META_XML_SUFFIX}`
   );
+  // const output = join(type.directoryName, `${baseName}.${ensureString(component.type.suffix)}${META_XML_SUFFIX}`);
   return join(calculateRelativePath('source')({ self: parent?.type ?? type })(fullName)(baseName), output);
 };
 
@@ -298,13 +301,23 @@ type InfoContainer = {
   mergeWith?: SourceComponent;
 };
 
-/** returns an data structure with lots of context information in it */
+// const toInfoContainer =
+//   (mergeWith: SourceComponent | undefined) =>
+//   (parent: SourceComponent) =>
+//   (c: MetadataType) =>
+//   (tagValue: JsonMap[]): InfoContainer => {
+//     const entryName = childType.directoryName
+//       ? tagValue[childType.uniqueIdElement]?.split('.')?.at(0) ?? parent.name
+//       : parent.name;
+/** returns a data structure with lots of context information in it */
 const toInfoContainer =
   (mergeWith: SourceComponent | undefined) =>
   (parent: SourceComponent) =>
   (childType: MetadataType) =>
   (tagValue: JsonMap): InfoContainer => {
-    const entryName = ensureString(extractUniqueElementValue(tagValue, childType.uniqueIdElement));
+    const entryName = childType.directoryName
+      ? ((tagValue as unknown as JsonMap[]).at(0)?.[childType.uniqueIdElement!] as string).split('.')[0]
+      : parent.name;
     return {
       parentComponent: parent,
       entryName,
@@ -325,9 +338,10 @@ const forceIgnoreAllowsComponent =
 
 /** wrap some xml in the Metadata type and add the NS stuff */
 const objectToSource =
+  (parentType: string) =>
   (childTypeName: string) =>
-  (obj: JsonMap): JsToXml =>
-    new JsToXml({ [childTypeName]: { [XML_NS_KEY]: XML_NS_URL, ...obj } });
+  (obj: JsonMap[]): JsToXml =>
+    new JsToXml({ [parentType]: { [childTypeName]: obj } });
 
 /** filter out the children and create the remaining parentXml */
 const buildParentXml =

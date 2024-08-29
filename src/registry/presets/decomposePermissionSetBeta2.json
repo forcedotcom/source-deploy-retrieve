@@ -58,7 +58,7 @@
         },
         "types": {
           "applicationvisibility": {
-            "directoryName": "applicationVisibilities",
+            "directoryName": "",
             "id": "applicationvisibility",
             "isAddressable": false,
             "name": "ApplicationVisibility",
@@ -66,7 +66,7 @@
             "uniqueIdElement": "application"
           },
           "classaccess": {
-            "directoryName": "classAccesses",
+            "directoryName": "",
             "id": "classaccess",
             "isAddressable": false,
             "name": "ClassAccess",
@@ -74,7 +74,7 @@
             "uniqueIdElement": "apexClass"
           },
           "custommetadatatypeaccess": {
-            "directoryName": "customMetadataTypeAccesses",
+            "directoryName": "",
             "id": "custommetadatatypeaccess",
             "isAddressable": false,
             "name": "CustomMetadataTypeAccess",
@@ -82,7 +82,7 @@
             "uniqueIdElement": "name"
           },
           "custompermissions": {
-            "directoryName": "customPermissions",
+            "directoryName": "",
             "id": "custompermissions",
             "isAddressable": false,
             "name": "CustomPermission",
@@ -90,7 +90,7 @@
             "uniqueIdElement": "name"
           },
           "customsettingaccess": {
-            "directoryName": "customSettingAccesses",
+            "directoryName": "",
             "id": "customsettingaccess",
             "isAddressable": false,
             "name": "CustomSettingAccess",
@@ -98,7 +98,7 @@
             "uniqueIdElement": "name"
           },
           "externalcredentialprincipalaccess": {
-            "directoryName": "externalCredentialPrincipalAccesses",
+            "directoryName": "",
             "id": "externalcredentialprincipalaccess",
             "isAddressable": false,
             "name": "ExternalCredentialPrincipalAccess",
@@ -106,7 +106,7 @@
             "uniqueIdElement": "externalCredentialPrincipal"
           },
           "externaldatasourceaccess": {
-            "directoryName": "externalDataSourceAccesses",
+            "directoryName": "",
             "id": "externaldatasourceaccess",
             "isAddressable": false,
             "name": "ExternalDataSourceAccess",
@@ -123,7 +123,7 @@
             "uniqueIdElement": "field"
           },
           "flowaccess": {
-            "directoryName": "flowAccesses",
+            "directoryName": "",
             "id": "flowaccess",
             "isAddressable": false,
             "name": "FlowAccess",
@@ -140,7 +140,7 @@
             "uniqueIdElement": "object"
           },
           "pageaccess": {
-            "directoryName": "pageAccesses",
+            "directoryName": "",
             "id": "pageaccess",
             "isAddressable": false,
             "name": "PageAccess",
@@ -166,7 +166,7 @@
             "uniqueIdElement": "tab"
           },
           "userpermission": {
-            "directoryName": "userPermissions",
+            "directoryName": "",
             "id": "userpermission",
             "isAddressable": false,
             "name": "UserPermission",
@@ -180,8 +180,8 @@
       "name": "PermissionSet",
       "strategies": {
         "decomposition": "filePerType",
-        "adapter": "filePerChild",
-        "transformer": "filePerChild"
+        "adapter": "filePerType",
+        "transformer": "filePerType"
       },
       "strictDirectoryName": true,
       "suffix": "permissionset",

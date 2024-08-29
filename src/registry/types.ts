@@ -145,10 +145,10 @@ export type MetadataType = {
       | 'decomposed'
       | 'digitalExperience'
       | 'bundle'
-      | 'filePerChild'
+      | 'filePerType'
       | 'default';
-    transformer?: 'decomposed' | 'staticResource' | 'nonDecomposed' | 'standard' | 'decomposedLabels' | 'filePerChild';
-    decomposition?: 'topLevel' | 'folderPerType' | 'filePerChild';
+    transformer?: 'decomposed' | 'staticResource' | 'nonDecomposed' | 'standard' | 'decomposedLabels' | 'filePerType';
+    decomposition?: 'topLevel' | 'folderPerType' | 'filePerType';
     recomposition?: 'startEmpty';
   };
 };

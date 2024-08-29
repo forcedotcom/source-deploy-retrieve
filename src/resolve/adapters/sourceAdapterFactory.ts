@@ -43,7 +43,7 @@ export class SourceAdapterFactory {
         return new MixedContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case 'digitalExperience':
         return new DigitalExperienceSourceAdapter(type, this.registry, forceIgnore, this.tree);
-      case 'filePerChild':
+      case 'filePerType':
         return new FilePerChildTypeSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case 'default':
       case undefined:

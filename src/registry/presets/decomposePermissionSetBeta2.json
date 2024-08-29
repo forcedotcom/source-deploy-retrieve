@@ -114,11 +114,12 @@
             "uniqueIdElement": "externalDataSource"
           },
           "fieldpermission": {
-            "directoryName": "fieldPermissions",
+            "directoryName": "objectSettings",
             "id": "fieldpermission",
             "isAddressable": false,
             "name": "FieldPermission",
-            "suffix": "fieldPermission",
+            "sharedDirectory": true,
+            "suffix": "objectSettings",
             "uniqueIdElement": "field"
           },
           "flowaccess": {
@@ -130,11 +131,12 @@
             "uniqueIdElement": "flow"
           },
           "objectpermission": {
-            "directoryName": "objectPermissions",
+            "directoryName": "objectSettings",
             "id": "objectpermission",
             "isAddressable": false,
+            "sharedDirectory": true,
             "name": "ObjectPermission",
-            "suffix": "objectPermission",
+            "suffix": "objectSettings",
             "uniqueIdElement": "object"
           },
           "pageaccess": {
@@ -146,19 +148,21 @@
             "uniqueIdElement": "apexPage"
           },
           "recordtypevisibility": {
-            "directoryName": "recordTypeVisibilities",
+            "directoryName": "objectSettings",
             "id": "recordtypevisibility",
+            "sharedDirectory": true,
             "isAddressable": false,
             "name": "RecordTypeVisibility",
-            "suffix": "recordTypeVisibility",
+            "suffix": "objectSettings",
             "uniqueIdElement": "recordType"
           },
           "tabsetting": {
-            "directoryName": "tabSettings",
+            "directoryName": "objectSettings",
+            "sharedDirectory": true,
             "id": "tabsetting",
             "isAddressable": false,
             "name": "TabSetting",
-            "suffix": "tabSetting",
+            "suffix": "objectSettings",
             "uniqueIdElement": "tab"
           },
           "userpermission": {
@@ -175,9 +179,9 @@
       "inFolder": false,
       "name": "PermissionSet",
       "strategies": {
-        "adapter": "decomposed",
-        "decomposition": "folderPerType",
-        "transformer": "decomposed"
+        "decomposition": "topLevel",
+        "adapter": "filePerChild",
+        "transformer": "filePerChild"
       },
       "strictDirectoryName": true,
       "suffix": "permissionset",

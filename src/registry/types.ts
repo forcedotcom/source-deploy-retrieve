@@ -139,9 +139,16 @@ export type MetadataType = {
    * Configuration for resolving and converting components of the type.
    */
   strategies?: {
-    adapter: 'mixedContent' | 'matchingContentFile' | 'decomposed' | 'digitalExperience' | 'bundle' | 'default';
-    transformer?: 'decomposed' | 'staticResource' | 'nonDecomposed' | 'standard' | 'decomposedLabels';
-    decomposition?: 'topLevel' | 'folderPerType';
+    adapter:
+      | 'mixedContent'
+      | 'matchingContentFile'
+      | 'decomposed'
+      | 'digitalExperience'
+      | 'bundle'
+      | 'filePerChild'
+      | 'default';
+    transformer?: 'decomposed' | 'staticResource' | 'nonDecomposed' | 'standard' | 'decomposedLabels' | 'filePerChild';
+    decomposition?: 'topLevel' | 'folderPerType' | 'filePerChild';
     recomposition?: 'startEmpty';
   };
 };

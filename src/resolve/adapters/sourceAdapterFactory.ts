@@ -13,6 +13,7 @@ import { TreeContainer } from '../treeContainers';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
 import { DecomposedSourceAdapter } from './decomposedSourceAdapter';
 import { MatchingContentSourceAdapter } from './matchingContentSourceAdapter';
+import { FilePerChildTypeSourceAdapter } from './filePerChildTypeSourceAdapter';
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { DefaultSourceAdapter } from './defaultSourceAdapter';
 import { DigitalExperienceSourceAdapter } from './digitalExperienceSourceAdapter';
@@ -42,6 +43,8 @@ export class SourceAdapterFactory {
         return new MixedContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case 'digitalExperience':
         return new DigitalExperienceSourceAdapter(type, this.registry, forceIgnore, this.tree);
+      case 'filePerChild':
+        return new FilePerChildTypeSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case 'default':
       case undefined:
         return new DefaultSourceAdapter(type, this.registry, forceIgnore, this.tree);

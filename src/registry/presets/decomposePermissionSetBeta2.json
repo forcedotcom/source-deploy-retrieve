@@ -179,7 +179,7 @@
       "inFolder": false,
       "name": "PermissionSet",
       "strategies": {
-        "decomposition": "topLevel",
+        "decomposition": "filePerType",
         "adapter": "filePerChild",
         "transformer": "filePerChild"
       },

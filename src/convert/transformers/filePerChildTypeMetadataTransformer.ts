@@ -7,7 +7,7 @@
 
 import { dirname, join } from 'node:path';
 import fs from 'node:fs';
-import { AnyJson, JsonMap, ensureString } from '@salesforce/ts-types';
+import { AnyJson, ensureString, JsonMap } from '@salesforce/ts-types';
 import { Messages } from '@salesforce/core';
 import { calculateRelativePath } from '../../utils/path';
 import { ForceIgnore } from '../../resolve/forceIgnore';
@@ -75,17 +75,21 @@ export class FilePerChildTypeMetadataTransformer extends BaseMetadataTransformer
     const writeInfosForChildren = composedMetadata
       .filter(hasChildTypeId)
       .map(addChildType)
-      .map((c) => {
-        if (c.childType.directoryName) {
-          // merge all child types that will end up in the same file
-          return toInfoContainer(mergeWith)(component)(c.childType)(c.tagValue as JsonMap);
-        } else {
-          return toInfoContainer(mergeWith)(component)(c.childType)(c.tagValue as JsonMap);
-        }
-      })
+      .filter((c) => !c.childType.directoryName)
+      .map((c) => toInfoContainer(mergeWith)(component)(c.childType)(c.tagValue as JsonMap))
       .filter(forceIgnoreAllowsComponent(forceIgnore))
       .map(handleUnaddressableChildAlone(composedMetadata.length)(parentXmlObject)(stateSetter))
       .flatMap(getChildWriteInfos(stateSetter)(childrenOfMergeComponent));
+
+    const toBeCombined = composedMetadata
+      .filter(hasChildTypeId)
+      .map(addChildType)
+      .filter((c) => c.childType.directoryName)
+      .map((c) => toInfoContainer(mergeWith)(component)(c.childType)(c.tagValue as JsonMap))
+      .filter(forceIgnoreAllowsComponent(forceIgnore))
+      .map(handleUnaddressableChildAlone(composedMetadata.length)(parentXmlObject)(stateSetter));
+    const combined = getAndCombineChildWriteInfos(toBeCombined, stateSetter, childrenOfMergeComponent);
+    writeInfosForChildren.push(...combined);
 
     const writeInfoForParent = mergeWith
       ? getWriteInfosFromMerge(mergeWith)(stateSetter)(parentXmlObject)(component)
@@ -301,14 +305,69 @@ type InfoContainer = {
   mergeWith?: SourceComponent;
 };
 
-// const toInfoContainer =
-//   (mergeWith: SourceComponent | undefined) =>
-//   (parent: SourceComponent) =>
-//   (c: MetadataType) =>
-//   (tagValue: JsonMap[]): InfoContainer => {
-//     const entryName = childType.directoryName
-//       ? tagValue[childType.uniqueIdElement]?.split('.')?.at(0) ?? parent.name
-//       : parent.name;
+const getAndCombineChildWriteInfos = (
+  containers: InfoContainer[],
+  stateSetter: StateSetter,
+  childrenOfMergeComponent: ComponentSet
+): WriteInfo[] => {
+  const nameWriteInfoMap = new Map<string, InfoContainer[]>();
+  containers.map((c) =>
+    nameWriteInfoMap.has(c.entryName)
+      ? nameWriteInfoMap.get(c.entryName)!.push(c)
+      : nameWriteInfoMap.set(c.entryName, [c])
+  );
+  const result: WriteInfo[] = [];
+
+  nameWriteInfoMap.forEach((info) => {
+    const source = new JsToXml({
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      [info[0].parentComponent.type.name]: Object.assign(
+        {},
+        ...info.map((i) => ({ [i.childComponent.type.name]: i.value }))
+      ),
+    });
+    // if there's nothing to merge with, push write operation now to default location
+    if (!info[0].mergeWith) {
+      result.push({ source, output: getDefaultOutput(info[0].childComponent) });
+      return;
+    }
+    // if the merge parent has a child that can be merged with, push write
+    // operation now and mark it as merged in the state
+    if (childrenOfMergeComponent.has(info[0].childComponent)) {
+      const mergeChild = childrenOfMergeComponent.getSourceComponents(info[0].childComponent).first();
+      if (!mergeChild?.xml) {
+        throw messages.createError('error_parsing_xml', [
+          info[0].childComponent.fullName,
+          info[0].childComponent.type.name,
+        ]);
+      }
+      stateSetter(info[0].childComponent, { foundMerge: true });
+      result.push({ source, output: mergeChild.xml });
+      return;
+    }
+    // If we have a parent and the child is unaddressable without the parent, keep them
+    // together on the file system, meaning a new child will not be written to the default dir.
+    if (info[0].childComponent.type.unaddressableWithoutParent && typeof info[0].mergeWith?.xml === 'string') {
+      // get output path from parent
+      result.push({
+        source,
+        output: join(
+          dirname(info[0].mergeWith.xml),
+          `${info[0].entryName}.${ensureString(info[0].childComponent.type.suffix)}${META_XML_SUFFIX}`
+        ),
+      });
+      return;
+    }
+    // we didn't find a merge, so we add it to the state for later processing
+    stateSetter(info[0].childComponent, {
+      writeInfo: { source, output: getDefaultOutput(info[0].childComponent) },
+    });
+    return [];
+  });
+
+  return result;
+};
+
 /** returns a data structure with lots of context information in it */
 const toInfoContainer =
   (mergeWith: SourceComponent | undefined) =>

@@ -1,3 +1,12 @@
+## [12.6.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.6.0...12.6.1) (2024-09-01)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/kit from 3.2.1 to 3.2.2 ([#1409](https://github.com/forcedotcom/source-deploy-retrieve/issues/1409)) ([97e0a37](https://github.com/forcedotcom/source-deploy-retrieve/commit/97e0a37e58e6c5c29afcf9828f6f42118947357d))
+
+
+
 # [12.6.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.5.1...12.6.0) (2024-08-26)
 
 

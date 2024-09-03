@@ -738,7 +738,7 @@ const constructFullName = (registry: RegistryAccess, type: MetadataType, fullNam
   // Some InFolder types are different. e.g., Report/ReportFolder & Dashboard/DashboardFolder.
   // ReportFolders are deployed/retrieved as Reports. If a ReportFolder is being added append
   // a "/" so the metadata API can identify it as a folder.
-  ['DashboardFolder', 'ReportFolder'].includes(type.name) && !fullName.endsWith('/')
+  ['DashboardFolder', 'ReportFolder', 'EmailTemplateFolder'].includes(type.name) && !fullName.endsWith('/')
     ? `${fullName}/`
     : registry.getParentType(type.name)?.strategies?.recomposition === 'startEmpty' && fullName.includes('.')
     ? // they're reassembled like CustomLabels.MyLabel

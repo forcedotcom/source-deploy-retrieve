@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>Top_Level_Folder/</members>
+        <members>Top_Level_Folder</members>
         <members>Top_Level_Folder/Template_in_folder</members>
         <members>unfiled$public/Top_level_email</members>
         <name>EmailTemplate</name>

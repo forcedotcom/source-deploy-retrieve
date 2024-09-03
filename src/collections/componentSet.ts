@@ -735,9 +735,10 @@ const splitOnFirstDelimiter = (input: string): [string, string] => {
 };
 
 const constructFullName = (registry: RegistryAccess, type: MetadataType, fullName: string): string =>
-  // InFolder types are different (e.g., Report/ReportFolder). ReportFolders are deployed/retrieved as Reports.
-  // If a ReportFolder is being added append a "/" so the metadata API can identify it as a folder.
-  type.folderContentType && !fullName.endsWith('/')
+  // Some InFolder types are different. e.g., Report/ReportFolder & Dashboard/DashboardFolder.
+  // ReportFolders are deployed/retrieved as Reports. If a ReportFolder is being added append
+  // a "/" so the metadata API can identify it as a folder.
+  ['DashboardFolder', 'ReportFolder'].includes(type.name) && !fullName.endsWith('/')
     ? `${fullName}/`
     : registry.getParentType(type.name)?.strategies?.recomposition === 'startEmpty' && fullName.includes('.')
     ? // they're reassembled like CustomLabels.MyLabel

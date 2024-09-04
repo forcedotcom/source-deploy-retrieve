@@ -139,14 +139,7 @@ export type MetadataType = {
    * Configuration for resolving and converting components of the type.
    */
   strategies?: {
-    adapter:
-      | 'mixedContent'
-      | 'matchingContentFile'
-      | 'decomposed'
-      | 'digitalExperience'
-      | 'bundle'
-      | 'filePerType'
-      | 'default';
+    adapter: 'mixedContent' | 'matchingContentFile' | 'decomposed' | 'digitalExperience' | 'bundle' | 'default';
     transformer?: 'decomposed' | 'staticResource' | 'nonDecomposed' | 'standard' | 'decomposedLabels' | 'filePerType';
     decomposition?: 'topLevel' | 'folderPerType' | 'filePerType';
     recomposition?: 'startEmpty';

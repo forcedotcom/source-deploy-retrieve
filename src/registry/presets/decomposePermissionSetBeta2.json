@@ -188,7 +188,7 @@
       "name": "PermissionSet",
       "strategies": {
         "decomposition": "filePerType",
-        "adapter": "filePerType",
+        "adapter": "decomposed",
         "transformer": "filePerType"
       },
       "strictDirectoryName": true,

@@ -54,7 +54,8 @@
           "pageAccess": "pageaccess",
           "recordTypeVisibility": "recordtypevisibility",
           "tabSetting": "tabsetting",
-          "userPermission": "userpermission"
+          "userPermission": "userpermission",
+          "objectSettings": "objectsettings"
         },
         "types": {
           "applicationvisibility": {
@@ -112,6 +113,13 @@
             "name": "ExternalDataSourceAccess",
             "suffix": "externalDataSourceAccess",
             "uniqueIdElement": "externalDataSource"
+          },
+          "objectsettings": {
+            "id": "objectsettings",
+            "name": "ObjectSettings",
+            "directoryName": "objectSettings",
+            "suffix": "objectsettings",
+            "isAddressable": false
           },
           "fieldpermission": {
             "directoryName": "objectSettings",

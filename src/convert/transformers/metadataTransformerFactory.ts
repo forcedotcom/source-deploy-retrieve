@@ -14,7 +14,7 @@ import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 import { StaticResourceMetadataTransformer } from './staticResourceMetadataTransformer';
 import { NonDecomposedMetadataTransformer } from './nonDecomposedMetadataTransformer';
 import { LabelMetadataTransformer, LabelsMetadataTransformer } from './decomposeLabelsTransformer';
-import { FilePerChildTypeMetadataTransformer } from './filePerChildTypeMetadataTransformer';
+import { DecomposedPermissionSetTransformer } from './decomposedPermissionSetTransformer';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -43,7 +43,7 @@ export class MetadataTransformerFactory {
       case 'nonDecomposed':
         return new NonDecomposedMetadataTransformer(this.registry, this.context);
       case 'filePerType':
-        return new FilePerChildTypeMetadataTransformer(this.registry, this.context);
+        return new DecomposedPermissionSetTransformer(this.registry, this.context);
       case 'decomposedLabels':
         return component.type.name === 'CustomLabels'
           ? new LabelsMetadataTransformer(this.registry, this.context)

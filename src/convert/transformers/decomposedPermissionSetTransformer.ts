@@ -9,9 +9,10 @@ import { dirname, join } from 'node:path';
 import fs from 'node:fs';
 import { AnyJson, ensureString, JsonMap } from '@salesforce/ts-types';
 import { Messages } from '@salesforce/core';
+import type { PermissionSet } from '@jsforce/jsforce-node/lib/api/metadata/schema';
 import { calculateRelativePath } from '../../utils/path';
 import { ForceIgnore } from '../../resolve/forceIgnore';
-import { objectHasSomeRealValues } from '../../utils/decomposed';
+import { objectHasSomeRealValues, unwrapAndOmitNS } from '../../utils/decomposed';
 import type { MetadataComponent } from '../../resolve/types';
 import { type MetadataType } from '../../registry/types';
 import { SourceComponent } from '../../resolve/sourceComponent';
@@ -28,33 +29,29 @@ type StateSetter = (forComponent: MetadataComponent, props: Partial<Omit<Decompo
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
-export class FilePerChildTypeMetadataTransformer extends BaseMetadataTransformer {
+export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
-    if (component.parent) {
-      const { fullName: parentName } = component.parent;
-      const stateForParent = this.context.recomposition.transactionState.get(parentName) ?? {
-        component: component.parent,
-        children: new ComponentSet([], this.registry),
-      };
-      stateForParent.children?.add(component);
-      this.context.recomposition.transactionState.set(parentName, stateForParent);
-    } else {
-      const { fullName } = component;
-      const existing = this.context.recomposition.transactionState.get(fullName) ?? {
-        component,
-        children: new ComponentSet([], this.registry),
-      };
-      if (component.xml && existing.component && !existing.component.xml) {
-        // we've already found and created the parent of this component on L~38
-        // but now we have more information about the parent (xml) that we didn't have before, so add it
-        existing.component = component;
-      }
-      (component.getChildren() ?? []).map((child) => {
-        existing.children?.add(child);
-      });
-      this.context.recomposition.transactionState.set(fullName, existing);
-    }
+    // only need to do this once
+    this.context.decomposedPermissionSet.permissionSetType ??= this.registry.getTypeByName('PermissionSet');
+    const children = component.getChildren();
+
+    [
+      ...children,
+      // because the children have the same name as the parent
+      // TODO: this feels wrong, I'm not sure where the parent is really parsed
+      new SourceComponent({
+        name: children[0].name,
+        xml: children[0].xml!.replace(/(\w+\.\w+-meta\.xml)/gm, `${children[0].name}.permissionset-meta.xml`),
+        type: this.context.decomposedPermissionSet.permissionSetType,
+      }),
+    ].map((c) => {
+      this.context.decomposedPermissionSet.transactionState.permissionSetChildByPath.set(
+        `${c.xml!}:${c.fullName}`,
+        unwrapAndOmitNS('PermissionSet')(c.parseXmlSync()) as PermissionSet
+      );
+    });
+
     // noop since the finalizer will push the writes to the component writer
     return [];
   }

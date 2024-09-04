@@ -245,7 +245,10 @@ export class SourceComponent implements MetadataComponent {
     }
     const children = ensureArray(get(parentXml, `${this.parent.type.name}.${getXmlElement(this.type)}`)) as T[];
     const uniqueElement = this.type.uniqueIdElement;
-    const matched = uniqueElement ? children.find((c) => getString(c, uniqueElement) === this.name) : undefined;
+    const matched = uniqueElement
+      ? children.find((c) => getString(c, uniqueElement) === this.name) ??
+        (parentXml[this.parent.type.name as keyof T] as T)
+      : (parentXml[this.parent.type.name as keyof T] as T) ?? undefined;
     if (!matched) {
       throw new SfError(
         `Invalid XML tags or unable to find matching parent xml file for ${this.type.name} "${this.name}"`

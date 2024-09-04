@@ -151,9 +151,14 @@ const getChildWriteInfos =
   (stateSetter: StateSetter) =>
   (childrenOfMergeComponent: ComponentSet) =>
   ({ mergeWith, childComponent, value, entryName }: InfoContainer): WriteInfo[] => {
-    const source = objectToSource(childComponent.parent!.type.name)(childComponent.type.name)(
-      value as unknown as JsonMap[]
-    );
+    const childDirectories = childComponent.parent?.type.children?.directories as Record<string, string>;
+
+    // convert to the correct child's xml tag with capitalization
+    const source = objectToSource(childComponent.parent!.type.name)(
+      Object.entries(childDirectories)
+        .find((e) => e[1] === childComponent.type.name.toLowerCase())
+        ?.at(0) ?? ''
+    )(value as unknown as JsonMap[]);
     // if there's nothing to merge with, push write operation now to default location
     if (!mergeWith) {
       return [{ source, output: getDefaultOutput(childComponent) }];
@@ -320,7 +325,11 @@ const getAndCombineChildWriteInfos = (
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       [info[0].parentComponent.type.name]: Object.assign(
         {},
-        ...info.map((i) => ({ [i.childComponent.type.name]: i.value }))
+        ...info.map((i) => ({
+          [Object.entries(i.childComponent.parent?.type.children?.directories as Record<string, string>)
+            .find((e) => e[1] === i.childComponent.type.name.toLowerCase())
+            ?.at(0) ?? '']: i.value,
+        }))
       ),
     });
     // if there's nothing to merge with, push write operation now to default location

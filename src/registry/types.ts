@@ -140,8 +140,14 @@ export type MetadataType = {
    */
   strategies?: {
     adapter: 'mixedContent' | 'matchingContentFile' | 'decomposed' | 'digitalExperience' | 'bundle' | 'default';
-    transformer?: 'decomposed' | 'staticResource' | 'nonDecomposed' | 'standard' | 'decomposedLabels' | 'filePerType';
-    decomposition?: 'topLevel' | 'folderPerType' | 'filePerType';
+    transformer?:
+      | 'decomposed'
+      | 'staticResource'
+      | 'nonDecomposed'
+      | 'standard'
+      | 'decomposedLabels'
+      | 'decomposedPermissionSet';
+    decomposition?: 'topLevel' | 'folderPerType';
     recomposition?: 'startEmpty';
   };
 };

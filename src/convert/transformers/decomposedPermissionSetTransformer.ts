@@ -66,7 +66,14 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
 
     const childrenOfMergeComponent = new ComponentSet(mergeWith?.getChildren(), this.registry);
     const composedMetadata = await getComposedMetadataEntries(component);
-    const parentXmlObject = buildParentXml(component.type)(composedMetadata);
+    const parentXmlObject: XmlObj = {
+      [component.type.name]: {
+        [XML_NS_KEY]: XML_NS_URL,
+        ...Object.fromEntries(
+          composedMetadata.filter((v) => v.childTypeId === undefined).map(({ tagKey, tagValue }) => [tagKey, tagValue])
+        ),
+      },
+    };
     const stateSetter = setDecomposedState(this.context.decomposition.transactionState);
 
     const writeInfosForChildren = composedMetadata
@@ -75,7 +82,6 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
       .filter((c) => !c.childType.directoryName)
       .map((c) => toInfoContainer(mergeWith)(component)(c.childType)(c.tagValue as JsonMap))
       .filter(forceIgnoreAllowsComponent(forceIgnore))
-      .map(handleUnaddressableChildAlone(composedMetadata.length)(parentXmlObject)(stateSetter))
       .flatMap(getChildWriteInfos(stateSetter)(childrenOfMergeComponent));
 
     const toBeCombined = composedMetadata
@@ -83,8 +89,7 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
       .map(addChildType)
       .filter((c) => c.childType.directoryName)
       .map((c) => toInfoContainer(mergeWith)(component)(c.childType)(c.tagValue as JsonMap))
-      .filter(forceIgnoreAllowsComponent(forceIgnore))
-      .map(handleUnaddressableChildAlone(composedMetadata.length)(parentXmlObject)(stateSetter));
+      .filter(forceIgnoreAllowsComponent(forceIgnore));
     const combined = getAndCombineChildWriteInfos(toBeCombined, stateSetter, childrenOfMergeComponent);
     writeInfosForChildren.push(...combined);
 
@@ -96,56 +101,20 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
 
     // files that exist in FS (therefore, in mergeWith) but aren't in the component should be deleted by returning a writeInfo
     // only do this if all the children have isAddressable marked false
-    const writeInfosForMissingChildrenToDelete: WriteInfo[] =
-      mergeWith && allChildrenAreUnaddressable(component.type)
-        ? childrenOfMergeComponent
-            .getSourceComponents()
-            .toArray()
-            .filter(hasXml)
-            .filter((c) => !childDestinations.has(c.xml))
-            .map((c) => ({ shouldDelete: true, output: c.xml, fullName: c.fullName, type: c.type.name }))
-        : [];
+    const writeInfosForMissingChildrenToDelete: WriteInfo[] = mergeWith
+      ? childrenOfMergeComponent
+          .getSourceComponents()
+          .toArray()
+          .filter(hasXml)
+          .filter((c) => !childDestinations.has(c.xml))
+          .map((c) => ({ shouldDelete: true, output: c.xml, fullName: c.fullName, type: c.type.name }))
+      : [];
 
     return [...writeInfosForChildren, ...writeInfoForParent, ...writeInfosForMissingChildrenToDelete];
   }
 }
 
 const hasXml = (c: SourceComponent): c is SourceComponent & { xml: string } => typeof c.xml === 'string';
-
-const allChildrenAreUnaddressable = (type: MetadataType): boolean =>
-  Object.values(type.children?.types ?? {}).every(
-    // exclude the COFT (unaddressableWithoutParent) from being deleted because its absence *might* not mean it was deleted from the org
-    (c) => c.isAddressable === false && c.unaddressableWithoutParent !== true
-  );
-
-/**
- * composedMetadata is a representation of the parent's xml
- *
- * if there is no CustomObjectTranslation in the org, the composedMetadata will be 2 entries
- * the xml declaration, and a fields attribute, which points to the child CustomObjectFieldTranslation
- *
- * because CustomObjectFieldTranslation is the only metadata type with 'requiresParent' = true we can
- * calculate if a CustomObjectTranslation was retrieved from the org (composedMetadata.length > 2), or,
- * if we'll have to write an empty CustomObjectTranslation file (composedMetadata.length <=2).
- *
- * CustomObjectFieldTranslations are only addressable through their parent, and require a
- * CustomObjectTranslation file to be present
- */
-const handleUnaddressableChildAlone =
-  (composedMetadataLength: number) =>
-  (parentXmlObject: XmlObj) =>
-  (stateSetter: StateSetter) =>
-  (v: InfoContainer): InfoContainer => {
-    if (v.childComponent.type.unaddressableWithoutParent && composedMetadataLength <= 2) {
-      stateSetter(v.childComponent, {
-        writeInfo: {
-          source: new JsToXml(parentXmlObject),
-          output: getDefaultOutput(v.parentComponent),
-        },
-      });
-    }
-    return v;
-  };
 
 const getChildWriteInfos =
   (stateSetter: StateSetter) =>
@@ -154,11 +123,13 @@ const getChildWriteInfos =
     const childDirectories = childComponent.parent?.type.children?.directories as Record<string, string>;
 
     // convert to the correct child's xml tag with capitalization
-    const source = objectToSource(childComponent.parent!.type.name)(
-      Object.entries(childDirectories)
-        .find((e) => e[1] === childComponent.type.name.toLowerCase())
-        ?.at(0) ?? ''
-    )(value as unknown as JsonMap[]);
+    const source = new JsToXml({
+      [childComponent.parent!.type.name]: {
+        [Object.entries(childDirectories)
+          .find((e) => e[1] === childComponent.type.name.toLowerCase())
+          ?.at(0) ?? '']: value,
+      },
+    });
     // if there's nothing to merge with, push write operation now to default location
     if (!mergeWith) {
       return [{ source, output: getDefaultOutput(childComponent) }];
@@ -273,7 +244,7 @@ const getDefaultOutput = (component: MetadataComponent): SourcePath => {
   // there could be a '.' inside the child name (ex: PermissionSet.FieldPermissions.field uses Obj__c.Field__c)
   const childName = tail.length ? tail.join('.') : undefined;
   const output = join(
-    parent?.type.strategies?.decomposition === 'filePerType' ? type.directoryName : '',
+    parent?.type.strategies?.decomposition ? type.directoryName : '',
     `${childName ?? baseName}.${ensureString(component.type.suffix)}${META_XML_SUFFIX}`
   );
   // const output = join(type.directoryName, `${baseName}.${ensureString(component.type.suffix)}${META_XML_SUFFIX}`);
@@ -400,25 +371,6 @@ const forceIgnoreAllowsComponent =
   (forceIgnore: ForceIgnore) =>
   (ic: InfoContainer): boolean =>
     forceIgnore.accepts(getDefaultOutput(ic.childComponent));
-
-/** wrap some xml in the Metadata type and add the NS stuff */
-const objectToSource =
-  (parentType: string) =>
-  (childTypeName: string) =>
-  (obj: JsonMap[]): JsToXml =>
-    new JsToXml({ [parentType]: { [childTypeName]: obj } });
-
-/** filter out the children and create the remaining parentXml */
-const buildParentXml =
-  (parentType: MetadataType) =>
-  (c: ComposedMetadata[]): XmlObj => ({
-    [parentType.name]: {
-      [XML_NS_KEY]: XML_NS_URL,
-      ...Object.fromEntries(
-        c.filter((v) => v.childTypeId === undefined).map(({ tagKey, tagValue }) => [tagKey, tagValue])
-      ),
-    },
-  });
 
 const getOutputFile = (component: SourceComponent, mergeWith?: SourceComponent): string =>
   mergeWith?.xml ?? getDefaultOutput(component);

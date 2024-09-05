@@ -118,7 +118,7 @@
             "id": "objectsettings",
             "name": "ObjectSettings",
             "directoryName": "objectSettings",
-            "suffix": "objectsettings",
+            "suffix": "objectSettings",
             "isAddressable": false
           },
           "fieldpermission": {
@@ -187,9 +187,9 @@
       "inFolder": false,
       "name": "PermissionSet",
       "strategies": {
-        "decomposition": "filePerType",
+        "decomposition": "topLevel",
         "adapter": "decomposed",
-        "transformer": "filePerType"
+        "transformer": "decomposedPermissionSet"
       },
       "strictDirectoryName": true,
       "suffix": "permissionset",

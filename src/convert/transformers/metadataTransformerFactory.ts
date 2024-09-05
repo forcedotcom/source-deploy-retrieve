@@ -42,7 +42,7 @@ export class MetadataTransformerFactory {
         return new StaticResourceMetadataTransformer(this.registry, this.context);
       case 'nonDecomposed':
         return new NonDecomposedMetadataTransformer(this.registry, this.context);
-      case 'filePerType':
+      case 'decomposedPermissionSet':
         return new DecomposedPermissionSetTransformer(this.registry, this.context);
       case 'decomposedLabels':
         return component.type.name === 'CustomLabels'

@@ -15,13 +15,13 @@ import { ConvertTransactionFinalizer } from './transactionFinalizer';
 
 type PermissionSetState = {
   /*
-   * Incoming child xml (CustomLabel) keyed by label fullname
+   * Incoming child xml (children of PS) keyed by label name
    */
   permissionSetChildByPath: Map<string, PermissionSet>;
 };
 
 /**
- * Merges child components that share the same parent in the conversion pipeline
+ * Merges child components that share the same object in the conversion pipeline
  * into a single file.
  *
  * Inserts unclaimed child components into the parent that belongs to the default package
@@ -66,15 +66,12 @@ export class DecomposedPermissionSetFinalizer extends ConvertTransactionFinalize
 /** Return a json object that's built up from the mergeMap children */
 const generateXml = (children: Map<string, PermissionSet>): JsonMap => ({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  ['PermissionSet']: {
+  PermissionSet: {
     [XML_NS_KEY]: XML_NS_URL,
-    // for CustomLabels, that's `labels`
-    ...Object.assign({}, ...children.values()),
-    // labels: Array.from(children.values()).filter(customLabelHasFullName).sort(sortLabelsByFullName),
+    ...Object.assign(
+      {},
+      // sort the children by fullName
+      ...Object.values(Array.from(children.values()).sort((a, b) => ((a.fullName ?? '') > (b.fullName ?? '') ? -1 : 1)))
+    ),
   },
 });
-
-// type CustomLabelWithFullName = PermissionSet & { fullName: string };
-//
-// const sortLabelsByFullName = (a: CustomLabelWithFullName, b: CustomLabelWithFullName): number =>
-//   a.fullName.localeCompare(b.fullName);

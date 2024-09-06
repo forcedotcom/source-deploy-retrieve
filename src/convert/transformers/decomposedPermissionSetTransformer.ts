@@ -6,13 +6,11 @@
  */
 
 import { dirname, join } from 'node:path';
-import fs from 'node:fs';
 import { AnyJson, ensureString, JsonMap } from '@salesforce/ts-types';
 import { Messages } from '@salesforce/core';
 import type { PermissionSet } from '@jsforce/jsforce-node/lib/api/metadata/schema';
 import { calculateRelativePath } from '../../utils/path';
-import { ForceIgnore } from '../../resolve/forceIgnore';
-import { objectHasSomeRealValues, unwrapAndOmitNS } from '../../utils/decomposed';
+import { unwrapAndOmitNS } from '../../utils/decomposed';
 import type { MetadataComponent } from '../../resolve/types';
 import { type MetadataType } from '../../registry/types';
 import { SourceComponent } from '../../resolve/sourceComponent';
@@ -21,8 +19,20 @@ import type { ToSourceFormatInput, WriteInfo, XmlObj } from '../types';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../common/constants';
 import type { SourcePath } from '../../common/types';
 import { ComponentSet } from '../../collections/componentSet';
-import type { DecompositionState, DecompositionStateValue } from '../convertContext/decompositionFinalizer';
+import type { DecompositionStateValue } from '../convertContext/decompositionFinalizer';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
+import {
+  addChildType,
+  ComposedMetadata,
+  forceIgnoreAllowsComponent,
+  getOutputFile,
+  getWriteInfosFromMerge,
+  getWriteInfosWithoutMerge,
+  hasChildTypeId,
+  InfoContainer,
+  setDecomposedState,
+  tagToChildTypeId,
+} from './decomposedMetadataTransformer';
 
 type StateSetter = (forComponent: MetadataComponent, props: Partial<Omit<DecompositionStateValue, 'origin'>>) => void;
 
@@ -41,8 +51,8 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
       // TODO: this feels wrong, I'm not sure why the parent (.permissionset) isn't here child.getChildren() returns children
       new SourceComponent({
         // because the children have the same name as the parent
-        name: children[0].name,
-        xml: children[0].xml!.replace(/(\w+\.\w+-meta\.xml)/gm, `${children[0].name}.permissionset-meta.xml`),
+        name: children[0]?.name,
+        xml: children[0]?.xml!.replace(/(\w+\.\w+-meta\.xml)/gm, `${children[0].name}.permissionset-meta.xml`),
         type: this.context.decomposedPermissionSet.permissionSetType,
       }),
     ].map((c) => {
@@ -84,9 +94,11 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
 
     const writeInfosForChildren = getAndCombineChildWriteInfos(
       [
-        // children whose type don't have a directory assigned will be written to the top level, separate them into individual WriteInfo[][]
+        // children whose type don't have a directory assigned will be written to the top level, separate them into individual WriteInfo[] with only one entry
+        // a [WriteInfo] with one entry, will result in one file
         ...preparedMetadata.filter((c) => !c.childComponent.type.directoryName).map((c) => [c]),
         // children whose type have a directory name will be grouped accordingly, bundle these together as a WriteInfo[][] with length > 1
+        // a [WriteInfo, WriteInfo, ...] will be combined into a [WriteInfo] with combined contents
         preparedMetadata.filter((c) => c.childComponent.type.directoryName),
       ],
       stateSetter,
@@ -116,66 +128,6 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
 
 const hasXml = (c: SourceComponent): c is SourceComponent & { xml: string } => typeof c.xml === 'string';
 
-const getWriteInfosFromMerge =
-  (mergeWith: SourceComponent) =>
-  (stateSetter: StateSetter) =>
-  (parentXmlObject: XmlObj) =>
-  (parentComponent: SourceComponent): WriteInfo[] => {
-    const writeInfo = { source: new JsToXml(parentXmlObject), output: getOutputFile(parentComponent, mergeWith) };
-    const parentHasRealValues = objectHasSomeRealValues(parentComponent.type)(parentXmlObject);
-
-    if (mergeWith?.xml) {
-      // mark the component as found
-      stateSetter(parentComponent, { foundMerge: true });
-      return objectHasSomeRealValues(parentComponent.type)(mergeWith.parseXmlSync()) && !parentHasRealValues
-        ? [] // the target file has values but this process doesn't, so we don't want to overwrite it
-        : [writeInfo];
-    }
-    if (objectHasSomeRealValues(parentComponent.type)(parentXmlObject)) {
-      // set the state but don't return any writeInfo to avoid writing "empty" (ns-only) parent files
-      stateSetter(parentComponent, { writeInfo });
-    }
-    return [];
-  };
-
-const getWriteInfosWithoutMerge =
-  (defaultDirectory: string | undefined) =>
-  (parentXmlObject: XmlObj) =>
-  (component: SourceComponent): WriteInfo[] => {
-    const output = join(defaultDirectory ?? '', getOutputFile(component));
-    // if the parent would be empty
-    // and it exists
-    // and every child is addressable
-    // don't overwrite the existing parent
-    if (
-      !objectHasSomeRealValues(component.type)(parentXmlObject) &&
-      fs.existsSync(output) &&
-      Object.values(component.type.children ?? {}).every((child) => !child.isAddressable)
-    ) {
-      return [];
-    } else {
-      return [{ source: new JsToXml(parentXmlObject), output }];
-    }
-  };
-
-/**
- * Helper for setting the decomposed transaction state
- *
- * @param state
- */
-const setDecomposedState =
-  (state: DecompositionState) =>
-  (forComponent: MetadataComponent, props: Partial<Omit<DecompositionStateValue, 'origin'>>): void => {
-    const key = getKey(forComponent);
-    state.set(key, {
-      // origin gets set the first time
-      ...(state.get(key) ?? { origin: forComponent.parent ?? forComponent }),
-      ...(props ?? {}),
-    });
-  };
-
-const getKey = (component: MetadataComponent): string => `${component.type.name}#${component.fullName}`;
-
 /** for a component, parse the xml and create an json object with contents, child typeId, etc */
 const getComposedMetadataEntries = async (component: SourceComponent): Promise<ComposedMetadata[]> =>
   // composedMetadata might be undefined if you call toSourceFormat() from a non-source-backed Component
@@ -201,40 +153,13 @@ const getDefaultOutput = (component: MetadataComponent): SourcePath => {
   return join(calculateRelativePath('source')({ self: parent?.type ?? type })(fullName)(baseName), output);
 };
 
-/** use the given xmlElementName name if it exists, otherwise use see if one matches the directories */
-const tagToChildTypeId = ({ tagKey, type }: { tagKey: string; type: MetadataType }): string | undefined =>
-  Object.values(type.children?.types ?? {}).find((c) => c.xmlElementName === tagKey)?.id ??
-  type.children?.directories?.[tagKey];
-
-const hasChildTypeId = (cm: ComposedMetadata): cm is Required<ComposedMetadata> => !!cm.childTypeId;
-
-const addChildType = (cm: Required<ComposedMetadata>): ComposedMetadataWithChildType => {
-  const childType = cm.parentType.children?.types[cm.childTypeId];
-  if (childType) {
-    return { ...cm, childType };
-  }
-  throw messages.createError('error_missing_child_type_definition', [cm.parentType.name, cm.childTypeId]);
-};
-
-type ComposedMetadata = { tagKey: string; tagValue: AnyJson; parentType: MetadataType; childTypeId?: string };
-type ComposedMetadataWithChildType = ComposedMetadata & { childType: MetadataType };
-
-type InfoContainer = {
-  entryName: string;
-  childComponent: MetadataComponent;
-  /** the parsed xml */
-  value: JsonMap;
-  parentComponent: SourceComponent;
-  mergeWith?: SourceComponent;
-};
-
 const getAndCombineChildWriteInfos = (
   containers: InfoContainer[][],
   stateSetter: StateSetter,
   childrenOfMergeComponent: ComponentSet
 ): WriteInfo[] => {
   // aggregator write info, will be returned at the end
-  const agg: WriteInfo[] = [];
+  const writeInfos: WriteInfo[] = [];
   containers.forEach((c) => {
     // we have multiple InfoContainers, build a map of output file => file content
     // this is how we'll combine multiple children into one file
@@ -266,7 +191,7 @@ const getAndCombineChildWriteInfos = (
       // if there's nothing to merge with, push write operation now to default location
       const childInfo = info[0].childComponent;
       if (!info[0].mergeWith) {
-        agg.push({ source, output: getDefaultOutput(childInfo) });
+        writeInfos.push({ source, output: getDefaultOutput(childInfo) });
         return;
       }
       // if the merge parent has a child that can be merged with, push write
@@ -277,14 +202,14 @@ const getAndCombineChildWriteInfos = (
           throw messages.createError('error_parsing_xml', [childInfo.fullName, childInfo.type.name]);
         }
         stateSetter(childInfo, { foundMerge: true });
-        agg.push({ source, output: mergeChild.xml });
+        writeInfos.push({ source, output: mergeChild.xml });
         return;
       }
       // If we have a parent and the child is unaddressable without the parent, keep them
       // together on the file system, meaning a new child will not be written to the default dir.
       if (childInfo.type.unaddressableWithoutParent && typeof info[0].mergeWith?.xml === 'string') {
         // get output path from parent
-        agg.push({
+        writeInfos.push({
           source,
           output: join(
             dirname(info[0].mergeWith.xml),
@@ -300,7 +225,7 @@ const getAndCombineChildWriteInfos = (
       return [];
     });
   });
-  return agg;
+  return writeInfos;
 };
 
 /** returns a data structure with lots of context information in it */
@@ -324,11 +249,3 @@ const toInfoContainer =
       mergeWith,
     };
   };
-
-const forceIgnoreAllowsComponent =
-  (forceIgnore: ForceIgnore) =>
-  (ic: InfoContainer): boolean =>
-    forceIgnore.accepts(getDefaultOutput(ic.childComponent));
-
-const getOutputFile = (component: SourceComponent, mergeWith?: SourceComponent): string =>
-  mergeWith?.xml ?? getDefaultOutput(component);

@@ -18,6 +18,7 @@ import * as nonDecomposed from './customlabelsConstant';
 import * as nestedTypes from './territoryConstant';
 import * as lwcBundle from './lwcBundleConstant';
 import * as digitalExperienceBundle from './digitalExperienceBundleConstants';
+import * as decomposedPermissionSet from './decomposedPermissionSetConstant';
 
 export {
   xmlInFolder,
@@ -34,4 +35,5 @@ export {
   lwcBundle,
   digitalExperienceBundle,
   experiencePropertyTypeContentSingleFile,
+  decomposedPermissionSet,
 };

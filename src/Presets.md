@@ -20,7 +20,7 @@ source format
 Each child of PermissionSet that is a repeated xml element (ex: ClassAccesses) is saved as a separate file
 Simple fields (ex: `description`, `userLicense`) remain in the top-level `myPS.permissionset-meta.xml`
 
-FieldPermissions for all objects are in the same folder (they're not in sub-folders by object). This is intentional--I wanted subfolders but couldn't get it to work well.
+FieldPermissions for all objects are in the same folder (they're not in sub-folders by object). This is intentional
 
 ## `decomposePermissionSetBeta2`
 
@@ -52,7 +52,7 @@ source format
 
 Simple fields (ex: `description`, `userLicense`) remain in the top-level `PO_Manager.permissionset-meta.xml`
 
-FieldPermissions for all objects are in the same folder (they're not in sub-folders by object). This is intentional--I wanted subfolders but couldn't get it to work well.
+FieldPermissions for all objects are in the same folder (they're not in sub-folders by object). This is intentional
 
 ## `decomposeSharingRulesBeta`
 

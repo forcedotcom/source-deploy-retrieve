@@ -186,7 +186,7 @@ const getChildWriteInfos =
     return [];
   };
 
-const getWriteInfosFromMerge =
+export const getWriteInfosFromMerge =
   (mergeWith: SourceComponent) =>
   (stateSetter: StateSetter) =>
   (parentXmlObject: XmlObj) =>
@@ -208,7 +208,7 @@ const getWriteInfosFromMerge =
     return [];
   };
 
-const getWriteInfosWithoutMerge =
+export const getWriteInfosWithoutMerge =
   (defaultDirectory: string | undefined) =>
   (parentXmlObject: XmlObj) =>
   (component: SourceComponent): WriteInfo[] => {
@@ -233,7 +233,7 @@ const getWriteInfosWithoutMerge =
  *
  * @param state
  */
-const setDecomposedState =
+export const setDecomposedState =
   (state: DecompositionState) =>
   (forComponent: MetadataComponent, props: Partial<Omit<DecompositionStateValue, 'origin'>>): void => {
     const key = getKey(forComponent);
@@ -272,13 +272,13 @@ const getDefaultOutput = (component: MetadataComponent): SourcePath => {
 };
 
 /** use the given xmlElementName name if it exists, otherwise use see if one matches the directories */
-const tagToChildTypeId = ({ tagKey, type }: { tagKey: string; type: MetadataType }): string | undefined =>
+export const tagToChildTypeId = ({ tagKey, type }: { tagKey: string; type: MetadataType }): string | undefined =>
   Object.values(type.children?.types ?? {}).find((c) => c.xmlElementName === tagKey)?.id ??
   type.children?.directories?.[tagKey];
 
-const hasChildTypeId = (cm: ComposedMetadata): cm is Required<ComposedMetadata> => !!cm.childTypeId;
+export const hasChildTypeId = (cm: ComposedMetadata): cm is Required<ComposedMetadata> => !!cm.childTypeId;
 
-const addChildType = (cm: Required<ComposedMetadata>): ComposedMetadataWithChildType => {
+export const addChildType = (cm: Required<ComposedMetadata>): ComposedMetadataWithChildType => {
   const childType = cm.parentType.children?.types[cm.childTypeId];
   if (childType) {
     return { ...cm, childType };
@@ -286,10 +286,10 @@ const addChildType = (cm: Required<ComposedMetadata>): ComposedMetadataWithChild
   throw messages.createError('error_missing_child_type_definition', [cm.parentType.name, cm.childTypeId]);
 };
 
-type ComposedMetadata = { tagKey: string; tagValue: AnyJson; parentType: MetadataType; childTypeId?: string };
-type ComposedMetadataWithChildType = ComposedMetadata & { childType: MetadataType };
+export type ComposedMetadata = { tagKey: string; tagValue: AnyJson; parentType: MetadataType; childTypeId?: string };
+export type ComposedMetadataWithChildType = ComposedMetadata & { childType: MetadataType };
 
-type InfoContainer = {
+export type InfoContainer = {
   entryName: string;
   childComponent: MetadataComponent;
   /** the parsed xml */
@@ -318,7 +318,7 @@ const toInfoContainer =
     };
   };
 
-const forceIgnoreAllowsComponent =
+export const forceIgnoreAllowsComponent =
   (forceIgnore: ForceIgnore) =>
   (ic: InfoContainer): boolean =>
     forceIgnore.accepts(getDefaultOutput(ic.childComponent));
@@ -341,5 +341,5 @@ const buildParentXml =
     },
   });
 
-const getOutputFile = (component: SourceComponent, mergeWith?: SourceComponent): string =>
+export const getOutputFile = (component: SourceComponent, mergeWith?: SourceComponent): string =>
   mergeWith?.xml ?? getDefaultOutput(component);

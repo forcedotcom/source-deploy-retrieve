@@ -116,7 +116,7 @@ describe('e2e replacements test', () => {
       if (image && !image.dir) {
         const content = await image.async('nodebuffer');
         // The file size would be much larger if it was corrupted via the string replacement method
-        expect(content.byteLength).to.equal(1562121);
+        expect(content.byteLength).to.equal(1_562_121);
       }
     });
   });

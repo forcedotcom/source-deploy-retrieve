@@ -71,8 +71,8 @@ export class ManifestResolver {
         const type = this.registry.getTypeByName(typeMembers.name);
         const parentType = type.folderType ? this.registry.getTypeByName(type.folderType) : undefined;
         return ensureArray(typeMembers.members).map((fullName, _index, members) => ({
-          fullName,
-          type: parentType && isMemberNestedInFolder(fullName, type, parentType, members) ? parentType : type,
+          fullName: resolveFullName(fullName, parentType),
+          type: !parentType ? type : resolveType(fullName, type, members, parentType),
         }));
       });
 
@@ -113,6 +113,33 @@ const getValidatedType =
     return typeMembers;
   };
 
+// Mostly for parents of InFolder types to strip off trailing "/" characters
+// in fullNames. Otherwise just returns the fullName.
+const resolveFullName = (fullName: string, parentType?: MetadataType): string =>
+  parentType?.folderContentType && fullName.endsWith('/') ? fullName.substring(0, fullName.length - 1) : fullName;
+
+// Resolve the correct metadata type from metadata entries in a manifest.
+// Parents of InFolder types can be detected by looking for a trailing "/"
+// character.
+const resolveType = (
+  fullName: string,
+  type: MetadataType,
+  members: string[],
+  parentType?: MetadataType
+): MetadataType => {
+  // Quick short-circuit for non-parent types and non-folderTypes
+  if (!parentType || !type.folderType) {
+    return type;
+  }
+
+  // Detect parents of InFolder types by looking for a trailing slash on InFolder types
+  if (parentType?.folderContentType && fullName.endsWith('/')) {
+    return parentType;
+  }
+
+  return isMemberNestedInFolder(fullName, type, parentType, members) ? parentType : type;
+};
+
 // Use the folderType instead of the type from the manifest when:
 //  1. InFolder types: (report, dashboard, emailTemplate, document)
 //    1a. type.inFolder === true (from metadataRegistry.json) AND
@@ -129,11 +156,6 @@ const isMemberNestedInFolder = (
   parentType: MetadataType,
   members: string[]
 ): boolean => {
-  // Quick short-circuit for non-folderTypes
-  if (!type.folderType) {
-    return false;
-  }
-
   const isInFolderType = type.inFolder;
   const isNestedInFolder = !fullName.includes('/') || members.some((m) => m.includes(`${fullName}/`));
   const isNonMatchingFolder = parentType && parentType.folderType !== parentType.id;

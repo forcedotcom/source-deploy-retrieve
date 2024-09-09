@@ -195,6 +195,64 @@ describe('ManifestResolver', () => {
       expect(result.components).to.deep.equal(expected);
     });
 
+    it('should resolve nested InFolder types with trailing slashes', async () => {
+      const registry = new RegistryAccess();
+      const reportType = registry.getTypeByName('report');
+      const reportFolderType = registry.getTypeByName('reportFolder');
+      const folderManifest: VirtualFile = {
+        name: 'reports-package.xml',
+        data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+      <Package xmlns="http://soap.sforce.com/2006/04/metadata">
+        <types>
+          <members>foo/</members>
+          <members>foo/subfoo/</members>
+          <members>foo/subfoo/MySubFooReport1</members>
+          <members>foo/subfoo/MySubFooReport2</members>
+          <members>bar/MyBarReport1</members>
+          <members>bar/MyBarReport2</members>
+          <name>Report</name>
+        </types>
+        <version>52.0</version>
+      </Package>\n`),
+      };
+      const tree = new VirtualTreeContainer([
+        {
+          dirPath: '.',
+          children: [folderManifest],
+        },
+      ]);
+      const resolver = new ManifestResolver(tree);
+      const result = await resolver.resolve(folderManifest.name);
+      const expected: MetadataComponent[] = [
+        {
+          fullName: 'foo',
+          type: reportFolderType,
+        },
+        {
+          fullName: 'foo/subfoo',
+          type: reportFolderType,
+        },
+        {
+          fullName: 'foo/subfoo/MySubFooReport1',
+          type: reportType,
+        },
+        {
+          fullName: 'foo/subfoo/MySubFooReport2',
+          type: reportType,
+        },
+        {
+          fullName: 'bar/MyBarReport1',
+          type: reportType,
+        },
+        {
+          fullName: 'bar/MyBarReport2',
+          type: reportType,
+        },
+      ];
+
+      expect(result.components).to.deep.equal(expected);
+    });
+
     it('should resolve folderType types (Territory2*)', async () => {
       const registry = new RegistryAccess();
       const t2ModelType = registry.getTypeByName('Territory2Model');

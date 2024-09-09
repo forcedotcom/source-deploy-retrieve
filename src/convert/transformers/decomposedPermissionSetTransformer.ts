@@ -105,7 +105,7 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
       .map((c) => toInfoContainer(mergeWith)(component)(c.childType)(c.tagValue as JsonMap))
       .filter(forceIgnoreAllowsComponent(forceIgnore));
 
-    const writeInfosForChildren = getAndCombineChildWriteInfos(
+    const writeInfosForChildren = combineChildWriteInfos(
       [
         // children whose type don't have a directory assigned will be written to the top level, separate them into individual WriteInfo[] with only one entry
         // a [WriteInfo] with one entry, will result in one file
@@ -166,18 +166,32 @@ const getDefaultOutput = (component: MetadataComponent): SourcePath => {
   return join(calculateRelativePath('source')({ self: parent?.type ?? type })(fullName)(baseName), output);
 };
 
-const getAndCombineChildWriteInfos = (
+const buildSource = (parentType: string, info: InfoContainer[], childDirectories: Array<[string, string]>): JsToXml =>
+  new JsToXml({
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    [parentType]: Object.assign(
+      {},
+      ...info.map((i) => ({
+        [childDirectories
+          // the child tag values correspond to the parents directories, not the names , classAccess => <classAccesses>
+          // find the value that matches, and use the key e[0]=value
+          .find((e) => e[1] === i.childComponent.type.name.toLowerCase())
+          ?.at(0) ?? '']: i.value,
+      }))
+    ),
+  });
+const combineChildWriteInfos = (
   containers: InfoContainer[][],
   stateSetter: StateSetter,
   childrenOfMergeComponent: ComponentSet
 ): WriteInfo[] => {
   // aggregator write info, will be returned at the end
   const writeInfos: WriteInfo[] = [];
-  containers.forEach((c) => {
+  containers.forEach((infoContainers) => {
     // we have multiple InfoContainers, build a map of output file => file content
     // this is how we'll combine multiple children into one file
     const nameWriteInfoMap = new Map<string, InfoContainer[]>();
-    c.map((info) =>
+    infoContainers.map((info) =>
       nameWriteInfoMap.has(info.entryName)
         ? nameWriteInfoMap.get(info.entryName)!.push(info)
         : nameWriteInfoMap.set(info.entryName, [info])
@@ -188,19 +202,7 @@ const getAndCombineChildWriteInfos = (
       const childDirectories = Object.entries(
         info[0].parentComponent.type.children?.directories as Record<string, string>
       );
-      const source = new JsToXml({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [info[0].parentComponent.type.name]: Object.assign(
-          {},
-          ...info.map((i) => ({
-            [childDirectories
-              // the child tag values correspond to the parents directories, not the names , classAccess => <classAccesses>
-              // find the value that matches, and use the key e[0]=value
-              .find((e) => e[1] === i.childComponent.type.name.toLowerCase())
-              ?.at(0) ?? '']: i.value,
-          }))
-        ),
-      });
+      const source = buildSource(info[0].parentComponent.type.name, info, childDirectories);
       // if there's nothing to merge with, push write operation now to default location
       const childInfo = info[0].childComponent;
       if (!info[0].mergeWith) {

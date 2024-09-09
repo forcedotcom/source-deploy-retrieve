@@ -7,6 +7,7 @@
 import { join } from 'node:path';
 import { ensure, JsonMap } from '@salesforce/ts-types';
 import type { PermissionSet } from '@jsforce/jsforce-node/lib/api/metadata/schema';
+import { SfError } from '@salesforce/core';
 import { MetadataType } from '../../registry';
 import { XML_NS_KEY, XML_NS_URL } from '../../common/constants';
 import { JsToXml } from '../streams';
@@ -21,7 +22,7 @@ type PermissionSetState = {
 };
 
 /**
- * Merges child components that share the same object in the conversion pipeline
+ * Merges child components that share the same related object (/objectSettings/<object name>.objectSettings) in the conversion pipeline
  * into a single file.
  *
  * Inserts unclaimed child components into the parent that belongs to the default package
@@ -41,7 +42,7 @@ export class DecomposedPermissionSetFinalizer extends ConvertTransactionFinalize
       return [];
     }
 
-    const fullName = Array.from(this.transactionState.permissionSetChildByPath.keys())[0].split(':')[1].split('.')[0];
+    const fullName = this.getName();
 
     return [
       {
@@ -60,6 +61,22 @@ export class DecomposedPermissionSetFinalizer extends ConvertTransactionFinalize
         ],
       },
     ];
+  }
+
+  private getName(): string {
+    let name: string;
+    try {
+      name = Array.from(this.transactionState.permissionSetChildByPath.keys())[0].split(':')[1].split('.')[0];
+    } catch (e) {
+      throw SfError.create({
+        cause: e,
+        message: `unable to parse name between : and . in ${
+          Array.from(this.transactionState.permissionSetChildByPath.keys())[0] ??
+          this.transactionState.permissionSetChildByPath.keys()
+        }`,
+      });
+    }
+    return name;
   }
 }
 

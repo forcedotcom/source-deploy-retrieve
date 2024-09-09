@@ -23,6 +23,7 @@ import type { SourcePath } from '../../common/types';
 import { ComponentSet } from '../../collections/componentSet';
 import type { DecompositionState, DecompositionStateValue } from '../convertContext/decompositionFinalizer';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
+import type { ComposedMetadata, ComposedMetadataWithChildType, InfoContainer } from './types';
 
 type StateSetter = (forComponent: MetadataComponent, props: Partial<Omit<DecompositionStateValue, 'origin'>>) => void;
 
@@ -284,18 +285,6 @@ export const addChildType = (cm: Required<ComposedMetadata>): ComposedMetadataWi
     return { ...cm, childType };
   }
   throw messages.createError('error_missing_child_type_definition', [cm.parentType.name, cm.childTypeId]);
-};
-
-export type ComposedMetadata = { tagKey: string; tagValue: AnyJson; parentType: MetadataType; childTypeId?: string };
-export type ComposedMetadataWithChildType = ComposedMetadata & { childType: MetadataType };
-
-export type InfoContainer = {
-  entryName: string;
-  childComponent: MetadataComponent;
-  /** the parsed xml */
-  value: JsonMap;
-  parentComponent: SourceComponent;
-  mergeWith?: SourceComponent;
 };
 
 /** returns an data structure with lots of context information in it */

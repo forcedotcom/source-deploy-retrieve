@@ -23,16 +23,15 @@ import type { DecompositionStateValue } from '../convertContext/decompositionFin
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import {
   addChildType,
-  ComposedMetadata,
   forceIgnoreAllowsComponent,
   getOutputFile,
   getWriteInfosFromMerge,
   getWriteInfosWithoutMerge,
   hasChildTypeId,
-  InfoContainer,
   setDecomposedState,
   tagToChildTypeId,
 } from './decomposedMetadataTransformer';
+import type { InfoContainer, ComposedMetadata } from './types';
 
 type StateSetter = (forComponent: MetadataComponent, props: Partial<Omit<DecompositionStateValue, 'origin'>>) => void;
 
@@ -40,6 +39,12 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer {
+  /**
+   * Combines a decomposed Permission Set into a singular .permissonset metadata-formatted file
+   *
+   * @param {SourceComponent} component - either the parent or child of a decomposed permission set to be combined with
+   * @returns {Promise<WriteInfo[]>} will be an array with one WriteInfo in it, because they're ending in one file
+   */
   // eslint-disable-next-line @typescript-eslint/require-await
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     // only need to do this once
@@ -65,6 +70,14 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
     // noop since the finalizer will push the writes to the component writer
     return [];
   }
+
+  /**
+   * will decomopse a .permissionset into a directory containing files, and an 'objectSettings' folder for object-specific settings
+   *
+   * @param {SourceComponent} component A SourceComponent representing a metadata-formatted permission set
+   * @param {SourceComponent | undefined} mergeWith any existing source-formatted permission sets to be merged with, think existing source merging with new information from a retrieve
+   * @returns {Promise<WriteInfo[]>} Will contain file content information, and file paths
+   */
   public async toSourceFormat({ component, mergeWith }: ToSourceFormatInput): Promise<WriteInfo[]> {
     const forceIgnore = component.getForceIgnore();
 
@@ -228,7 +241,7 @@ const getAndCombineChildWriteInfos = (
   return writeInfos;
 };
 
-/** returns a data structure with lots of context information in it */
+/** returns a data structure with lots of context information in it - this is also where the name of the file/component is calculated */
 const toInfoContainer =
   (mergeWith: SourceComponent | undefined) =>
   (parent: SourceComponent) =>

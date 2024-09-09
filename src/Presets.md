@@ -52,7 +52,9 @@ source format
 
 Simple fields (ex: `description`, `userLicense`) remain in the top-level `PO_Manager.permissionset-meta.xml`
 
-FieldPermissions for all objects are in the same folder (they're not in sub-folders by object). This is intentional
+Entries not specific to objects remain at the top-level, grouped into files, e.g. `ClassAccess`, `PageAccess`, `UserPermissions`...
+
+Entries specific to objects are grouped in the `objectSettings` directory and grouped into object-specific files, e.g. `PO_Line_Item__c.objectSettings`, in there you'll find entries related to `FieldPermissions`, `TabSettings`, `ObjetPermissions` and other object-specific fields.
 
 ## `decomposeSharingRulesBeta`
 

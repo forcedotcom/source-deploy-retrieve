@@ -102,7 +102,7 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
     const preparedMetadata = composedMetadata
       .filter(hasChildTypeId)
       .map(addChildType)
-      .map((c) => toInfoContainer(mergeWith)(component)(c.childType)(c.tagValue as JsonMap))
+      .map((child) => toInfoContainer(mergeWith)(component)(child.childType)(child.tagValue as JsonMap))
       .filter(forceIgnoreAllowsComponent(forceIgnore));
 
     const writeInfosForChildren = combineChildWriteInfos(
@@ -249,8 +249,9 @@ const toInfoContainer =
   (parent: SourceComponent) =>
   (childType: MetadataType) =>
   (tagValue: JsonMap): InfoContainer => {
+    const tagEntry: JsonMap[] = Array.isArray(tagValue) ? tagValue : [tagValue];
     const entryName = childType.directoryName
-      ? ((tagValue as unknown as JsonMap[]).at(0)?.[childType.uniqueIdElement!] as string).split('.')[0]
+      ? (tagEntry.at(0)?.[childType.uniqueIdElement!] as string).split('.')[0]
       : parent.name;
     return {
       parentComponent: parent,

@@ -186,6 +186,40 @@ export const MD_FORMAT_PS = new SourceComponent(
   ])
 );
 
+export const MD_FORMAT_PS_ONE_CHILD = new SourceComponent(
+  {
+    name: 'myPS',
+    type: permissionSet,
+    xml: join('permissionsets', MDAPI_XML_NAME),
+  },
+  new VirtualTreeContainer([
+    {
+      dirPath: 'permissionsets',
+      children: [
+        {
+          name: MDAPI_XML_NAME,
+          data: Buffer.from(`<?xml version="1.0" encoding="UTF-8" ?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>This PS has only one object permission</description>
+    <hasActivationRequired>true</hasActivationRequired>
+    <label>test</label>
+    <license>testing</license>
+    <objectPermissions>
+        <allowCreate>false</allowCreate>
+        <allowDelete>false</allowDelete>
+        <allowEdit>false</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>false</modifyAllRecords>
+        <object>Case</object>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+</PermissionSet>`),
+        },
+      ],
+    },
+  ])
+);
+
 export const SOURCE_FORMAT_PS = new SourceComponent(
   {
     name: 'myPS',

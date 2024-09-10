@@ -13,6 +13,7 @@ import { presetMap } from '../../../src/registry/presets/presetMap';
 import { DecomposedPermissionSetTransformer } from '../../../src/convert/transformers/decomposedPermissionSetTransformer';
 import {
   MD_FORMAT_PS,
+  MD_FORMAT_PS_ONE_CHILD,
   ONLY_PS_PARENT,
   SOURCE_FORMAT_PS,
 } from '../../mock/type-constants/decomposedPermissionSetConstant';
@@ -36,6 +37,19 @@ describe('DecomposedPermissionSetTransformer', () => {
         expect(result[3].output).to.match(/objectSettings[\\/]Broker__c.objectSettings-meta.xml$/);
         expect(result[4].output).to.match(/myPS.permissionset-meta.xml$/);
       });
+
+      it('multiple children combined, and some written to individual files', async () => {
+        const component = MD_FORMAT_PS_ONE_CHILD;
+        const xf = new DecomposedPermissionSetTransformer(regAcc);
+        const result = await xf.toSourceFormat({ component });
+        expect(result).to.have.length(2);
+        result.map((l) => {
+          expect(l.output).to.include(join('main', 'default', 'permissionsets'));
+        });
+        expect(result[0].output).to.match(/objectSettings[\\/]Case.objectSettings-meta.xml$/);
+        expect(result[1].output).to.match(/myPS.permissionset-meta.xml$/);
+      });
+
       it('merge component in defaultDir', async () => {
         const component = MD_FORMAT_PS;
         const xf = new DecomposedPermissionSetTransformer(regAcc);

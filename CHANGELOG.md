@@ -1,3 +1,12 @@
+## [12.6.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.6.2...12.6.3) (2024-09-09)
+
+
+### Bug Fixes
+
+* append forward slash to folder types manifest entries ([#1407](https://github.com/forcedotcom/source-deploy-retrieve/issues/1407)) ([4d35ce3](https://github.com/forcedotcom/source-deploy-retrieve/commit/4d35ce333d59ec18ac9fe3ca730dbd2dd34f06ff))
+
+
+
 ## [12.6.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.6.1...12.6.2) (2024-09-01)
 
 ### Bug Fixes

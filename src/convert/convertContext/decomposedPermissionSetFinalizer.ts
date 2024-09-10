@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import { ensure, JsonMap } from '@salesforce/ts-types';
 import type { PermissionSet } from '@jsforce/jsforce-node/lib/api/metadata/schema';
 import { SfError } from '@salesforce/core';
@@ -66,7 +66,11 @@ export class DecomposedPermissionSetFinalizer extends ConvertTransactionFinalize
   private getName(): string {
     let name: string;
     try {
-      name = Array.from(this.transactionState.permissionSetChildByPath.keys())[0].split(':')[1].split('.')[0];
+      name = Array.from(this.transactionState.permissionSetChildByPath.keys())[0]
+        .split(sep)
+        .slice(-1)[0]
+        .split(':')[0]
+        .split('.')[0];
     } catch (e) {
       throw SfError.create({
         cause: e,

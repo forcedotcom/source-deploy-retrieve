@@ -18,7 +18,7 @@ import {
 // we don't want failing tests outputting over each other
 /* eslint-disable no-await-in-loop */
 
-describe('fully decomposed permission set via preset', () => {
+describe('fully decomposed permission set via decomposePermissionSetBeta2', () => {
   const testDir = path.join('test', 'snapshot', 'sampleProjects', 'preset-decomposedPS2');
   let sourceFiles: string[];
   let mdFiles: string[];

@@ -38,7 +38,7 @@ describe('DecomposedPermissionSetTransformer', () => {
         expect(result[4].output).to.match(/myPS.permissionset-meta.xml$/);
       });
 
-      it('multiple children combined, and some written to individual files', async () => {
+      it('will write a singular child type', async () => {
         const component = MD_FORMAT_PS_ONE_CHILD;
         const xf = new DecomposedPermissionSetTransformer(regAcc);
         const result = await xf.toSourceFormat({ component });

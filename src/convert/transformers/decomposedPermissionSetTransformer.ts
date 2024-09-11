@@ -53,13 +53,16 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
 
     [
       ...children,
-      // TODO: this feels wrong, I'm not sure why the parent (.permissionset) isn't here child.getChildren() returns children
-      new SourceComponent({
-        // because the children have the same name as the parent
-        name: children[0]?.name,
-        xml: children[0]?.xml!.replace(/(\w+\.\w+-meta\.xml)/gm, `${children[0].name}.permissionset-meta.xml`),
-        type: this.context.decomposedPermissionSet.permissionSetType,
-      }),
+      // component is the first (alphabetically) file in the PS dir, if it happens to be the parent (.permissionset) use it,
+      // otherwise, build our own
+      component.xml?.endsWith('.permissionset-meta.xml')
+        ? component
+        : new SourceComponent({
+            // because the children have the same name as the parent
+            name: children[0]?.name,
+            xml: children[0]?.xml!.replace(/(\w+\.\w+-meta\.xml)/gm, `${children[0].name}.permissionset-meta.xml`),
+            type: this.context.decomposedPermissionSet.permissionSetType,
+          }),
     ].map((c) => {
       this.context.decomposedPermissionSet.transactionState.permissionSetChildByPath.set(
         `${c.xml!}:${c.fullName}`,
@@ -122,25 +125,9 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
       ? getWriteInfosFromMerge(mergeWith)(stateSetter)(parentXmlObject)(component)
       : getWriteInfosWithoutMerge(this.defaultDirectory)(parentXmlObject)(component);
 
-    const childDestinations = new Set(writeInfosForChildren.map((w) => w.output));
-
-    // files that exist in FS (therefore, in mergeWith) but aren't in the component should be deleted by returning a writeInfo
-    // only do this if all the children have isAddressable marked false
-    const writeInfosForMissingChildrenToDelete: WriteInfo[] = mergeWith
-      ? childrenOfMergeComponent
-          .getSourceComponents()
-          .toArray()
-          .filter(hasXml)
-          .filter((c) => !childDestinations.has(c.xml))
-          .map((c) => ({ shouldDelete: true, output: c.xml, fullName: c.fullName, type: c.type.name }))
-      : [];
-
-    return [...writeInfosForChildren, ...writeInfoForParent, ...writeInfosForMissingChildrenToDelete];
+    return [...writeInfosForChildren, ...writeInfoForParent];
   }
 }
-
-const hasXml = (c: SourceComponent): c is SourceComponent & { xml: string } => typeof c.xml === 'string';
-
 /** for a component, parse the xml and create an json object with contents, child typeId, etc */
 const getComposedMetadataEntries = async (component: SourceComponent): Promise<ComposedMetadata[]> =>
   // composedMetadata might be undefined if you call toSourceFormat() from a non-source-backed Component

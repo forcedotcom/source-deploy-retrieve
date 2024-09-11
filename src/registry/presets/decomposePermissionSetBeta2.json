@@ -126,7 +126,6 @@
             "id": "fieldpermission",
             "isAddressable": false,
             "name": "FieldPermission",
-            "sharedDirectory": true,
             "suffix": "objectSettings",
             "uniqueIdElement": "field"
           },
@@ -142,7 +141,6 @@
             "directoryName": "objectSettings",
             "id": "objectpermission",
             "isAddressable": false,
-            "sharedDirectory": true,
             "name": "ObjectPermission",
             "suffix": "objectSettings",
             "uniqueIdElement": "object"
@@ -158,7 +156,6 @@
           "recordtypevisibility": {
             "directoryName": "objectSettings",
             "id": "recordtypevisibility",
-            "sharedDirectory": true,
             "isAddressable": false,
             "name": "RecordTypeVisibility",
             "suffix": "objectSettings",
@@ -166,7 +163,6 @@
           },
           "tabsetting": {
             "directoryName": "objectSettings",
-            "sharedDirectory": true,
             "id": "tabsetting",
             "isAddressable": false,
             "name": "TabSetting",

@@ -3,6 +3,7 @@
     <types>
         <members>dreamhouse</members>
         <members>ebikes</members>
+        <members>noObjectSettings</members>
         <name>PermissionSet</name>
     </types>
     <version>60.0</version>

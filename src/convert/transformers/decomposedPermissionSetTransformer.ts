@@ -50,10 +50,8 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
     // only need to do this once
     this.context.decomposedPermissionSet.permissionSetType ??= this.registry.getTypeByName('PermissionSet');
     const children = component.getChildren();
-
-    [
-      ...children,
-      // component is the first (alphabetically) file in the PS dir, if it happens to be the parent (.permissionset) use it,
+    // component is the first (alphabetically) file in the PS dir, if it happens to be the parent (.permissionset) use it,
+    const parent =
       // otherwise, build our own
       component.xml?.endsWith('.permissionset-meta.xml')
         ? component
@@ -62,12 +60,17 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
             name: children[0]?.name,
             xml: children[0]?.xml!.replace(/(\w+\.\w+-meta\.xml)/gm, `${children[0].name}.permissionset-meta.xml`),
             type: this.context.decomposedPermissionSet.permissionSetType,
-          }),
-    ].map((c) => {
-      this.context.decomposedPermissionSet.transactionState.permissionSetChildByPath.set(
-        `${c.xml!}:${c.fullName}`,
-        unwrapAndOmitNS('PermissionSet')(c.parseXmlSync()) as PermissionSet
-      );
+          });
+
+    [...children, parent].map((c) => {
+      // eslint-disable-next-line no-unused-expressions
+      this.context.decomposedPermissionSet.transactionState.permissionSetChildByPath.has(parent.fullName)
+        ? this.context.decomposedPermissionSet.transactionState.permissionSetChildByPath
+            .get(parent.fullName)!
+            .push(unwrapAndOmitNS('PermissionSet')(c.parseXmlSync()) as PermissionSet)
+        : this.context.decomposedPermissionSet.transactionState.permissionSetChildByPath.set(parent.fullName, [
+            unwrapAndOmitNS('PermissionSet')(c.parseXmlSync()) as PermissionSet,
+          ]);
     });
 
     // noop since the finalizer will push the writes to the component writer

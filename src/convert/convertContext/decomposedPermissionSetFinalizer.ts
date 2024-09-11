@@ -4,10 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join, sep } from 'node:path';
-import { ensure, JsonMap } from '@salesforce/ts-types';
+import { join } from 'node:path';
+import { ensure, ensureString, JsonMap } from '@salesforce/ts-types';
 import type { PermissionSet } from '@jsforce/jsforce-node/lib/api/metadata/schema';
-import { SfError } from '@salesforce/core';
 import { MetadataType } from '../../registry';
 import { XML_NS_KEY, XML_NS_URL } from '../../common/constants';
 import { JsToXml } from '../streams';
@@ -16,9 +15,9 @@ import { ConvertTransactionFinalizer } from './transactionFinalizer';
 
 type PermissionSetState = {
   /*
-   * Incoming child xml (children of PS) keyed by label name
+   * Incoming child xml (children of PS) which will be partial parts of a PermissionSet, keyed by the parent they belong to
    */
-  permissionSetChildByPath: Map<string, PermissionSet>;
+  permissionSetChildByPath: Map<string, PermissionSet[]>;
 };
 
 /**
@@ -42,57 +41,38 @@ export class DecomposedPermissionSetFinalizer extends ConvertTransactionFinalize
       return [];
     }
 
-    const fullName = this.getName();
-
-    return [
-      {
+    const agg: WriterFormat[] = [];
+    this.transactionState.permissionSetChildByPath.forEach((children, parent) => {
+      agg.push({
         component: {
           type: ensure(this.permissionSetType, 'DecomposedPermissionSetFinalizer should have set PermissionSetType'),
-          fullName,
+          fullName: ensureString(parent),
         },
         writeInfos: [
           {
             output: join(
               ensure(this.permissionSetType?.directoryName, 'directoryName missing from PermissionSet type'),
-              `${fullName}.permissionset`
+              `${parent}.permissionset`
             ),
-            source: new JsToXml(generateXml(this.transactionState.permissionSetChildByPath)),
+            source: new JsToXml(generateXml(children)),
           },
         ],
-      },
-    ];
-  }
-
-  private getName(): string {
-    let name: string;
-    try {
-      name = Array.from(this.transactionState.permissionSetChildByPath.keys())[0]
-        .split(sep)
-        .slice(-1)[0]
-        .split(':')[0]
-        .split('.')[0];
-    } catch (e) {
-      throw SfError.create({
-        cause: e,
-        message: `unable to parse name between : and . in ${
-          Array.from(this.transactionState.permissionSetChildByPath.keys())[0] ??
-          this.transactionState.permissionSetChildByPath.keys()
-        }`,
       });
-    }
-    return name;
+    });
+
+    return agg;
   }
 }
 
 /** Return a json object that's built up from the mergeMap children */
-const generateXml = (children: Map<string, PermissionSet>): JsonMap => ({
+const generateXml = (children: PermissionSet[]): JsonMap => ({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   PermissionSet: {
     [XML_NS_KEY]: XML_NS_URL,
     ...Object.assign(
       {},
       // sort the children by fullName
-      ...Object.values(Array.from(children.values()).sort((a, b) => ((a.fullName ?? '') > (b.fullName ?? '') ? -1 : 1)))
+      ...Object.values(children.sort((a, b) => ((a.fullName ?? '') > (b.fullName ?? '') ? -1 : 1)))
     ),
   },
 });

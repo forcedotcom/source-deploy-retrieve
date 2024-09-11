@@ -42,17 +42,23 @@ describe('fully decomposed permission set via decomposePermissionSetBeta2', () =
     }
   });
   it('round trip of metadata format is equivalent', async () => {
-    const [old, updated] = await Promise.all([
+    const [old1, updated1] = await Promise.all([
       fs.promises.readFile(path.join(testDir, 'originalMdapi', 'permissionsets', 'dreamhouse.permissionset'), 'utf8'),
       fs.promises.readFile(path.join(testDir, MDAPI_OUT, 'permissionsets', 'dreamhouse.permissionset'), 'utf8'),
     ]);
-    compareTwoXml(old, updated);
+    compareTwoXml(old1, updated1);
+
+    const [old2, updated2] = await Promise.all([
+      fs.promises.readFile(path.join(testDir, 'originalMdapi', 'permissionsets', 'ebikes.permissionset'), 'utf8'),
+      fs.promises.readFile(path.join(testDir, MDAPI_OUT, 'permissionsets', 'ebikes.permissionset'), 'utf8'),
+    ]);
+    compareTwoXml(old2, updated2);
   });
 
   after(async () => {
     await Promise.all([
-      fs.promises.rm(path.join(testDir, 'force-app'), { recursive: true, force: true }),
-      fs.promises.rm(path.join(testDir, MDAPI_OUT), { recursive: true, force: true }),
+      // fs.promises.rm(path.join(testDir, 'force-app'), { recursive: true, force: true }),
+      // fs.promises.rm(path.join(testDir, MDAPI_OUT), { recursive: true, force: true }),
     ]);
   });
 });

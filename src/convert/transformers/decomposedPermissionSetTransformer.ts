@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { dirname, join } from 'node:path';
+import { join } from 'node:path';
 import { AnyJson, ensureString, JsonMap } from '@salesforce/ts-types';
 import { Messages } from '@salesforce/core';
 import type { PermissionSet } from '@jsforce/jsforce-node/lib/api/metadata/schema';
@@ -209,25 +209,17 @@ const combineChildWriteInfos = (
         stateSetter(childInfo, { foundMerge: true });
         writeInfos.push({ source, output: mergeChild.xml });
         return;
-      }
-      // If we have a parent and the child is unaddressable without the parent, keep them
-      // together on the file system, meaning a new child will not be written to the default dir.
-      if (childInfo.type.unaddressableWithoutParent && typeof info[0].mergeWith?.xml === 'string') {
-        // get output path from parent
+      } else {
         writeInfos.push({
           source,
           output: join(
-            dirname(info[0].mergeWith.xml),
+            ensureString(info[0].mergeWith.content),
+            childInfo.type.directoryName,
             `${info[0].entryName}.${ensureString(childInfo.type.suffix)}${META_XML_SUFFIX}`
           ),
         });
         return;
       }
-      // we didn't find a merge, so we add it to the state for later processing
-      stateSetter(childInfo, {
-        writeInfo: { source, output: getDefaultOutput(childInfo) },
-      });
-      return [];
     });
   });
   return writeInfos;

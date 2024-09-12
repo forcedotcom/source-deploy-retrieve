@@ -64,11 +64,11 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
 
     [...children, parent].map((c) => {
       // eslint-disable-next-line no-unused-expressions
-      this.context.decomposedPermissionSet.transactionState.permissionSetChildByPath.has(parent.fullName)
-        ? this.context.decomposedPermissionSet.transactionState.permissionSetChildByPath
+      this.context.decomposedPermissionSet.transactionState.parentToChild.has(parent.fullName)
+        ? this.context.decomposedPermissionSet.transactionState.parentToChild
             .get(parent.fullName)!
             .push(unwrapAndOmitNS('PermissionSet')(c.parseXmlSync()) as PermissionSet)
-        : this.context.decomposedPermissionSet.transactionState.permissionSetChildByPath.set(parent.fullName, [
+        : this.context.decomposedPermissionSet.transactionState.parentToChild.set(parent.fullName, [
             unwrapAndOmitNS('PermissionSet')(c.parseXmlSync()) as PermissionSet,
           ]);
     });

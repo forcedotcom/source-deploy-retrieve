@@ -7,7 +7,6 @@
 
 import { join } from 'node:path';
 import { AnyJson, ensureString, JsonMap } from '@salesforce/ts-types';
-import { Messages } from '@salesforce/core';
 import type { PermissionSet } from '@jsforce/jsforce-node/lib/api/metadata/schema';
 import { calculateRelativePath } from '../../utils/path';
 import { unwrapAndOmitNS } from '../../utils/decomposed';
@@ -18,8 +17,6 @@ import { JsToXml } from '../streams';
 import type { ToSourceFormatInput, WriteInfo, XmlObj } from '../types';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../common/constants';
 import type { SourcePath } from '../../common/types';
-import { ComponentSet } from '../../collections/componentSet';
-import type { DecompositionStateValue } from '../convertContext/decompositionFinalizer';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import {
   addChildType,
@@ -32,11 +29,6 @@ import {
   tagToChildTypeId,
 } from './decomposedMetadataTransformer';
 import type { InfoContainer, ComposedMetadata } from './types';
-
-type StateSetter = (forComponent: MetadataComponent, props: Partial<Omit<DecompositionStateValue, 'origin'>>) => void;
-
-Messages.importMessagesDirectory(__dirname);
-const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer {
   /**
@@ -93,7 +85,6 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
       return [];
     }
     const stateSetter = setDecomposedState(this.context.decomposition.transactionState);
-    const childrenOfMergeComponent = new ComponentSet(mergeWith?.getChildren(), this.registry);
     const composedMetadata = await getComposedMetadataEntries(component);
 
     const parentXmlObject: XmlObj = {
@@ -111,18 +102,14 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
       .map((child) => toInfoContainer(mergeWith)(component)(child.childType)(child.tagValue as JsonMap))
       .filter(forceIgnoreAllowsComponent(forceIgnore));
 
-    const writeInfosForChildren = combineChildWriteInfos(
-      [
-        // children whose type don't have a directory assigned will be written to the top level, separate them into individual WriteInfo[] with only one entry
-        // a [WriteInfo] with one entry, will result in one file
-        ...preparedMetadata.filter((c) => !c.childComponent.type.directoryName).map((c) => [c]),
-        // children whose type have a directory name will be grouped accordingly, bundle these together as a WriteInfo[][] with length > 1
-        // a [WriteInfo, WriteInfo, ...] will be combined into a [WriteInfo] with combined contents
-        preparedMetadata.filter((c) => c.childComponent.type.directoryName),
-      ],
-      stateSetter,
-      childrenOfMergeComponent
-    );
+    const writeInfosForChildren = combineChildWriteInfos([
+      // children whose type don't have a directory assigned will be written to the top level, separate them into individual WriteInfo[] with only one entry
+      // a [WriteInfo] with one entry, will result in one file
+      ...preparedMetadata.filter((c) => !c.childComponent.type.directoryName).map((c) => [c]),
+      // children whose type have a directory name will be grouped accordingly, bundle these together as a WriteInfo[][] with length > 1
+      // a [WriteInfo, WriteInfo, ...] will be combined into a [WriteInfo] with combined contents
+      preparedMetadata.filter((c) => c.childComponent.type.directoryName),
+    ]);
 
     const writeInfoForParent = mergeWith
       ? getWriteInfosFromMerge(mergeWith)(stateSetter)(parentXmlObject)(component)
@@ -170,11 +157,7 @@ const buildSource = (parentType: string, info: InfoContainer[], childDirectories
       }))
     ),
   });
-const combineChildWriteInfos = (
-  containers: InfoContainer[][],
-  stateSetter: StateSetter,
-  childrenOfMergeComponent: ComponentSet
-): WriteInfo[] => {
+const combineChildWriteInfos = (containers: InfoContainer[][]): WriteInfo[] => {
   // aggregator write info, will be returned at the end
   const writeInfos: WriteInfo[] = [];
   containers.forEach((infoContainers) => {
@@ -192,34 +175,20 @@ const combineChildWriteInfos = (
       const childDirectories = Object.entries(
         info[0].parentComponent.type.children?.directories as Record<string, string>
       );
-      const source = buildSource(info[0].parentComponent.type.name, info, childDirectories);
       // if there's nothing to merge with, push write operation now to default location
       const childInfo = info[0].childComponent;
-      if (!info[0].mergeWith) {
-        writeInfos.push({ source, output: getDefaultOutput(childInfo) });
-        return;
-      }
-      // if the merge parent has a child that can be merged with, push write
-      // operation now and mark it as merged in the state
-      if (childrenOfMergeComponent.has(childInfo)) {
-        const mergeChild = childrenOfMergeComponent.getSourceComponents(childInfo).first();
-        if (!mergeChild?.xml) {
-          throw messages.createError('error_parsing_xml', [childInfo.fullName, childInfo.type.name]);
-        }
-        stateSetter(childInfo, { foundMerge: true });
-        writeInfos.push({ source, output: mergeChild.xml });
-        return;
-      } else {
-        writeInfos.push({
-          source,
-          output: join(
-            ensureString(info[0].mergeWith.content),
-            childInfo.type.directoryName,
-            `${info[0].entryName}.${ensureString(childInfo.type.suffix)}${META_XML_SUFFIX}`
-          ),
-        });
-        return;
-      }
+
+      writeInfos.push({
+        source: buildSource(info[0].parentComponent.type.name, info, childDirectories),
+        output: !info[0].mergeWith
+          ? getDefaultOutput(childInfo)
+          : join(
+              ensureString(info[0].mergeWith.content),
+              childInfo.type.directoryName,
+              `${info[0].entryName}.${ensureString(childInfo.type.suffix)}${META_XML_SUFFIX}`
+            ),
+      });
+      return;
     });
   });
   return writeInfos;

@@ -22,10 +22,8 @@ import {
   addChildType,
   forceIgnoreAllowsComponent,
   getOutputFile,
-  getWriteInfosFromMerge,
   getWriteInfosWithoutMerge,
   hasChildTypeId,
-  setDecomposedState,
   tagToChildTypeId,
 } from './decomposedMetadataTransformer';
 import type { InfoContainer, ComposedMetadata } from './types';
@@ -84,7 +82,6 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
     if (forceIgnore.denies(getOutputFile(component, mergeWith))) {
       return [];
     }
-    const stateSetter = setDecomposedState(this.context.decomposition.transactionState);
     const composedMetadata = await getComposedMetadataEntries(component);
 
     const parentXmlObject: XmlObj = {
@@ -112,7 +109,15 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
     ]);
 
     const writeInfoForParent = mergeWith
-      ? getWriteInfosFromMerge(mergeWith)(stateSetter)(parentXmlObject)(component)
+      ? [
+          {
+            output: join(
+              ensureString(mergeWith.content),
+              `${component.name}.${ensureString(component.type.suffix)}${META_XML_SUFFIX}`
+            ),
+            source: new JsToXml(parentXmlObject),
+          },
+        ]
       : getWriteInfosWithoutMerge(this.defaultDirectory)(parentXmlObject)(component);
 
     return [...writeInfosForChildren, ...writeInfoForParent];

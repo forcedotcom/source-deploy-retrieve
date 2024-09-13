@@ -3984,10 +3984,10 @@
     "sharingrules": {
       "children": {
         "directories": {
-          "sharingCriteriaRules": "sharingcriteriarule",
-          "sharingGuestRules": "sharingguestrule",
-          "sharingOwnerRules": "sharingownerrule",
-          "sharingTerritoryRules": "sharingterritoryrule"
+          "sharingCriteriaRules": "sharingRules",
+          "sharingGuestRules": "sharingRules",
+          "sharingOwnerRules": "sharingRules",
+          "sharingTerritoryRules": "sharingRules"
         },
         "suffixes": {
           "sharingCriteriaRule": "sharingcriteriarule",
@@ -3997,7 +3997,7 @@
         },
         "types": {
           "sharingcriteriarule": {
-            "directoryName": "sharingCriteriaRules",
+            "directoryName": "sharingRules",
             "id": "sharingcriteriarule",
             "name": "SharingCriteriaRule",
             "suffix": "sharingCriteriaRule",
@@ -4005,7 +4005,7 @@
             "xmlElementName": "sharingCriteriaRules"
           },
           "sharingguestrule": {
-            "directoryName": "sharingGuestRules",
+            "directoryName": "sharingRules",
             "id": "sharingguestrule",
             "name": "SharingGuestRule",
             "suffix": "sharingGuestRule",
@@ -4013,7 +4013,7 @@
             "xmlElementName": "sharingGuestRules"
           },
           "sharingownerrule": {
-            "directoryName": "sharingOwnerRules",
+            "directoryName": "sharingRules",
             "id": "sharingownerrule",
             "name": "SharingOwnerRule",
             "suffix": "sharingOwnerRule",
@@ -4021,7 +4021,7 @@
             "xmlElementName": "sharingOwnerRules"
           },
           "sharingterritoryrule": {
-            "directoryName": "sharingTerritoryRules",
+            "directoryName": "sharingRules",
             "id": "sharingterritoryrule",
             "name": "SharingTerritoryRule",
             "suffix": "sharingTerritoryRule",

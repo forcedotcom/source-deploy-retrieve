@@ -57,7 +57,13 @@ describe('Creating and converting ComponentSets with destructive changes', () =>
     for (const file of convertedFiles) {
       await fileSnap(file, testDir);
     }
-    await dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'pre1'), pre1TestOutputDir);
+    const expectedOutputDir = path.join(
+      snapshotsDir,
+      '1-pre-destructive-and-1-deployment.expected',
+      'testOutput',
+      'pre1'
+    );
+    await dirsAreIdentical(expectedOutputDir, pre1TestOutputDir);
   });
 
   it('2 pre-destructive and 2 deployments', async () => {
@@ -82,7 +88,13 @@ describe('Creating and converting ComponentSets with destructive changes', () =>
     for (const file of convertedFiles) {
       await fileSnap(file, testDir);
     }
-    await dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'pre2'), pre2TestOutputDir);
+    const expectedOutputDir = path.join(
+      snapshotsDir,
+      '2-pre-destructive-and-2-deployments.expected',
+      'testOutput',
+      'pre2'
+    );
+    await dirsAreIdentical(expectedOutputDir, pre2TestOutputDir);
   });
 
   it('1 post-destructive and 1 deployment', async () => {
@@ -107,7 +119,13 @@ describe('Creating and converting ComponentSets with destructive changes', () =>
     for (const file of convertedFiles) {
       await fileSnap(file, testDir);
     }
-    await dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'post1'), postTestOutputDir);
+    const expectedOutputDir = path.join(
+      snapshotsDir,
+      '1-post-destructive-and-1-deployment.expected',
+      'testOutput',
+      'post1'
+    );
+    await dirsAreIdentical(expectedOutputDir, postTestOutputDir);
   });
 
   it('2 post-destructive and 2 deployments', async () => {
@@ -132,7 +150,13 @@ describe('Creating and converting ComponentSets with destructive changes', () =>
     for (const file of convertedFiles) {
       await fileSnap(file, testDir);
     }
-    await dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'post2'), post2TestOutputDir);
+    const expectedOutputDir = path.join(
+      snapshotsDir,
+      '2-post-destructive-and-2-deployments.expected',
+      'testOutput',
+      'post2'
+    );
+    await dirsAreIdentical(expectedOutputDir, post2TestOutputDir);
   });
 
   it('1 post-destructive and no deployment', async () => {
@@ -157,7 +181,13 @@ describe('Creating and converting ComponentSets with destructive changes', () =>
     for (const file of convertedFiles) {
       await fileSnap(file, testDir);
     }
-    await dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'post1-solo'), postTestOutputDir);
+    const expectedOutputDir = path.join(
+      snapshotsDir,
+      '1-post-destructive-and-no-deployment.expected',
+      'testOutput',
+      'post1-solo'
+    );
+    await dirsAreIdentical(expectedOutputDir, postTestOutputDir);
   });
 
   it('throws when wildcards are used in destructive changes', async () => {

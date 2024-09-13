@@ -57,7 +57,7 @@ describe('Creating and converting ComponentSets with destructive changes', () =>
     for (const file of convertedFiles) {
       await fileSnap(file, testDir);
     }
-    dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'pre1'), pre1TestOutputDir);
+    await dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'pre1'), pre1TestOutputDir);
   });
 
   it('2 pre-destructive and 2 deployments', async () => {
@@ -82,7 +82,7 @@ describe('Creating and converting ComponentSets with destructive changes', () =>
     for (const file of convertedFiles) {
       await fileSnap(file, testDir);
     }
-    dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'pre2'), pre2TestOutputDir);
+    await dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'pre2'), pre2TestOutputDir);
   });
 
   it('1 post-destructive and 1 deployment', async () => {
@@ -107,7 +107,7 @@ describe('Creating and converting ComponentSets with destructive changes', () =>
     for (const file of convertedFiles) {
       await fileSnap(file, testDir);
     }
-    dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'post1'), postTestOutputDir);
+    await dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'post1'), postTestOutputDir);
   });
 
   it('2 post-destructive and 2 deployments', async () => {
@@ -132,7 +132,7 @@ describe('Creating and converting ComponentSets with destructive changes', () =>
     for (const file of convertedFiles) {
       await fileSnap(file, testDir);
     }
-    dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'post2'), post2TestOutputDir);
+    await dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'post2'), post2TestOutputDir);
   });
 
   it('1 post-destructive and no deployment', async () => {
@@ -157,7 +157,7 @@ describe('Creating and converting ComponentSets with destructive changes', () =>
     for (const file of convertedFiles) {
       await fileSnap(file, testDir);
     }
-    dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'post1-solo'), postTestOutputDir);
+    await dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'post1-solo'), postTestOutputDir);
   });
 
   it('throws when wildcards are used in destructive changes', async () => {

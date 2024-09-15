@@ -20,7 +20,41 @@ source format
 Each child of PermissionSet that is a repeated xml element (ex: ClassAccesses) is saved as a separate file
 Simple fields (ex: `description`, `userLicense`) remain in the top-level `myPS.permissionset-meta.xml`
 
-FieldPermissions for all objects are in the same folder (they're not in sub-folders by object). This is intentional--I wanted subfolders but couldn't get it to work well.
+FieldPermissions for all objects are in the same folder (they're not in sub-folders by object). This is intentional
+
+## `decomposePermissionSetBeta2`
+
+PermissionSet is decomposed to a folder named after the PermissionSet with one file containing grouped children - there will also be a new directory "objectSettings" grouping similar objectSettings child types.
+
+metadata format
+`/permissionsets/myPS.permissionset`
+
+source format
+
+```txt
+ └─ permissionsets
+     ├─ PO_Manager
+     │   ├─ objectSettings
+     │   │   ├─ Account.objectSettings-meta.xml
+     │   │   ├─ PO_Line_Item__c.objectSettings-meta.xml
+     │   │   └─ Purchase_Order__c.objectSettings-meta.xml
+     │   ├─ PO_Manager.applicationVisibilities-meta.xml
+     │   ├─ PO_Manager.classAccesses-meta.xml
+     │   ├─ PO_Manager.customPermissions-meta.xml
+     │   ├─ PO_Manager.customSettingAccesses-meta.xml
+     │   ├─ PO_Manager.externalCredentialPrincipalAccesses-meta.xml
+     │   ├─ PO_Manager.externalDataSourceAccesses-meta.xml
+     │   ├─ PO_Manager.flowAccesses-meta.xml
+     │   ├─ PO_Manager.pageAccesses-meta.xml
+     │   ├─ PO_Manager.permissionset-meta.xml
+     │   └─ PO_Manager.userPermissions-meta.xml
+```
+
+Simple fields (ex: `description`, `userLicense`) remain in the top-level `PO_Manager.permissionset-meta.xml`
+
+Entries not specific to object's settings remain at the top-level, grouped into files, e.g. `ClassAccess`, `PageAccess`, `UserPermissions`...
+
+Entries specific to object's settings are grouped in the `objectSettings` directory and grouped into object-specific files, e.g. `PO_Line_Item__c.objectSettings`, in there you'll find entries related to `FieldPermissions`, `TabSettings`, `ObjetPermissions` and other object-specific fields.
 
 ## `decomposeSharingRulesBeta`
 

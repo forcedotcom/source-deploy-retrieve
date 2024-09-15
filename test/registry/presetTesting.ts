@@ -24,7 +24,12 @@ const registriesFromPresets = fs
   .map((file) => ({
     name: file.name,
     registry: JSON.parse(fs.readFileSync(path.join(file.path, file.name), 'utf-8')) as MetadataRegistry,
-  }));
+  })) /*
+  decomposedPermissionSetBeta2 has an invalid registry configured.
+  this is because multiple children will map to the .objectSettings suffix, and currently, the registry only supports 1:1 suffix mapping
+  TODO: W-10113922
+   */
+  .filter((preset) => !preset.name.endsWith('decomposePermissionSetBeta2.json'));
 
 const allMerged = registriesFromPresets.reduce<MetadataRegistry>(
   (acc, { registry }) => firstLevelMerge(acc, registry),

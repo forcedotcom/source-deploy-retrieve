@@ -1,0 +1,13 @@
+{
+  "name": "decomposedPermissionSetBeta2",
+  "namespace": "",
+  "packageDirectories": [
+    {
+      "default": true,
+      "path": "force-app"
+    }
+  ],
+  "sourceBehaviorOptions": ["decomposePermissionSetBeta2"],
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "60.0"
+}

@@ -103,8 +103,8 @@ export class MetadataApiDeploy extends MetadataTransfer<
 
   public constructor(options: MetadataApiDeployOptions) {
     super(options);
-    options.apiOptions = { ...MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions, ...options.apiOptions };
     this.options = Object.assign({}, options);
+    this.options.apiOptions = { ...MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions, ...options.apiOptions };
     this.isRestDeploy = !!options.apiOptions?.rest;
     this.registry = options.registry ?? new RegistryAccess();
     if (this.mdapiTempDir) {

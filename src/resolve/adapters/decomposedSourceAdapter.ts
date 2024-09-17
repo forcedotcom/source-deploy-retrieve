@@ -83,6 +83,8 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
     isResolvingSource?: boolean
   ): SourceComponent | undefined {
     const metaXml = parseMetadataXml(trigger);
+    const toBeReturned = component;
+
     if (metaXml?.suffix) {
       const pathToContent = this.trimPathToContent(trigger);
       const childTypeId = this.type.children?.suffixes?.[metaXml.suffix];
@@ -97,7 +99,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
       ) {
         if (strategy === 'folderPerType' || strategy === 'topLevel' || isResolvingSource) {
           const parent =
-            component ??
+            toBeReturned ??
             new SourceComponent(
               {
                 name: strategy === 'folderPerType' ? baseName(pathToContent) : pathToContent,
@@ -118,7 +120,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
             this.forceIgnore
           );
         }
-      } else if (!component) {
+      } else if (!toBeReturned) {
         // This is most likely metadata found within a CustomObject folder that is not a
         // child type of CustomObject. E.g., Layout, SharingRules, ApexClass.
         throw new SfError(
@@ -126,10 +128,10 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
           'TypeInferenceError'
         );
       }
-      if (component) {
-        component.content = pathToContent;
+      if (toBeReturned) {
+        toBeReturned.content = pathToContent;
       }
     }
-    return component;
+    return toBeReturned;
   }
 }

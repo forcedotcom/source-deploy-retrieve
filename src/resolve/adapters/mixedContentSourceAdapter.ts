@@ -67,10 +67,12 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
       );
     }
 
-    if (component) {
-      component.content = contentPath;
+    let toBeReturned = component;
+
+    if (toBeReturned) {
+      toBeReturned.content = contentPath;
     } else {
-      component = new SourceComponent(
+      toBeReturned = new SourceComponent(
         {
           name: baseName(contentPath),
           type: this.type,
@@ -82,7 +84,7 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
       );
     }
 
-    return component;
+    return toBeReturned;
   }
 
   /**

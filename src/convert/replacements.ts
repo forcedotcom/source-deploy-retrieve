@@ -117,16 +117,17 @@ class ReplacementMarkingStream extends Transform {
     encoding: string,
     callback: (err: Error | undefined, data: SourceComponent) => void
   ): Promise<void> {
+    const toBeReturned = chunk;
     let err: Error | undefined;
     // if deleting, or no configs, just pass through
-    if (!chunk.isMarkedForDelete() && this.replacementConfigs?.length) {
+    if (!toBeReturned.isMarkedForDelete() && this.replacementConfigs?.length) {
       try {
-        chunk.replacements = await getReplacements(chunk, this.replacementConfigs);
-        if (chunk.replacements && chunk.parent?.type.strategies?.transformer === 'nonDecomposed') {
+        toBeReturned.replacements = await getReplacements(toBeReturned, this.replacementConfigs);
+        if (toBeReturned.replacements && toBeReturned.parent?.type.strategies?.transformer === 'nonDecomposed') {
           // Set replacements on the parent of a nonDecomposed CustomLabel as well so that recomposing
           // doesn't use the non-replaced content from parent cache.
           // See RecompositionFinalizer.recompose() in convertContext.ts
-          chunk.parent.replacements = chunk.replacements;
+          toBeReturned.parent.replacements = toBeReturned.replacements;
         }
       } catch (e) {
         if (!(e instanceof Error)) {
@@ -135,7 +136,7 @@ class ReplacementMarkingStream extends Transform {
         err = e;
       }
     }
-    callback(err, chunk);
+    callback(err, toBeReturned);
   }
 }
 

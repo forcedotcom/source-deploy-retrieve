@@ -54,7 +54,6 @@ export class SourceComponent implements MetadataComponent {
   private markedForDelete = false;
   private destructiveChangesType?: DestructiveChangesType;
   private pathContentMap = new Map<string, string>();
-  private calculatedContent: string[] = [];
 
   public constructor(
     props: ComponentProperties,
@@ -147,17 +146,15 @@ export class SourceComponent implements MetadataComponent {
   }
 
   public walkContent(): string[] {
-    if (!this.calculatedContent.length) {
-      if (this.content) {
-        for (const fsPath of this.walk(this.content)) {
-          if (fsPath !== this.xml) {
-            this.calculatedContent.push(fsPath);
-          }
+    const sources: string[] = [];
+    if (this.content) {
+      for (const fsPath of this.walk(this.content)) {
+        if (fsPath !== this.xml) {
+          sources.push(fsPath);
         }
       }
     }
-
-    return this.calculatedContent;
+    return sources;
   }
   /**
    * returns the children of a parent SourceComponent

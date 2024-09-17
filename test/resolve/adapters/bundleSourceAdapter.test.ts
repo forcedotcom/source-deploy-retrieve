@@ -13,12 +13,6 @@ import { CONTENT_PATH as LWC_CONTENT_PATH } from '../../mock/type-constants/lwcB
 import { RegistryAccess } from '../../../src';
 
 describe('BundleSourceAdapter with AuraBundle', () => {
-  beforeEach(() => {
-    // @ts-ignore reset cache
-    bundle.COMPONENT.calculatedContent = [];
-    // @ts-ignore reset cache
-    lwcBundle.COMPONENT.calculatedContent = [];
-  });
   const registryAccess = new RegistryAccess();
   const adapter = new BundleSourceAdapter(bundle.COMPONENT.type, registryAccess, undefined, bundle.COMPONENT.tree);
 

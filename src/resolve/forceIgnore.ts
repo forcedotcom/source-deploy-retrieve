@@ -8,7 +8,7 @@
 import { dirname, join, relative } from 'node:path';
 import ignore, { Ignore } from 'ignore/index';
 import { readFileSync } from 'graceful-fs';
-import { Lifecycle } from '@salesforce/core';
+import { Lifecycle, Logger } from '@salesforce/core';
 import { SourcePath } from '../common/types';
 import { searchUp } from '../utils/fileSystemHandler';
 
@@ -42,7 +42,7 @@ export class ForceIgnore {
         this.forceIgnoreDirectory = dirname(forceIgnorePath);
       }
     } catch (e) {
-      // TODO: log no force ignore
+      Logger.childFromRoot(this.constructor.name).info('no .forceignore found');
     }
   }
 

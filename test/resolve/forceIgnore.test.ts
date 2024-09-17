@@ -84,30 +84,15 @@ describe('ForceIgnore', () => {
       forceIgnore = new ForceIgnore();
     });
 
-    it('Should ignore files starting with a dot', () => {
-      const dotPath = join(root, '.xyz');
+    // the example's index here is specific to the rules order in ForceIgnore.DEFAULT_IGNORE
+    const forceIgnoreExamples = ['abc.dup', '.xyz', 'package2-descriptor.json', 'package2-manifest.json'];
+    forceIgnoreExamples.map((ignore) => {
+      it(`Should ignore files starting with a ${ignore}`, () => {
+        const testPath = join(root, ignore);
 
-      expect(forceIgnore.accepts(dotPath)).to.be.false;
-      expect(forceIgnore.denies(dotPath)).to.be.true;
-    });
-
-    it('Should ignore files ending in .dup', () => {
-      const dupPath = join(root, 'abc.dup');
-
-      expect(forceIgnore.accepts(dupPath)).to.be.false;
-      expect(forceIgnore.denies(dupPath)).to.be.true;
-    });
-
-    it('Should ignore files named package2-descriptor.json', () => {
-      const descriptorPath = join(root, 'package2-descriptor.json');
-      expect(forceIgnore.accepts(descriptorPath)).to.be.false;
-      expect(forceIgnore.denies(descriptorPath)).to.be.true;
-    });
-
-    it('Should ignore files named package2-manifest.json', () => {
-      const manifestPath = join(root, 'package2-manifest.json');
-      expect(forceIgnore.accepts(manifestPath)).to.be.false;
-      expect(forceIgnore.denies(manifestPath)).to.be.true;
+        expect(forceIgnore.accepts(testPath)).to.be.false;
+        expect(forceIgnore.denies(testPath)).to.be.true;
+      });
     });
 
     it('Should allow .forceignore file to override defaults', () => {

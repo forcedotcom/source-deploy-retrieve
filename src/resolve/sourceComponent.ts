@@ -393,12 +393,12 @@ export class SourceComponent implements MetadataComponent {
     } else {
       for (const child of this.treeContainer.readDirectory(fsPath)) {
         const childPath = join(fsPath, child);
-        if (this.forceIgnore.denies(childPath)) {
-          continue;
-        } else if (this.treeContainer.isDirectory(childPath)) {
-          yield* this.walk(childPath);
-        } else {
-          yield childPath;
+        if (!this.forceIgnore.denies(childPath)) {
+          if (this.treeContainer.isDirectory(childPath)) {
+            yield* this.walk(childPath);
+          } else {
+            yield childPath;
+          }
         }
       }
     }

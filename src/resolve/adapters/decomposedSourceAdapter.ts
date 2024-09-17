@@ -92,6 +92,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
         triggerIsAChild &&
         this.type.children &&
         !this.type.children.types[childTypeId].unaddressableWithoutParent &&
+        // make sure isAddressable is truly set to 'false' not just undefined or omitted
         this.type.children.types[childTypeId].isAddressable !== false
       ) {
         if (strategy === 'folderPerType' || strategy === 'topLevel' || isResolvingSource) {

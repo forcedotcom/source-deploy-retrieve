@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { basename, dirname, extname, sep, join } from 'node:path';
+import { basename, dirname, extname, join, sep } from 'node:path';
 import { Optional } from '@salesforce/ts-types';
 import { SfdxFileFormat } from '../convert/types';
 import { SourcePath } from '../common/types';
@@ -28,6 +28,7 @@ export function baseName(fsPath: SourcePath): string {
  * this will handle that, but requires you to specify the mdType to check suffixes for.
  *
  * @param fsPath The path to evaluate
+ * @param mdType the metadata type to check suffixes of
  */
 export function baseWithoutSuffixes(fsPath: SourcePath, mdType: MetadataType): string {
   return basename(fsPath).replace(META_XML_SUFFIX, '').split('.').filter(stringIsNotSuffix(mdType)).join('.');
@@ -118,8 +119,7 @@ export function parseNestedFullName(fsPath: string, directoryName: string): stri
   const pathPrefix = pathSplits.slice(pathSplits.lastIndexOf(directoryName) + 1);
   // the eslint comment should remain until strictMode is fully implemented
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-  const fileName = (pathSplits.pop() as string).replace('-meta.xml', '').split('.')[0];
-  pathPrefix[pathPrefix.length - 1] = fileName;
+  pathPrefix[pathPrefix.length - 1] = (pathSplits.pop() as string).replace('-meta.xml', '').split('.')[0];
   return pathPrefix.join('/');
 }
 

@@ -28,8 +28,8 @@ export type ResolveConnectionResult = {
  * Resolve MetadataComponents from an org connection
  */
 export class ConnectionResolver {
-  private connection: Connection;
-  private registry: RegistryAccess;
+  private readonly connection: Connection;
+  private readonly registry: RegistryAccess;
 
   // Array of metadata type names to use for listMembers. By default it includes
   // all types defined in the registry.

@@ -94,7 +94,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   protected parseAsRootMetadataXml(path: SourcePath): MetadataXml | undefined {
     const metaXml = this.parseMetadataXml(path);
     if (metaXml) {
-      let isRootMetadataXml = false;
+      let isRootMetadataXml: boolean;
       if (this.type.strictDirectoryName) {
         const parentPath = dirname(path);
         const typeDirName = basename(this.type.inFolder ? dirname(parentPath) : parentPath);
@@ -138,6 +138,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    *
    * @param component Component to populate properties on
    * @param trigger Path that `getComponent` was called with
+   * @param isResolvingSource if you're resolving a local source file
    */
   protected abstract populate(
     trigger: SourcePath,
@@ -153,7 +154,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
  *
  * .../tabs/MyTab.tab
  *
- * @param path File path of a metadata component
+ * @param type
  */
 const parseAsContentMetadataXml =
   (type: MetadataType) =>

@@ -17,7 +17,7 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export class RegistryAccess {
-  private registry: MetadataRegistry;
+  private readonly registry: MetadataRegistry;
   private strictFolderTypes?: MetadataType[];
   private folderContentTypes?: MetadataType[];
   private aliasTypes?: MetadataType[];

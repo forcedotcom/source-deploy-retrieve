@@ -91,7 +91,6 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
    * folder will be returned. Intended to be used exclusively for MixedContent types.
    *
    * @param path Path to trim
-   * @param type MetadataType to determine content for
    */
   protected trimPathToContent(path: SourcePath): SourcePath {
     const pathParts = path.split(sep);

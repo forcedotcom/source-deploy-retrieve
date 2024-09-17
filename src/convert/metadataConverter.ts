@@ -28,8 +28,7 @@ export class MetadataConverter {
   public static readonly DESTRUCTIVE_CHANGES_POST_XML_FILE = 'destructiveChangesPost.xml';
   public static readonly DESTRUCTIVE_CHANGES_PRE_XML_FILE = 'destructiveChangesPre.xml';
   public static readonly DEFAULT_PACKAGE_PREFIX = 'metadataPackage';
-
-  private registry: RegistryAccess;
+  private readonly registry: RegistryAccess;
 
   public constructor(registry = new RegistryAccess()) {
     this.registry = registry;
@@ -42,9 +41,7 @@ export class MetadataConverter {
   ): Promise<ConvertResult> {
     try {
       const cs = comps instanceof ComponentSet ? comps : new ComponentSet(comps, this.registry);
-      const components = (
-        (comps instanceof ComponentSet ? Array.from(comps.getSourceComponents()) : comps) as SourceComponent[]
-      ).filter((comp) => comp.type.isAddressable !== false);
+      const components = cs.getSourceComponents().filter((comp) => comp.type.isAddressable !== false);
 
       if (output.type !== 'merge' && output.packageName) {
         cs.fullName = output.packageName;

@@ -118,7 +118,7 @@ export abstract class ComponentWriter extends Writable {
   protected rootDestination?: SourcePath;
   protected logger: Logger;
 
-  public constructor(rootDestination?: SourcePath) {
+  protected constructor(rootDestination?: SourcePath) {
     super({ objectMode: true });
     this.rootDestination = rootDestination;
     this.logger = Logger.childFromRoot(this.constructor.name);

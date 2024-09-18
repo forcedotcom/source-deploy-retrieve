@@ -1,4803 +1,4935 @@
 {
   "AIApplication": {
+    "name": "AIApplication",
     "directoryName": "aiApplications",
-    "hasChildren": false,
+    "suffix": "ai",
     "inFolder": false,
     "metaFile": false,
-    "name": "AIApplication",
-    "suffix": "ai"
+    "hasChildren": false
   },
   "AIApplicationConfig": {
+    "name": "AIApplicationConfig",
     "directoryName": "aiApplicationConfigs",
-    "hasChildren": false,
+    "suffix": "aiapplicationconfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "AIApplicationConfig",
-    "suffix": "aiapplicationconfig"
+    "hasChildren": false
   },
   "AIReplyRecommendationsSettings": {
+    "name": "AIReplyRecommendationsSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "AIReplyRecommendationsSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "AIScoringModelDefVersion": {
-    "hasChildren": false,
+    "name": "AIScoringModelDefVersion",
     "inFolder": false,
     "metaFile": false,
-    "name": "AIScoringModelDefVersion"
+    "hasChildren": false
   },
   "AIScoringModelDefinition": {
+    "name": "AIScoringModelDefinition",
     "directoryName": "aiScoringModelDefinitions",
-    "hasChildren": false,
+    "suffix": "aiScoringModelDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "AIScoringModelDefinition",
-    "suffix": "aiScoringModelDefinition"
+    "hasChildren": false
   },
   "AIUsecaseDefinition": {
+    "name": "AIUsecaseDefinition",
     "directoryName": "aiUsecaseDefinitions",
-    "hasChildren": false,
+    "suffix": "aiUsecaseDefinitions",
     "inFolder": false,
     "metaFile": false,
-    "name": "AIUsecaseDefinition",
-    "suffix": "aiUsecaseDefinitions"
+    "hasChildren": false
   },
   "AccountForecastSettings": {
+    "name": "AccountForecastSettings",
     "directoryName": "AccountForecastSettings",
-    "hasChildren": false,
+    "suffix": "accountForecastSetting",
     "inFolder": false,
     "metaFile": false,
-    "name": "AccountForecastSettings",
-    "suffix": "accountForecastSetting"
+    "hasChildren": false
   },
   "AccountIntelligenceSettings": {
+    "name": "AccountIntelligenceSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "AccountIntelligenceSettings",
-    "suffix": "settings"
+    "hasChildren": false
+  },
+  "AccountPlanSettings": {
+    "name": "AccountPlanSettings",
+    "directoryName": "settings",
+    "suffix": "settings",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "AccountRelationshipShareRule": {
+    "name": "AccountRelationshipShareRule",
     "directoryName": "accountRelationshipShareRules",
-    "hasChildren": false,
+    "suffix": "accountRelationshipShareRule",
     "inFolder": false,
     "metaFile": false,
-    "name": "AccountRelationshipShareRule",
-    "suffix": "accountRelationshipShareRule"
+    "hasChildren": false
   },
   "AccountSettings": {
+    "name": "AccountSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "AccountSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "AccountingFieldMapping": {
+    "name": "AccountingFieldMapping",
     "directoryName": "accountingFieldMappings",
-    "hasChildren": false,
+    "suffix": "accountingFieldMapping",
     "inFolder": false,
     "metaFile": false,
-    "name": "AccountingFieldMapping",
-    "suffix": "accountingFieldMapping"
+    "hasChildren": false
   },
   "AccountingModelConfig": {
+    "name": "AccountingModelConfig",
     "directoryName": "accountingModelConfigs",
-    "hasChildren": false,
+    "suffix": "accountingModelConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "AccountingModelConfig",
-    "suffix": "accountingModelConfig"
+    "hasChildren": false
   },
   "AccountingSettings": {
+    "name": "AccountingSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "AccountingSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "AcctMgrTargetSettings": {
+    "name": "AcctMgrTargetSettings",
     "directoryName": "acctMgrTargetSettings",
-    "hasChildren": false,
+    "suffix": "acctMgrTargetSetting",
     "inFolder": false,
     "metaFile": false,
-    "name": "AcctMgrTargetSettings",
-    "suffix": "acctMgrTargetSetting"
+    "hasChildren": false
   },
   "ActionLauncherItemDef": {
+    "name": "ActionLauncherItemDef",
     "directoryName": "ActionLauncherItemDef",
-    "hasChildren": false,
+    "suffix": "actionLauncherItemDef",
     "inFolder": false,
     "metaFile": false,
-    "name": "ActionLauncherItemDef",
-    "suffix": "actionLauncherItemDef"
+    "hasChildren": false
   },
   "ActionLinkGroupTemplate": {
+    "name": "ActionLinkGroupTemplate",
     "directoryName": "actionLinkGroupTemplates",
-    "hasChildren": false,
+    "suffix": "actionLinkGroupTemplate",
     "inFolder": false,
     "metaFile": false,
-    "name": "ActionLinkGroupTemplate",
-    "suffix": "actionLinkGroupTemplate"
+    "hasChildren": false
   },
   "ActionPlanTemplate": {
+    "name": "ActionPlanTemplate",
     "directoryName": "actionPlanTemplates",
-    "hasChildren": false,
+    "suffix": "apt",
     "inFolder": false,
     "metaFile": false,
-    "name": "ActionPlanTemplate",
-    "suffix": "apt"
+    "hasChildren": false
   },
   "ActionableEventOrchDef": {
+    "name": "ActionableEventOrchDef",
     "directoryName": "ActionableEventOrchDefSettings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ActionableEventOrchDef",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ActionableEventTypeDef": {
+    "name": "ActionableEventTypeDef",
     "directoryName": "ActionableEventTypeDefSettings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ActionableEventTypeDef",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ActionableListDefinition": {
+    "name": "ActionableListDefinition",
     "directoryName": "actionableListDefinitions",
-    "hasChildren": false,
+    "suffix": "actionableListDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "ActionableListDefinition",
-    "suffix": "actionableListDefinition"
+    "hasChildren": false
   },
   "ActionsSettings": {
+    "name": "ActionsSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ActionsSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ActivationPlatform": {
+    "name": "ActivationPlatform",
     "directoryName": "activationPlatforms",
-    "hasChildren": false,
+    "suffix": "activationPlatform",
     "inFolder": false,
     "metaFile": false,
-    "name": "ActivationPlatform",
-    "suffix": "activationPlatform"
+    "hasChildren": false
   },
   "ActivitiesSettings": {
+    "name": "ActivitiesSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ActivitiesSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ActnblListKeyPrfmIndDef": {
+    "name": "ActnblListKeyPrfmIndDef",
     "directoryName": "actnblListKeyPrfmIndDefs",
-    "hasChildren": false,
+    "suffix": "actnblListKeyPrfmIndDef",
     "inFolder": false,
     "metaFile": false,
-    "name": "ActnblListKeyPrfmIndDef",
-    "suffix": "actnblListKeyPrfmIndDef"
+    "hasChildren": false
   },
   "AddressSettings": {
+    "name": "AddressSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "AddressSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "AdvAccountForecastSet": {
+    "name": "AdvAccountForecastSet",
     "directoryName": "AdvAccountForecastSet",
-    "hasChildren": false,
+    "suffix": "advAccountForecastSet",
     "inFolder": false,
     "metaFile": false,
-    "name": "AdvAccountForecastSet",
-    "suffix": "advAccountForecastSet"
+    "hasChildren": false
   },
   "AdvAcctForecastDimSource": {
+    "name": "AdvAcctForecastDimSource",
     "directoryName": "AdvAcctForecastDimSource",
-    "hasChildren": false,
+    "suffix": "advAcctForecastDimSource",
     "inFolder": false,
     "metaFile": false,
-    "name": "AdvAcctForecastDimSource",
-    "suffix": "advAcctForecastDimSource"
+    "hasChildren": false
   },
   "AdvAcctForecastPeriodGroup": {
+    "name": "AdvAcctForecastPeriodGroup",
     "directoryName": "AdvAcctForecastPeriodGroup",
-    "hasChildren": false,
+    "suffix": "advAcctForecastPeriodGroup",
     "inFolder": false,
     "metaFile": false,
-    "name": "AdvAcctForecastPeriodGroup",
-    "suffix": "advAcctForecastPeriodGroup"
+    "hasChildren": false
   },
   "AffinityScoreDefinition": {
+    "name": "AffinityScoreDefinition",
     "directoryName": "affinityScoreDefinitions",
-    "hasChildren": false,
+    "suffix": "affinityScoreDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "AffinityScoreDefinition",
-    "suffix": "affinityScoreDefinition"
+    "hasChildren": false
   },
   "Ai4mSettings": {
+    "name": "Ai4mSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "Ai4mSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "AnalyticSnapshot": {
+    "name": "AnalyticSnapshot",
     "directoryName": "analyticSnapshots",
-    "hasChildren": false,
+    "suffix": "snapshot",
     "inFolder": false,
     "metaFile": false,
-    "name": "AnalyticSnapshot",
-    "suffix": "snapshot"
+    "hasChildren": false
   },
   "AnalyticsSettings": {
+    "name": "AnalyticsSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "AnalyticsSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "AnimationRule": {
+    "name": "AnimationRule",
     "directoryName": "animationRules",
-    "hasChildren": false,
+    "suffix": "animationRule",
     "inFolder": false,
     "metaFile": false,
-    "name": "AnimationRule",
-    "suffix": "animationRule"
+    "hasChildren": false
   },
   "ApexClass": {
+    "name": "ApexClass",
     "directoryName": "classes",
-    "hasChildren": false,
+    "suffix": "cls",
     "inFolder": false,
     "metaFile": true,
-    "name": "ApexClass",
-    "suffix": "cls"
+    "hasChildren": false
   },
   "ApexComponent": {
+    "name": "ApexComponent",
     "directoryName": "components",
-    "hasChildren": false,
+    "suffix": "component",
     "inFolder": false,
     "metaFile": true,
-    "name": "ApexComponent",
-    "suffix": "component"
+    "hasChildren": false
   },
   "ApexEmailNotifications": {
+    "name": "ApexEmailNotifications",
     "directoryName": "apexEmailNotifications",
-    "hasChildren": false,
+    "suffix": "notifications",
     "inFolder": false,
     "metaFile": false,
-    "name": "ApexEmailNotifications",
-    "suffix": "notifications"
+    "hasChildren": false
   },
   "ApexPage": {
+    "name": "ApexPage",
     "directoryName": "pages",
-    "hasChildren": false,
+    "suffix": "page",
     "inFolder": false,
     "metaFile": true,
-    "name": "ApexPage",
-    "suffix": "page"
+    "hasChildren": false
   },
   "ApexSettings": {
+    "name": "ApexSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ApexSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ApexTestSuite": {
+    "name": "ApexTestSuite",
     "directoryName": "testSuites",
-    "hasChildren": false,
+    "suffix": "testSuite",
     "inFolder": false,
     "metaFile": false,
-    "name": "ApexTestSuite",
-    "suffix": "testSuite"
+    "hasChildren": false
   },
   "ApexTrigger": {
+    "name": "ApexTrigger",
     "directoryName": "triggers",
-    "hasChildren": false,
+    "suffix": "trigger",
     "inFolder": false,
     "metaFile": true,
-    "name": "ApexTrigger",
-    "suffix": "trigger"
+    "hasChildren": false
   },
   "AppAnalyticsSettings": {
+    "name": "AppAnalyticsSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "AppAnalyticsSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "AppExperienceSettings": {
+    "name": "AppExperienceSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "AppExperienceSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "AppMenu": {
+    "name": "AppMenu",
     "directoryName": "appMenus",
-    "hasChildren": false,
+    "suffix": "appMenu",
     "inFolder": false,
     "metaFile": false,
-    "name": "AppMenu",
-    "suffix": "appMenu"
+    "hasChildren": false
   },
   "ApplicationRecordTypeConfig": {
+    "name": "ApplicationRecordTypeConfig",
     "directoryName": "ApplicationRecordTypeConfig",
-    "hasChildren": false,
+    "suffix": "applicationRecordTypeConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "ApplicationRecordTypeConfig",
-    "suffix": "applicationRecordTypeConfig"
+    "hasChildren": false
   },
   "ApplicationSubtypeDefinition": {
+    "name": "ApplicationSubtypeDefinition",
     "directoryName": "ApplicationSubtypeDefinitions",
-    "hasChildren": false,
+    "suffix": "applicationSubtypeDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "ApplicationSubtypeDefinition",
-    "suffix": "applicationSubtypeDefinition"
+    "hasChildren": false
   },
   "AppointmentAssignmentPolicy": {
+    "name": "AppointmentAssignmentPolicy",
     "directoryName": "appointmentAssignmentPolicies",
-    "hasChildren": false,
+    "suffix": "policy",
     "inFolder": false,
     "metaFile": false,
-    "name": "AppointmentAssignmentPolicy",
-    "suffix": "policy"
+    "hasChildren": false
   },
   "AppointmentSchedulingPolicy": {
+    "name": "AppointmentSchedulingPolicy",
     "directoryName": "appointmentSchedulingPolicies",
-    "hasChildren": false,
+    "suffix": "policy",
     "inFolder": false,
     "metaFile": false,
-    "name": "AppointmentSchedulingPolicy",
-    "suffix": "policy"
+    "hasChildren": false
   },
   "ApprovalProcess": {
+    "name": "ApprovalProcess",
     "directoryName": "approvalProcesses",
-    "hasChildren": false,
+    "suffix": "approvalProcess",
     "inFolder": false,
     "metaFile": false,
-    "name": "ApprovalProcess",
-    "suffix": "approvalProcess"
+    "hasChildren": false
   },
   "AssessmentConfiguration": {
+    "name": "AssessmentConfiguration",
     "directoryName": "AssessmentConfigurations",
-    "hasChildren": false,
+    "suffix": "assessmentConfiguration",
     "inFolder": false,
     "metaFile": false,
-    "name": "AssessmentConfiguration",
-    "suffix": "assessmentConfiguration"
+    "hasChildren": false
   },
   "AssessmentQuestion": {
+    "name": "AssessmentQuestion",
     "directoryName": "AssessmentQuestions",
-    "hasChildren": false,
+    "suffix": "aq",
     "inFolder": false,
     "metaFile": false,
-    "name": "AssessmentQuestion",
-    "suffix": "aq"
+    "hasChildren": false
   },
   "AssessmentQuestionSet": {
+    "name": "AssessmentQuestionSet",
     "directoryName": "AssessmentQuestionSets",
-    "hasChildren": false,
+    "suffix": "aqs",
     "inFolder": false,
     "metaFile": false,
-    "name": "AssessmentQuestionSet",
-    "suffix": "aqs"
+    "hasChildren": false
   },
   "AssignmentRules": {
+    "name": "AssignmentRules",
     "directoryName": "assignmentRules",
-    "hasChildren": true,
+    "suffix": "assignmentRules",
     "inFolder": false,
     "metaFile": false,
-    "name": "AssignmentRules",
-    "suffix": "assignmentRules"
+    "hasChildren": true
   },
   "AssistantContextItem": {
+    "name": "AssistantContextItem",
     "directoryName": "assistantContextItems",
-    "hasChildren": false,
+    "suffix": "assistantContextItem",
     "inFolder": false,
     "metaFile": false,
-    "name": "AssistantContextItem",
-    "suffix": "assistantContextItem"
+    "hasChildren": false
   },
   "AssistantDefinition": {
+    "name": "AssistantDefinition",
     "directoryName": "assistantDefinitions",
-    "hasChildren": false,
+    "suffix": "assistantDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "AssistantDefinition",
-    "suffix": "assistantDefinition"
+    "hasChildren": false
   },
   "AssistantSkillQuickAction": {
+    "name": "AssistantSkillQuickAction",
     "directoryName": "assistantSkillQuickActions",
-    "hasChildren": false,
+    "suffix": "assistantSkillQuickAction",
     "inFolder": false,
     "metaFile": false,
-    "name": "AssistantSkillQuickAction",
-    "suffix": "assistantSkillQuickAction"
+    "hasChildren": false
   },
   "AssistantSkillSobjectAction": {
+    "name": "AssistantSkillSobjectAction",
     "directoryName": "assistantSkillSobjectActions",
-    "hasChildren": false,
+    "suffix": "assistantSkillSobjectAction",
     "inFolder": false,
     "metaFile": false,
-    "name": "AssistantSkillSobjectAction",
-    "suffix": "assistantSkillSobjectAction"
+    "hasChildren": false
   },
   "AssistantVersion": {
+    "name": "AssistantVersion",
     "directoryName": "assistantVersions",
-    "hasChildren": false,
+    "suffix": "assistantVersion",
     "inFolder": false,
     "metaFile": false,
-    "name": "AssistantVersion",
-    "suffix": "assistantVersion"
+    "hasChildren": false
   },
   "AssociationEngineSettings": {
+    "name": "AssociationEngineSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "AssociationEngineSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "Audience": {
+    "name": "Audience",
     "directoryName": "audience",
-    "hasChildren": false,
+    "suffix": "audience",
     "inFolder": false,
     "metaFile": false,
-    "name": "Audience",
-    "suffix": "audience"
+    "hasChildren": false
   },
   "AuraDefinitionBundle": {
+    "name": "AuraDefinitionBundle",
     "directoryName": "aura",
-    "hasChildren": false,
     "inFolder": false,
     "metaFile": false,
-    "name": "AuraDefinitionBundle"
+    "hasChildren": false
   },
   "AuthProvider": {
+    "name": "AuthProvider",
     "directoryName": "authproviders",
-    "hasChildren": false,
+    "suffix": "authprovider",
     "inFolder": false,
     "metaFile": false,
-    "name": "AuthProvider",
-    "suffix": "authprovider"
+    "hasChildren": false
   },
   "AutoResponseRules": {
+    "name": "AutoResponseRules",
     "directoryName": "autoResponseRules",
-    "hasChildren": true,
+    "suffix": "autoResponseRules",
     "inFolder": false,
     "metaFile": false,
-    "name": "AutoResponseRules",
-    "suffix": "autoResponseRules"
+    "hasChildren": true
   },
   "AutomatedContactsSettings": {
+    "name": "AutomatedContactsSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "AutomatedContactsSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "BatchCalcJobDefinition": {
+    "name": "BatchCalcJobDefinition",
     "directoryName": "batchCalcJobDefinitions",
-    "hasChildren": false,
+    "suffix": "batchCalcJobDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "BatchCalcJobDefinition",
-    "suffix": "batchCalcJobDefinition"
+    "hasChildren": false
   },
   "BatchProcessJobDefinition": {
+    "name": "BatchProcessJobDefinition",
     "directoryName": "batchProcessJobDefinitions",
-    "hasChildren": false,
+    "suffix": "batchProcessJobDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "BatchProcessJobDefinition",
-    "suffix": "batchProcessJobDefinition"
+    "hasChildren": false
   },
   "BenefitAction": {
+    "name": "BenefitAction",
     "directoryName": "benefitActions",
-    "hasChildren": false,
+    "suffix": "benefitAction",
     "inFolder": false,
     "metaFile": false,
-    "name": "BenefitAction",
-    "suffix": "benefitAction"
+    "hasChildren": false
+  },
+  "BillingSettings": {
+    "name": "BillingSettings",
+    "directoryName": "settings",
+    "suffix": "settings",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "BlacklistedConsumer": {
+    "name": "BlacklistedConsumer",
     "directoryName": "blacklistedConsumers",
-    "hasChildren": false,
+    "suffix": "blacklistedConsumer",
     "inFolder": false,
     "metaFile": false,
-    "name": "BlacklistedConsumer",
-    "suffix": "blacklistedConsumer"
+    "hasChildren": false
   },
   "BldgEnrgyIntensityCnfg": {
+    "name": "BldgEnrgyIntensityCnfg",
     "directoryName": "buildingEnergyIntensityConfigs",
-    "hasChildren": false,
+    "suffix": "buildingEnergyIntensityConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "BldgEnrgyIntensityCnfg",
-    "suffix": "buildingEnergyIntensityConfig"
+    "hasChildren": false
   },
   "BlockchainSettings": {
+    "name": "BlockchainSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "BlockchainSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "Bot": {
+    "name": "Bot",
     "directoryName": "bots",
-    "hasChildren": false,
+    "suffix": "bot",
     "inFolder": false,
     "metaFile": false,
-    "name": "Bot",
-    "suffix": "bot"
+    "hasChildren": false
   },
   "BotBlock": {
+    "name": "BotBlock",
     "directoryName": "botBlocks",
-    "hasChildren": false,
+    "suffix": "botBlock",
     "inFolder": false,
     "metaFile": false,
-    "name": "BotBlock",
-    "suffix": "botBlock"
+    "hasChildren": false
   },
   "BotBlockVersion": {
-    "hasChildren": false,
+    "name": "BotBlockVersion",
     "inFolder": false,
     "metaFile": false,
-    "name": "BotBlockVersion"
+    "hasChildren": false
   },
   "BotSettings": {
+    "name": "BotSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "BotSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "BotTemplate": {
+    "name": "BotTemplate",
     "directoryName": "botTemplates",
-    "hasChildren": false,
+    "suffix": "botTemplate",
     "inFolder": false,
     "metaFile": false,
-    "name": "BotTemplate",
-    "suffix": "botTemplate"
+    "hasChildren": false
   },
   "BotVersion": {
-    "hasChildren": false,
+    "name": "BotVersion",
     "inFolder": false,
     "metaFile": false,
-    "name": "BotVersion"
+    "hasChildren": false
   },
   "BranchManagementSettings": {
+    "name": "BranchManagementSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "BranchManagementSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "BrandingSet": {
+    "name": "BrandingSet",
     "directoryName": "brandingSets",
-    "hasChildren": false,
+    "suffix": "brandingSet",
     "inFolder": false,
     "metaFile": false,
-    "name": "BrandingSet",
-    "suffix": "brandingSet"
+    "hasChildren": false
   },
   "BriefcaseDefinition": {
+    "name": "BriefcaseDefinition",
     "directoryName": "briefcaseDefinitions",
-    "hasChildren": false,
+    "suffix": "briefcaseDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "BriefcaseDefinition",
-    "suffix": "briefcaseDefinition"
+    "hasChildren": false
   },
   "BusinessHoursSettings": {
+    "name": "BusinessHoursSettings",
     "directoryName": "settings",
-    "hasChildren": true,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "BusinessHoursSettings",
-    "suffix": "settings"
+    "hasChildren": true
   },
   "BusinessProcess": {
-    "hasChildren": false,
+    "name": "BusinessProcess",
     "inFolder": false,
     "metaFile": false,
-    "name": "BusinessProcess"
+    "hasChildren": false
   },
   "BusinessProcessGroup": {
+    "name": "BusinessProcessGroup",
     "directoryName": "businessProcessGroups",
-    "hasChildren": false,
+    "suffix": "businessProcessGroup",
     "inFolder": false,
     "metaFile": false,
-    "name": "BusinessProcessGroup",
-    "suffix": "businessProcessGroup"
+    "hasChildren": false
   },
   "BusinessProcessTypeDefinition": {
+    "name": "BusinessProcessTypeDefinition",
     "directoryName": "BusinessProcessTypeDefinitions",
-    "hasChildren": false,
+    "suffix": "businessProcessTypeDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "BusinessProcessTypeDefinition",
-    "suffix": "businessProcessTypeDefinition"
+    "hasChildren": false
   },
   "CMSConnectSource": {
+    "name": "CMSConnectSource",
     "directoryName": "cmsConnectSource",
-    "hasChildren": false,
+    "suffix": "cmsConnectSource",
     "inFolder": false,
     "metaFile": false,
-    "name": "CMSConnectSource",
-    "suffix": "cmsConnectSource"
+    "hasChildren": false
   },
   "CallCenter": {
+    "name": "CallCenter",
     "directoryName": "callCenters",
-    "hasChildren": false,
+    "suffix": "callCenter",
     "inFolder": false,
     "metaFile": false,
-    "name": "CallCenter",
-    "suffix": "callCenter"
+    "hasChildren": false
   },
   "CallCenterRoutingMap": {
+    "name": "CallCenterRoutingMap",
     "directoryName": "callCenterRoutingMaps",
-    "hasChildren": false,
+    "suffix": "callCenterRoutingMap",
     "inFolder": false,
     "metaFile": false,
-    "name": "CallCenterRoutingMap",
-    "suffix": "callCenterRoutingMap"
+    "hasChildren": false
   },
   "CallCoachingMediaProvider": {
+    "name": "CallCoachingMediaProvider",
     "directoryName": "callCoachingMediaProviders",
-    "hasChildren": false,
+    "suffix": "callCoachingMediaProvider",
     "inFolder": false,
     "metaFile": false,
-    "name": "CallCoachingMediaProvider",
-    "suffix": "callCoachingMediaProvider"
+    "hasChildren": false
   },
   "CampaignInfluenceModel": {
+    "name": "CampaignInfluenceModel",
     "directoryName": "campaignInfluenceModels",
-    "hasChildren": false,
+    "suffix": "campaignInfluenceModel",
     "inFolder": false,
     "metaFile": false,
-    "name": "CampaignInfluenceModel",
-    "suffix": "campaignInfluenceModel"
+    "hasChildren": false
   },
   "CampaignSettings": {
+    "name": "CampaignSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "CampaignSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "CanvasMetadata": {
+    "name": "CanvasMetadata",
     "directoryName": "Canvases",
-    "hasChildren": false,
+    "suffix": "Canvas",
     "inFolder": false,
     "metaFile": false,
-    "name": "CanvasMetadata",
-    "suffix": "Canvas"
+    "hasChildren": false
   },
   "CareBenefitVerifySettings": {
+    "name": "CareBenefitVerifySettings",
     "directoryName": "careBenefitVerifySettings",
-    "hasChildren": false,
+    "suffix": "careBenefitVerifySettings",
     "inFolder": false,
     "metaFile": false,
-    "name": "CareBenefitVerifySettings",
-    "suffix": "careBenefitVerifySettings"
+    "hasChildren": false
   },
   "CareLimitType": {
+    "name": "CareLimitType",
     "directoryName": "careLimitTypes",
-    "hasChildren": false,
+    "suffix": "careLimitType",
     "inFolder": false,
     "metaFile": false,
-    "name": "CareLimitType",
-    "suffix": "careLimitType"
+    "hasChildren": false
   },
   "CareProviderAfflRoleConfig": {
+    "name": "CareProviderAfflRoleConfig",
     "directoryName": "careProviderAfflRoleConfigs",
-    "hasChildren": false,
+    "suffix": "careProviderAfflRoleConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "CareProviderAfflRoleConfig",
-    "suffix": "careProviderAfflRoleConfig"
+    "hasChildren": false
   },
   "CareProviderSearchConfig": {
+    "name": "CareProviderSearchConfig",
     "directoryName": "careProviderSearchConfigs",
-    "hasChildren": false,
+    "suffix": "careProviderSearchConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "CareProviderSearchConfig",
-    "suffix": "careProviderSearchConfig"
+    "hasChildren": false
   },
   "CareRequestConfiguration": {
+    "name": "CareRequestConfiguration",
     "directoryName": "careRequestConfigurations",
-    "hasChildren": false,
+    "suffix": "careRequestConfiguration",
     "inFolder": false,
     "metaFile": false,
-    "name": "CareRequestConfiguration",
-    "suffix": "careRequestConfiguration"
+    "hasChildren": false
   },
   "CareSystemFieldMapping": {
+    "name": "CareSystemFieldMapping",
     "directoryName": "careSystemFieldMappings",
-    "hasChildren": false,
+    "suffix": "careSystemFieldMapping",
     "inFolder": false,
     "metaFile": false,
-    "name": "CareSystemFieldMapping",
-    "suffix": "careSystemFieldMapping"
+    "hasChildren": false
   },
   "CaseSettings": {
+    "name": "CaseSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "CaseSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "CaseSubjectParticle": {
+    "name": "CaseSubjectParticle",
     "directoryName": "CaseSubjectParticles",
-    "hasChildren": false,
+    "suffix": "CaseSubjectParticle",
     "inFolder": false,
     "metaFile": false,
-    "name": "CaseSubjectParticle",
-    "suffix": "CaseSubjectParticle"
+    "hasChildren": false
   },
   "Certificate": {
+    "name": "Certificate",
     "directoryName": "certs",
-    "hasChildren": false,
+    "suffix": "crt",
     "inFolder": false,
     "metaFile": true,
-    "name": "Certificate",
-    "suffix": "crt"
+    "hasChildren": false
   },
   "ChannelLayout": {
+    "name": "ChannelLayout",
     "directoryName": "channelLayouts",
-    "hasChildren": false,
+    "suffix": "channelLayout",
     "inFolder": false,
     "metaFile": false,
-    "name": "ChannelLayout",
-    "suffix": "channelLayout"
+    "hasChildren": false
   },
   "ChannelObjectLinkingRule": {
+    "name": "ChannelObjectLinkingRule",
     "directoryName": "ChannelObjectLinkingRules",
-    "hasChildren": false,
+    "suffix": "ChannelObjectLinkingRule",
     "inFolder": false,
     "metaFile": false,
-    "name": "ChannelObjectLinkingRule",
-    "suffix": "ChannelObjectLinkingRule"
+    "hasChildren": false
+  },
+  "ChannelRevMgmtSettings": {
+    "name": "ChannelRevMgmtSettings",
+    "directoryName": "settings",
+    "suffix": "settings",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "ChatterAnswersSettings": {
+    "name": "ChatterAnswersSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ChatterAnswersSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ChatterEmailsMDSettings": {
+    "name": "ChatterEmailsMDSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ChatterEmailsMDSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ChatterExtension": {
+    "name": "ChatterExtension",
     "directoryName": "ChatterExtensions",
-    "hasChildren": false,
+    "suffix": "ChatterExtension",
     "inFolder": false,
     "metaFile": false,
-    "name": "ChatterExtension",
-    "suffix": "ChatterExtension"
+    "hasChildren": false
   },
   "ChatterSettings": {
+    "name": "ChatterSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ChatterSettings",
-    "suffix": "settings"
+    "hasChildren": false
+  },
+  "ChoiceList": {
+    "name": "ChoiceList",
+    "directoryName": "ChoiceList",
+    "suffix": "ChoiceList",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "ClaimFinancialSettings": {
+    "name": "ClaimFinancialSettings",
     "directoryName": "ClaimFinancialSettings",
-    "hasChildren": false,
+    "suffix": "claimFinancialSettings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ClaimFinancialSettings",
-    "suffix": "claimFinancialSettings"
+    "hasChildren": false
   },
   "ClaimMgmtFoundationEnabledSettings": {
+    "name": "ClaimMgmtFoundationEnabledSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ClaimMgmtFoundationEnabledSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ClauseCatgConfiguration": {
+    "name": "ClauseCatgConfiguration",
     "directoryName": "clauseCatgConfigurations",
-    "hasChildren": false,
+    "suffix": "clauseCatgConfiguration",
     "inFolder": false,
     "metaFile": false,
-    "name": "ClauseCatgConfiguration",
-    "suffix": "clauseCatgConfiguration"
+    "hasChildren": false
   },
   "CleanDataService": {
+    "name": "CleanDataService",
     "directoryName": "cleanDataServices",
-    "hasChildren": false,
+    "suffix": "cleanDataService",
     "inFolder": false,
     "metaFile": false,
-    "name": "CleanDataService",
-    "suffix": "cleanDataService"
+    "hasChildren": false
   },
   "CodeBuilderSettings": {
+    "name": "CodeBuilderSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "CodeBuilderSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "CollectionsDashboardSettings": {
+    "name": "CollectionsDashboardSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "CollectionsDashboardSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "CommandAction": {
+    "name": "CommandAction",
     "directoryName": "commandActions",
-    "hasChildren": false,
+    "suffix": "commandaction",
     "inFolder": false,
     "metaFile": false,
-    "name": "CommandAction",
-    "suffix": "commandaction"
+    "hasChildren": false
   },
   "CommerceSettings": {
+    "name": "CommerceSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "CommerceSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "CommsServiceConsoleSettings": {
+    "name": "CommsServiceConsoleSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "CommsServiceConsoleSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "CommunitiesSettings": {
+    "name": "CommunitiesSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "CommunitiesSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "Community": {
+    "name": "Community",
     "directoryName": "communities",
-    "hasChildren": false,
+    "suffix": "community",
     "inFolder": false,
     "metaFile": false,
-    "name": "Community",
-    "suffix": "community"
+    "hasChildren": false
   },
   "CommunityTemplateDefinition": {
+    "name": "CommunityTemplateDefinition",
     "directoryName": "communityTemplateDefinitions",
-    "hasChildren": false,
+    "suffix": "communityTemplateDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "CommunityTemplateDefinition",
-    "suffix": "communityTemplateDefinition"
+    "hasChildren": false
   },
   "CommunityThemeDefinition": {
+    "name": "CommunityThemeDefinition",
     "directoryName": "communityThemeDefinitions",
-    "hasChildren": false,
+    "suffix": "communityThemeDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "CommunityThemeDefinition",
-    "suffix": "communityThemeDefinition"
+    "hasChildren": false
   },
   "CompactLayout": {
-    "hasChildren": false,
+    "name": "CompactLayout",
     "inFolder": false,
     "metaFile": false,
-    "name": "CompactLayout"
+    "hasChildren": false
   },
   "CompanySettings": {
+    "name": "CompanySettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "CompanySettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ConnectedApp": {
+    "name": "ConnectedApp",
     "directoryName": "connectedApps",
-    "hasChildren": false,
+    "suffix": "connectedApp",
     "inFolder": false,
     "metaFile": false,
-    "name": "ConnectedApp",
-    "suffix": "connectedApp"
+    "hasChildren": false
   },
   "ConnectedAppSettings": {
+    "name": "ConnectedAppSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ConnectedAppSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ContentAsset": {
+    "name": "ContentAsset",
     "directoryName": "contentassets",
-    "hasChildren": false,
+    "suffix": "asset",
     "inFolder": false,
     "metaFile": true,
-    "name": "ContentAsset",
-    "suffix": "asset"
+    "hasChildren": false
   },
   "ContentSettings": {
+    "name": "ContentSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ContentSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ContextDefinition": {
+    "name": "ContextDefinition",
     "directoryName": "contextDefinitions",
-    "hasChildren": false,
+    "suffix": "contextDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "ContextDefinition",
-    "suffix": "contextDefinition"
+    "hasChildren": false
   },
   "ContextUseCaseMapping": {
+    "name": "ContextUseCaseMapping",
     "directoryName": "contextUseCaseMappings",
-    "hasChildren": false,
+    "suffix": "contextUseCaseMapping",
     "inFolder": false,
     "metaFile": false,
-    "name": "ContextUseCaseMapping",
-    "suffix": "contextUseCaseMapping"
+    "hasChildren": false
   },
   "ContractSettings": {
+    "name": "ContractSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ContractSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ContractType": {
+    "name": "ContractType",
     "directoryName": "contractTypes",
-    "hasChildren": false,
+    "suffix": "contractType",
     "inFolder": false,
     "metaFile": false,
-    "name": "ContractType",
-    "suffix": "contractType"
+    "hasChildren": false
+  },
+  "ConvIntelligenceSignalRule": {
+    "name": "ConvIntelligenceSignalRule",
+    "directoryName": "ConvIntelligenceSignalRule",
+    "suffix": "ConvIntelligenceSignalRule",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "ConversationChannelDefinition": {
+    "name": "ConversationChannelDefinition",
     "directoryName": "conversationChannelDefinitions",
-    "hasChildren": false,
+    "suffix": "ConversationChannelDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "ConversationChannelDefinition",
-    "suffix": "ConversationChannelDefinition"
+    "hasChildren": false
+  },
+  "ConversationMessageDefinition": {
+    "name": "ConversationMessageDefinition",
+    "directoryName": "conversationMessageDefinitions",
+    "suffix": "conversationMessageDefinition",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "ConversationServiceIntegrationSettings": {
+    "name": "ConversationServiceIntegrationSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ConversationServiceIntegrationSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ConversationVendorInfo": {
+    "name": "ConversationVendorInfo",
     "directoryName": "ConversationVendorInformation",
-    "hasChildren": false,
+    "suffix": "ConversationVendorInformation",
     "inFolder": false,
     "metaFile": false,
-    "name": "ConversationVendorInfo",
-    "suffix": "ConversationVendorInformation"
+    "hasChildren": false
   },
   "ConversationalIntelligenceSettings": {
+    "name": "ConversationalIntelligenceSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ConversationalIntelligenceSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "CorsWhitelistOrigin": {
+    "name": "CorsWhitelistOrigin",
     "directoryName": "corsWhitelistOrigins",
-    "hasChildren": false,
+    "suffix": "corsWhitelistOrigin",
     "inFolder": false,
     "metaFile": false,
-    "name": "CorsWhitelistOrigin",
-    "suffix": "corsWhitelistOrigin"
+    "hasChildren": false
   },
   "CspTrustedSite": {
+    "name": "CspTrustedSite",
     "directoryName": "cspTrustedSites",
-    "hasChildren": false,
+    "suffix": "cspTrustedSite",
     "inFolder": false,
     "metaFile": false,
-    "name": "CspTrustedSite",
-    "suffix": "cspTrustedSite"
+    "hasChildren": false
   },
   "CurrencySettings": {
+    "name": "CurrencySettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "CurrencySettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "CustomAddressFieldSettings": {
+    "name": "CustomAddressFieldSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomAddressFieldSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "CustomApplication": {
+    "name": "CustomApplication",
     "directoryName": "applications",
-    "hasChildren": false,
+    "suffix": "app",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomApplication",
-    "suffix": "app"
+    "hasChildren": false
   },
   "CustomApplicationComponent": {
+    "name": "CustomApplicationComponent",
     "directoryName": "customApplicationComponents",
-    "hasChildren": false,
+    "suffix": "customApplicationComponent",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomApplicationComponent",
-    "suffix": "customApplicationComponent"
+    "hasChildren": false
   },
   "CustomFeedFilter": {
+    "name": "CustomFeedFilter",
     "directoryName": "feedFilters",
-    "hasChildren": false,
+    "suffix": "feedFilter",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomFeedFilter",
-    "suffix": "feedFilter"
+    "hasChildren": false
   },
   "CustomField": {
-    "hasChildren": false,
+    "name": "CustomField",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomField"
+    "hasChildren": false
   },
   "CustomHelpMenuSection": {
+    "name": "CustomHelpMenuSection",
     "directoryName": "customHelpMenuSections",
-    "hasChildren": false,
+    "suffix": "customHelpMenuSection",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomHelpMenuSection",
-    "suffix": "customHelpMenuSection"
+    "hasChildren": false
   },
   "CustomIndex": {
+    "name": "CustomIndex",
     "directoryName": "customindex",
-    "hasChildren": false,
+    "suffix": "indx",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomIndex",
-    "suffix": "indx"
+    "hasChildren": false
   },
   "CustomLabels": {
+    "name": "CustomLabels",
     "directoryName": "labels",
-    "hasChildren": true,
+    "suffix": "labels",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomLabels",
-    "suffix": "labels"
+    "hasChildren": true
   },
   "CustomMetadata": {
+    "name": "CustomMetadata",
     "directoryName": "customMetadata",
-    "hasChildren": false,
+    "suffix": "md",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomMetadata",
-    "suffix": "md"
+    "hasChildren": false
   },
   "CustomNotificationType": {
+    "name": "CustomNotificationType",
     "directoryName": "notificationtypes",
-    "hasChildren": false,
+    "suffix": "notiftype",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomNotificationType",
-    "suffix": "notiftype"
+    "hasChildren": false
   },
   "CustomObject": {
+    "name": "CustomObject",
     "directoryName": "objects",
-    "hasChildren": true,
+    "suffix": "object",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomObject",
-    "suffix": "object"
+    "hasChildren": true
   },
   "CustomObjectTranslation": {
+    "name": "CustomObjectTranslation",
     "directoryName": "objectTranslations",
-    "hasChildren": false,
+    "suffix": "objectTranslation",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomObjectTranslation",
-    "suffix": "objectTranslation"
+    "hasChildren": false
   },
   "CustomPageWebLink": {
+    "name": "CustomPageWebLink",
     "directoryName": "weblinks",
-    "hasChildren": false,
+    "suffix": "weblink",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomPageWebLink",
-    "suffix": "weblink"
+    "hasChildren": false
   },
   "CustomPermission": {
+    "name": "CustomPermission",
     "directoryName": "customPermissions",
-    "hasChildren": false,
+    "suffix": "customPermission",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomPermission",
-    "suffix": "customPermission"
+    "hasChildren": false
   },
   "CustomSite": {
+    "name": "CustomSite",
     "directoryName": "sites",
-    "hasChildren": false,
+    "suffix": "site",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomSite",
-    "suffix": "site"
+    "hasChildren": false
   },
   "CustomTab": {
+    "name": "CustomTab",
     "directoryName": "tabs",
-    "hasChildren": false,
+    "suffix": "tab",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomTab",
-    "suffix": "tab"
+    "hasChildren": false
   },
   "CustomValue": {
-    "hasChildren": false,
+    "name": "CustomValue",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomValue"
+    "hasChildren": false
   },
   "CustomerDataPlatformSettings": {
+    "name": "CustomerDataPlatformSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomerDataPlatformSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "CustomizablePropensityScoringSettings": {
+    "name": "CustomizablePropensityScoringSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "CustomizablePropensityScoringSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "Dashboard": {
+    "name": "Dashboard",
     "directoryName": "dashboards",
-    "hasChildren": false,
+    "suffix": "dashboard",
     "inFolder": true,
     "metaFile": false,
-    "name": "Dashboard",
-    "suffix": "dashboard"
+    "hasChildren": false
   },
   "DashboardFolder": {
+    "name": "DashboardFolder",
     "directoryName": "dashboards",
-    "hasChildren": false,
+    "suffix": "",
     "inFolder": false,
     "metaFile": false,
-    "name": "DashboardFolder",
-    "suffix": ""
+    "hasChildren": false
   },
   "DataCalcInsightTemplate": {
+    "name": "DataCalcInsightTemplate",
     "directoryName": "dataCalcInsightTemplates",
-    "hasChildren": false,
+    "suffix": "dataCalcInsightTemplate",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataCalcInsightTemplate",
-    "suffix": "dataCalcInsightTemplate"
+    "hasChildren": false
   },
   "DataCategoryGroup": {
-    "directoryName": "datacategorygroups",
-    "hasChildren": false,
-    "inFolder": false,
-    "metaFile": false,
     "name": "DataCategoryGroup",
-    "suffix": "datacategorygroup"
-  },
-  "DataConnectionParamTmpl": {
-    "hasChildren": false,
+    "directoryName": "datacategorygroups",
+    "suffix": "datacategorygroup",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataConnectionParamTmpl"
+    "hasChildren": false
   },
   "DataConnectorIngestApi": {
+    "name": "DataConnectorIngestApi",
     "directoryName": "dataConnectorIngestApis",
-    "hasChildren": false,
+    "suffix": "dataConnectorIngestApi",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataConnectorIngestApi",
-    "suffix": "dataConnectorIngestApi"
+    "hasChildren": false
   },
   "DataConnectorS3": {
+    "name": "DataConnectorS3",
     "directoryName": "s3DataConnectors",
-    "hasChildren": false,
+    "suffix": "s3DataConnector",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataConnectorS3",
-    "suffix": "s3DataConnector"
+    "hasChildren": false
   },
   "DataDotComSettings": {
+    "name": "DataDotComSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataDotComSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "DataImportManagementSettings": {
+    "name": "DataImportManagementSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataImportManagementSettings",
-    "suffix": "settings"
+    "hasChildren": false
+  },
+  "DataKitObjectDependency": {
+    "name": "DataKitObjectDependency",
+    "directoryName": "dataKitObjectDependencies",
+    "suffix": "dataKitObjectDependency",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "DataKitObjectTemplate": {
+    "name": "DataKitObjectTemplate",
     "directoryName": "dataKitObjectTemplates",
-    "hasChildren": false,
+    "suffix": "dataKitObjectTemplate",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataKitObjectTemplate",
-    "suffix": "dataKitObjectTemplate"
+    "hasChildren": false
   },
   "DataPackageKitDefinition": {
+    "name": "DataPackageKitDefinition",
     "directoryName": "dataPackageKitDefinitions",
-    "hasChildren": false,
+    "suffix": "dataPackageKitDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataPackageKitDefinition",
-    "suffix": "dataPackageKitDefinition"
+    "hasChildren": false
   },
   "DataPackageKitObject": {
+    "name": "DataPackageKitObject",
     "directoryName": "DataPackageKitObjects",
-    "hasChildren": false,
+    "suffix": "DataPackageKitObject",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataPackageKitObject",
-    "suffix": "DataPackageKitObject"
+    "hasChildren": false
   },
   "DataSource": {
+    "name": "DataSource",
     "directoryName": "mktDataSources",
-    "hasChildren": false,
+    "suffix": "dataSource",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataSource",
-    "suffix": "dataSource"
+    "hasChildren": false
   },
   "DataSourceBundleDefinition": {
+    "name": "DataSourceBundleDefinition",
     "directoryName": "dataSourceBundleDefinitions",
-    "hasChildren": false,
+    "suffix": "dataSourceBundleDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataSourceBundleDefinition",
-    "suffix": "dataSourceBundleDefinition"
+    "hasChildren": false
   },
   "DataSourceObject": {
+    "name": "DataSourceObject",
     "directoryName": "dataSourceObjects",
-    "hasChildren": false,
+    "suffix": "dataSourceObject",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataSourceObject",
-    "suffix": "dataSourceObject"
+    "hasChildren": false
   },
   "DataSourceTenant": {
+    "name": "DataSourceTenant",
     "directoryName": "dataSourceTenants",
-    "hasChildren": false,
+    "suffix": "dataSourceTenant",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataSourceTenant",
-    "suffix": "dataSourceTenant"
+    "hasChildren": false
   },
   "DataSrcDataModelFieldMap": {
+    "name": "DataSrcDataModelFieldMap",
     "directoryName": "dataSrcDataModelFieldMaps",
-    "hasChildren": false,
+    "suffix": "dataSrcDataModelFieldMap",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataSrcDataModelFieldMap",
-    "suffix": "dataSrcDataModelFieldMap"
+    "hasChildren": false
   },
   "DataStreamDefinition": {
+    "name": "DataStreamDefinition",
     "directoryName": "dataStreamDefinitions",
-    "hasChildren": false,
+    "suffix": "dataStreamDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataStreamDefinition",
-    "suffix": "dataStreamDefinition"
+    "hasChildren": false
   },
   "DataStreamTemplate": {
+    "name": "DataStreamTemplate",
     "directoryName": "dataStreamTemplates",
-    "hasChildren": false,
+    "suffix": "dataStreamTemplate",
     "inFolder": false,
     "metaFile": false,
-    "name": "DataStreamTemplate",
-    "suffix": "dataStreamTemplate"
+    "hasChildren": false
   },
   "DataWeaveResource": {
+    "name": "DataWeaveResource",
     "directoryName": "dw",
-    "hasChildren": false,
+    "suffix": "dwl",
     "inFolder": false,
     "metaFile": true,
-    "name": "DataWeaveResource",
-    "suffix": "dwl"
+    "hasChildren": false
   },
   "DecisionMatrixDefinition": {
+    "name": "DecisionMatrixDefinition",
     "directoryName": "decisionMatrixDefinition",
-    "hasChildren": false,
+    "suffix": "decisionMatrixDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "DecisionMatrixDefinition",
-    "suffix": "decisionMatrixDefinition"
+    "hasChildren": false
   },
   "DecisionMatrixDefinitionVersion": {
+    "name": "DecisionMatrixDefinitionVersion",
     "directoryName": "decisionMatrixVersion",
-    "hasChildren": false,
+    "suffix": "decisionMatrixVersion",
     "inFolder": false,
     "metaFile": false,
-    "name": "DecisionMatrixDefinitionVersion",
-    "suffix": "decisionMatrixVersion"
+    "hasChildren": false
   },
   "DecisionTable": {
+    "name": "DecisionTable",
     "directoryName": "decisionTables",
-    "hasChildren": false,
+    "suffix": "decisionTable",
     "inFolder": false,
     "metaFile": false,
-    "name": "DecisionTable",
-    "suffix": "decisionTable"
+    "hasChildren": false
   },
   "DecisionTableDatasetLink": {
+    "name": "DecisionTableDatasetLink",
     "directoryName": "decisionTableDatasetLinks",
-    "hasChildren": false,
+    "suffix": "decisionTableDatasetLink",
     "inFolder": false,
     "metaFile": false,
-    "name": "DecisionTableDatasetLink",
-    "suffix": "decisionTableDatasetLink"
+    "hasChildren": false
   },
   "DelegateGroup": {
+    "name": "DelegateGroup",
     "directoryName": "delegateGroups",
-    "hasChildren": false,
+    "suffix": "delegateGroup",
     "inFolder": false,
     "metaFile": false,
-    "name": "DelegateGroup",
-    "suffix": "delegateGroup"
+    "hasChildren": false
   },
   "DeploymentSettings": {
+    "name": "DeploymentSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "DeploymentSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "DevHubSettings": {
+    "name": "DevHubSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "DevHubSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "DigitalExperience": {
-    "hasChildren": false,
+    "name": "DigitalExperience",
     "inFolder": false,
     "metaFile": false,
-    "name": "DigitalExperience"
+    "hasChildren": false
   },
   "DigitalExperienceBundle": {
+    "name": "DigitalExperienceBundle",
     "directoryName": "digitalExperiences",
-    "hasChildren": true,
+    "suffix": "digitalExperience",
     "inFolder": false,
     "metaFile": true,
-    "name": "DigitalExperienceBundle",
-    "suffix": "digitalExperience"
+    "hasChildren": true
   },
   "DigitalExperienceConfig": {
+    "name": "DigitalExperienceConfig",
     "directoryName": "digitalExperienceConfigs",
-    "hasChildren": false,
+    "suffix": "digitalExperienceConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "DigitalExperienceConfig",
-    "suffix": "digitalExperienceConfig"
+    "hasChildren": false
   },
   "DisclosureDefinition": {
+    "name": "DisclosureDefinition",
     "directoryName": "disclosureDefinitions",
-    "hasChildren": false,
+    "suffix": "disclosureDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "DisclosureDefinition",
-    "suffix": "disclosureDefinition"
+    "hasChildren": false
   },
   "DisclosureDefinitionVersion": {
+    "name": "DisclosureDefinitionVersion",
     "directoryName": "disclosureDefinitionVersions",
-    "hasChildren": false,
+    "suffix": "disclosureDefinitionVersion",
     "inFolder": false,
     "metaFile": false,
-    "name": "DisclosureDefinitionVersion",
-    "suffix": "disclosureDefinitionVersion"
+    "hasChildren": false
   },
   "DisclosureType": {
+    "name": "DisclosureType",
     "directoryName": "disclosureTypes",
-    "hasChildren": false,
+    "suffix": "disclosureType",
     "inFolder": false,
     "metaFile": false,
-    "name": "DisclosureType",
-    "suffix": "disclosureType"
+    "hasChildren": false
   },
   "DiscoveryAIModel": {
+    "name": "DiscoveryAIModel",
     "directoryName": "discovery",
-    "hasChildren": false,
+    "suffix": "model",
     "inFolder": false,
     "metaFile": true,
-    "name": "DiscoveryAIModel",
-    "suffix": "model"
+    "hasChildren": false
   },
   "DiscoveryGoal": {
+    "name": "DiscoveryGoal",
     "directoryName": "discovery",
-    "hasChildren": false,
+    "suffix": "goal",
     "inFolder": false,
     "metaFile": false,
-    "name": "DiscoveryGoal",
-    "suffix": "goal"
+    "hasChildren": false
   },
   "DiscoverySettings": {
+    "name": "DiscoverySettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "DiscoverySettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "DiscoveryStory": {
+    "name": "DiscoveryStory",
     "directoryName": "discovery",
-    "hasChildren": false,
+    "suffix": "story",
     "inFolder": false,
     "metaFile": true,
-    "name": "DiscoveryStory",
-    "suffix": "story"
+    "hasChildren": false
   },
   "Document": {
+    "name": "Document",
     "directoryName": "documents",
-    "hasChildren": false,
     "inFolder": true,
     "metaFile": false,
-    "name": "Document"
+    "hasChildren": false
   },
   "DocumentCategory": {
+    "name": "DocumentCategory",
     "directoryName": "documentCategory",
-    "hasChildren": false,
+    "suffix": "documentCategory",
     "inFolder": false,
     "metaFile": false,
-    "name": "DocumentCategory",
-    "suffix": "documentCategory"
+    "hasChildren": false
   },
   "DocumentCategoryDocumentType": {
+    "name": "DocumentCategoryDocumentType",
     "directoryName": "documentCategoryDocumentTypes",
-    "hasChildren": false,
+    "suffix": "documentCategoryDocumentType",
     "inFolder": false,
     "metaFile": false,
-    "name": "DocumentCategoryDocumentType",
-    "suffix": "documentCategoryDocumentType"
+    "hasChildren": false
   },
   "DocumentChecklistSettings": {
+    "name": "DocumentChecklistSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "DocumentChecklistSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "DocumentFolder": {
+    "name": "DocumentFolder",
     "directoryName": "documents",
-    "hasChildren": false,
+    "suffix": "",
     "inFolder": false,
     "metaFile": false,
-    "name": "DocumentFolder",
-    "suffix": ""
+    "hasChildren": false
   },
   "DocumentGenerationSetting": {
+    "name": "DocumentGenerationSetting",
     "directoryName": "documentGenerationSettings",
-    "hasChildren": false,
+    "suffix": "documentGenerationSetting",
     "inFolder": false,
     "metaFile": false,
-    "name": "DocumentGenerationSetting",
-    "suffix": "documentGenerationSetting"
+    "hasChildren": false
   },
   "DocumentTemplate": {
+    "name": "DocumentTemplate",
     "directoryName": "documentTemplates",
-    "hasChildren": false,
+    "suffix": "dt",
     "inFolder": false,
     "metaFile": true,
-    "name": "DocumentTemplate",
-    "suffix": "dt"
+    "hasChildren": false
   },
   "DocumentType": {
+    "name": "DocumentType",
     "directoryName": "documentTypes",
-    "hasChildren": false,
+    "suffix": "documentType",
     "inFolder": false,
     "metaFile": false,
-    "name": "DocumentType",
-    "suffix": "documentType"
+    "hasChildren": false
   },
   "DuplicateRule": {
+    "name": "DuplicateRule",
     "directoryName": "duplicateRules",
-    "hasChildren": false,
+    "suffix": "duplicateRule",
     "inFolder": false,
     "metaFile": false,
-    "name": "DuplicateRule",
-    "suffix": "duplicateRule"
+    "hasChildren": false
   },
   "DynamicFormsSettings": {
+    "name": "DynamicFormsSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "DynamicFormsSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "DynamicFulfillmentOrchestratorSettings": {
+    "name": "DynamicFulfillmentOrchestratorSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "DynamicFulfillmentOrchestratorSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EACSettings": {
+    "name": "EACSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EACSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ESignatureConfig": {
+    "name": "ESignatureConfig",
     "directoryName": "eSignatureConfigs",
-    "hasChildren": false,
+    "suffix": "eSignatureConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "ESignatureConfig",
-    "suffix": "eSignatureConfig"
+    "hasChildren": false
   },
   "ESignatureEnvelopeConfig": {
+    "name": "ESignatureEnvelopeConfig",
     "directoryName": "eSignatureEnvelopeConfigs",
-    "hasChildren": false,
+    "suffix": "eSignatureEnvelopeConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "ESignatureEnvelopeConfig",
-    "suffix": "eSignatureEnvelopeConfig"
+    "hasChildren": false
   },
   "EclairGeoData": {
+    "name": "EclairGeoData",
     "directoryName": "eclair",
-    "hasChildren": false,
+    "suffix": "geodata",
     "inFolder": false,
     "metaFile": true,
-    "name": "EclairGeoData",
-    "suffix": "geodata"
+    "hasChildren": false
   },
   "EinsteinAISettings": {
+    "name": "EinsteinAISettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EinsteinAISettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EinsteinAgentSettings": {
+    "name": "EinsteinAgentSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EinsteinAgentSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EinsteinAssistantSettings": {
+    "name": "EinsteinAssistantSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EinsteinAssistantSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EinsteinCopilotSettings": {
+    "name": "EinsteinCopilotSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EinsteinCopilotSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EinsteinDealInsightsSettings": {
+    "name": "EinsteinDealInsightsSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EinsteinDealInsightsSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EinsteinDocumentCaptureSettings": {
+    "name": "EinsteinDocumentCaptureSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EinsteinDocumentCaptureSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EinsteinGptSettings": {
+    "name": "EinsteinGptSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EinsteinGptSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EmailAdministrationSettings": {
+    "name": "EmailAdministrationSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EmailAdministrationSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EmailFolder": {
+    "name": "EmailFolder",
     "directoryName": "email",
-    "hasChildren": false,
+    "suffix": "",
     "inFolder": false,
     "metaFile": false,
-    "name": "EmailFolder",
-    "suffix": ""
+    "hasChildren": false
   },
   "EmailIntegrationSettings": {
+    "name": "EmailIntegrationSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EmailIntegrationSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EmailServicesFunction": {
+    "name": "EmailServicesFunction",
     "directoryName": "emailservices",
-    "hasChildren": false,
+    "suffix": "xml",
     "inFolder": false,
     "metaFile": false,
-    "name": "EmailServicesFunction",
-    "suffix": "xml"
+    "hasChildren": false
   },
   "EmailTemplate": {
+    "name": "EmailTemplate",
     "directoryName": "email",
-    "hasChildren": false,
+    "suffix": "email",
     "inFolder": true,
     "metaFile": false,
-    "name": "EmailTemplate",
-    "suffix": "email"
+    "hasChildren": false
   },
   "EmailTemplateFolder": {
+    "name": "EmailTemplateFolder",
     "directoryName": "email",
-    "hasChildren": false,
+    "suffix": "",
     "inFolder": false,
     "metaFile": false,
-    "name": "EmailTemplateFolder",
-    "suffix": ""
+    "hasChildren": false
   },
   "EmailTemplateSettings": {
+    "name": "EmailTemplateSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EmailTemplateSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EmbeddedServiceBranding": {
+    "name": "EmbeddedServiceBranding",
     "directoryName": "EmbeddedServiceBranding",
-    "hasChildren": false,
+    "suffix": "EmbeddedServiceBranding",
     "inFolder": false,
     "metaFile": false,
-    "name": "EmbeddedServiceBranding",
-    "suffix": "EmbeddedServiceBranding"
+    "hasChildren": false
   },
   "EmbeddedServiceConfig": {
+    "name": "EmbeddedServiceConfig",
     "directoryName": "EmbeddedServiceConfig",
-    "hasChildren": false,
+    "suffix": "EmbeddedServiceConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "EmbeddedServiceConfig",
-    "suffix": "EmbeddedServiceConfig"
+    "hasChildren": false
   },
   "EmbeddedServiceFlowConfig": {
+    "name": "EmbeddedServiceFlowConfig",
     "directoryName": "EmbeddedServiceFlowConfig",
-    "hasChildren": false,
+    "suffix": "EmbeddedServiceFlowConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "EmbeddedServiceFlowConfig",
-    "suffix": "EmbeddedServiceFlowConfig"
+    "hasChildren": false
   },
   "EmbeddedServiceLiveAgent": {
+    "name": "EmbeddedServiceLiveAgent",
     "directoryName": "EmbeddedServiceLiveAgent",
-    "hasChildren": false,
+    "suffix": "EmbeddedServiceLiveAgent",
     "inFolder": false,
     "metaFile": false,
-    "name": "EmbeddedServiceLiveAgent",
-    "suffix": "EmbeddedServiceLiveAgent"
+    "hasChildren": false
   },
   "EmbeddedServiceMenuSettings": {
+    "name": "EmbeddedServiceMenuSettings",
     "directoryName": "EmbeddedServiceMenuSettings",
-    "hasChildren": false,
+    "suffix": "EmbeddedServiceMenuSettings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EmbeddedServiceMenuSettings",
-    "suffix": "EmbeddedServiceMenuSettings"
+    "hasChildren": false
   },
   "EmployeeDataSyncProfile": {
+    "name": "EmployeeDataSyncProfile",
     "directoryName": "employeeDataSyncProfiles",
-    "hasChildren": false,
+    "suffix": "employeeDataSyncProfile",
     "inFolder": false,
     "metaFile": false,
-    "name": "EmployeeDataSyncProfile",
-    "suffix": "employeeDataSyncProfile"
+    "hasChildren": false
   },
   "EmployeeFieldAccessSettings": {
+    "name": "EmployeeFieldAccessSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EmployeeFieldAccessSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EmployeeUserSettings": {
+    "name": "EmployeeUserSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EmployeeUserSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EnablementMeasureDefinition": {
+    "name": "EnablementMeasureDefinition",
     "directoryName": "enablementMeasureDefinitions",
-    "hasChildren": false,
+    "suffix": "enablementMeasureDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "EnablementMeasureDefinition",
-    "suffix": "enablementMeasureDefinition"
+    "hasChildren": false
   },
   "EnablementProgramDefinition": {
+    "name": "EnablementProgramDefinition",
     "directoryName": "enablementProgramDefinitions",
-    "hasChildren": false,
+    "suffix": "enablementProgramDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "EnablementProgramDefinition",
-    "suffix": "enablementProgramDefinition"
+    "hasChildren": false
+  },
+  "EnblProgramTaskSubCategory": {
+    "name": "EnblProgramTaskSubCategory",
+    "directoryName": "enblProgramTaskSubCategories",
+    "suffix": "enblProgramTaskSubCategory",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "EnhancedNotesSettings": {
+    "name": "EnhancedNotesSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EnhancedNotesSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EntitlementProcess": {
+    "name": "EntitlementProcess",
     "directoryName": "entitlementProcesses",
-    "hasChildren": false,
+    "suffix": "entitlementProcess",
     "inFolder": false,
     "metaFile": false,
-    "name": "EntitlementProcess",
-    "suffix": "entitlementProcess"
+    "hasChildren": false
   },
   "EntitlementSettings": {
+    "name": "EntitlementSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EntitlementSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EntitlementTemplate": {
+    "name": "EntitlementTemplate",
     "directoryName": "entitlementTemplates",
-    "hasChildren": false,
+    "suffix": "entitlementTemplate",
     "inFolder": false,
     "metaFile": false,
-    "name": "EntitlementTemplate",
-    "suffix": "entitlementTemplate"
+    "hasChildren": false
   },
   "EscalationRules": {
+    "name": "EscalationRules",
     "directoryName": "escalationRules",
-    "hasChildren": true,
+    "suffix": "escalationRules",
     "inFolder": false,
     "metaFile": false,
-    "name": "EscalationRules",
-    "suffix": "escalationRules"
+    "hasChildren": true
   },
   "EssentialsSettings": {
+    "name": "EssentialsSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EssentialsSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EventLogObjectSettings": {
+    "name": "EventLogObjectSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EventLogObjectSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "EventSettings": {
+    "name": "EventSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "EventSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ExperienceBundle": {
+    "name": "ExperienceBundle",
     "directoryName": "experiences",
-    "hasChildren": false,
     "inFolder": false,
     "metaFile": false,
-    "name": "ExperienceBundle"
+    "hasChildren": false
   },
   "ExperienceBundleSettings": {
+    "name": "ExperienceBundleSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExperienceBundleSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ExperiencePropertyTypeBundle": {
+    "name": "ExperiencePropertyTypeBundle",
     "directoryName": "experiencePropertyTypeBundles",
-    "hasChildren": false,
+    "suffix": "experiencePropertyTypeBundle",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExperiencePropertyTypeBundle",
-    "suffix": "experiencePropertyTypeBundle"
+    "hasChildren": false
   },
   "ExplainabilityActionDefinition": {
+    "name": "ExplainabilityActionDefinition",
     "directoryName": "ExplainabilityActionDefinitions",
-    "hasChildren": false,
+    "suffix": "explainabilityActionDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExplainabilityActionDefinition",
-    "suffix": "explainabilityActionDefinition"
+    "hasChildren": false
   },
   "ExplainabilityActionVersion": {
+    "name": "ExplainabilityActionVersion",
     "directoryName": "ExplainabilityActionVersions",
-    "hasChildren": false,
+    "suffix": "explainabilityActionVersion",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExplainabilityActionVersion",
-    "suffix": "explainabilityActionVersion"
+    "hasChildren": false
   },
   "ExplainabilityMsgTemplate": {
+    "name": "ExplainabilityMsgTemplate",
     "directoryName": "ExplainabilityMsgTemplates",
-    "hasChildren": false,
+    "suffix": "explainabilityMsgTemplate",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExplainabilityMsgTemplate",
-    "suffix": "explainabilityMsgTemplate"
+    "hasChildren": false
   },
   "ExpressionSetDefinition": {
+    "name": "ExpressionSetDefinition",
     "directoryName": "expressionSetDefinition",
-    "hasChildren": false,
+    "suffix": "expressionSetDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExpressionSetDefinition",
-    "suffix": "expressionSetDefinition"
+    "hasChildren": false
   },
   "ExpressionSetDefinitionVersion": {
+    "name": "ExpressionSetDefinitionVersion",
     "directoryName": "expressionSetVersion",
-    "hasChildren": false,
+    "suffix": "expressionSetVersion",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExpressionSetDefinitionVersion",
-    "suffix": "expressionSetVersion"
+    "hasChildren": false
   },
   "ExpressionSetObjectAlias": {
+    "name": "ExpressionSetObjectAlias",
     "directoryName": "expressionSetObjectAlias",
-    "hasChildren": false,
+    "suffix": "expressionSetObjectAlias",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExpressionSetObjectAlias",
-    "suffix": "expressionSetObjectAlias"
+    "hasChildren": false
   },
   "ExtDataTranFieldTemplate": {
-    "hasChildren": false,
+    "name": "ExtDataTranFieldTemplate",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExtDataTranFieldTemplate"
+    "hasChildren": false
   },
   "ExtDataTranObjectTemplate": {
+    "name": "ExtDataTranObjectTemplate",
     "directoryName": "extDataTranObjectTemplates",
-    "hasChildren": false,
+    "suffix": "extDataTranObjectTemplate",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExtDataTranObjectTemplate",
-    "suffix": "extDataTranObjectTemplate"
+    "hasChildren": false
   },
   "ExternalAIModel": {
+    "name": "ExternalAIModel",
     "directoryName": "externalAIModels",
-    "hasChildren": false,
+    "suffix": "externalAIModel",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExternalAIModel",
-    "suffix": "externalAIModel"
+    "hasChildren": false
   },
   "ExternalAuthIdentityProvider": {
+    "name": "ExternalAuthIdentityProvider",
     "directoryName": "externalAuthIdentityProviders",
-    "hasChildren": false,
+    "suffix": "externalAuthIdentityProvider",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExternalAuthIdentityProvider",
-    "suffix": "externalAuthIdentityProvider"
+    "hasChildren": false
   },
   "ExternalClientAppSettings": {
+    "name": "ExternalClientAppSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExternalClientAppSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ExternalClientApplication": {
+    "name": "ExternalClientApplication",
     "directoryName": "externalClientApps",
-    "hasChildren": false,
+    "suffix": "eca",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExternalClientApplication",
-    "suffix": "eca"
+    "hasChildren": false
   },
   "ExternalCredential": {
+    "name": "ExternalCredential",
     "directoryName": "externalCredentials",
-    "hasChildren": false,
+    "suffix": "externalCredential",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExternalCredential",
-    "suffix": "externalCredential"
+    "hasChildren": false
   },
   "ExternalDataConnector": {
+    "name": "ExternalDataConnector",
     "directoryName": "externalDataConnectors",
-    "hasChildren": false,
+    "suffix": "externalDataConnector",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExternalDataConnector",
-    "suffix": "externalDataConnector"
+    "hasChildren": false
   },
   "ExternalDataSource": {
+    "name": "ExternalDataSource",
     "directoryName": "dataSources",
-    "hasChildren": true,
+    "suffix": "dataSource",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExternalDataSource",
-    "suffix": "dataSource"
+    "hasChildren": true
   },
   "ExternalDataSrcDescriptor": {
-    "hasChildren": false,
+    "name": "ExternalDataSrcDescriptor",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExternalDataSrcDescriptor"
+    "hasChildren": false
   },
   "ExternalDataTranField": {
-    "hasChildren": false,
+    "name": "ExternalDataTranField",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExternalDataTranField"
+    "hasChildren": false
   },
   "ExternalDataTranObject": {
+    "name": "ExternalDataTranObject",
     "directoryName": "externalDataTranObjects",
-    "hasChildren": false,
+    "suffix": "externalDataTranObject",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExternalDataTranObject",
-    "suffix": "externalDataTranObject"
+    "hasChildren": false
   },
   "ExternalDocStorageConfig": {
+    "name": "ExternalDocStorageConfig",
     "directoryName": "externalDocStorageConfigs",
-    "hasChildren": false,
+    "suffix": "externalDocStorageConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExternalDocStorageConfig",
-    "suffix": "externalDocStorageConfig"
+    "hasChildren": false
   },
   "ExternalServiceRegistration": {
+    "name": "ExternalServiceRegistration",
     "directoryName": "externalServiceRegistrations",
-    "hasChildren": false,
+    "suffix": "externalServiceRegistration",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExternalServiceRegistration",
-    "suffix": "externalServiceRegistration"
+    "hasChildren": false
   },
   "ExtlClntAppConfigurablePolicies": {
+    "name": "ExtlClntAppConfigurablePolicies",
     "directoryName": "extlClntAppPolicies",
-    "hasChildren": false,
+    "suffix": "ecaPlcy",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExtlClntAppConfigurablePolicies",
-    "suffix": "ecaPlcy"
+    "hasChildren": false
   },
   "ExtlClntAppGlobalOauthSettings": {
+    "name": "ExtlClntAppGlobalOauthSettings",
     "directoryName": "extlClntAppGlobalOauthSets",
-    "hasChildren": false,
+    "suffix": "ecaGlblOauth",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExtlClntAppGlobalOauthSettings",
-    "suffix": "ecaGlblOauth"
+    "hasChildren": false
   },
   "ExtlClntAppMobileConfigurablePolicies": {
+    "name": "ExtlClntAppMobileConfigurablePolicies",
     "directoryName": "extlClntAppMobilePolicies",
-    "hasChildren": false,
+    "suffix": "ecaMobilePlcy",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExtlClntAppMobileConfigurablePolicies",
-    "suffix": "ecaMobilePlcy"
+    "hasChildren": false
   },
   "ExtlClntAppMobileSettings": {
+    "name": "ExtlClntAppMobileSettings",
     "directoryName": "extlClntAppMobileSettings",
-    "hasChildren": false,
+    "suffix": "ecaMobile",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExtlClntAppMobileSettings",
-    "suffix": "ecaMobile"
+    "hasChildren": false
   },
   "ExtlClntAppNotificationSettings": {
+    "name": "ExtlClntAppNotificationSettings",
     "directoryName": "extlClntAppNotifSettings",
-    "hasChildren": false,
+    "suffix": "ecaNotifications",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExtlClntAppNotificationSettings",
-    "suffix": "ecaNotifications"
+    "hasChildren": false
   },
   "ExtlClntAppOauthConfigurablePolicies": {
+    "name": "ExtlClntAppOauthConfigurablePolicies",
     "directoryName": "extlClntAppOauthPolicies",
-    "hasChildren": false,
+    "suffix": "ecaOauthPlcy",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExtlClntAppOauthConfigurablePolicies",
-    "suffix": "ecaOauthPlcy"
+    "hasChildren": false
   },
   "ExtlClntAppOauthSettings": {
+    "name": "ExtlClntAppOauthSettings",
     "directoryName": "extlClntAppOauthSettings",
-    "hasChildren": false,
+    "suffix": "ecaOauth",
     "inFolder": false,
     "metaFile": false,
-    "name": "ExtlClntAppOauthSettings",
-    "suffix": "ecaOauth"
+    "hasChildren": false
+  },
+  "ExtlClntAppPushConfigurablePolicies": {
+    "name": "ExtlClntAppPushConfigurablePolicies",
+    "directoryName": "extlClntAppPushPolicies",
+    "suffix": "ecaPushPlcy",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
+  },
+  "ExtlClntAppPushSettings": {
+    "name": "ExtlClntAppPushSettings",
+    "directoryName": "extlClntAppPushSettings",
+    "suffix": "ecaPush",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "FeatureParameterBoolean": {
+    "name": "FeatureParameterBoolean",
     "directoryName": "featureParameters",
-    "hasChildren": false,
+    "suffix": "featureParameterBoolean",
     "inFolder": false,
     "metaFile": false,
-    "name": "FeatureParameterBoolean",
-    "suffix": "featureParameterBoolean"
+    "hasChildren": false
   },
   "FeatureParameterDate": {
+    "name": "FeatureParameterDate",
     "directoryName": "featureParameters",
-    "hasChildren": false,
+    "suffix": "featureParameterDate",
     "inFolder": false,
     "metaFile": false,
-    "name": "FeatureParameterDate",
-    "suffix": "featureParameterDate"
+    "hasChildren": false
   },
   "FeatureParameterInteger": {
+    "name": "FeatureParameterInteger",
     "directoryName": "featureParameters",
-    "hasChildren": false,
+    "suffix": "featureParameterInteger",
     "inFolder": false,
     "metaFile": false,
-    "name": "FeatureParameterInteger",
-    "suffix": "featureParameterInteger"
+    "hasChildren": false
   },
   "FieldRestrictionRule": {
+    "name": "FieldRestrictionRule",
     "directoryName": "fieldRestrictionRules",
-    "hasChildren": false,
+    "suffix": "rule",
     "inFolder": false,
     "metaFile": false,
-    "name": "FieldRestrictionRule",
-    "suffix": "rule"
+    "hasChildren": false
   },
   "FieldServiceMobileExtension": {
+    "name": "FieldServiceMobileExtension",
     "directoryName": "fieldServiceMobileExtensions",
-    "hasChildren": false,
+    "suffix": "fieldServiceMobileExtension",
     "inFolder": false,
     "metaFile": true,
-    "name": "FieldServiceMobileExtension",
-    "suffix": "fieldServiceMobileExtension"
+    "hasChildren": false
   },
   "FieldServiceSettings": {
+    "name": "FieldServiceSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "FieldServiceSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "FieldSet": {
-    "hasChildren": false,
+    "name": "FieldSet",
     "inFolder": false,
     "metaFile": false,
-    "name": "FieldSet"
+    "hasChildren": false
   },
   "FieldSrcTrgtRelationship": {
+    "name": "FieldSrcTrgtRelationship",
     "directoryName": "fieldSrcTrgtRelationships",
-    "hasChildren": false,
+    "suffix": "fieldSrcTrgtRelationship",
     "inFolder": false,
     "metaFile": false,
-    "name": "FieldSrcTrgtRelationship",
-    "suffix": "fieldSrcTrgtRelationship"
+    "hasChildren": false
   },
   "FileUploadAndDownloadSecuritySettings": {
+    "name": "FileUploadAndDownloadSecuritySettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "FileUploadAndDownloadSecuritySettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "FilesConnectSettings": {
+    "name": "FilesConnectSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "FilesConnectSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "FlexiPage": {
+    "name": "FlexiPage",
     "directoryName": "flexipages",
-    "hasChildren": false,
+    "suffix": "flexipage",
     "inFolder": false,
     "metaFile": false,
-    "name": "FlexiPage",
-    "suffix": "flexipage"
+    "hasChildren": false
   },
   "Flow": {
+    "name": "Flow",
     "directoryName": "flows",
-    "hasChildren": false,
+    "suffix": "flow",
     "inFolder": false,
     "metaFile": false,
-    "name": "Flow",
-    "suffix": "flow"
+    "hasChildren": false
   },
   "FlowCategory": {
+    "name": "FlowCategory",
     "directoryName": "flowCategories",
-    "hasChildren": false,
+    "suffix": "flowCategory",
     "inFolder": false,
     "metaFile": false,
-    "name": "FlowCategory",
-    "suffix": "flowCategory"
+    "hasChildren": false
   },
   "FlowDefinition": {
+    "name": "FlowDefinition",
     "directoryName": "flowDefinitions",
-    "hasChildren": false,
+    "suffix": "flowDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "FlowDefinition",
-    "suffix": "flowDefinition"
+    "hasChildren": false
   },
   "FlowSettings": {
+    "name": "FlowSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "FlowSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "FlowTest": {
+    "name": "FlowTest",
     "directoryName": "flowtests",
-    "hasChildren": false,
+    "suffix": "flowtest",
     "inFolder": false,
     "metaFile": false,
-    "name": "FlowTest",
-    "suffix": "flowtest"
+    "hasChildren": false
   },
   "ForecastingFilter": {
+    "name": "ForecastingFilter",
     "directoryName": "forecastingFilters",
-    "hasChildren": false,
+    "suffix": "forecastingFilter",
     "inFolder": false,
     "metaFile": false,
-    "name": "ForecastingFilter",
-    "suffix": "forecastingFilter"
+    "hasChildren": false
   },
   "ForecastingFilterCondition": {
+    "name": "ForecastingFilterCondition",
     "directoryName": "forecastingFilterConditions",
-    "hasChildren": false,
+    "suffix": "forecastingFilterCondition",
     "inFolder": false,
     "metaFile": false,
-    "name": "ForecastingFilterCondition",
-    "suffix": "forecastingFilterCondition"
+    "hasChildren": false
   },
   "ForecastingGroup": {
+    "name": "ForecastingGroup",
     "directoryName": "forecastingGroups",
-    "hasChildren": false,
+    "suffix": "forecastingGroup",
     "inFolder": false,
     "metaFile": false,
-    "name": "ForecastingGroup",
-    "suffix": "forecastingGroup"
+    "hasChildren": false
   },
   "ForecastingObjectListSettings": {
+    "name": "ForecastingObjectListSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ForecastingObjectListSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ForecastingSettings": {
+    "name": "ForecastingSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ForecastingSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ForecastingSourceDefinition": {
+    "name": "ForecastingSourceDefinition",
     "directoryName": "forecastingSourceDefinitions",
-    "hasChildren": false,
+    "suffix": "forecastingSourceDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "ForecastingSourceDefinition",
-    "suffix": "forecastingSourceDefinition"
+    "hasChildren": false
   },
   "ForecastingType": {
+    "name": "ForecastingType",
     "directoryName": "forecastingTypes",
-    "hasChildren": false,
+    "suffix": "forecastingType",
     "inFolder": false,
     "metaFile": false,
-    "name": "ForecastingType",
-    "suffix": "forecastingType"
+    "hasChildren": false
   },
   "ForecastingTypeSource": {
+    "name": "ForecastingTypeSource",
     "directoryName": "forecastingTypeSources",
-    "hasChildren": false,
+    "suffix": "forecastingTypeSource",
     "inFolder": false,
     "metaFile": false,
-    "name": "ForecastingTypeSource",
-    "suffix": "forecastingTypeSource"
+    "hasChildren": false
   },
   "FormulaSettings": {
+    "name": "FormulaSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "FormulaSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "FuelType": {
+    "name": "FuelType",
     "directoryName": "fuelTypes",
-    "hasChildren": false,
+    "suffix": "fuelType",
     "inFolder": false,
     "metaFile": false,
-    "name": "FuelType",
-    "suffix": "fuelType"
+    "hasChildren": false
   },
   "FuelTypeSustnUom": {
+    "name": "FuelTypeSustnUom",
     "directoryName": "fuelTypeSustnUoms",
-    "hasChildren": false,
+    "suffix": "fuelTypeSustnUom",
     "inFolder": false,
     "metaFile": false,
-    "name": "FuelTypeSustnUom",
-    "suffix": "fuelTypeSustnUom"
+    "hasChildren": false
   },
   "FunctionReference": {
+    "name": "FunctionReference",
     "directoryName": "functions",
-    "hasChildren": false,
+    "suffix": "function",
     "inFolder": false,
     "metaFile": false,
-    "name": "FunctionReference",
-    "suffix": "function"
+    "hasChildren": false
   },
   "FundraisingConfig": {
+    "name": "FundraisingConfig",
     "directoryName": "fundraisingConfigs",
-    "hasChildren": false,
+    "suffix": "fundraisingConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "FundraisingConfig",
-    "suffix": "fundraisingConfig"
+    "hasChildren": false
   },
   "GatewayProviderPaymentMethodType": {
+    "name": "GatewayProviderPaymentMethodType",
     "directoryName": "gatewayProviderPaymentMethodTypes",
-    "hasChildren": false,
+    "suffix": "gatewayProviderPaymentMethodType",
     "inFolder": false,
     "metaFile": false,
-    "name": "GatewayProviderPaymentMethodType",
-    "suffix": "gatewayProviderPaymentMethodType"
+    "hasChildren": false
   },
   "GenAiFunction": {
+    "name": "GenAiFunction",
     "directoryName": "genAiFunctions",
-    "hasChildren": false,
+    "suffix": "genAiFunction",
     "inFolder": false,
     "metaFile": false,
-    "name": "GenAiFunction",
-    "suffix": "genAiFunction"
+    "hasChildren": false
   },
   "GenAiPlanner": {
+    "name": "GenAiPlanner",
     "directoryName": "genAiPlanners",
-    "hasChildren": false,
+    "suffix": "genAiPlanner",
     "inFolder": false,
     "metaFile": false,
-    "name": "GenAiPlanner",
-    "suffix": "genAiPlanner"
+    "hasChildren": false
   },
   "GenAiPlugin": {
+    "name": "GenAiPlugin",
     "directoryName": "genAiPlugins",
-    "hasChildren": false,
+    "suffix": "genAiPlugin",
     "inFolder": false,
     "metaFile": false,
-    "name": "GenAiPlugin",
-    "suffix": "genAiPlugin"
+    "hasChildren": false
   },
   "GenAiPluginInstructionDef": {
-    "hasChildren": false,
+    "name": "GenAiPluginInstructionDef",
     "inFolder": false,
     "metaFile": false,
-    "name": "GenAiPluginInstructionDef"
+    "hasChildren": false
   },
   "GlobalValueSet": {
+    "name": "GlobalValueSet",
     "directoryName": "globalValueSets",
-    "hasChildren": false,
+    "suffix": "globalValueSet",
     "inFolder": false,
     "metaFile": false,
-    "name": "GlobalValueSet",
-    "suffix": "globalValueSet"
+    "hasChildren": false
   },
   "GlobalValueSetTranslation": {
+    "name": "GlobalValueSetTranslation",
     "directoryName": "globalValueSetTranslations",
-    "hasChildren": false,
+    "suffix": "globalValueSetTranslation",
     "inFolder": false,
     "metaFile": false,
-    "name": "GlobalValueSetTranslation",
-    "suffix": "globalValueSetTranslation"
+    "hasChildren": false
   },
   "GoogleAppsSettings": {
+    "name": "GoogleAppsSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "GoogleAppsSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "Group": {
+    "name": "Group",
     "directoryName": "groups",
-    "hasChildren": false,
+    "suffix": "group",
     "inFolder": false,
     "metaFile": false,
-    "name": "Group",
-    "suffix": "group"
+    "hasChildren": false
+  },
+  "HerokuIntegrationSettings": {
+    "name": "HerokuIntegrationSettings",
+    "directoryName": "settings",
+    "suffix": "settings",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "HighVelocitySalesSettings": {
+    "name": "HighVelocitySalesSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "HighVelocitySalesSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "HomePageComponent": {
+    "name": "HomePageComponent",
     "directoryName": "homePageComponents",
-    "hasChildren": false,
+    "suffix": "homePageComponent",
     "inFolder": false,
     "metaFile": false,
-    "name": "HomePageComponent",
-    "suffix": "homePageComponent"
+    "hasChildren": false
   },
   "HomePageLayout": {
+    "name": "HomePageLayout",
     "directoryName": "homePageLayouts",
-    "hasChildren": false,
+    "suffix": "homePageLayout",
     "inFolder": false,
     "metaFile": false,
-    "name": "HomePageLayout",
-    "suffix": "homePageLayout"
+    "hasChildren": false
   },
   "IPAddressRange": {
+    "name": "IPAddressRange",
     "directoryName": "IPAddressRanges",
-    "hasChildren": false,
+    "suffix": "IPAddressRange",
     "inFolder": false,
     "metaFile": false,
-    "name": "IPAddressRange",
-    "suffix": "IPAddressRange"
+    "hasChildren": false
   },
   "Icon": {
+    "name": "Icon",
     "directoryName": "icons",
-    "hasChildren": false,
+    "suffix": "icon",
     "inFolder": false,
     "metaFile": false,
-    "name": "Icon",
-    "suffix": "icon"
+    "hasChildren": false
   },
   "IdeasSettings": {
+    "name": "IdeasSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IdeasSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "IdentityProviderSettings": {
+    "name": "IdentityProviderSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IdentityProviderSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "IdentityVerificationProcDef": {
+    "name": "IdentityVerificationProcDef",
     "directoryName": "IdentityVerificationProcDefs",
-    "hasChildren": false,
+    "suffix": "IdentityVerificationProcDef",
     "inFolder": false,
     "metaFile": false,
-    "name": "IdentityVerificationProcDef",
-    "suffix": "IdentityVerificationProcDef"
+    "hasChildren": false
   },
   "IframeWhiteListUrlSettings": {
+    "name": "IframeWhiteListUrlSettings",
     "directoryName": "iframeWhiteListUrlSettings",
-    "hasChildren": false,
+    "suffix": "iframeWhiteListUrlSettings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IframeWhiteListUrlSettings",
-    "suffix": "iframeWhiteListUrlSettings"
+    "hasChildren": false
   },
   "InboundCertificate": {
+    "name": "InboundCertificate",
     "directoryName": "inboundCertificates",
-    "hasChildren": false,
+    "suffix": "inboundCertificate",
     "inFolder": false,
     "metaFile": true,
-    "name": "InboundCertificate",
-    "suffix": "inboundCertificate"
+    "hasChildren": false
   },
   "InboundNetworkConnection": {
+    "name": "InboundNetworkConnection",
     "directoryName": "inboundNetworkConnections",
-    "hasChildren": false,
+    "suffix": "inboundNetworkConnection",
     "inFolder": false,
     "metaFile": false,
-    "name": "InboundNetworkConnection",
-    "suffix": "inboundNetworkConnection"
+    "hasChildren": false
   },
   "IncidentMgmtSettings": {
+    "name": "IncidentMgmtSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IncidentMgmtSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "IncludeEstTaxInQuoteCPQSettings": {
+    "name": "IncludeEstTaxInQuoteCPQSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IncludeEstTaxInQuoteCPQSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "IncludeEstTaxInQuoteSettings": {
+    "name": "IncludeEstTaxInQuoteSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IncludeEstTaxInQuoteSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "Index": {
-    "hasChildren": false,
+    "name": "Index",
     "inFolder": false,
     "metaFile": false,
-    "name": "Index"
+    "hasChildren": false
   },
   "IndustriesAutomotiveSettings": {
+    "name": "IndustriesAutomotiveSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IndustriesAutomotiveSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "IndustriesContextSettings": {
+    "name": "IndustriesContextSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IndustriesContextSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "IndustriesEinsteinFeatureSettings": {
+    "name": "IndustriesEinsteinFeatureSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IndustriesEinsteinFeatureSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "IndustriesEventOrchSettings": {
+    "name": "IndustriesEventOrchSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IndustriesEventOrchSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "IndustriesFieldServiceSettings": {
+    "name": "IndustriesFieldServiceSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IndustriesFieldServiceSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "IndustriesGamificationSettings": {
+    "name": "IndustriesGamificationSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IndustriesGamificationSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "IndustriesLoyaltySettings": {
+    "name": "IndustriesLoyaltySettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IndustriesLoyaltySettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "IndustriesManufacturingSettings": {
+    "name": "IndustriesManufacturingSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IndustriesManufacturingSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "IndustriesPricingSettings": {
+    "name": "IndustriesPricingSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IndustriesPricingSettings",
-    "suffix": "settings"
+    "hasChildren": false
+  },
+  "IndustriesRatingSettings": {
+    "name": "IndustriesRatingSettings",
+    "directoryName": "settings",
+    "suffix": "settings",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "IndustriesSettings": {
+    "name": "IndustriesSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IndustriesSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "IndustriesUnifiedPromotionsSettings": {
+    "name": "IndustriesUnifiedPromotionsSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IndustriesUnifiedPromotionsSettings",
-    "suffix": "settings"
+    "hasChildren": false
+  },
+  "IndustriesUsageSettings": {
+    "name": "IndustriesUsageSettings",
+    "directoryName": "settings",
+    "suffix": "settings",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "InstalledPackage": {
+    "name": "InstalledPackage",
     "directoryName": "installedPackages",
-    "hasChildren": false,
+    "suffix": "installedPackage",
     "inFolder": false,
     "metaFile": false,
-    "name": "InstalledPackage",
-    "suffix": "installedPackage"
+    "hasChildren": false
   },
   "IntegrationProviderDef": {
+    "name": "IntegrationProviderDef",
     "directoryName": "integrationProviderDefinitions",
-    "hasChildren": false,
+    "suffix": "integrationProviderDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "IntegrationProviderDef",
-    "suffix": "integrationProviderDefinition"
+    "hasChildren": false
   },
   "InterestTaggingSettings": {
+    "name": "InterestTaggingSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "InterestTaggingSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "InternalDataConnector": {
+    "name": "InternalDataConnector",
     "directoryName": "internalDataConnectors",
-    "hasChildren": false,
+    "suffix": "internalDataConnector",
     "inFolder": false,
     "metaFile": false,
-    "name": "InternalDataConnector",
-    "suffix": "internalDataConnector"
+    "hasChildren": false
   },
   "InvLatePymntRiskCalcSettings": {
+    "name": "InvLatePymntRiskCalcSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "InvLatePymntRiskCalcSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "InventorySettings": {
+    "name": "InventorySettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "InventorySettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "InvocableActionSettings": {
+    "name": "InvocableActionSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "InvocableActionSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "IoTSettings": {
+    "name": "IoTSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "IoTSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "KeywordList": {
+    "name": "KeywordList",
     "directoryName": "moderation",
-    "hasChildren": false,
+    "suffix": "keywords",
     "inFolder": false,
     "metaFile": false,
-    "name": "KeywordList",
-    "suffix": "keywords"
+    "hasChildren": false
   },
   "KnowledgeGenerationSettings": {
+    "name": "KnowledgeGenerationSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "KnowledgeGenerationSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "KnowledgeSettings": {
+    "name": "KnowledgeSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "KnowledgeSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "LanguageSettings": {
+    "name": "LanguageSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "LanguageSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "LargeQuotesandOrdersForRlmSettings": {
+    "name": "LargeQuotesandOrdersForRlmSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "LargeQuotesandOrdersForRlmSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "Layout": {
+    "name": "Layout",
     "directoryName": "layouts",
-    "hasChildren": false,
+    "suffix": "layout",
     "inFolder": false,
     "metaFile": false,
-    "name": "Layout",
-    "suffix": "layout"
+    "hasChildren": false
   },
   "LeadConfigSettings": {
+    "name": "LeadConfigSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "LeadConfigSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "LeadConvertSettings": {
+    "name": "LeadConvertSettings",
     "directoryName": "LeadConvertSettings",
-    "hasChildren": false,
+    "suffix": "LeadConvertSetting",
     "inFolder": false,
     "metaFile": false,
-    "name": "LeadConvertSettings",
-    "suffix": "LeadConvertSetting"
+    "hasChildren": false
   },
   "LearningAchievementConfig": {
+    "name": "LearningAchievementConfig",
     "directoryName": "learningAchievementConfigs",
-    "hasChildren": false,
+    "suffix": "learningAchievementConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "LearningAchievementConfig",
-    "suffix": "learningAchievementConfig"
+    "hasChildren": false
+  },
+  "LearningItemType": {
+    "name": "LearningItemType",
+    "directoryName": "learningItemTypes",
+    "suffix": "learningItemType",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "Letterhead": {
+    "name": "Letterhead",
     "directoryName": "letterhead",
-    "hasChildren": false,
+    "suffix": "letter",
     "inFolder": false,
     "metaFile": false,
-    "name": "Letterhead",
-    "suffix": "letter"
+    "hasChildren": false
   },
   "LicensingSettings": {
+    "name": "LicensingSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "LicensingSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "LightningBolt": {
+    "name": "LightningBolt",
     "directoryName": "lightningBolts",
-    "hasChildren": false,
+    "suffix": "lightningBolt",
     "inFolder": false,
     "metaFile": false,
-    "name": "LightningBolt",
-    "suffix": "lightningBolt"
+    "hasChildren": false
   },
   "LightningComponentBundle": {
+    "name": "LightningComponentBundle",
     "directoryName": "lwc",
-    "hasChildren": false,
     "inFolder": false,
     "metaFile": false,
-    "name": "LightningComponentBundle"
+    "hasChildren": false
   },
   "LightningExperienceSettings": {
+    "name": "LightningExperienceSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "LightningExperienceSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "LightningExperienceTheme": {
+    "name": "LightningExperienceTheme",
     "directoryName": "lightningExperienceThemes",
-    "hasChildren": false,
+    "suffix": "lightningExperienceTheme",
     "inFolder": false,
     "metaFile": false,
-    "name": "LightningExperienceTheme",
-    "suffix": "lightningExperienceTheme"
+    "hasChildren": false
   },
   "LightningMessageChannel": {
+    "name": "LightningMessageChannel",
     "directoryName": "messageChannels",
-    "hasChildren": false,
+    "suffix": "messageChannel",
     "inFolder": false,
     "metaFile": false,
-    "name": "LightningMessageChannel",
-    "suffix": "messageChannel"
+    "hasChildren": false
   },
   "LightningOnboardingConfig": {
+    "name": "LightningOnboardingConfig",
     "directoryName": "lightningOnboardingConfigs",
-    "hasChildren": false,
+    "suffix": "lightningOnboardingConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "LightningOnboardingConfig",
-    "suffix": "lightningOnboardingConfig"
+    "hasChildren": false
   },
   "ListView": {
-    "hasChildren": false,
+    "name": "ListView",
     "inFolder": false,
     "metaFile": false,
-    "name": "ListView"
+    "hasChildren": false
   },
   "LiveAgentSettings": {
+    "name": "LiveAgentSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "LiveAgentSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "LiveChatAgentConfig": {
+    "name": "LiveChatAgentConfig",
     "directoryName": "liveChatAgentConfigs",
-    "hasChildren": false,
+    "suffix": "liveChatAgentConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "LiveChatAgentConfig",
-    "suffix": "liveChatAgentConfig"
+    "hasChildren": false
   },
   "LiveChatButton": {
+    "name": "LiveChatButton",
     "directoryName": "liveChatButtons",
-    "hasChildren": false,
+    "suffix": "liveChatButton",
     "inFolder": false,
     "metaFile": false,
-    "name": "LiveChatButton",
-    "suffix": "liveChatButton"
+    "hasChildren": false
   },
   "LiveChatDeployment": {
+    "name": "LiveChatDeployment",
     "directoryName": "liveChatDeployments",
-    "hasChildren": false,
+    "suffix": "liveChatDeployment",
     "inFolder": false,
     "metaFile": false,
-    "name": "LiveChatDeployment",
-    "suffix": "liveChatDeployment"
+    "hasChildren": false
   },
   "LiveChatSensitiveDataRule": {
+    "name": "LiveChatSensitiveDataRule",
     "directoryName": "liveChatSensitiveDataRule",
-    "hasChildren": false,
+    "suffix": "liveChatSensitiveDataRule",
     "inFolder": false,
     "metaFile": false,
-    "name": "LiveChatSensitiveDataRule",
-    "suffix": "liveChatSensitiveDataRule"
+    "hasChildren": false
   },
   "LiveMessageSettings": {
+    "name": "LiveMessageSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "LiveMessageSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "LocationUse": {
+    "name": "LocationUse",
     "directoryName": "locationUses",
-    "hasChildren": false,
+    "suffix": "locationUse",
     "inFolder": false,
     "metaFile": false,
-    "name": "LocationUse",
-    "suffix": "locationUse"
+    "hasChildren": false
   },
   "LoyaltyProgramSetup": {
+    "name": "LoyaltyProgramSetup",
     "directoryName": "loyaltyProgramSetups",
-    "hasChildren": false,
+    "suffix": "loyaltyProgramSetup",
     "inFolder": false,
     "metaFile": false,
-    "name": "LoyaltyProgramSetup",
-    "suffix": "loyaltyProgramSetup"
+    "hasChildren": false
   },
   "MacroSettings": {
+    "name": "MacroSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "MacroSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "MailMergeSettings": {
+    "name": "MailMergeSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "MailMergeSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ManagedContentType": {
+    "name": "ManagedContentType",
     "directoryName": "managedContentTypes",
-    "hasChildren": false,
+    "suffix": "managedContentType",
     "inFolder": false,
     "metaFile": false,
-    "name": "ManagedContentType",
-    "suffix": "managedContentType"
+    "hasChildren": false
   },
   "ManagedEventSubscription": {
+    "name": "ManagedEventSubscription",
     "directoryName": "managedEventSubscriptions",
-    "hasChildren": false,
+    "suffix": "managedEventSubscription",
     "inFolder": false,
     "metaFile": false,
-    "name": "ManagedEventSubscription",
-    "suffix": "managedEventSubscription"
+    "hasChildren": false
   },
   "ManagedTopics": {
+    "name": "ManagedTopics",
     "directoryName": "managedTopics",
-    "hasChildren": false,
+    "suffix": "managedTopics",
     "inFolder": false,
     "metaFile": false,
-    "name": "ManagedTopics",
-    "suffix": "managedTopics"
+    "hasChildren": false
   },
   "MapsAndLocationSettings": {
+    "name": "MapsAndLocationSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "MapsAndLocationSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "MarketSegmentDefinition": {
+    "name": "MarketSegmentDefinition",
     "directoryName": "marketSegmentDefinitions",
-    "hasChildren": false,
+    "suffix": "marketSegmentDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "MarketSegmentDefinition",
-    "suffix": "marketSegmentDefinition"
+    "hasChildren": false
   },
   "MarketingAppExtActivity": {
-    "hasChildren": false,
+    "name": "MarketingAppExtActivity",
     "inFolder": false,
     "metaFile": false,
-    "name": "MarketingAppExtActivity"
+    "hasChildren": false
   },
   "MarketingAppExtension": {
+    "name": "MarketingAppExtension",
     "directoryName": "marketingappextensions",
-    "hasChildren": false,
+    "suffix": "marketingappextension",
     "inFolder": false,
     "metaFile": false,
-    "name": "MarketingAppExtension",
-    "suffix": "marketingappextension"
+    "hasChildren": false
   },
   "MatchingRules": {
+    "name": "MatchingRules",
     "directoryName": "matchingRules",
-    "hasChildren": true,
+    "suffix": "matchingRule",
     "inFolder": false,
     "metaFile": false,
-    "name": "MatchingRules",
-    "suffix": "matchingRule"
+    "hasChildren": true
   },
   "MediaAdSalesSettings": {
+    "name": "MediaAdSalesSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "MediaAdSalesSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "MeetingsSettings": {
+    "name": "MeetingsSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "MeetingsSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "MessagingChannel": {
+    "name": "MessagingChannel",
     "directoryName": "messagingChannels",
-    "hasChildren": false,
+    "suffix": "messagingChannel",
     "inFolder": false,
     "metaFile": false,
-    "name": "MessagingChannel",
-    "suffix": "messagingChannel"
+    "hasChildren": false
   },
   "MfgProgramTemplate": {
+    "name": "MfgProgramTemplate",
     "directoryName": "MfgProgramTemplate",
-    "hasChildren": false,
+    "suffix": "mfgProgramTemplate",
     "inFolder": false,
     "metaFile": false,
-    "name": "MfgProgramTemplate",
-    "suffix": "mfgProgramTemplate"
+    "hasChildren": false
   },
   "MfgServiceConsoleSettings": {
+    "name": "MfgServiceConsoleSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "MfgServiceConsoleSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "MilestoneType": {
+    "name": "MilestoneType",
     "directoryName": "milestoneTypes",
-    "hasChildren": false,
+    "suffix": "milestoneType",
     "inFolder": false,
     "metaFile": false,
-    "name": "MilestoneType",
-    "suffix": "milestoneType"
+    "hasChildren": false
   },
   "MktCalcInsightObjectDef": {
+    "name": "MktCalcInsightObjectDef",
     "directoryName": "mktCalcInsightObjectDefs",
-    "hasChildren": false,
+    "suffix": "mktCalcInsightObjectDef",
     "inFolder": false,
     "metaFile": false,
-    "name": "MktCalcInsightObjectDef",
-    "suffix": "mktCalcInsightObjectDef"
+    "hasChildren": false
   },
   "MktDataConnection": {
-    "directoryName": "mktDataConnections",
-    "hasChildren": false,
-    "inFolder": false,
-    "metaFile": false,
     "name": "MktDataConnection",
-    "suffix": "mktDataConnection"
-  },
-  "MktDataConnectionCred": {
-    "hasChildren": false,
+    "directoryName": "mktDataConnections",
+    "suffix": "mktDataConnection",
     "inFolder": false,
     "metaFile": false,
-    "name": "MktDataConnectionCred"
-  },
-  "MktDataConnectionParam": {
-    "hasChildren": false,
-    "inFolder": false,
-    "metaFile": false,
-    "name": "MktDataConnectionParam"
+    "hasChildren": false
   },
   "MktDataConnectionSrcParam": {
+    "name": "MktDataConnectionSrcParam",
     "directoryName": "mktDataConnectionSrcParams",
-    "hasChildren": false,
+    "suffix": "mktDataConnectionSrcParam",
     "inFolder": false,
     "metaFile": false,
-    "name": "MktDataConnectionSrcParam",
-    "suffix": "mktDataConnectionSrcParam"
+    "hasChildren": false
   },
   "MktDataTranObject": {
+    "name": "MktDataTranObject",
     "directoryName": "mktDataTranObjects",
-    "hasChildren": false,
+    "suffix": "mktDataTranObject",
     "inFolder": false,
     "metaFile": false,
-    "name": "MktDataTranObject",
-    "suffix": "mktDataTranObject"
+    "hasChildren": false
   },
   "MlDomain": {
+    "name": "MlDomain",
     "directoryName": "mlDomains",
-    "hasChildren": false,
+    "suffix": "mlDomain",
     "inFolder": false,
     "metaFile": false,
-    "name": "MlDomain",
-    "suffix": "mlDomain"
+    "hasChildren": false
   },
   "MobSecurityCertPinConfig": {
+    "name": "MobSecurityCertPinConfig",
     "directoryName": "mobSecurityCertPinConfigs",
-    "hasChildren": false,
+    "suffix": "mobSecurityCertPinConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "MobSecurityCertPinConfig",
-    "suffix": "mobSecurityCertPinConfig"
+    "hasChildren": false
   },
   "MobileApplicationDetail": {
+    "name": "MobileApplicationDetail",
     "directoryName": "MobileApplicationDetails",
-    "hasChildren": false,
+    "suffix": "MobileApplicationDetail",
     "inFolder": false,
     "metaFile": false,
-    "name": "MobileApplicationDetail",
-    "suffix": "MobileApplicationDetail"
+    "hasChildren": false
   },
   "MobileSecurityAssignment": {
+    "name": "MobileSecurityAssignment",
     "directoryName": "mobileSecurityAssignments",
-    "hasChildren": false,
+    "suffix": "mobileSecurityAssignment",
     "inFolder": false,
     "metaFile": false,
-    "name": "MobileSecurityAssignment",
-    "suffix": "mobileSecurityAssignment"
+    "hasChildren": false
   },
   "MobileSecurityPolicy": {
+    "name": "MobileSecurityPolicy",
     "directoryName": "mobileSecurityPolicies",
-    "hasChildren": false,
+    "suffix": "mobileSecurityPolicy",
     "inFolder": false,
     "metaFile": false,
-    "name": "MobileSecurityPolicy",
-    "suffix": "mobileSecurityPolicy"
+    "hasChildren": false
   },
   "MobileSettings": {
+    "name": "MobileSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "MobileSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ModerationRule": {
+    "name": "ModerationRule",
     "directoryName": "moderation",
-    "hasChildren": false,
+    "suffix": "rule",
     "inFolder": false,
     "metaFile": false,
-    "name": "ModerationRule",
-    "suffix": "rule"
+    "hasChildren": false
   },
   "MutingPermissionSet": {
+    "name": "MutingPermissionSet",
     "directoryName": "mutingpermissionsets",
-    "hasChildren": false,
+    "suffix": "mutingpermissionset",
     "inFolder": false,
     "metaFile": false,
-    "name": "MutingPermissionSet",
-    "suffix": "mutingpermissionset"
+    "hasChildren": false
   },
   "MyDomainDiscoverableLogin": {
+    "name": "MyDomainDiscoverableLogin",
     "directoryName": "myDomainDiscoverableLogins",
-    "hasChildren": false,
+    "suffix": "myDomainDiscoverableLogin",
     "inFolder": false,
     "metaFile": false,
-    "name": "MyDomainDiscoverableLogin",
-    "suffix": "myDomainDiscoverableLogin"
+    "hasChildren": false
   },
   "MyDomainSettings": {
+    "name": "MyDomainSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "MyDomainSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "NameSettings": {
+    "name": "NameSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "NameSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "NamedCredential": {
+    "name": "NamedCredential",
     "directoryName": "namedCredentials",
-    "hasChildren": false,
+    "suffix": "namedCredential",
     "inFolder": false,
     "metaFile": false,
-    "name": "NamedCredential",
-    "suffix": "namedCredential"
+    "hasChildren": false
   },
   "NavigationMenu": {
+    "name": "NavigationMenu",
     "directoryName": "navigationMenus",
-    "hasChildren": false,
+    "suffix": "navigationMenu",
     "inFolder": false,
     "metaFile": false,
-    "name": "NavigationMenu",
-    "suffix": "navigationMenu"
+    "hasChildren": false
   },
   "Network": {
+    "name": "Network",
     "directoryName": "networks",
-    "hasChildren": false,
+    "suffix": "network",
     "inFolder": false,
     "metaFile": false,
-    "name": "Network",
-    "suffix": "network"
+    "hasChildren": false
   },
   "NetworkBranding": {
+    "name": "NetworkBranding",
     "directoryName": "networkBranding",
-    "hasChildren": false,
+    "suffix": "networkBranding",
     "inFolder": false,
     "metaFile": true,
-    "name": "NetworkBranding",
-    "suffix": "networkBranding"
+    "hasChildren": false
   },
   "NotificationTypeConfig": {
+    "name": "NotificationTypeConfig",
     "directoryName": "notificationTypeConfig",
-    "hasChildren": false,
+    "suffix": "config",
     "inFolder": false,
     "metaFile": false,
-    "name": "NotificationTypeConfig",
-    "suffix": "config"
+    "hasChildren": false
   },
   "NotificationsSettings": {
+    "name": "NotificationsSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "NotificationsSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "OauthCustomScope": {
+    "name": "OauthCustomScope",
     "directoryName": "oauthcustomscopes",
-    "hasChildren": false,
+    "suffix": "oauthcustomscope",
     "inFolder": false,
     "metaFile": false,
-    "name": "OauthCustomScope",
-    "suffix": "oauthcustomscope"
+    "hasChildren": false
   },
   "OauthOidcSettings": {
+    "name": "OauthOidcSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "OauthOidcSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "OauthTokenExchangeHandler": {
+    "name": "OauthTokenExchangeHandler",
     "directoryName": "oauthtokenexchangehandlers",
-    "hasChildren": false,
+    "suffix": "oauthtokenexchangehandler",
     "inFolder": false,
     "metaFile": false,
-    "name": "OauthTokenExchangeHandler",
-    "suffix": "oauthtokenexchangehandler"
+    "hasChildren": false
   },
   "ObjectHierarchyRelationship": {
+    "name": "ObjectHierarchyRelationship",
     "directoryName": "ObjectHierarchyRelationship",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ObjectHierarchyRelationship",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ObjectLinkingSettings": {
+    "name": "ObjectLinkingSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ObjectLinkingSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ObjectSourceTargetMap": {
+    "name": "ObjectSourceTargetMap",
     "directoryName": "objectSourceTargetMaps",
-    "hasChildren": false,
+    "suffix": "objectSourceTargetMap",
     "inFolder": false,
     "metaFile": false,
-    "name": "ObjectSourceTargetMap",
-    "suffix": "objectSourceTargetMap"
+    "hasChildren": false
   },
   "OcrSampleDocument": {
+    "name": "OcrSampleDocument",
     "directoryName": "ocrSampleDocuments",
-    "hasChildren": false,
+    "suffix": "ocrSampleDocument",
     "inFolder": false,
     "metaFile": false,
-    "name": "OcrSampleDocument",
-    "suffix": "ocrSampleDocument"
+    "hasChildren": false
   },
   "OcrTemplate": {
+    "name": "OcrTemplate",
     "directoryName": "ocrTemplates",
-    "hasChildren": false,
+    "suffix": "ocrTemplate",
     "inFolder": false,
     "metaFile": false,
-    "name": "OcrTemplate",
-    "suffix": "ocrTemplate"
+    "hasChildren": false
   },
   "OmniChannelPricingSettings": {
+    "name": "OmniChannelPricingSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "OmniChannelPricingSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "OmniChannelSettings": {
+    "name": "OmniChannelSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "OmniChannelSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "OmniDataTransform": {
+    "name": "OmniDataTransform",
     "directoryName": "omniDataTransforms",
-    "hasChildren": false,
+    "suffix": "rpt",
     "inFolder": false,
     "metaFile": false,
-    "name": "OmniDataTransform",
-    "suffix": "rpt"
+    "hasChildren": false
   },
   "OmniExtTrackingDef": {
+    "name": "OmniExtTrackingDef",
     "directoryName": "OmniExtTrackingDefs",
-    "hasChildren": false,
+    "suffix": "OmniExtTrackingDef",
     "inFolder": false,
     "metaFile": false,
-    "name": "OmniExtTrackingDef",
-    "suffix": "OmniExtTrackingDef"
+    "hasChildren": false
   },
   "OmniIntegrationProcedure": {
+    "name": "OmniIntegrationProcedure",
     "directoryName": "omniIntegrationProcedures",
-    "hasChildren": false,
+    "suffix": "oip",
     "inFolder": false,
     "metaFile": false,
-    "name": "OmniIntegrationProcedure",
-    "suffix": "oip"
+    "hasChildren": false
   },
   "OmniInteractionAccessConfig": {
+    "name": "OmniInteractionAccessConfig",
     "directoryName": "OmniInteractionAccessConfig",
-    "hasChildren": false,
+    "suffix": "omniInteractionAccessConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "OmniInteractionAccessConfig",
-    "suffix": "omniInteractionAccessConfig"
+    "hasChildren": false
   },
   "OmniInteractionConfig": {
+    "name": "OmniInteractionConfig",
     "directoryName": "OmniInteractionConfig",
-    "hasChildren": false,
+    "suffix": "omniInteractionConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "OmniInteractionConfig",
-    "suffix": "omniInteractionConfig"
+    "hasChildren": false
   },
   "OmniScript": {
+    "name": "OmniScript",
     "directoryName": "omniScripts",
-    "hasChildren": false,
+    "suffix": "os",
     "inFolder": false,
     "metaFile": false,
-    "name": "OmniScript",
-    "suffix": "os"
+    "hasChildren": false
   },
   "OmniSupervisorConfig": {
+    "name": "OmniSupervisorConfig",
     "directoryName": "omniSupervisorConfigs",
-    "hasChildren": false,
+    "suffix": "omniSupervisorConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "OmniSupervisorConfig",
-    "suffix": "omniSupervisorConfig"
+    "hasChildren": false
   },
   "OmniTrackingGroup": {
+    "name": "OmniTrackingGroup",
     "directoryName": "OmniTrackingGroups",
-    "hasChildren": false,
+    "suffix": "OmniTrackingGroup",
     "inFolder": false,
     "metaFile": false,
-    "name": "OmniTrackingGroup",
-    "suffix": "OmniTrackingGroup"
+    "hasChildren": false
   },
   "OmniUiCard": {
+    "name": "OmniUiCard",
     "directoryName": "omniUiCard",
-    "hasChildren": false,
+    "suffix": "ouc",
     "inFolder": false,
     "metaFile": false,
-    "name": "OmniUiCard",
-    "suffix": "ouc"
+    "hasChildren": false
   },
   "OnlineSalesSettings": {
+    "name": "OnlineSalesSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "OnlineSalesSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "OpportunityScoreSettings": {
+    "name": "OpportunityScoreSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "OpportunityScoreSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "OpportunitySettings": {
+    "name": "OpportunitySettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "OpportunitySettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "OrderManagementSettings": {
+    "name": "OrderManagementSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "OrderManagementSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "OrderSettings": {
+    "name": "OrderSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "OrderSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "OrgSettings": {
+    "name": "OrgSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "OrgSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "OutboundNetworkConnection": {
+    "name": "OutboundNetworkConnection",
     "directoryName": "outboundNetworkConnections",
-    "hasChildren": false,
+    "suffix": "outboundNetworkConnection",
     "inFolder": false,
     "metaFile": false,
-    "name": "OutboundNetworkConnection",
-    "suffix": "outboundNetworkConnection"
+    "hasChildren": false
   },
   "PardotEinsteinSettings": {
+    "name": "PardotEinsteinSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "PardotEinsteinSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "PardotSettings": {
+    "name": "PardotSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "PardotSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ParticipantRole": {
+    "name": "ParticipantRole",
     "directoryName": "participantRoles",
-    "hasChildren": false,
+    "suffix": "participantRole",
     "inFolder": false,
     "metaFile": false,
-    "name": "ParticipantRole",
-    "suffix": "participantRole"
+    "hasChildren": false
   },
   "PartyDataModelSettings": {
+    "name": "PartyDataModelSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "PartyDataModelSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "PathAssistant": {
+    "name": "PathAssistant",
     "directoryName": "pathAssistants",
-    "hasChildren": false,
+    "suffix": "pathAssistant",
     "inFolder": false,
     "metaFile": false,
-    "name": "PathAssistant",
-    "suffix": "pathAssistant"
+    "hasChildren": false
   },
   "PathAssistantSettings": {
+    "name": "PathAssistantSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "PathAssistantSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "PaymentGatewayProvider": {
+    "name": "PaymentGatewayProvider",
     "directoryName": "paymentGatewayProviders",
-    "hasChildren": false,
+    "suffix": "paymentGatewayProvider",
     "inFolder": false,
     "metaFile": false,
-    "name": "PaymentGatewayProvider",
-    "suffix": "paymentGatewayProvider"
+    "hasChildren": false
   },
   "PaymentsManagementEnabledSettings": {
+    "name": "PaymentsManagementEnabledSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "PaymentsManagementEnabledSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "PaymentsSettings": {
+    "name": "PaymentsSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "PaymentsSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "PermissionSet": {
+    "name": "PermissionSet",
     "directoryName": "permissionsets",
-    "hasChildren": false,
+    "suffix": "permissionset",
     "inFolder": false,
     "metaFile": false,
-    "name": "PermissionSet",
-    "suffix": "permissionset"
+    "hasChildren": false
   },
   "PermissionSetGroup": {
+    "name": "PermissionSetGroup",
     "directoryName": "permissionsetgroups",
-    "hasChildren": false,
+    "suffix": "permissionsetgroup",
     "inFolder": false,
     "metaFile": false,
-    "name": "PermissionSetGroup",
-    "suffix": "permissionsetgroup"
+    "hasChildren": false
   },
   "PermissionSetLicenseDefinition": {
+    "name": "PermissionSetLicenseDefinition",
     "directoryName": "permissionSetLicenseDefinitions",
-    "hasChildren": false,
+    "suffix": "permissionSetLicenseDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "PermissionSetLicenseDefinition",
-    "suffix": "permissionSetLicenseDefinition"
+    "hasChildren": false
   },
   "PersonAccountOwnerPowerUser": {
+    "name": "PersonAccountOwnerPowerUser",
     "directoryName": "personAccountOwnerPowerUsers",
-    "hasChildren": false,
+    "suffix": "personAccountOwnerPowerUser",
     "inFolder": false,
     "metaFile": false,
-    "name": "PersonAccountOwnerPowerUser",
-    "suffix": "personAccountOwnerPowerUser"
+    "hasChildren": false
   },
   "PicklistSettings": {
+    "name": "PicklistSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "PicklistSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "PicklistValue": {
-    "hasChildren": false,
+    "name": "PicklistValue",
     "inFolder": false,
     "metaFile": false,
-    "name": "PicklistValue"
+    "hasChildren": false
   },
   "PipelineInspMetricConfig": {
+    "name": "PipelineInspMetricConfig",
     "directoryName": "pipelineInspMetricConfigs",
-    "hasChildren": false,
+    "suffix": "pipelineInspMetricConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "PipelineInspMetricConfig",
-    "suffix": "pipelineInspMetricConfig"
+    "hasChildren": false
   },
   "PlatformCachePartition": {
+    "name": "PlatformCachePartition",
     "directoryName": "cachePartitions",
-    "hasChildren": false,
+    "suffix": "cachePartition",
     "inFolder": false,
     "metaFile": false,
-    "name": "PlatformCachePartition",
-    "suffix": "cachePartition"
+    "hasChildren": false
   },
   "PlatformEventChannel": {
+    "name": "PlatformEventChannel",
     "directoryName": "platformEventChannels",
-    "hasChildren": false,
+    "suffix": "platformEventChannel",
     "inFolder": false,
     "metaFile": false,
-    "name": "PlatformEventChannel",
-    "suffix": "platformEventChannel"
+    "hasChildren": false
   },
   "PlatformEventChannelMember": {
+    "name": "PlatformEventChannelMember",
     "directoryName": "platformEventChannelMembers",
-    "hasChildren": false,
+    "suffix": "platformEventChannelMember",
     "inFolder": false,
     "metaFile": false,
-    "name": "PlatformEventChannelMember",
-    "suffix": "platformEventChannelMember"
+    "hasChildren": false
   },
   "PlatformEventSettings": {
+    "name": "PlatformEventSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "PlatformEventSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "PlatformEventSubscriberConfig": {
+    "name": "PlatformEventSubscriberConfig",
     "directoryName": "PlatformEventSubscriberConfigs",
-    "hasChildren": false,
+    "suffix": "platformEventSubscriberConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "PlatformEventSubscriberConfig",
-    "suffix": "platformEventSubscriberConfig"
+    "hasChildren": false
   },
   "PlatformSlackSettings": {
+    "name": "PlatformSlackSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "PlatformSlackSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "PortalDelegablePermissionSet": {
+    "name": "PortalDelegablePermissionSet",
     "directoryName": "portalDelegablePermissionSet",
-    "hasChildren": false,
+    "suffix": "portalDelegablePermissionSet",
     "inFolder": false,
     "metaFile": false,
-    "name": "PortalDelegablePermissionSet",
-    "suffix": "portalDelegablePermissionSet"
+    "hasChildren": false
   },
   "PortalsSettings": {
+    "name": "PortalsSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "PortalsSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "PostTemplate": {
+    "name": "PostTemplate",
     "directoryName": "postTemplates",
-    "hasChildren": false,
+    "suffix": "postTemplate",
     "inFolder": false,
     "metaFile": false,
-    "name": "PostTemplate",
-    "suffix": "postTemplate"
+    "hasChildren": false
   },
   "PredictionBuilderSettings": {
+    "name": "PredictionBuilderSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "PredictionBuilderSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "PresenceDeclineReason": {
+    "name": "PresenceDeclineReason",
     "directoryName": "presenceDeclineReasons",
-    "hasChildren": false,
+    "suffix": "presenceDeclineReason",
     "inFolder": false,
     "metaFile": false,
-    "name": "PresenceDeclineReason",
-    "suffix": "presenceDeclineReason"
+    "hasChildren": false
   },
   "PresenceUserConfig": {
+    "name": "PresenceUserConfig",
     "directoryName": "presenceUserConfigs",
-    "hasChildren": false,
+    "suffix": "presenceUserConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "PresenceUserConfig",
-    "suffix": "presenceUserConfig"
+    "hasChildren": false
   },
   "PricingActionParameters": {
+    "name": "PricingActionParameters",
     "directoryName": "pricingActionParameters",
-    "hasChildren": false,
+    "suffix": "pricingActionParameters",
     "inFolder": false,
     "metaFile": false,
-    "name": "PricingActionParameters",
-    "suffix": "pricingActionParameters"
+    "hasChildren": false
   },
   "PricingRecipe": {
+    "name": "PricingRecipe",
     "directoryName": "pricingRecipe",
-    "hasChildren": false,
+    "suffix": "pricingRecipe",
     "inFolder": false,
     "metaFile": false,
-    "name": "PricingRecipe",
-    "suffix": "pricingRecipe"
+    "hasChildren": false
   },
   "PrivacySettings": {
+    "name": "PrivacySettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "PrivacySettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ProcessFlowMigration": {
+    "name": "ProcessFlowMigration",
     "directoryName": "processflowmigrations",
-    "hasChildren": false,
+    "suffix": "processflowmigration",
     "inFolder": false,
     "metaFile": false,
-    "name": "ProcessFlowMigration",
-    "suffix": "processflowmigration"
+    "hasChildren": false
   },
   "ProductAttrDisplayConfig": {
+    "name": "ProductAttrDisplayConfig",
     "directoryName": "productAttrDisplayConfigs",
-    "hasChildren": false,
+    "suffix": "productAttrDisplayConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "ProductAttrDisplayConfig",
-    "suffix": "productAttrDisplayConfig"
+    "hasChildren": false
   },
   "ProductAttributeSet": {
+    "name": "ProductAttributeSet",
     "directoryName": "productAttributeSets",
-    "hasChildren": false,
+    "suffix": "productAttributeSet",
     "inFolder": false,
     "metaFile": false,
-    "name": "ProductAttributeSet",
-    "suffix": "productAttributeSet"
+    "hasChildren": false
   },
   "ProductConfiguratorSettings": {
+    "name": "ProductConfiguratorSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ProductConfiguratorSettings",
-    "suffix": "settings"
+    "hasChildren": false
+  },
+  "ProductDiscoverySettings": {
+    "name": "ProductDiscoverySettings",
+    "directoryName": "settings",
+    "suffix": "settings",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "ProductSettings": {
+    "name": "ProductSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ProductSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ProductSpecificationRecType": {
+    "name": "ProductSpecificationRecType",
     "directoryName": "productSpecificationRecTypes",
-    "hasChildren": false,
+    "suffix": "productSpecificationRecType",
     "inFolder": false,
     "metaFile": false,
-    "name": "ProductSpecificationRecType",
-    "suffix": "productSpecificationRecType"
+    "hasChildren": false
   },
   "ProductSpecificationType": {
+    "name": "ProductSpecificationType",
     "directoryName": "productSpecificationTypes",
-    "hasChildren": false,
+    "suffix": "productSpecificationType",
     "inFolder": false,
     "metaFile": false,
-    "name": "ProductSpecificationType",
-    "suffix": "productSpecificationType"
+    "hasChildren": false
   },
   "Profile": {
+    "name": "Profile",
     "directoryName": "profiles",
-    "hasChildren": false,
+    "suffix": "profile",
     "inFolder": false,
     "metaFile": false,
-    "name": "Profile",
-    "suffix": "profile"
+    "hasChildren": false
   },
   "ProfilePasswordPolicy": {
+    "name": "ProfilePasswordPolicy",
     "directoryName": "profilePasswordPolicies",
-    "hasChildren": false,
+    "suffix": "profilePasswordPolicy",
     "inFolder": false,
     "metaFile": false,
-    "name": "ProfilePasswordPolicy",
-    "suffix": "profilePasswordPolicy"
+    "hasChildren": false
   },
   "ProfileSessionSetting": {
+    "name": "ProfileSessionSetting",
     "directoryName": "profileSessionSettings",
-    "hasChildren": false,
+    "suffix": "profileSessionSetting",
     "inFolder": false,
     "metaFile": false,
-    "name": "ProfileSessionSetting",
-    "suffix": "profileSessionSetting"
+    "hasChildren": false
   },
   "Prompt": {
+    "name": "Prompt",
     "directoryName": "prompts",
-    "hasChildren": false,
+    "suffix": "prompt",
     "inFolder": false,
     "metaFile": false,
-    "name": "Prompt",
-    "suffix": "prompt"
+    "hasChildren": false
+  },
+  "PublicKeyCertificate": {
+    "name": "PublicKeyCertificate",
+    "directoryName": "PublicKeyCertificate",
+    "suffix": "PublicKeyCertificate",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
+  },
+  "PublicKeyCertificateSet": {
+    "name": "PublicKeyCertificateSet",
+    "directoryName": "PublicKeyCertificateSet",
+    "suffix": "PublicKeyCertificateSet",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "Queue": {
+    "name": "Queue",
     "directoryName": "queues",
-    "hasChildren": false,
+    "suffix": "queue",
     "inFolder": false,
     "metaFile": false,
-    "name": "Queue",
-    "suffix": "queue"
+    "hasChildren": false
   },
   "QueueRoutingConfig": {
+    "name": "QueueRoutingConfig",
     "directoryName": "queueRoutingConfigs",
-    "hasChildren": false,
+    "suffix": "queueRoutingConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "QueueRoutingConfig",
-    "suffix": "queueRoutingConfig"
+    "hasChildren": false
   },
   "QuickAction": {
+    "name": "QuickAction",
     "directoryName": "quickActions",
-    "hasChildren": false,
+    "suffix": "quickAction",
     "inFolder": false,
     "metaFile": false,
-    "name": "QuickAction",
-    "suffix": "quickAction"
+    "hasChildren": false
   },
   "QuickTextSettings": {
+    "name": "QuickTextSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "QuickTextSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "QuoteSettings": {
+    "name": "QuoteSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "QuoteSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "RealTimeEventSettings": {
+    "name": "RealTimeEventSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "RealTimeEventSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "RecAlrtDataSrcExpSetDef": {
+    "name": "RecAlrtDataSrcExpSetDef",
     "directoryName": "recAlrtDataSrcExpSetDefs",
-    "hasChildren": false,
+    "suffix": "recAlrtDataSrcExpSetDef",
     "inFolder": false,
     "metaFile": false,
-    "name": "RecAlrtDataSrcExpSetDef",
-    "suffix": "recAlrtDataSrcExpSetDef"
+    "hasChildren": false
   },
   "RecommendationBuilderSettings": {
+    "name": "RecommendationBuilderSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "RecommendationBuilderSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "RecommendationStrategy": {
+    "name": "RecommendationStrategy",
     "directoryName": "recommendationStrategies",
-    "hasChildren": false,
+    "suffix": "recommendationStrategy",
     "inFolder": false,
     "metaFile": false,
-    "name": "RecommendationStrategy",
-    "suffix": "recommendationStrategy"
+    "hasChildren": false
   },
   "RecordActionDeployment": {
+    "name": "RecordActionDeployment",
     "directoryName": "recordActionDeployments",
-    "hasChildren": false,
+    "suffix": "deployment",
     "inFolder": false,
     "metaFile": false,
-    "name": "RecordActionDeployment",
-    "suffix": "deployment"
+    "hasChildren": false
   },
   "RecordAggregationDefinition": {
+    "name": "RecordAggregationDefinition",
     "directoryName": "RecordAggregationDefinitions",
-    "hasChildren": false,
+    "suffix": "RecordAggregationDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "RecordAggregationDefinition",
-    "suffix": "RecordAggregationDefinition"
+    "hasChildren": false
   },
   "RecordAlertCategory": {
+    "name": "RecordAlertCategory",
     "directoryName": "recordAlertCategories",
-    "hasChildren": false,
+    "suffix": "recordAlertCategory",
     "inFolder": false,
     "metaFile": false,
-    "name": "RecordAlertCategory",
-    "suffix": "recordAlertCategory"
+    "hasChildren": false
   },
   "RecordAlertDataSource": {
+    "name": "RecordAlertDataSource",
     "directoryName": "recordAlertDataSources",
-    "hasChildren": false,
+    "suffix": "recordAlertDataSource",
     "inFolder": false,
     "metaFile": false,
-    "name": "RecordAlertDataSource",
-    "suffix": "recordAlertDataSource"
+    "hasChildren": false
   },
   "RecordAlertTemplate": {
+    "name": "RecordAlertTemplate",
     "directoryName": "recordAlertTemplates",
-    "hasChildren": false,
+    "suffix": "recordAlertTemplate",
     "inFolder": false,
     "metaFile": false,
-    "name": "RecordAlertTemplate",
-    "suffix": "recordAlertTemplate"
+    "hasChildren": false
   },
   "RecordPageSettings": {
+    "name": "RecordPageSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "RecordPageSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "RecordType": {
-    "hasChildren": false,
+    "name": "RecordType",
     "inFolder": false,
     "metaFile": false,
-    "name": "RecordType"
+    "hasChildren": false
   },
   "RedirectWhitelistUrl": {
+    "name": "RedirectWhitelistUrl",
     "directoryName": "redirectWhitelistUrls",
-    "hasChildren": false,
+    "suffix": "redirectWhitelistUrl",
     "inFolder": false,
     "metaFile": false,
-    "name": "RedirectWhitelistUrl",
-    "suffix": "redirectWhitelistUrl"
+    "hasChildren": false
   },
   "ReferencedDashboard": {
+    "name": "ReferencedDashboard",
     "directoryName": "wave",
-    "hasChildren": false,
+    "suffix": "refdash",
     "inFolder": false,
     "metaFile": false,
-    "name": "ReferencedDashboard",
-    "suffix": "refdash"
+    "hasChildren": false
   },
   "ReferralMarketingSettings": {
+    "name": "ReferralMarketingSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ReferralMarketingSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "RegisteredExternalService": {
+    "name": "RegisteredExternalService",
     "directoryName": "registeredExternalServices",
-    "hasChildren": false,
+    "suffix": "registeredExternalService",
     "inFolder": false,
     "metaFile": false,
-    "name": "RegisteredExternalService",
-    "suffix": "registeredExternalService"
+    "hasChildren": false
   },
   "RelatedRecordAssocCriteria": {
+    "name": "RelatedRecordAssocCriteria",
     "directoryName": "relatedRecordAssocCriteria",
-    "hasChildren": false,
+    "suffix": "relatedRecordAssocCriteria",
     "inFolder": false,
     "metaFile": false,
-    "name": "RelatedRecordAssocCriteria",
-    "suffix": "relatedRecordAssocCriteria"
+    "hasChildren": false
   },
   "RelationshipGraphDefinition": {
+    "name": "RelationshipGraphDefinition",
     "directoryName": "relationshipGraphDefinitions",
-    "hasChildren": false,
+    "suffix": "relationshipGraphDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "RelationshipGraphDefinition",
-    "suffix": "relationshipGraphDefinition"
+    "hasChildren": false
   },
   "RemoteSiteSetting": {
+    "name": "RemoteSiteSetting",
     "directoryName": "remoteSiteSettings",
-    "hasChildren": false,
+    "suffix": "remoteSite",
     "inFolder": false,
     "metaFile": false,
-    "name": "RemoteSiteSetting",
-    "suffix": "remoteSite"
+    "hasChildren": false
   },
   "Report": {
+    "name": "Report",
     "directoryName": "reports",
-    "hasChildren": false,
+    "suffix": "report",
     "inFolder": true,
     "metaFile": false,
-    "name": "Report",
-    "suffix": "report"
+    "hasChildren": false
   },
   "ReportFolder": {
+    "name": "ReportFolder",
     "directoryName": "reports",
-    "hasChildren": false,
+    "suffix": "",
     "inFolder": false,
     "metaFile": false,
-    "name": "ReportFolder",
-    "suffix": ""
+    "hasChildren": false
   },
   "ReportType": {
+    "name": "ReportType",
     "directoryName": "reportTypes",
-    "hasChildren": false,
+    "suffix": "reportType",
     "inFolder": false,
     "metaFile": false,
-    "name": "ReportType",
-    "suffix": "reportType"
+    "hasChildren": false
   },
   "RestrictionRule": {
+    "name": "RestrictionRule",
     "directoryName": "restrictionRules",
-    "hasChildren": false,
+    "suffix": "rule",
     "inFolder": false,
     "metaFile": false,
-    "name": "RestrictionRule",
-    "suffix": "rule"
+    "hasChildren": false
   },
   "RetailExecutionSettings": {
+    "name": "RetailExecutionSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "RetailExecutionSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "RetrievalSummaryDefinition": {
+    "name": "RetrievalSummaryDefinition",
     "directoryName": "RetrievalSummaryDefinitions",
-    "hasChildren": false,
+    "suffix": "RetrievalSummaryDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "RetrievalSummaryDefinition",
-    "suffix": "RetrievalSummaryDefinition"
+    "hasChildren": false
   },
   "RevenueManagementSettings": {
+    "name": "RevenueManagementSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "RevenueManagementSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "Role": {
+    "name": "Role",
     "directoryName": "roles",
-    "hasChildren": false,
+    "suffix": "role",
     "inFolder": false,
     "metaFile": false,
-    "name": "Role",
-    "suffix": "role"
+    "hasChildren": false
   },
   "SalesAgreementSettings": {
+    "name": "SalesAgreementSettings",
     "directoryName": "salesAgreementSettings",
-    "hasChildren": false,
+    "suffix": "salesAgreementSetting",
     "inFolder": false,
     "metaFile": false,
-    "name": "SalesAgreementSettings",
-    "suffix": "salesAgreementSetting"
+    "hasChildren": false
   },
   "SalesWorkQueueSettings": {
+    "name": "SalesWorkQueueSettings",
     "directoryName": "salesworkqueuesettings",
-    "hasChildren": false,
+    "suffix": "salesworkqueuesetting",
     "inFolder": false,
     "metaFile": false,
-    "name": "SalesWorkQueueSettings",
-    "suffix": "salesworkqueuesetting"
+    "hasChildren": false
   },
   "SamlSsoConfig": {
+    "name": "SamlSsoConfig",
     "directoryName": "samlssoconfigs",
-    "hasChildren": false,
+    "suffix": "samlssoconfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "SamlSsoConfig",
-    "suffix": "samlssoconfig"
+    "hasChildren": false
   },
   "SandboxSettings": {
+    "name": "SandboxSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "SandboxSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "SceGlobalModelOptOutSettings": {
+    "name": "SceGlobalModelOptOutSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "SceGlobalModelOptOutSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "SchedulingObjective": {
+    "name": "SchedulingObjective",
     "directoryName": "SchedulingObjectives",
-    "hasChildren": false,
+    "suffix": "schedulingObjective",
     "inFolder": false,
     "metaFile": false,
-    "name": "SchedulingObjective",
-    "suffix": "schedulingObjective"
+    "hasChildren": false
   },
   "SchedulingRule": {
+    "name": "SchedulingRule",
     "directoryName": "SchedulingRules",
-    "hasChildren": false,
+    "suffix": "schedulingRule",
     "inFolder": false,
     "metaFile": false,
-    "name": "SchedulingRule",
-    "suffix": "schedulingRule"
+    "hasChildren": false
   },
   "SchemaSettings": {
+    "name": "SchemaSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "SchemaSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ScoreCategory": {
+    "name": "ScoreCategory",
     "directoryName": "scoreCategories",
-    "hasChildren": false,
+    "suffix": "scoreCategory",
     "inFolder": false,
     "metaFile": false,
-    "name": "ScoreCategory",
-    "suffix": "scoreCategory"
+    "hasChildren": false
   },
   "SearchCustomization": {
+    "name": "SearchCustomization",
     "directoryName": "searchCustomizations",
-    "hasChildren": false,
+    "suffix": "searchCustomization",
     "inFolder": false,
     "metaFile": false,
-    "name": "SearchCustomization",
-    "suffix": "searchCustomization"
+    "hasChildren": false
   },
   "SearchOrgWideObjectConfig": {
+    "name": "SearchOrgWideObjectConfig",
     "directoryName": "searchOrgWideConfiguration",
-    "hasChildren": false,
+    "suffix": "searchOrgWideObjectConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "SearchOrgWideObjectConfig",
-    "suffix": "searchOrgWideObjectConfig"
+    "hasChildren": false
   },
   "SearchSettings": {
+    "name": "SearchSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "SearchSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "SecuritySettings": {
+    "name": "SecuritySettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "SecuritySettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ServiceAISetupDefinition": {
+    "name": "ServiceAISetupDefinition",
     "directoryName": "serviceAISetupDescriptions",
-    "hasChildren": false,
+    "suffix": "serviceAISetupDescription",
     "inFolder": false,
     "metaFile": false,
-    "name": "ServiceAISetupDefinition",
-    "suffix": "serviceAISetupDescription"
+    "hasChildren": false
   },
   "ServiceAISetupField": {
+    "name": "ServiceAISetupField",
     "directoryName": "serviceAISetupFields",
-    "hasChildren": false,
+    "suffix": "serviceAISetupField",
     "inFolder": false,
     "metaFile": false,
-    "name": "ServiceAISetupField",
-    "suffix": "serviceAISetupField"
+    "hasChildren": false
   },
   "ServiceChannel": {
+    "name": "ServiceChannel",
     "directoryName": "serviceChannels",
-    "hasChildren": false,
+    "suffix": "serviceChannel",
     "inFolder": false,
     "metaFile": false,
-    "name": "ServiceChannel",
-    "suffix": "serviceChannel"
+    "hasChildren": false
   },
   "ServiceCloudVoiceSettings": {
+    "name": "ServiceCloudVoiceSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ServiceCloudVoiceSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "ServicePresenceStatus": {
+    "name": "ServicePresenceStatus",
     "directoryName": "servicePresenceStatuses",
-    "hasChildren": false,
+    "suffix": "servicePresenceStatus",
     "inFolder": false,
     "metaFile": false,
-    "name": "ServicePresenceStatus",
-    "suffix": "servicePresenceStatus"
+    "hasChildren": false
   },
   "ServiceProcess": {
+    "name": "ServiceProcess",
     "directoryName": "serviceprocess",
-    "hasChildren": false,
+    "suffix": "serviceprocess",
     "inFolder": false,
     "metaFile": false,
-    "name": "ServiceProcess",
-    "suffix": "serviceprocess"
+    "hasChildren": false
   },
   "ServiceSetupAssistantSettings": {
+    "name": "ServiceSetupAssistantSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "ServiceSetupAssistantSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "SharingCriteriaRule": {
-    "hasChildren": false,
+    "name": "SharingCriteriaRule",
     "inFolder": false,
     "metaFile": false,
-    "name": "SharingCriteriaRule"
+    "hasChildren": false
   },
   "SharingGuestRule": {
-    "hasChildren": false,
+    "name": "SharingGuestRule",
     "inFolder": false,
     "metaFile": false,
-    "name": "SharingGuestRule"
+    "hasChildren": false
   },
   "SharingOwnerRule": {
-    "hasChildren": false,
+    "name": "SharingOwnerRule",
     "inFolder": false,
     "metaFile": false,
-    "name": "SharingOwnerRule"
+    "hasChildren": false
   },
   "SharingReason": {
-    "hasChildren": false,
+    "name": "SharingReason",
     "inFolder": false,
     "metaFile": false,
-    "name": "SharingReason"
+    "hasChildren": false
   },
   "SharingRules": {
+    "name": "SharingRules",
     "directoryName": "sharingRules",
-    "hasChildren": true,
+    "suffix": "sharingRules",
     "inFolder": false,
     "metaFile": false,
-    "name": "SharingRules",
-    "suffix": "sharingRules"
+    "hasChildren": true
   },
   "SharingSet": {
+    "name": "SharingSet",
     "directoryName": "sharingSets",
-    "hasChildren": false,
+    "suffix": "sharingSet",
     "inFolder": false,
     "metaFile": false,
-    "name": "SharingSet",
-    "suffix": "sharingSet"
+    "hasChildren": false
   },
   "SharingSettings": {
+    "name": "SharingSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "SharingSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "SharingTerritoryRule": {
-    "hasChildren": false,
+    "name": "SharingTerritoryRule",
     "inFolder": false,
     "metaFile": false,
-    "name": "SharingTerritoryRule"
+    "hasChildren": false
   },
   "SiteDotCom": {
+    "name": "SiteDotCom",
     "directoryName": "siteDotComSites",
-    "hasChildren": false,
+    "suffix": "site",
     "inFolder": false,
     "metaFile": true,
-    "name": "SiteDotCom",
-    "suffix": "site"
+    "hasChildren": false
   },
   "SiteSettings": {
+    "name": "SiteSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "SiteSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "Skill": {
+    "name": "Skill",
     "directoryName": "skills",
-    "hasChildren": false,
+    "suffix": "skill",
     "inFolder": false,
     "metaFile": false,
-    "name": "Skill",
-    "suffix": "skill"
+    "hasChildren": false
   },
   "SkillType": {
+    "name": "SkillType",
     "directoryName": "skilltypes",
-    "hasChildren": false,
+    "suffix": "skilltype",
     "inFolder": false,
     "metaFile": false,
-    "name": "SkillType",
-    "suffix": "skilltype"
+    "hasChildren": false
   },
   "SlackApp": {
+    "name": "SlackApp",
     "directoryName": "slackapps",
-    "hasChildren": false,
+    "suffix": "slackapp",
     "inFolder": false,
     "metaFile": true,
-    "name": "SlackApp",
-    "suffix": "slackapp"
+    "hasChildren": false
   },
   "SocialCustomerServiceSettings": {
+    "name": "SocialCustomerServiceSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "SocialCustomerServiceSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "SourceTrackingSettings": {
+    "name": "SourceTrackingSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "SourceTrackingSettings",
-    "suffix": "settings"
+    "hasChildren": false
+  },
+  "StageDefinition": {
+    "name": "StageDefinition",
+    "directoryName": "stageDefinitions",
+    "suffix": "stageDefinition",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "StandardValue": {
-    "hasChildren": false,
+    "name": "StandardValue",
     "inFolder": false,
     "metaFile": false,
-    "name": "StandardValue"
+    "hasChildren": false
   },
   "StandardValueSet": {
+    "name": "StandardValueSet",
     "directoryName": "standardValueSets",
-    "hasChildren": false,
+    "suffix": "standardValueSet",
     "inFolder": false,
     "metaFile": false,
-    "name": "StandardValueSet",
-    "suffix": "standardValueSet"
+    "hasChildren": false
   },
   "StandardValueSetTranslation": {
+    "name": "StandardValueSetTranslation",
     "directoryName": "standardValueSetTranslations",
-    "hasChildren": false,
+    "suffix": "standardValueSetTranslation",
     "inFolder": false,
     "metaFile": false,
-    "name": "StandardValueSetTranslation",
-    "suffix": "standardValueSetTranslation"
+    "hasChildren": false
   },
   "StaticResource": {
+    "name": "StaticResource",
     "directoryName": "staticresources",
-    "hasChildren": false,
+    "suffix": "resource",
     "inFolder": false,
     "metaFile": true,
-    "name": "StaticResource",
-    "suffix": "resource"
+    "hasChildren": false
   },
   "StnryAssetEnvSrcCnfg": {
+    "name": "StnryAssetEnvSrcCnfg",
     "directoryName": "stationaryAssetEnvSourceConfigs",
-    "hasChildren": false,
+    "suffix": "stationaryAssetEnvSourceConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "StnryAssetEnvSrcCnfg",
-    "suffix": "stationaryAssetEnvSourceConfig"
+    "hasChildren": false
   },
   "StreamingAppDataConnector": {
+    "name": "StreamingAppDataConnector",
     "directoryName": "streamingAppDataConnectors",
-    "hasChildren": false,
+    "suffix": "streamingAppDataConnector",
     "inFolder": false,
     "metaFile": false,
-    "name": "StreamingAppDataConnector",
-    "suffix": "streamingAppDataConnector"
+    "hasChildren": false
   },
   "SubscriptionManagementSettings": {
+    "name": "SubscriptionManagementSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "SubscriptionManagementSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "SurveySettings": {
+    "name": "SurveySettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "SurveySettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "SustainabilityUom": {
+    "name": "SustainabilityUom",
     "directoryName": "sustainabilityUoms",
-    "hasChildren": false,
+    "suffix": "sustainabilityUom",
     "inFolder": false,
     "metaFile": false,
-    "name": "SustainabilityUom",
-    "suffix": "sustainabilityUom"
+    "hasChildren": false
   },
   "SustnUomConversion": {
+    "name": "SustnUomConversion",
     "directoryName": "sustnUomConversions",
-    "hasChildren": false,
+    "suffix": "sustnUomConversion",
     "inFolder": false,
     "metaFile": false,
-    "name": "SustnUomConversion",
-    "suffix": "sustnUomConversion"
+    "hasChildren": false
   },
   "SvcCatalogCategory": {
+    "name": "SvcCatalogCategory",
     "directoryName": "svcCatalogCategories",
-    "hasChildren": false,
+    "suffix": "category",
     "inFolder": false,
     "metaFile": false,
-    "name": "SvcCatalogCategory",
-    "suffix": "category"
+    "hasChildren": false
   },
   "SvcCatalogFilterCriteria": {
+    "name": "SvcCatalogFilterCriteria",
     "directoryName": "svcCatalogFilterCriteria",
-    "hasChildren": false,
+    "suffix": "filterCriterion",
     "inFolder": false,
     "metaFile": false,
-    "name": "SvcCatalogFilterCriteria",
-    "suffix": "filterCriterion"
+    "hasChildren": false
   },
   "SvcCatalogFulfillmentFlow": {
+    "name": "SvcCatalogFulfillmentFlow",
     "directoryName": "svcCatalogFulfillmentFlows",
-    "hasChildren": false,
+    "suffix": "fulfillmentFlow",
     "inFolder": false,
     "metaFile": false,
-    "name": "SvcCatalogFulfillmentFlow",
-    "suffix": "fulfillmentFlow"
+    "hasChildren": false
   },
   "SvcCatalogItemDef": {
+    "name": "SvcCatalogItemDef",
     "directoryName": "svcCatalogItems",
-    "hasChildren": false,
+    "suffix": "catalogItem",
     "inFolder": false,
     "metaFile": false,
-    "name": "SvcCatalogItemDef",
-    "suffix": "catalogItem"
+    "hasChildren": false
   },
   "SynonymDictionary": {
+    "name": "SynonymDictionary",
     "directoryName": "synonymDictionaries",
-    "hasChildren": false,
+    "suffix": "synonymDictionary",
     "inFolder": false,
     "metaFile": false,
-    "name": "SynonymDictionary",
-    "suffix": "synonymDictionary"
+    "hasChildren": false
   },
   "SystemNotificationSettings": {
+    "name": "SystemNotificationSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "SystemNotificationSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "Territory": {
+    "name": "Territory",
     "directoryName": "territories",
-    "hasChildren": false,
+    "suffix": "territory",
     "inFolder": false,
     "metaFile": false,
-    "name": "Territory",
-    "suffix": "territory"
+    "hasChildren": false
   },
   "Territory2": {
+    "name": "Territory2",
     "directoryName": "territory2Models",
-    "hasChildren": false,
+    "suffix": "territory2",
     "inFolder": false,
     "metaFile": false,
-    "name": "Territory2",
-    "suffix": "territory2"
+    "hasChildren": false
   },
   "Territory2Model": {
+    "name": "Territory2Model",
     "directoryName": "territory2Models",
-    "hasChildren": false,
+    "suffix": "territory2Model",
     "inFolder": false,
     "metaFile": false,
-    "name": "Territory2Model",
-    "suffix": "territory2Model"
+    "hasChildren": false
   },
   "Territory2Rule": {
+    "name": "Territory2Rule",
     "directoryName": "territory2Models",
-    "hasChildren": false,
+    "suffix": "territory2Rule",
     "inFolder": false,
     "metaFile": false,
-    "name": "Territory2Rule",
-    "suffix": "territory2Rule"
+    "hasChildren": false
   },
   "Territory2Settings": {
+    "name": "Territory2Settings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "Territory2Settings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "Territory2Type": {
+    "name": "Territory2Type",
     "directoryName": "territory2Types",
-    "hasChildren": false,
+    "suffix": "territory2Type",
     "inFolder": false,
     "metaFile": false,
-    "name": "Territory2Type",
-    "suffix": "territory2Type"
+    "hasChildren": false
   },
   "TimeSheetTemplate": {
+    "name": "TimeSheetTemplate",
     "directoryName": "timeSheetTemplates",
-    "hasChildren": false,
+    "suffix": "timeSheetTemplate",
     "inFolder": false,
     "metaFile": false,
-    "name": "TimeSheetTemplate",
-    "suffix": "timeSheetTemplate"
+    "hasChildren": false
   },
   "TimelineObjectDefinition": {
+    "name": "TimelineObjectDefinition",
     "directoryName": "timelineObjectDefinitions",
-    "hasChildren": false,
+    "suffix": "timelineObjectDefinition",
     "inFolder": false,
     "metaFile": false,
-    "name": "TimelineObjectDefinition",
-    "suffix": "timelineObjectDefinition"
+    "hasChildren": false
   },
   "TopicsForObjects": {
+    "name": "TopicsForObjects",
     "directoryName": "topicsForObjects",
-    "hasChildren": false,
+    "suffix": "topicsForObjects",
     "inFolder": false,
     "metaFile": false,
-    "name": "TopicsForObjects",
-    "suffix": "topicsForObjects"
+    "hasChildren": false
   },
   "TrailheadSettings": {
+    "name": "TrailheadSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "TrailheadSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "TransactionSecurityPolicy": {
+    "name": "TransactionSecurityPolicy",
     "directoryName": "transactionSecurityPolicies",
-    "hasChildren": false,
+    "suffix": "transactionSecurityPolicy",
     "inFolder": false,
     "metaFile": false,
-    "name": "TransactionSecurityPolicy",
-    "suffix": "transactionSecurityPolicy"
+    "hasChildren": false
   },
   "Translations": {
+    "name": "Translations",
     "directoryName": "translations",
-    "hasChildren": false,
+    "suffix": "translation",
     "inFolder": false,
     "metaFile": false,
-    "name": "Translations",
-    "suffix": "translation"
+    "hasChildren": false
   },
   "TrialOrgSettings": {
+    "name": "TrialOrgSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "TrialOrgSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "UIObjectRelationConfig": {
+    "name": "UIObjectRelationConfig",
     "directoryName": "uiObjectRelationConfigs",
-    "hasChildren": false,
+    "suffix": "uiObjectRelationConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "UIObjectRelationConfig",
-    "suffix": "uiObjectRelationConfig"
+    "hasChildren": false
+  },
+  "UiFormatSpecificationSet": {
+    "name": "UiFormatSpecificationSet",
+    "directoryName": "uiFormatSpecificationSets",
+    "suffix": "uiFormatSpecificationSet",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "UiPlugin": {
+    "name": "UiPlugin",
     "directoryName": "uiplugins",
-    "hasChildren": false,
+    "suffix": "uiplugin",
     "inFolder": false,
     "metaFile": true,
-    "name": "UiPlugin",
-    "suffix": "uiplugin"
+    "hasChildren": false
   },
   "UserAccessPolicy": {
+    "name": "UserAccessPolicy",
     "directoryName": "useraccesspolicies",
-    "hasChildren": false,
+    "suffix": "useraccesspolicy",
     "inFolder": false,
     "metaFile": false,
-    "name": "UserAccessPolicy",
-    "suffix": "useraccesspolicy"
+    "hasChildren": false
   },
   "UserAuthCertificate": {
+    "name": "UserAuthCertificate",
     "directoryName": "userAuthCertificates",
-    "hasChildren": false,
+    "suffix": "userAuthCertificate",
     "inFolder": false,
     "metaFile": true,
-    "name": "UserAuthCertificate",
-    "suffix": "userAuthCertificate"
+    "hasChildren": false
   },
   "UserCriteria": {
+    "name": "UserCriteria",
     "directoryName": "userCriteria",
-    "hasChildren": false,
+    "suffix": "userCriteria",
     "inFolder": false,
     "metaFile": false,
-    "name": "UserCriteria",
-    "suffix": "userCriteria"
+    "hasChildren": false
   },
   "UserEngagementSettings": {
+    "name": "UserEngagementSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "UserEngagementSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "UserInterfaceSettings": {
+    "name": "UserInterfaceSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "UserInterfaceSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "UserManagementSettings": {
-    "directoryName": "settings",
-    "hasChildren": false,
-    "inFolder": false,
-    "metaFile": false,
     "name": "UserManagementSettings",
-    "suffix": "settings"
-  },
-  "UserProfileSearchScope": {
-    "directoryName": "userProfileSearchScopes",
-    "hasChildren": false,
+    "directoryName": "settings",
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "UserProfileSearchScope",
-    "suffix": "userProfileSearchScope"
+    "hasChildren": false
   },
   "UserProvisioningConfig": {
+    "name": "UserProvisioningConfig",
     "directoryName": "userProvisioningConfigs",
-    "hasChildren": false,
+    "suffix": "userProvisioningConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "UserProvisioningConfig",
-    "suffix": "userProvisioningConfig"
+    "hasChildren": false
   },
   "ValidationRule": {
-    "hasChildren": false,
+    "name": "ValidationRule",
     "inFolder": false,
     "metaFile": false,
-    "name": "ValidationRule"
+    "hasChildren": false
   },
   "VehicleAssetEmssnSrcCnfg": {
+    "name": "VehicleAssetEmssnSrcCnfg",
     "directoryName": "vehicleAssetEmssnSourceConfigs",
-    "hasChildren": false,
+    "suffix": "vehicleAssetEmssnSourceConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "VehicleAssetEmssnSrcCnfg",
-    "suffix": "vehicleAssetEmssnSourceConfig"
+    "hasChildren": false
   },
   "ViewDefinition": {
+    "name": "ViewDefinition",
     "directoryName": "viewdefinitions",
-    "hasChildren": false,
+    "suffix": "view",
     "inFolder": false,
     "metaFile": true,
-    "name": "ViewDefinition",
-    "suffix": "view"
+    "hasChildren": false
   },
   "VirtualVisitConfig": {
+    "name": "VirtualVisitConfig",
     "directoryName": "VirtualVisitConfigs",
-    "hasChildren": false,
+    "suffix": "virtualVisitConfig",
     "inFolder": false,
     "metaFile": false,
-    "name": "VirtualVisitConfig",
-    "suffix": "virtualVisitConfig"
+    "hasChildren": false
   },
   "VoiceSettings": {
+    "name": "VoiceSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "VoiceSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "WarrantyLifecycleMgmtSettings": {
+    "name": "WarrantyLifecycleMgmtSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "WarrantyLifecycleMgmtSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "WaveAnalyticAssetCollection": {
+    "name": "WaveAnalyticAssetCollection",
     "directoryName": "wave",
-    "hasChildren": false,
+    "suffix": "collection",
     "inFolder": false,
     "metaFile": false,
-    "name": "WaveAnalyticAssetCollection",
-    "suffix": "collection"
+    "hasChildren": false
   },
   "WaveApplication": {
+    "name": "WaveApplication",
     "directoryName": "wave",
-    "hasChildren": false,
+    "suffix": "wapp",
     "inFolder": false,
     "metaFile": false,
-    "name": "WaveApplication",
-    "suffix": "wapp"
+    "hasChildren": false
   },
   "WaveComponent": {
+    "name": "WaveComponent",
     "directoryName": "wave",
-    "hasChildren": false,
+    "suffix": "wcomp",
     "inFolder": false,
     "metaFile": true,
-    "name": "WaveComponent",
-    "suffix": "wcomp"
+    "hasChildren": false
   },
   "WaveDashboard": {
+    "name": "WaveDashboard",
     "directoryName": "wave",
-    "hasChildren": false,
+    "suffix": "wdash",
     "inFolder": false,
     "metaFile": true,
-    "name": "WaveDashboard",
-    "suffix": "wdash"
+    "hasChildren": false
   },
   "WaveDataflow": {
+    "name": "WaveDataflow",
     "directoryName": "wave",
-    "hasChildren": false,
+    "suffix": "wdf",
     "inFolder": false,
     "metaFile": true,
-    "name": "WaveDataflow",
-    "suffix": "wdf"
+    "hasChildren": false
   },
   "WaveDataset": {
+    "name": "WaveDataset",
     "directoryName": "wave",
-    "hasChildren": false,
+    "suffix": "wds",
     "inFolder": false,
     "metaFile": false,
-    "name": "WaveDataset",
-    "suffix": "wds"
+    "hasChildren": false
   },
   "WaveLens": {
+    "name": "WaveLens",
     "directoryName": "wave",
-    "hasChildren": false,
+    "suffix": "wlens",
     "inFolder": false,
     "metaFile": true,
-    "name": "WaveLens",
-    "suffix": "wlens"
+    "hasChildren": false
   },
   "WaveRecipe": {
+    "name": "WaveRecipe",
     "directoryName": "wave",
-    "hasChildren": false,
+    "suffix": "wdpr",
     "inFolder": false,
     "metaFile": true,
-    "name": "WaveRecipe",
-    "suffix": "wdpr"
+    "hasChildren": false
   },
   "WaveTemplateBundle": {
+    "name": "WaveTemplateBundle",
     "directoryName": "waveTemplates",
-    "hasChildren": false,
     "inFolder": false,
     "metaFile": false,
-    "name": "WaveTemplateBundle"
+    "hasChildren": false
   },
   "WaveXmd": {
+    "name": "WaveXmd",
     "directoryName": "wave",
-    "hasChildren": false,
+    "suffix": "xmd",
     "inFolder": false,
     "metaFile": false,
-    "name": "WaveXmd",
-    "suffix": "xmd"
+    "hasChildren": false
   },
   "Web3Settings": {
+    "name": "Web3Settings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "Web3Settings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "WebLink": {
-    "hasChildren": false,
+    "name": "WebLink",
     "inFolder": false,
     "metaFile": false,
-    "name": "WebLink"
+    "hasChildren": false
   },
   "WebStoreBundle": {
+    "name": "WebStoreBundle",
     "directoryName": "webStoreBundles",
-    "hasChildren": false,
+    "suffix": "webStoreBundle",
     "inFolder": false,
     "metaFile": false,
-    "name": "WebStoreBundle",
-    "suffix": "webStoreBundle"
+    "hasChildren": false
   },
   "WebStoreTemplate": {
+    "name": "WebStoreTemplate",
     "directoryName": "webStoreTemplates",
-    "hasChildren": false,
+    "suffix": "webStoreTemplate",
     "inFolder": false,
     "metaFile": false,
-    "name": "WebStoreTemplate",
-    "suffix": "webStoreTemplate"
+    "hasChildren": false
   },
   "WebToXSettings": {
+    "name": "WebToXSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "WebToXSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "WorkDotComSettings": {
+    "name": "WorkDotComSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "WorkDotComSettings",
-    "suffix": "settings"
+    "hasChildren": false
   },
   "WorkSkillRouting": {
+    "name": "WorkSkillRouting",
     "directoryName": "workSkillRoutings",
-    "hasChildren": false,
+    "suffix": "workSkillRouting",
     "inFolder": false,
     "metaFile": false,
-    "name": "WorkSkillRouting",
-    "suffix": "workSkillRouting"
+    "hasChildren": false
   },
   "Workflow": {
+    "name": "Workflow",
     "directoryName": "workflows",
-    "hasChildren": true,
+    "suffix": "workflow",
     "inFolder": false,
     "metaFile": false,
-    "name": "Workflow",
-    "suffix": "workflow"
+    "hasChildren": true
   },
   "WorkflowAlert": {
-    "hasChildren": false,
+    "name": "WorkflowAlert",
     "inFolder": false,
     "metaFile": false,
-    "name": "WorkflowAlert"
+    "hasChildren": false
   },
   "WorkflowFieldUpdate": {
-    "hasChildren": false,
+    "name": "WorkflowFieldUpdate",
     "inFolder": false,
     "metaFile": false,
-    "name": "WorkflowFieldUpdate"
+    "hasChildren": false
   },
   "WorkflowFlowAction": {
-    "hasChildren": false,
+    "name": "WorkflowFlowAction",
     "inFolder": false,
     "metaFile": false,
-    "name": "WorkflowFlowAction"
+    "hasChildren": false
+  },
+  "WorkflowFlowAutomation": {
+    "name": "WorkflowFlowAutomation",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   },
   "WorkflowKnowledgePublish": {
-    "hasChildren": false,
+    "name": "WorkflowKnowledgePublish",
     "inFolder": false,
     "metaFile": false,
-    "name": "WorkflowKnowledgePublish"
+    "hasChildren": false
   },
   "WorkflowOutboundMessage": {
-    "hasChildren": false,
+    "name": "WorkflowOutboundMessage",
     "inFolder": false,
     "metaFile": false,
-    "name": "WorkflowOutboundMessage"
+    "hasChildren": false
   },
   "WorkflowRule": {
-    "hasChildren": false,
+    "name": "WorkflowRule",
     "inFolder": false,
     "metaFile": false,
-    "name": "WorkflowRule"
+    "hasChildren": false
   },
   "WorkflowSend": {
-    "hasChildren": false,
+    "name": "WorkflowSend",
     "inFolder": false,
     "metaFile": false,
-    "name": "WorkflowSend"
+    "hasChildren": false
   },
   "WorkflowTask": {
-    "hasChildren": false,
+    "name": "WorkflowTask",
     "inFolder": false,
     "metaFile": false,
-    "name": "WorkflowTask"
+    "hasChildren": false
   },
   "WorkforceEngagementSettings": {
+    "name": "WorkforceEngagementSettings",
     "directoryName": "settings",
-    "hasChildren": false,
+    "suffix": "settings",
     "inFolder": false,
     "metaFile": false,
-    "name": "WorkforceEngagementSettings",
-    "suffix": "settings"
+    "hasChildren": false
   }
 }

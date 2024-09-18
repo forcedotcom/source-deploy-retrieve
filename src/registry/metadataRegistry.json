@@ -518,7 +518,9 @@
     "workflowTask": "workflowtask",
     "xmd": "wavexmd",
     "xml": "emailservicesfunction",
-    "xorghub": "xorghub"
+    "xorghub": "xorghub",
+    "ecaPush": "extlclntapppushsettings",
+    "ecaPushPlcy": "extlclntapppushconfigurablepolicies"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4612,6 +4614,22 @@
       "inFolder": false,
       "name": "XOrgHub",
       "suffix": "xorghub"
+    },
+    "extlclntapppushsettings": {
+      "id": "extlclntapppushsettings",
+      "name": "ExtlClntAppPushSettings",
+      "suffix": "ecaPush",
+      "directoryName": "extlClntAppPushSettings",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntapppushconfigurablepolicies": {
+      "id": "extlclntapppushconfigurablepolicies",
+      "name": "ExtlClntAppPushConfigurablePolicies",
+      "suffix": "ecaPushPlcy",
+      "directoryName": "extlClntAppPushPolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   }
 }

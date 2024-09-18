@@ -25,6 +25,7 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
  * Extend this base class to implement a custom container.
  */
 export abstract class TreeContainer {
+  protected fileContentMap: Map<string, Buffer> = new Map<string, Buffer>();
   /**
    * Searches for a metadata component file in a container directory.
    *
@@ -110,7 +111,12 @@ export class NodeFSTreeContainer extends TreeContainer {
   }
 
   public readFileSync(fsPath: SourcePath): Buffer {
-    return readFileSync(fsPath);
+    if (this.fileContentMap.has(fsPath)) {
+      return this.fileContentMap.get(fsPath)!;
+    } else {
+      this.fileContentMap.set(fsPath, readFileSync(fsPath));
+      return this.fileContentMap.get(fsPath)!;
+    }
   }
 
   public stream(fsPath: SourcePath): Readable {

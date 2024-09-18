@@ -106,8 +106,14 @@ export class NodeFSTreeContainer extends TreeContainer {
   }
 
   public readFile(fsPath: SourcePath): Promise<Buffer> {
-    // significant enough performance increase using sync instead of fs.promise version
-    return Promise.resolve(readFileSync(fsPath));
+    if (this.fileContentMap.has(fsPath)) {
+      return Promise.resolve(this.fileContentMap.get(fsPath)!);
+    } else {
+      // significant enough performance increase using sync instead of fs.promise version
+      const content = readFileSync(fsPath);
+      this.fileContentMap.set(fsPath, content);
+      return Promise.resolve(content);
+    }
   }
 
   public readFileSync(fsPath: SourcePath): Buffer {

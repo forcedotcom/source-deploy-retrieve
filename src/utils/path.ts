@@ -117,9 +117,7 @@ export function parseNestedFullName(fsPath: string, directoryName: string): stri
     return;
   }
   const pathPrefix = pathSplits.slice(pathSplits.lastIndexOf(directoryName) + 1);
-  // the eslint comment should remain until strictMode is fully implemented
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-  pathPrefix[pathPrefix.length - 1] = (pathSplits.pop() as string).replace('-meta.xml', '').split('.')[0];
+  pathPrefix[pathPrefix.length - 1] = (pathSplits.pop() as string).replace(META_XML_SUFFIX, '').split('.')[0];
   return pathPrefix.join('/');
 }
 

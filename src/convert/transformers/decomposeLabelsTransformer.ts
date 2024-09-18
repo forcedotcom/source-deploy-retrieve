@@ -13,6 +13,7 @@ import { SourceComponent } from '../../resolve/sourceComponent';
 import { ToSourceFormatInput, WriteInfo } from '../types';
 import { JsToXml } from '../streams';
 import { unwrapAndOmitNS } from '../../utils/decomposed';
+import { META_XML_SUFFIX } from '../../common';
 import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
 
 /* Use for the metadata type CustomLabels  */
@@ -31,7 +32,7 @@ export class LabelsMetadataTransformer extends DefaultMetadataTransformer {
         output:
           // if present in the merge set, use that xml path, otherwise use the default path
           mergeSet?.getComponentFilenamesByNameAndType({ fullName: l.fullName, type: labelType.name })?.[0] ??
-          partiallyAppliedPathCalculator(l.fullName)(`${l.fullName}.label-meta.xml`),
+          partiallyAppliedPathCalculator(l.fullName)(`${l.fullName}.label${META_XML_SUFFIX}`),
         source: new JsToXml({ CustomLabel: l }),
       }));
   }

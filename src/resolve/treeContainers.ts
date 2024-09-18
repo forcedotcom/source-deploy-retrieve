@@ -237,7 +237,6 @@ export class ZipTreeContainer extends TreeContainer {
  */
 export class VirtualTreeContainer extends TreeContainer {
   private tree = new Map<SourcePath, Set<SourcePath>>();
-  private fileContents = new Map<SourcePath, Buffer>();
 
   public constructor(virtualFs: VirtualDirectory[]) {
     super();
@@ -298,10 +297,10 @@ export class VirtualTreeContainer extends TreeContainer {
 
   public readFileSync(fsPath: SourcePath): Buffer {
     if (this.exists(fsPath)) {
-      let data = this.fileContents.get(fsPath);
+      let data = this.fileContentMap.get(fsPath);
       if (!data) {
         data = Buffer.from('');
-        this.fileContents.set(fsPath, data);
+        this.fileContentMap.set(fsPath, data);
       }
       return data;
     }
@@ -327,7 +326,7 @@ export class VirtualTreeContainer extends TreeContainer {
         dirPathFromTree.add(childPath);
 
         if (typeof child === 'object' && child.data) {
-          this.fileContents.set(childPath, child.data);
+          this.fileContentMap.set(childPath, child.data);
         }
       }
     }

@@ -638,7 +638,7 @@ v62 introduces the following new types.  Here's their current level of support
 |ConversationMessageDefinition|✅||
 |EnblProgramTaskSubCategory|✅||
 |EvfSettings|✅||
-|ExtlClntAppPushConfigurablePolicies|❌|Not supported, but support could be added (but not for tracking)|
+|ExtlClntAppPushConfigurablePolicies|⚠️|Supports deploy/retrieve but not source tracking|
 |ExtlClntAppPushSettings|✅||
 |HerokuIntegrationSettings|✅||
 |IndustriesRatingSettings|✅||

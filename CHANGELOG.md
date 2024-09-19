@@ -1,3 +1,12 @@
+## [12.7.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.7.0...12.7.1) (2024-09-19)
+
+
+### Bug Fixes
+
+* add ExtlClntAppPushSettings and ExtlClntAppPushConfigurablePolicies ([#1424](https://github.com/forcedotcom/source-deploy-retrieve/issues/1424)) ([8fa28a1](https://github.com/forcedotcom/source-deploy-retrieve/commit/8fa28a11025c4ddb7ea87705ff69368fdbb68a33))
+
+
+
 # [12.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.6.4...12.7.0) (2024-09-15)
 
 

@@ -27,7 +27,7 @@ There exists a test in Core `GenerateCLITypeRegistryInfoTest` that generates a f
 
 The test is manually run, the file is committed to `patch`, and the output is manually copied to `../scripts/update-registry/describe.json` in SDR.
 
-If your metadata type is simple and already in the file, run `yarn update-registry-org <MetadataEntity1> <MetadataEntity2>` (you'll see warnings if your type is missing or too complex for the script to handle)
+If your metadata type is simple and already in the file, run `yarn update-registry-core <MetadataEntity1> <MetadataEntity2>` (you'll see warnings if your type is missing or too complex for the script to handle)
 
 ### Path 2: Using Describe from an Org
 

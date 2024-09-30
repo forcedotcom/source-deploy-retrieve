@@ -237,6 +237,7 @@
     "ecaOauth": "extlclntappoauthsettings",
     "ecaOauthPlcy": "extlclntappoauthconfigurablepolicies",
     "ecaPlcy": "extlclntappconfigurablepolicies",
+    "ecaSamlPlcy": "extlclntappsamlconfigurablepolicies",
     "ecaSmpl": "extlclntappsamplesettings",
     "ecaSmplPlcy": "extlclntappsampleconfigurablepolicies",
     "email": "emailtemplate",
@@ -2465,6 +2466,14 @@
       "name": "ExtlClntAppOauthSettings",
       "strictDirectoryName": false,
       "suffix": "ecaOauth"
+    },
+    "extlclntappsamlconfigurablepolicies": {
+      "directoryName": "extlClntAppSamlConfigurablePolicies",
+      "id": "extlclntappsamlconfigurablepolicies",
+      "inFolder": false,
+      "name": "ExtlClntAppSamlConfigurablePolicies",
+      "strictDirectoryName": false,
+      "suffix": "ecaSamlPlcy"
     },
     "extlclntappsampleconfigurablepolicies": {
       "directoryName": "extlClntAppSamplePolicies",

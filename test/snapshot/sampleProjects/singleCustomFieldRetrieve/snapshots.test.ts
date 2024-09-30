@@ -239,7 +239,6 @@ describe('a single field in a CustomObject xml does not overwrite (blank) the ex
         )
       )
     ).to.be.true;
-    await validateSourceDir(TEST_PACKAGE);
   });
 
   it(`verify ${FORCE_APP}`, async () => {

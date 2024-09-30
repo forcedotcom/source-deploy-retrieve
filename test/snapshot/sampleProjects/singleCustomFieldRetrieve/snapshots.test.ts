@@ -140,6 +140,108 @@ describe('a single field in a CustomObject xml does not overwrite (blank) the ex
     expect(fs.readdirSync(path.join(pathToBroker, 'fields')).length).to.equal(3);
   });
 
+  it('will not overwrite .object-meta.xml in package retrieval ', async () => {
+    const TEST_PACKAGE = 'TestPackage';
+
+    const result: MetadataApiRetrieveStatus = {
+      done: true,
+      fileProperties: [
+        {
+          createdById: '005bm000006BUfFAAW',
+          createdByName: 'William Ruemmele',
+          createdDate: '2024-09-30T18:10:44.000Z',
+          fileName: 'TestPackage/objects/test__c.object',
+          fullName: 'test__c',
+          id: '01Ibm000001ZQS5EAO',
+          lastModifiedById: '005bm000006BUfFAAW',
+          lastModifiedByName: 'William Ruemmele',
+          lastModifiedDate: '2024-09-30T18:10:44.000Z',
+          manageableState: ManageableState.Unmanaged,
+          type: 'CustomObject',
+        },
+        {
+          createdById: '005bm000006BUfFAAW',
+          createdByName: 'William Ruemmele',
+          createdDate: '2024-09-30T18:10:44.000Z',
+          fileName: 'TestPackage/layouts/test__c-test Layout.layout',
+          fullName: 'test__c-test Layout',
+          id: '00hbm000006bcEHAAY',
+          lastModifiedById: '005bm000006BUfFAAW',
+          lastModifiedByName: 'William Ruemmele',
+          lastModifiedDate: '2024-09-30T18:11:30.000Z',
+          manageableState: ManageableState.Unmanaged,
+          type: 'Layout',
+        },
+        {
+          createdById: '005bm000006BUfFAAW',
+          createdByName: 'William Ruemmele',
+          createdDate: '2024-09-30T18:12:05.000Z',
+          fileName: 'TestPackage/package.xml',
+          fullName: 'package',
+          id: '0A2bm000000eGN7CAM',
+          lastModifiedById: '005bm000006BUfFAAW',
+          lastModifiedByName: 'William Ruemmele',
+          lastModifiedDate: '2024-09-30T18:12:05.000Z',
+          manageableState: ManageableState.Unmanaged,
+          type: 'Package',
+        },
+        {
+          createdById: '005bm000006BUfFAAW',
+          createdByName: 'William Ruemmele',
+          createdDate: '2024-09-30T19:59:19.089Z',
+          fileName: 'unpackaged/package.xml',
+          fullName: 'unpackaged/package.xml',
+          id: '',
+          lastModifiedById: '005bm000006BUfFAAW',
+          lastModifiedByName: 'William Ruemmele',
+          lastModifiedDate: '2024-09-30T19:59:19.089Z',
+          manageableState: ManageableState.Unmanaged,
+          type: 'Package',
+        },
+      ],
+      id: '09Sbm000001mg2nEAA',
+      status: RequestStatus.Succeeded,
+      success: true,
+      zipFile:
+        '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',
+      messages: [],
+    };
+
+    const retrieve = new MetadataApiRetrieve({
+      singlePackage: true,
+      packageOptions: [{ name: TEST_PACKAGE, outputDir: path.join(testDir, TEST_PACKAGE) }],
+      merge: true,
+      output: path.join(testDir, TEST_PACKAGE),
+      usernameOrConnection: 'abc',
+    });
+    await retrieve.post(result);
+    expect(
+      fs.existsSync(
+        path.join(testDir, TEST_PACKAGE, 'main', 'default', 'objects', 'test__c', 'test__c.object-meta.xml')
+      )
+    ).to.be.true;
+    expect(
+      fs.existsSync(
+        path.join(testDir, TEST_PACKAGE, 'main', 'default', 'objects', 'test__c', 'fields', 'status__c.field-meta.xml')
+      )
+    ).to.be.true;
+    expect(
+      fs.existsSync(
+        path.join(
+          testDir,
+          TEST_PACKAGE,
+          'main',
+          'default',
+          'objects',
+          'test__c',
+          'fields',
+          'completion__c.field-meta.xml'
+        )
+      )
+    ).to.be.true;
+    await validateSourceDir(TEST_PACKAGE);
+  });
+
   it(`verify ${FORCE_APP}`, async () => {
     await validateSourceDir(FORCE_APP);
   });

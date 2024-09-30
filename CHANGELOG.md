@@ -1,3 +1,12 @@
+## [12.7.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.7.2...12.7.3) (2024-09-30)
+
+
+### Bug Fixes
+
+* adding new saml plugin to eca ([#1430](https://github.com/forcedotcom/source-deploy-retrieve/issues/1430)) ([eb567e8](https://github.com/forcedotcom/source-deploy-retrieve/commit/eb567e88dbb579c0e83a20dcc329646f093b6c31))
+
+
+
 ## [12.7.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.7.1...12.7.2) (2024-09-29)
 
 

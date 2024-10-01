@@ -71,10 +71,6 @@ describe('ForceIgnore', () => {
     expect(fi.accepts(join('force-app', 'main', 'default', 'classes'))).to.be.true;
   });
 
-  /**
-   * TODO: Rework when approach to default patterns changes. We should be able
-   * to generally test the defaults system.
-   */
   describe('Defaults with new parser', () => {
     let forceIgnore: ForceIgnore;
     const root = join('some', 'path');
@@ -84,30 +80,15 @@ describe('ForceIgnore', () => {
       forceIgnore = new ForceIgnore();
     });
 
-    it('Should ignore files starting with a dot', () => {
-      const dotPath = join(root, '.xyz');
+    // these examples test the default behaviors - check the cache behavior with the duplicate 'abc.dup'
+    const forceIgnoreExamples = ['abc.dup', 'abc.dup', '.xyz', 'package2-descriptor.json', 'package2-manifest.json'];
+    forceIgnoreExamples.map((ignore) => {
+      it(`Should ignore files starting with a ${ignore}`, () => {
+        const testPath = join(root, ignore);
 
-      expect(forceIgnore.accepts(dotPath)).to.be.false;
-      expect(forceIgnore.denies(dotPath)).to.be.true;
-    });
-
-    it('Should ignore files ending in .dup', () => {
-      const dupPath = join(root, 'abc.dup');
-
-      expect(forceIgnore.accepts(dupPath)).to.be.false;
-      expect(forceIgnore.denies(dupPath)).to.be.true;
-    });
-
-    it('Should ignore files named package2-descriptor.json', () => {
-      const descriptorPath = join(root, 'package2-descriptor.json');
-      expect(forceIgnore.accepts(descriptorPath)).to.be.false;
-      expect(forceIgnore.denies(descriptorPath)).to.be.true;
-    });
-
-    it('Should ignore files named package2-manifest.json', () => {
-      const manifestPath = join(root, 'package2-manifest.json');
-      expect(forceIgnore.accepts(manifestPath)).to.be.false;
-      expect(forceIgnore.denies(manifestPath)).to.be.true;
+        expect(forceIgnore.accepts(testPath)).to.be.false;
+        expect(forceIgnore.denies(testPath)).to.be.true;
+      });
     });
 
     it('Should allow .forceignore file to override defaults', () => {

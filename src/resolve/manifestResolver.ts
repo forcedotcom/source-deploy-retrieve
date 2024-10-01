@@ -61,9 +61,7 @@ export class ManifestResolver {
       numberParseOptions: { leadingZeros: false, hex: false, skipLike: /\.0$/ },
     });
 
-    const parsedManifest: ParsedPackageManifest = (
-      parser.parse(validatedContents) as { Package: ParsedPackageManifest }
-    ).Package;
+    const parsedManifest = (parser.parse(validatedContents) as { Package: ParsedPackageManifest }).Package;
 
     const components = ensureArray(parsedManifest.types)
       .map(getValidatedType(manifestPath))

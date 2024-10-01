@@ -25,6 +25,7 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
  * Extend this base class to implement a custom container.
  */
 export abstract class TreeContainer {
+  protected fileContentMap: Map<string, Buffer> = new Map<string, Buffer>();
   /**
    * Searches for a metadata component file in a container directory.
    *
@@ -105,12 +106,23 @@ export class NodeFSTreeContainer extends TreeContainer {
   }
 
   public readFile(fsPath: SourcePath): Promise<Buffer> {
-    // significant enough performance increase using sync instead of fs.promise version
-    return Promise.resolve(readFileSync(fsPath));
+    if (this.fileContentMap.has(fsPath)) {
+      return Promise.resolve(this.fileContentMap.get(fsPath)!);
+    } else {
+      // significant enough performance increase using sync instead of fs.promise version
+      const content = readFileSync(fsPath);
+      this.fileContentMap.set(fsPath, content);
+      return Promise.resolve(content);
+    }
   }
 
   public readFileSync(fsPath: SourcePath): Buffer {
-    return readFileSync(fsPath);
+    if (this.fileContentMap.has(fsPath)) {
+      return this.fileContentMap.get(fsPath)!;
+    } else {
+      this.fileContentMap.set(fsPath, readFileSync(fsPath));
+      return this.fileContentMap.get(fsPath)!;
+    }
   }
 
   public stream(fsPath: SourcePath): Readable {
@@ -225,7 +237,6 @@ export class ZipTreeContainer extends TreeContainer {
  */
 export class VirtualTreeContainer extends TreeContainer {
   private tree = new Map<SourcePath, Set<SourcePath>>();
-  private fileContents = new Map<SourcePath, Buffer>();
 
   public constructor(virtualFs: VirtualDirectory[]) {
     super();
@@ -286,10 +297,10 @@ export class VirtualTreeContainer extends TreeContainer {
 
   public readFileSync(fsPath: SourcePath): Buffer {
     if (this.exists(fsPath)) {
-      let data = this.fileContents.get(fsPath);
+      let data = this.fileContentMap.get(fsPath);
       if (!data) {
         data = Buffer.from('');
-        this.fileContents.set(fsPath, data);
+        this.fileContentMap.set(fsPath, data);
       }
       return data;
     }
@@ -315,7 +326,7 @@ export class VirtualTreeContainer extends TreeContainer {
         dirPathFromTree.add(childPath);
 
         if (typeof child === 'object' && child.data) {
-          this.fileContents.set(childPath, child.data);
+          this.fileContentMap.set(childPath, child.data);
         }
       }
     }

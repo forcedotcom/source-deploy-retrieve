@@ -213,14 +213,14 @@ export const getWriteInfosWithoutMerge =
   (defaultDirectory: string | undefined) =>
   (parentXmlObject: XmlObj) =>
   (component: SourceComponent): WriteInfo[] => {
-    const output = join(defaultDirectory ?? '', getOutputFile(component));
+    const output = getOutputFile(component);
     // if the parent would be empty
     // and it exists
     // and every child is addressable
     // don't overwrite the existing parent
     if (
       !objectHasSomeRealValues(component.type)(parentXmlObject) &&
-      fs.existsSync(output) &&
+      fs.existsSync(join(defaultDirectory ?? '', output)) &&
       Object.values(component.type.children ?? {}).every((child) => !child.isAddressable)
     ) {
       return [];

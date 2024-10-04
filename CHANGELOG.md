@@ -1,3 +1,12 @@
+## [12.7.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.7.3...12.7.4) (2024-10-04)
+
+
+### Bug Fixes
+
+* calculate if parent exists, return path to be calculated ([#1431](https://github.com/forcedotcom/source-deploy-retrieve/issues/1431)) ([755f89c](https://github.com/forcedotcom/source-deploy-retrieve/commit/755f89cef02f2c97da76341eb019f95c8ef52c19))
+
+
+
 ## [12.7.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.7.2...12.7.3) (2024-09-30)
 
 

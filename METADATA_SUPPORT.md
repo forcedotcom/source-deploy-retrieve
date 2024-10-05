@@ -1,10 +1,10 @@
 # Supported CLI Metadata Types
 
-This list compares metadata types found in Salesforce v61 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
+This list compares metadata types found in Salesforce v62 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 598/611 supported metadata types.
+Currently, there are 612/628 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -18,6 +18,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AIUsecaseDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |AccountForecastSettings|✅||
 |AccountIntelligenceSettings|✅||
+|AccountPlanSettings|✅||
 |AccountRelationshipShareRule|✅||
 |AccountSettings|✅||
 |AccountingFieldMapping|✅||
@@ -76,6 +77,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |BatchCalcJobDefinition|✅||
 |BatchProcessJobDefinition|✅||
 |BenefitAction|✅||
+|BillingSettings|✅||
 |BlacklistedConsumer|✅||
 |BldgEnrgyIntensityCnfg|✅||
 |BlockchainSettings|✅||
@@ -110,10 +112,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |Certificate|✅||
 |ChannelLayout|✅||
 |ChannelObjectLinkingRule|✅||
+|ChannelRevMgmtSettings|✅||
 |ChatterAnswersSettings|✅||
 |ChatterEmailsMDSettings|✅||
 |ChatterExtension|✅||
 |ChatterSettings|✅||
+|ChoiceList|❌|Not supported, but support could be added (but not for tracking)|
 |ClaimFinancialSettings|✅||
 |ClaimMgmtFoundationEnabledSettings|✅||
 |ClauseCatgConfiguration|✅||
@@ -137,7 +141,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ContextUseCaseMapping|✅||
 |ContractSettings|✅||
 |ContractType|✅||
+|ConvIntelligenceSignalRule|❌|Not supported, but support could be added|
 |ConversationChannelDefinition|✅||
+|ConversationMessageDefinition|✅||
 |ConversationServiceIntegrationSettings|✅||
 |ConversationVendorInfo|✅||
 |ConversationalIntelligenceSettings|✅||
@@ -167,7 +173,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DashboardFolder|✅||
 |DataCalcInsightTemplate|✅||
 |DataCategoryGroup|✅||
-|DataConnectionParamTmpl|❌|Not supported, but support could be added|
 |DataConnectorIngestApi|✅||
 |DataConnectorS3|✅||
 |DataDotComSettings|✅||
@@ -238,8 +243,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |EmployeeDataSyncProfile|✅||
 |EmployeeFieldAccessSettings|✅||
 |EmployeeUserSettings|✅||
-|EnablementMeasureDefinition|⚠️|Supports deploy/retrieve but not source tracking|
-|EnablementProgramDefinition|⚠️|Supports deploy/retrieve but not source tracking|
+|EnablementMeasureDefinition|✅||
+|EnablementProgramDefinition|✅||
+|EnblProgramTaskSubCategory|✅||
 |EnhancedNotesSettings|✅||
 |EntitlementProcess|✅||
 |EntitlementSettings|✅||
@@ -248,6 +254,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |EssentialsSettings|✅||
 |EventLogObjectSettings|✅||
 |EventSettings|✅||
+|EvfSettings|✅||
 |ExperienceBundle|✅||
 |ExperienceBundleSettings|✅||
 |ExperiencePropertyTypeBundle|✅||
@@ -278,6 +285,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExtlClntAppNotificationSettings|✅||
 |ExtlClntAppOauthConfigurablePolicies|✅||
 |ExtlClntAppOauthSettings|✅||
+|ExtlClntAppPushConfigurablePolicies|⚠️|Supports deploy/retrieve but not source tracking|
+|ExtlClntAppPushSettings|✅||
 |FeatureParameterBoolean|✅||
 |FeatureParameterDate|✅||
 |FeatureParameterInteger|✅||
@@ -316,6 +325,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |GlobalValueSetTranslation|✅||
 |GoogleAppsSettings|✅||
 |Group|✅||
+|HerokuIntegrationSettings|✅||
 |HighVelocitySalesSettings|✅||
 |HomePageComponent|✅||
 |HomePageLayout|✅||
@@ -340,8 +350,10 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |IndustriesLoyaltySettings|✅||
 |IndustriesManufacturingSettings|✅||
 |IndustriesPricingSettings|✅||
+|IndustriesRatingSettings|✅||
 |IndustriesSettings|✅||
 |IndustriesUnifiedPromotionsSettings|✅||
+|IndustriesUsageSettings|✅||
 |InstalledPackage|⚠️|Supports deploy/retrieve but not source tracking|
 |IntegrationProviderDef|✅||
 |InterestTaggingSettings|✅||
@@ -359,6 +371,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |LeadConfigSettings|✅||
 |LeadConvertSettings|✅||
 |LearningAchievementConfig|✅||
+|LearningItemType|✅||
 |Letterhead|✅||
 |LicensingSettings|✅||
 |LightningBolt|✅||
@@ -394,7 +407,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |MilestoneType|✅||
 |MktCalcInsightObjectDef|✅||
 |MktDataConnection|✅||
-|MktDataConnectionCred|❌|Not supported, but support could be added|
 |MktDataConnectionParam|❌|Not supported, but support could be added|
 |MktDataConnectionSrcParam|✅||
 |MktDataTranObject|✅||
@@ -469,13 +481,14 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PredictionBuilderSettings|✅||
 |PresenceDeclineReason|✅||
 |PresenceUserConfig|✅||
-|PricingActionParameters|⚠️|Supports deploy/retrieve but not source tracking|
+|PricingActionParameters|✅||
 |PricingRecipe|✅||
 |PrivacySettings|✅||
 |ProcessFlowMigration|✅||
 |ProductAttrDisplayConfig|✅||
 |ProductAttributeSet|✅||
 |ProductConfiguratorSettings|✅||
+|ProductDiscoverySettings|✅||
 |ProductSettings|✅||
 |ProductSpecificationRecType|✅||
 |ProductSpecificationType|✅||
@@ -483,6 +496,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ProfilePasswordPolicy|✅||
 |ProfileSessionSetting|✅||
 |Prompt|✅||
+|PublicKeyCertificate|❌|Not supported, but support could be added (but not for tracking)|
+|PublicKeyCertificateSet|❌|Not supported, but support could be added (but not for tracking)|
 |Queue|✅||
 |QueueRoutingConfig|✅||
 |QuickAction|✅||
@@ -549,6 +564,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SlackApp|✅||
 |SocialCustomerServiceSettings|✅||
 |SourceTrackingSettings|✅||
+|StageDefinition|✅||
 |StandardValue|❌|Not supported, but support could be added|
 |StandardValueSet|✅||
 |StandardValueSetTranslation|✅||
@@ -579,6 +595,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |Translations|✅||
 |TrialOrgSettings|✅||
 |UIObjectRelationConfig|✅||
+|UiFormatSpecificationSet|✅||
 |UiPlugin|✅||
 |UserAccessPolicy|✅||
 |UserAuthCertificate|✅||
@@ -586,7 +603,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |UserEngagementSettings|✅||
 |UserInterfaceSettings|✅||
 |UserManagementSettings|✅||
-|UserProfileSearchScope|✅||
 |UserProvisioningConfig|✅||
 |ValidationRule|✅||
 |VehicleAssetEmssnSrcCnfg|✅||
@@ -615,6 +631,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |WorkflowAlert|✅||
 |WorkflowFieldUpdate|✅||
 |WorkflowFlowAction|❌|Not supported, but support could be added|
+|WorkflowFlowAutomation|❌|Not supported, but support could be added|
 |WorkflowKnowledgePublish|✅||
 |WorkflowOutboundMessage|✅||
 |WorkflowRule|✅||
@@ -624,32 +641,24 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 
 
-## Next Release (v62)
+## Next Release (v63)
 
-v62 introduces the following new types.  Here's their current level of support
+v63 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
-|AccountPlanSettings|✅||
-|BillingSettings|✅||
-|ChannelRevMgmtSettings|✅||
-|ChoiceList|❌|Not supported, but support could be added (but not for tracking)|
-|ConvIntelligenceSignalRule|❌|Not supported, but support could be added|
-|ConversationMessageDefinition|✅||
-|EnblProgramTaskSubCategory|✅||
-|EvfSettings|✅||
-|ExtlClntAppPushConfigurablePolicies|⚠️|Supports deploy/retrieve but not source tracking|
-|ExtlClntAppPushSettings|✅||
-|HerokuIntegrationSettings|✅||
-|IndustriesRatingSettings|✅||
-|IndustriesUsageSettings|✅||
-|LearningItemType|✅||
-|ProductDiscoverySettings|✅||
-|PublicKeyCertificate|❌|Not supported, but support could be added (but not for tracking)|
-|PublicKeyCertificateSet|❌|Not supported, but support could be added (but not for tracking)|
-|StageDefinition|✅||
-|UiFormatSpecificationSet|✅||
-|WorkflowFlowAutomation|❌|Not supported, but support could be added|
+|AccountPlanObjMeasCalcDef|❌|Not supported, but support could be added|
+|AgentforceForDevelopersSettings|✅||
+|AiPluginUtteranceDef|❌|Not supported, but support could be added|
+|AppFrameworkTemplateBundle|❌|Not supported, but support could be added|
+|CustomFieldDisplay|❌|Not supported, but support could be added|
+|EducationCloudPicklistCnfg|❌|Not supported, but support could be added|
+|FieldMappingConfig|❌|Not supported, but support could be added|
+|IndustriesChannelPartnerInventorySettings|✅||
+|LightningTypeBundle|❌|Not supported, but support could be added (but not for tracking)|
+|OmniStudioSettings|✅||
+|ProcedureOutputResolution|❌|Not supported, but support could be added|
+|TransactionProcessingType|❌|Not supported, but support could be added|
 
 ## Additional Types
 
@@ -715,6 +724,7 @@ v62 introduces the following new types.  Here's their current level of support
 - SvcCatalogFilterCondition
 - SvcCatalogItemDefFiltrCrit
 - UiViewDefinition
+- UserProfileSearchScope
 - VisualizationPlugin
 - WorkSkillRoutingAttribute
 - XOrgHub

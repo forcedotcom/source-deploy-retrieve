@@ -657,7 +657,7 @@ v63 introduces the following new types.  Here's their current level of support
 |IndustriesChannelPartnerInventorySettings|✅||
 |LightningTypeBundle|❌|Not supported, but support could be added (but not for tracking)|
 |OmniStudioSettings|✅||
-|ProcedureOutputResolution|❌|Not supported, but support could be added|
+|ProcedureOutputResolution|❌|Not supported, but support could be added (but not for tracking)|
 |TransactionProcessingType|❌|Not supported, but support could be added|
 
 ## Additional Types

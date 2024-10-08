@@ -1,3 +1,12 @@
+# [12.8.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.7.4...12.8.0) (2024-10-08)
+
+
+### Features
+
+* add deploy size and count warnings ([#1435](https://github.com/forcedotcom/source-deploy-retrieve/issues/1435)) ([3ebdc07](https://github.com/forcedotcom/source-deploy-retrieve/commit/3ebdc078704ccacd67de180862f0e9e05bfd62b2))
+
+
+
 ## [12.7.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.7.3...12.7.4) (2024-10-04)
 
 

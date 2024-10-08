@@ -8,7 +8,7 @@ import { basename, join, sep } from 'node:path';
 import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import chai, { assert, expect } from 'chai';
 import { AnyJson, ensureString, getString } from '@salesforce/ts-types';
-import { Lifecycle, Messages, PollingClient, StatusResult } from '@salesforce/core';
+import { envVars, Lifecycle, Messages, PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import {
@@ -143,6 +143,99 @@ describe('MetadataApiDeploy', () => {
         await operation.start();
 
         expect(operation.id).to.deep.equal(response.id);
+      });
+
+      it('should call warnIfDeployThresholdExceeded', async () => {
+        const component = matchingContentFile.COMPONENT;
+        const deployedComponents = new ComponentSet([component]);
+        const { operation, response } = await stubMetadataDeploy($$, testOrg, {
+          components: deployedComponents,
+        });
+        // @ts-expect-error stubbing private method
+        const warnStub = $$.SANDBOX.spy(operation, 'warnIfDeployThresholdExceeded');
+
+        await operation.start();
+
+        expect(operation.id).to.deep.equal(response.id);
+        expect(warnStub.callCount).to.equal(1, 'warnIfDeployThresholdExceeded() should have been called');
+        // 4 is the expected byte size (zipBuffer is set to '1234')
+        // undefined is expected since we're not computing the number of files in the zip
+        expect(warnStub.firstCall.args).to.deep.equal([4, undefined]);
+      });
+    });
+
+    describe('warnIfDeployThresholdExceeded', () => {
+      let emitWarningStub: sinon.SinonStub;
+
+      beforeEach(() => {
+        emitWarningStub = $$.SANDBOX.stub(Lifecycle.prototype, 'emitWarning').resolves();
+      });
+
+      it('should emit warning with default threshold when zipSize > 80%', async () => {
+        const loggerDebugSpy = $$.SANDBOX.spy($$.TEST_LOGGER, 'debug');
+        const mdapThis = { logger: $$.TEST_LOGGER };
+        // @ts-expect-error testing private method
+        await MetadataApiDeploy.prototype.warnIfDeployThresholdExceeded.call(mdapThis, 31_200_001, 8000);
+        expect(emitWarningStub.calledOnce, 'emitWarning for fileSize should have been called').to.be.true;
+        const warningMsg =
+          'Deployment zip file size is approaching the Metadata API limit (~39MB). Warning threshold is 80%';
+        expect(emitWarningStub.firstCall.args[0]).to.include(warningMsg);
+        expect(loggerDebugSpy.called).to.be.false;
+      });
+
+      it('should emit warning with default threshold when zipFileCount > 80%', async () => {
+        const loggerDebugSpy = $$.SANDBOX.spy($$.TEST_LOGGER, 'debug');
+        const mdapThis = { logger: $$.TEST_LOGGER };
+        // @ts-expect-error testing private method
+        await MetadataApiDeploy.prototype.warnIfDeployThresholdExceeded.call(mdapThis, 31_200_000, 8001);
+        expect(emitWarningStub.calledOnce, 'emitWarning for fileSize should have been called').to.be.true;
+        const warningMsg =
+          'Deployment zip file count is approaching the Metadata API limit (10,000). Warning threshold is 80%';
+        expect(emitWarningStub.firstCall.args[0]).to.include(warningMsg);
+        expect(loggerDebugSpy.called).to.be.false;
+      });
+
+      it('should not emit warning but log debug output when threshold >= 100%', async () => {
+        const loggerDebugSpy = $$.SANDBOX.spy($$.TEST_LOGGER, 'debug');
+        $$.SANDBOX.stub(envVars, 'getNumber').returns(100);
+        const mdapThis = { logger: $$.TEST_LOGGER };
+        // @ts-expect-error testing private method
+        await MetadataApiDeploy.prototype.warnIfDeployThresholdExceeded.call(mdapThis, 310_200_000, 12_000);
+        expect(emitWarningStub.called).to.be.false;
+        expect(loggerDebugSpy.calledOnce).to.be.true;
+        const expectedMsg = 'Deploy size warning is disabled since SF_DEPLOY_SIZE_THRESHOLD is overridden to: 100';
+        expect(loggerDebugSpy.firstCall.args[0]).to.equal(expectedMsg);
+      });
+
+      it('should emit warnings and log debug output with exceeded overridden threshold', async () => {
+        const loggerDebugSpy = $$.SANDBOX.spy($$.TEST_LOGGER, 'debug');
+        $$.SANDBOX.stub(envVars, 'getNumber').returns(75);
+        const mdapThis = { logger: $$.TEST_LOGGER };
+        // @ts-expect-error testing private method
+        await MetadataApiDeploy.prototype.warnIfDeployThresholdExceeded.call(mdapThis, 29_250_001, 7501);
+        expect(emitWarningStub.calledTwice, 'emitWarning for fileSize and fileCount should have been called').to.be
+          .true;
+        const fileSizeWarningMsg =
+          'Deployment zip file size is approaching the Metadata API limit (~39MB). Warning threshold is 75%';
+        const fileCountWarningMsg =
+          'Deployment zip file count is approaching the Metadata API limit (10,000). Warning threshold is 75%';
+        expect(emitWarningStub.firstCall.args[0]).to.include(fileSizeWarningMsg);
+        expect(emitWarningStub.secondCall.args[0]).to.include(fileCountWarningMsg);
+        expect(loggerDebugSpy.calledOnce).to.be.true;
+        const expectedMsg = 'Deploy size warning threshold has been overridden by SF_DEPLOY_SIZE_THRESHOLD to: 75';
+        expect(loggerDebugSpy.firstCall.args[0]).to.equal(expectedMsg);
+      });
+
+      it('should NOT emit warnings but log debug output with overridden threshold that is not exceeded', async () => {
+        const loggerDebugSpy = $$.SANDBOX.spy($$.TEST_LOGGER, 'debug');
+        $$.SANDBOX.stub(envVars, 'getNumber').returns(75);
+        const mdapThis = { logger: $$.TEST_LOGGER };
+        // @ts-expect-error testing private method
+        await MetadataApiDeploy.prototype.warnIfDeployThresholdExceeded.call(mdapThis, 29_250_000, 7500);
+        expect(emitWarningStub.called, 'emitWarning should not have been called').to.be.false;
+        expect(loggerDebugSpy.calledOnce).to.be.true;
+        const expectedMsg = 'Deploy size warning threshold has been overridden by SF_DEPLOY_SIZE_THRESHOLD to: 75';
+        expect(loggerDebugSpy.firstCall.args[0]).to.equal(expectedMsg);
       });
     });
 

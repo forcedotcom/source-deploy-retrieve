@@ -9,7 +9,7 @@ import { format } from 'node:util';
 import { isString } from '@salesforce/ts-types';
 import JSZip from 'jszip';
 import fs from 'graceful-fs';
-import { Lifecycle, Messages, SfError } from '@salesforce/core';
+import { Lifecycle, Messages, SfError, envVars } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
 import { RegistryAccess } from '../registry/registryAccess';
 import { ReplacementEvent } from '../convert/types';
@@ -234,6 +234,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
     this.logger.debug(zipMessage);
     await LifecycleInstance.emit('apiVersionDeploy', { webService, manifestVersion, apiVersion });
     await LifecycleInstance.emit('deployZipData', { zipSize: this.zipSize, zipFileCount });
+    await this.warnIfDeployThresholdExceeded(this.zipSize, zipFileCount);
 
     return this.isRestDeploy
       ? connection.metadata.deployRest(zipBuffer, optionsWithoutRest)
@@ -311,6 +312,41 @@ export class MetadataApiDeploy extends MetadataTransfer<
     return deployResult;
   }
 
+  // By default, an 80% deploy size threshold is used to warn users when their deploy size
+  // is approaching the limit enforced by the Metadata API.  This includes the number of files
+  // being deployed as well as the byte size of the deployment.  The threshold can be overridden
+  // to be a different percentage using the SF_DEPLOY_SIZE_THRESHOLD env var. An env var value
+  // of 100 would disable the client side warning. An env var value of 0 would always warn.
+  private async warnIfDeployThresholdExceeded(zipSize: number, zipFileCount: number | undefined): Promise<void> {
+    const thresholdPercentage = Math.abs(envVars.getNumber('SF_DEPLOY_SIZE_THRESHOLD', 80));
+    if (thresholdPercentage >= 100) {
+      this.logger.debug(
+        `Deploy size warning is disabled since SF_DEPLOY_SIZE_THRESHOLD is overridden to: ${thresholdPercentage}`
+      );
+      return;
+    }
+    if (thresholdPercentage !== 80) {
+      this.logger.debug(
+        `Deploy size warning threshold has been overridden by SF_DEPLOY_SIZE_THRESHOLD to: ${thresholdPercentage}`
+      );
+    }
+    // 39_000_000 is 39 MB in decimal format, which is the format used in buffer.byteLength
+    const fileSizeThreshold = Math.round(39_000_000 * (thresholdPercentage / 100));
+    const fileCountThreshold = Math.round(10_000 * (thresholdPercentage / 100));
+
+    if (zipSize > fileSizeThreshold) {
+      await Lifecycle.getInstance().emitWarning(
+        `Deployment zip file size is approaching the Metadata API limit (~39MB). Warning threshold is ${thresholdPercentage}% and size ${zipSize} > ${fileSizeThreshold}`
+      );
+    }
+
+    if (zipFileCount && zipFileCount > fileCountThreshold) {
+      await Lifecycle.getInstance().emitWarning(
+        `Deployment zip file count is approaching the Metadata API limit (10,000). Warning threshold is ${thresholdPercentage}% and count ${zipFileCount} > ${fileCountThreshold}`
+      );
+    }
+  }
+
   private async getZipBuffer(): Promise<{ zipBuffer: Buffer; zipFileCount?: number }> {
     const mdapiPath = this.options.mdapiPath;
 
@@ -339,7 +375,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
           }
         }
       };
-      this.logger.debug('Zipping directory for metadata deploy:', mdapiPath);
+      this.logger.debug(`Zipping directory for metadata deploy: ${mdapiPath}`);
       zipDirRecursive(mdapiPath);
 
       return {

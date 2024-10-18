@@ -656,6 +656,8 @@ v63 introduces the following new types.  Here's their current level of support
 |EducationCloudPicklistCnfg|❌|Not supported, but support could be added|
 |FieldMappingConfig|❌|Not supported, but support could be added|
 |IndustriesChannelPartnerInventorySettings|✅||
+|LaborCostOptimizationSettings|✅||
+|LifeSciConfigCategory|❌|Not supported, but support could be added|
 |LightningTypeBundle|❌|Not supported, but support could be added (but not for tracking)|
 |OmniStudioSettings|✅||
 |ProcedureOutputResolution|❌|Not supported, but support could be added (but not for tracking)|

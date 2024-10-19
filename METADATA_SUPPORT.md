@@ -645,23 +645,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 ## Next Release (v63)
 
-v63 introduces the following new types.  Here's their current level of support
-
-|Metadata Type|Support|Notes|
-|:---|:---|:---|
-|AccountPlanObjMeasCalcDef|❌|Not supported, but support could be added|
-|AiPluginUtteranceDef|❌|Not supported, but support could be added|
-|AppFrameworkTemplateBundle|❌|Not supported, but support could be added|
-|CustomFieldDisplay|❌|Not supported, but support could be added|
-|EducationCloudPicklistCnfg|❌|Not supported, but support could be added|
-|FieldMappingConfig|❌|Not supported, but support could be added|
-|IndustriesChannelPartnerInventorySettings|✅||
-|LaborCostOptimizationSettings|✅||
-|LifeSciConfigCategory|❌|Not supported, but support could be added|
-|LightningTypeBundle|❌|Not supported, but support could be added (but not for tracking)|
-|OmniStudioSettings|✅||
-|ProcedureOutputResolution|❌|Not supported, but support could be added (but not for tracking)|
-|TransactionProcessingType|❌|Not supported, but support could be added|
+> **Note**
+> v63 coverage not available at this time
 
 ## Additional Types
 

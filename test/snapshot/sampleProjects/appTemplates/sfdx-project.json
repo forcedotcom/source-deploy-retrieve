@@ -1,0 +1,11 @@
+{
+  "packageDirectories": [
+    {
+      "default": true,
+      "path": "force-app"
+    }
+  ],
+  "name": "appTemplatesTestProject",
+  "namespace": "",
+  "sourceApiVersion": "62.0"
+}

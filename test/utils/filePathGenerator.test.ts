@@ -136,6 +136,19 @@ const testData = {
       },
     ],
   },
+  bundleAppTemplates: {
+    fullName: 'test_template',
+    typeName: 'AppFrameworkTemplateBundle',
+    expectedFilePaths: [
+      getFilePath('appTemplates/test_template/template-info.json'),
+      getFilePath('appTemplates/test_template/layout.json'),
+    ],
+    expectedComponents: [
+      {
+        content: getFilePath('appTemplates/test_template'),
+      },
+    ],
+  },
   nonDecomposedExplicit: {
     fullName: 'CustomLabels',
     typeName: 'CustomLabels',
@@ -303,6 +316,10 @@ describe('generating virtual tree from component name/type', () => {
 
     it('waveTemplate', () => {
       runTest(testData.bundleWave);
+    });
+
+    it('appFrameworkTemplate', () => {
+      runTest(testData.bundleAppTemplates);
     });
   });
 

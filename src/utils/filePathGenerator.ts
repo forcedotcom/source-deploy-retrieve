@@ -112,17 +112,26 @@ export const filePathsFromMetadataComponent = (
 
   // lwc, aura, waveTemplate, experiencePropertyType
   if (type.strategies?.adapter === 'bundle') {
-    const mappings = new Map<string, string>([
+    const mappings = new Map<string, string | string[]>([
       ['ExperiencePropertyTypeBundle', join(packageDirWithTypeDir, `${fullName}${sep}schema.json`)],
       ['WaveTemplateBundle', join(packageDirWithTypeDir, `${fullName}${sep}template-info.json`)],
       ['LightningComponentBundle', join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.js${META_XML_SUFFIX}`)],
       ['AuraDefinitionBundle', join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.cmp${META_XML_SUFFIX}`)],
+      [
+        'AppFrameworkTemplateBundle',
+        [
+          join(packageDirWithTypeDir, `${fullName}${sep}template-info.json`),
+          join(packageDirWithTypeDir, `${fullName}${sep}layout.json`),
+        ],
+      ],
     ]);
+
     const matched = mappings.get(type.name);
     if (!matched) {
       throw messages.createError('unsupportedBundleType', [type.name]);
     }
-    return [matched];
+
+    return Array.isArray(matched) ? matched : [matched];
   }
 
   throw messages.createError('filePathGeneratorNoTypeSupport', [type.name]);

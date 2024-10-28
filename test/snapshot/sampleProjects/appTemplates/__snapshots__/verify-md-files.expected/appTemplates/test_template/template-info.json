@@ -1,0 +1,11 @@
+{
+  "templateType": "App",
+  "label": "my test template",
+  "name": "test_template",
+  "namespace": null,
+  "assetVersion": 63.0,
+  "maxAppCount": null,
+  "layoutDefinition": "layout.json",
+  "tags": {},
+  "chainDefinitions": []
+}

@@ -112,11 +112,11 @@ export const filePathsFromMetadataComponent = (
 
   // lwc, aura, waveTemplate, experiencePropertyType
   if (type.strategies?.adapter === 'bundle') {
-    const mappings = new Map<string, string | string[]>([
-      ['ExperiencePropertyTypeBundle', join(packageDirWithTypeDir, `${fullName}${sep}schema.json`)],
-      ['WaveTemplateBundle', join(packageDirWithTypeDir, `${fullName}${sep}template-info.json`)],
-      ['LightningComponentBundle', join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.js${META_XML_SUFFIX}`)],
-      ['AuraDefinitionBundle', join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.cmp${META_XML_SUFFIX}`)],
+    const mappings = new Map<string, string[]>([
+      ['ExperiencePropertyTypeBundle', [join(packageDirWithTypeDir, `${fullName}${sep}schema.json`)]],
+      ['WaveTemplateBundle', [join(packageDirWithTypeDir, `${fullName}${sep}template-info.json`)]],
+      ['LightningComponentBundle', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.js${META_XML_SUFFIX}`)]],
+      ['AuraDefinitionBundle', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.cmp${META_XML_SUFFIX}`)]],
       [
         'AppFrameworkTemplateBundle',
         [
@@ -131,7 +131,7 @@ export const filePathsFromMetadataComponent = (
       throw messages.createError('unsupportedBundleType', [type.name]);
     }
 
-    return Array.isArray(matched) ? matched : [matched];
+    return matched;
   }
 
   throw messages.createError('filePathGeneratorNoTypeSupport', [type.name]);

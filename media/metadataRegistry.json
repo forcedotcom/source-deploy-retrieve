@@ -63,7 +63,8 @@
     "siteDotComSites": "sitedotcom",
     "sites": "customsite",
     "staticresources": "staticresource",
-    "waveTemplates": "wavetemplatebundle"
+    "waveTemplates": "wavetemplatebundle",
+    "appTemplates": "appframeworktemplatebundle"
   },
   "suffixes": {
     "Canvas": "canvasmetadata",
@@ -521,7 +522,11 @@
     "xml": "emailservicesfunction",
     "xorghub": "xorghub",
     "ecaPush": "extlclntapppushsettings",
-    "ecaPushPlcy": "extlclntapppushconfigurablepolicies"
+    "ecaPushPlcy": "extlclntapppushconfigurablepolicies",
+    "ChoiceList": "choicelist",
+    "ConvIntelligenceSignalRule": "convintelligencesignalrule",
+    "PublicKeyCertificate": "publickeycertificate",
+    "PublicKeyCertificateSet": "publickeycertificateset"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4637,6 +4642,49 @@
       "name": "ExtlClntAppPushConfigurablePolicies",
       "suffix": "ecaPushPlcy",
       "directoryName": "extlClntAppPushPolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "appframeworktemplatebundle": {
+      "directoryName": "appTemplates",
+      "id": "appframeworktemplatebundle",
+      "name": "AppFrameworkTemplateBundle",
+      "inFolder": false,
+      "strategies": {
+        "adapter": "bundle"
+      },
+      "strictDirectoryName": true,
+      "supportsPartialDelete": true
+    },
+    "choicelist": {
+      "id": "choicelist",
+      "name": "ChoiceList",
+      "suffix": "ChoiceList",
+      "directoryName": "ChoiceList",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "convintelligencesignalrule": {
+      "id": "convintelligencesignalrule",
+      "name": "ConvIntelligenceSignalRule",
+      "suffix": "ConvIntelligenceSignalRule",
+      "directoryName": "ConvIntelligenceSignalRule",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "publickeycertificate": {
+      "id": "publickeycertificate",
+      "name": "PublicKeyCertificate",
+      "suffix": "PublicKeyCertificate",
+      "directoryName": "PublicKeyCertificate",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "publickeycertificateset": {
+      "id": "publickeycertificateset",
+      "name": "PublicKeyCertificateSet",
+      "suffix": "PublicKeyCertificateSet",
+      "directoryName": "PublicKeyCertificateSet",
       "inFolder": false,
       "strictDirectoryName": false
     }

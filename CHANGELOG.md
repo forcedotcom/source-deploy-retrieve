@@ -1,3 +1,17 @@
+# [12.10.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.8.1...12.10.0) (2024-10-31)
+
+
+### Bug Fixes
+
+* force new release ([#1450](https://github.com/forcedotcom/source-deploy-retrieve/issues/1450)) ([d2da656](https://github.com/forcedotcom/source-deploy-retrieve/commit/d2da656507e6e23c5bbc1e3f4527f8037245e6f5))
+
+
+### Features
+
+* Adds a new metadata bundle type for AppFrameworkTemplates ([#1442](https://github.com/forcedotcom/source-deploy-retrieve/issues/1442)) ([699cf7a](https://github.com/forcedotcom/source-deploy-retrieve/commit/699cf7ad1b60c7e1e97d32016a34587a342a6eda))
+
+
+
 ## [12.8.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.8.0...12.8.1) (2024-10-13)
 
 

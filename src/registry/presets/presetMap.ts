@@ -7,6 +7,7 @@
 import { MetadataRegistry } from '../types';
 
 // we have to import all presets explicitly for VSCE's esbuild bundling process
+// other read methods might make esbuild fail to bundle the json file
 import * as decomposeCustomLabelsBeta from './decomposeCustomLabelsBeta.json';
 import * as decomposeCustomLabelsBeta2 from './decomposeCustomLabelsBeta2.json';
 import * as decomposePermissionSetBeta from './decomposePermissionSetBeta.json';

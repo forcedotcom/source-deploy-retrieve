@@ -7,6 +7,8 @@
 import { Logger, SfProject, SfProjectJson, Lifecycle, SfError } from '@salesforce/core';
 import { deepFreeze } from '../utils/collections';
 import { MetadataRegistry } from './types';
+// The static import of json file should never be changed,
+// other read methods might make esbuild fail to bundle the json file
 import * as registryData from './metadataRegistry.json';
 import { presetMap } from './presets/presetMap';
 

@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v62 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 618/630 supported metadata types.
+Currently, there are 618/631 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -43,6 +43,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AgentforceForDevelopersSettings|✅||
 |Ai4mSettings|✅||
 |AnalyticSnapshot|✅||
+|AnalyticsDashboard|❌|Not supported, but support could be added|
 |AnalyticsSettings|✅||
 |AnimationRule|✅||
 |ApexClass|✅||
@@ -668,6 +669,7 @@ v63 introduces the following new types.  Here's their current level of support
 |ProcedureOutputResolution|❌|Not supported, but support could be added (but not for tracking)|
 |RelatedRecordAccessDef|❌|Not supported, but support could be added|
 |TransactionProcessingType|❌|Not supported, but support could be added|
+|TransactionProcessorSettings|✅||
 
 ## Additional Types
 

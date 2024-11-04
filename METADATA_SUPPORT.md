@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v62 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 618/631 supported metadata types.
+Currently, there are 618/632 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -42,6 +42,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AffinityScoreDefinition|✅||
 |AgentforceForDevelopersSettings|✅||
 |Ai4mSettings|✅||
+|AiPluginUtteranceDef|❌|Not supported, but support could be added|
 |AnalyticSnapshot|✅||
 |AnalyticsDashboard|❌|Not supported, but support could be added|
 |AnalyticsSettings|✅||
@@ -651,7 +652,6 @@ v63 introduces the following new types.  Here's their current level of support
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
 |AccountPlanObjMeasCalcDef|❌|Not supported, but support could be added|
-|AiPluginUtteranceDef|❌|Not supported, but support could be added|
 |AppFrameworkTemplateBundle|✅||
 |CommunicationChannelType|❌|Not supported, but support could be added|
 |CustomFieldDisplay|❌|Not supported, but support could be added|

@@ -152,7 +152,7 @@ export class ComponentSetBuilder {
       if (resolvedComponents.forceIgnoredPaths) {
         // if useFsForceIgnore = true, then we won't be able to resolve a forceignored path,
         // which we need to do to get the ignored source component
-        const resolver = new MetadataResolver(registry, undefined, true);
+        const resolver = new MetadataResolver(registry, undefined, false);
 
         for (const ignoredPath of resolvedComponents.forceIgnoredPaths ?? []) {
           resolver.getComponentsFromPath(ignoredPath).map((ignored) => {

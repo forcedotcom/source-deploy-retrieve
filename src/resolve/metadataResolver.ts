@@ -369,8 +369,12 @@ const resolveType =
  */
 const parseAsContentMetadataXml =
   (registry: RegistryAccess) =>
-  (fsPath: string): boolean =>
-    Boolean(registry.getTypeBySuffix(extName(fsPath)));
+  (fsPath: string): boolean => {
+    const suffixType = registry.getTypeBySuffix(extName(fsPath));
+    if (!suffixType) return false;
+
+    return fsPath.split(sep).includes(suffixType.directoryName);
+  };
 
 /**
  * If this file should be considered as a metadata file then return the metadata type

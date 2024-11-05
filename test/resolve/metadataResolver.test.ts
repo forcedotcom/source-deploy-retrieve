@@ -458,6 +458,24 @@ describe('MetadataResolver', () => {
         expect(access.getComponentsFromPath(path).length).to.equal(0);
       });
 
+      it('Should not throw TypeInferenceError for a non-metadata file that is not part of an inclusive filter', () => {
+        const emailservicesPath = join('unpackaged', 'emailservices', 'MyEmailServices.xml');
+        const nonMetadataDirPath = join('unpackaged', 'datasets');
+        const nonMetadataFilePath = join(nonMetadataDirPath, 'myDS.xml');
+        const emailservicesComponent = new SourceComponent(
+          {
+            name: 'MyEmailServices',
+            type: registry.types.emailservicesfunction,
+            xml: emailservicesPath,
+          },
+          VirtualTreeContainer.fromFilePaths([emailservicesPath])
+        );
+        const filter = new ComponentSet([emailservicesComponent]);
+        const treeContainer = VirtualTreeContainer.fromFilePaths([emailservicesPath, nonMetadataFilePath]);
+        const mdResolver = new MetadataResolver(undefined, treeContainer, false);
+        expect(mdResolver.getComponentsFromPath(nonMetadataDirPath, filter)).to.deep.equal([]);
+      });
+
       it('Should not return a component if path to folder metadata xml is forceignored', () => {
         const path = xmlInFolder.FOLDER_XML_PATH;
         const access = testUtil.createMetadataResolver([

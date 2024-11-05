@@ -1,3 +1,12 @@
+## [12.10.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.10.0...12.10.1) (2024-11-05)
+
+
+### Bug Fixes
+
+* **resolver:** ignore non-component XML files in project ([#1452](https://github.com/forcedotcom/source-deploy-retrieve/issues/1452)) ([36ea522](https://github.com/forcedotcom/source-deploy-retrieve/commit/36ea522ff441486b3d9e7f55e60f1607e42998fc))
+
+
+
 # [12.10.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.8.1...12.10.0) (2024-10-31)
 
 

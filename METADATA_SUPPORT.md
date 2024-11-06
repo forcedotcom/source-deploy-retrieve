@@ -653,12 +653,14 @@ v63 introduces the following new types.  Here's their current level of support
 |:---|:---|:---|
 |AccountPlanObjMeasCalcDef|❌|Not supported, but support could be added|
 |AppFrameworkTemplateBundle|✅||
+|CmsnStmtLineItemConfig|❌|Not supported, but support could be added|
 |CommunicationChannelType|❌|Not supported, but support could be added|
 |CustomFieldDisplay|❌|Not supported, but support could be added|
 |ExtlClntAppSamlConfigurablePolicies|✅||
 |FieldMappingConfig|❌|Not supported, but support could be added|
 |FieldMappingConfigItem|❌|Not supported, but support could be added|
 |IndustriesChannelPartnerInventorySettings|✅||
+|InsPlcyCoverageSpecConfig|❌|Not supported, but support could be added|
 |InsPolicyLifecycleConfig|❌|Not supported, but support could be added|
 |InsPolicyManagementConfig|❌|Not supported, but support could be added|
 |InsRatePlanCmsnConfig|❌|Not supported, but support could be added|

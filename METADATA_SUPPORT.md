@@ -668,6 +668,7 @@ v63 introduces the following new types.  Here's their current level of support
 |InsPolicyManagementConfig|❌|Not supported, but support could be added|
 |InsRatePlanCmsnConfig|❌|Not supported, but support could be added|
 |InsRatePlanTypeConfig|❌|Not supported, but support could be added|
+|InventoryReplenishmentSettings|✅||
 |LaborCostOptimizationSettings|✅||
 |LifeSciConfigAssignment|❌|Not supported, but support could be added|
 |LifeSciConfigCategory|❌|Not supported, but support could be added|

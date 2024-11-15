@@ -658,6 +658,7 @@ v63 introduces the following new types.  Here's their current level of support
 |CommissionStatementConfig|❌|Not supported, but support could be added|
 |CommunicationChannelType|❌|Not supported, but support could be added|
 |CustomFieldDisplay|❌|Not supported, but support could be added|
+|EventRelayConfig|✅||
 |ExtlClntAppSamlConfigurablePolicies|✅||
 |FieldMappingConfig|❌|Not supported, but support could be added|
 |FieldMappingConfigItem|❌|Not supported, but support could be added|
@@ -708,7 +709,6 @@ v63 introduces the following new types.  Here's their current level of support
 - EntityImplements
 - EscalationRule
 - EventDelivery
-- EventRelayConfig
 - EventSubscription
 - EventType
 - ExpressionSetMessageToken

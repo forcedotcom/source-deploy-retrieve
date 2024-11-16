@@ -653,11 +653,12 @@ v63 introduces the following new types.  Here's their current level of support
 |:---|:---|:---|
 |AccountPlanObjMeasCalcDef|❌|Not supported, but support could be added|
 |AppFrameworkTemplateBundle|✅||
-|CmsnStmtLinItemTypeConfig|❌|Not supported, but support could be added|
 |CmsnStmtLineItemConfig|❌|Not supported, but support could be added|
+|CmsnStmtLineItemTypConfig|❌|Not supported, but support could be added|
 |CommissionStatementConfig|❌|Not supported, but support could be added|
 |CommunicationChannelType|❌|Not supported, but support could be added|
 |CustomFieldDisplay|❌|Not supported, but support could be added|
+|DeltaPricingPstSettings|✅||
 |EventRelayConfig|✅||
 |ExtlClntAppSamlConfigurablePolicies|✅||
 |FieldMappingConfig|❌|Not supported, but support could be added|
@@ -679,6 +680,7 @@ v63 introduces the following new types.  Here's their current level of support
 |OmniStudioSettings|✅||
 |ProcedureOutputResolution|❌|Not supported, but support could be added (but not for tracking)|
 |RelatedRecordAccessDef|❌|Not supported, but support could be added|
+|SearchDataCloudObjectConf|❌|Not supported, but support could be added (but not for tracking)|
 |TransactionProcessingType|❌|Not supported, but support could be added|
 |TransactionProcessorSettings|✅||
 

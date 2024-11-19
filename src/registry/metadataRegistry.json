@@ -526,7 +526,8 @@
     "ChoiceList": "choicelist",
     "ConvIntelligenceSignalRule": "convintelligencesignalrule",
     "PublicKeyCertificate": "publickeycertificate",
-    "PublicKeyCertificateSet": "publickeycertificateset"
+    "PublicKeyCertificateSet": "publickeycertificateset",
+    "transactionProcessingTypes": "transactionprocessingtype"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4685,6 +4686,14 @@
       "name": "PublicKeyCertificateSet",
       "suffix": "PublicKeyCertificateSet",
       "directoryName": "PublicKeyCertificateSet",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "transactionprocessingtype": {
+      "id": "transactionprocessingtype",
+      "name": "TransactionProcessingType",
+      "suffix": "transactionProcessingTypes",
+      "directoryName": "transactionProcessingType",
       "inFolder": false,
       "strictDirectoryName": false
     }

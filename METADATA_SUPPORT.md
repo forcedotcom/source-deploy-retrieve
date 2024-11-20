@@ -664,7 +664,6 @@ v63 introduces the following new types.  Here's their current level of support
 |ExpressionSetMessageToken|✅||
 |ExtlClntAppSamlConfigurablePolicies|✅||
 |FieldMappingConfig|❌|Not supported, but support could be added|
-|FieldMappingConfigItem|❌|Not supported, but support could be added|
 |IndustriesChannelPartnerInventorySettings|✅||
 |InsPlcyCoverageSpecConfig|❌|Not supported, but support could be added|
 |InsPlcyLineOfBusConfig|❌|Not supported, but support could be added|

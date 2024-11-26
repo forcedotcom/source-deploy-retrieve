@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'node:path';
+import * as os from 'node:os';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import fs from 'graceful-fs';
@@ -44,6 +45,19 @@ describe('ForceIgnore', () => {
     const forceIgnore = new ForceIgnore();
 
     expect(forceIgnore.accepts(pathToClass)).to.be.true;
+    expect(lifecycleStub.callCount).to.equal(1);
+  });
+
+  it('will not warn for \\ on commented lines', () => {
+    const lifecycleStub = env.stub(Lifecycle.prototype, 'emitWarning');
+    const forceIgnoreEntry = `# force-app\\main\\default\\classes\\myApex.* ${os.EOL} force-app\\main\\default\\classes\\myApex.*`;
+    const pathToClass = join('force-app', 'main', 'default', 'classes', 'myApex.cls');
+    env.stub(fs, 'readFileSync').returns(forceIgnoreEntry);
+
+    const forceIgnore = new ForceIgnore();
+
+    expect(forceIgnore.accepts(pathToClass)).to.be.true;
+    // once, second line is uncommented, but uses \
     expect(lifecycleStub.callCount).to.equal(1);
   });
 

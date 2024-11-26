@@ -6,6 +6,7 @@
  */
 
 import { dirname, join, relative } from 'node:path';
+import * as os from 'node:os';
 import ignore, { Ignore } from 'ignore/index';
 import { readFileSync } from 'graceful-fs';
 import { Lifecycle } from '@salesforce/core';
@@ -24,8 +25,8 @@ export class ForceIgnore {
       const contents = readFileSync(forceIgnorePath, 'utf-8');
       // check if file `.forceignore` exists
       if (contents !== undefined) {
-        // check for windows style separators (\) and warn
-        if (contents.includes('\\')) {
+        // check for windows style separators (\) and warn, that aren't comments
+        if (contents.split(os.EOL).find((c) => c.includes('\\') && !c.startsWith('#'))) {
           // void because you cannot await a method in a constructor
           void Lifecycle.getInstance().emitWarning(
             'Your .forceignore file incorrectly uses the backslash ("\\") as a folder separator; it should use the slash ("/") instead. The ignore rules will not work as expected until you fix this.'

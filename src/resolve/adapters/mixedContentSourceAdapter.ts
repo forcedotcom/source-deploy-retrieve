@@ -67,10 +67,12 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
       );
     }
 
-    if (component) {
-      component.content = contentPath;
+    let toBeReturned = component;
+
+    if (toBeReturned) {
+      toBeReturned.content = contentPath;
     } else {
-      component = new SourceComponent(
+      toBeReturned = new SourceComponent(
         {
           name: baseName(contentPath),
           type: this.type,
@@ -82,7 +84,7 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
       );
     }
 
-    return component;
+    return toBeReturned;
   }
 
   /**
@@ -91,7 +93,6 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
    * folder will be returned. Intended to be used exclusively for MixedContent types.
    *
    * @param path Path to trim
-   * @param type MetadataType to determine content for
    */
   protected trimPathToContent(path: SourcePath): SourcePath {
     const pathParts = path.split(sep);

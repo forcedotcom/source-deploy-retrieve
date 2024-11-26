@@ -20,8 +20,8 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export class MetadataTransformerFactory {
-  private registry: RegistryAccess;
-  private context: ConvertContext;
+  private readonly registry: RegistryAccess;
+  private readonly context: ConvertContext;
 
   public constructor(registry: RegistryAccess, context = new ConvertContext()) {
     this.registry = registry;

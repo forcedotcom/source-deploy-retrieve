@@ -9,7 +9,7 @@ import { dirname, join, relative } from 'node:path';
 import * as os from 'node:os';
 import ignore, { Ignore } from 'ignore/index';
 import { readFileSync } from 'graceful-fs';
-import { Lifecycle } from '@salesforce/core';
+import { Lifecycle, Logger } from '@salesforce/core';
 import { SourcePath } from '../common/types';
 import { searchUp } from '../utils/fileSystemHandler';
 
@@ -19,6 +19,7 @@ export class ForceIgnore {
   private readonly parser?: Ignore;
   private readonly forceIgnoreDirectory?: string;
   private DEFAULT_IGNORE = ['**/*.dup', '**/.*', '**/package2-descriptor.json', '**/package2-manifest.json'];
+  private isPathIgnored = new Map<string, boolean>();
 
   public constructor(forceIgnorePath = '') {
     try {
@@ -43,7 +44,7 @@ export class ForceIgnore {
         this.forceIgnoreDirectory = dirname(forceIgnorePath);
       }
     } catch (e) {
-      // TODO: log no force ignore
+      Logger.childFromRoot(this.constructor.name).info('no .forceignore found');
     }
   }
 
@@ -65,19 +66,35 @@ export class ForceIgnore {
 
   public denies(fsPath: SourcePath): boolean {
     if (!this.parser || !this.forceIgnoreDirectory) return false;
+    // we've already figured out if this path is ignored or not, just get it from the cache
+    if (this.isPathIgnored.has(fsPath)) return this.isPathIgnored.get(fsPath)!;
+
+    let result: boolean;
     try {
-      return this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));
+      result = this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));
     } catch (e) {
-      return false;
+      result = false;
     }
+
+    this.isPathIgnored.set(fsPath, result);
+
+    return result;
   }
 
   public accepts(fsPath: SourcePath): boolean {
     if (!this.parser || !this.forceIgnoreDirectory) return true;
+    // we've already figured out if this path is ignored or not, just get it from the cache
+    // the cache is set for 'denies' so for accept, negate the result
+    if (this.isPathIgnored.has(fsPath)) return !this.isPathIgnored.get(fsPath);
+
+    let result: boolean;
     try {
-      return !this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));
+      result = !this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));
     } catch (e) {
-      return true;
+      result = true;
     }
+    // since the cache has the 'denies' result, negate the result here
+    this.isPathIgnored.set(fsPath, !result);
+    return result;
   }
 }

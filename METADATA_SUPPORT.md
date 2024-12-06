@@ -659,7 +659,6 @@ v63 introduces the following new types.  Here's their current level of support
 |CommunicationChannelType|❌|Not supported, but support could be added|
 |CustomFieldDisplay|❌|Not supported, but support could be added|
 |DataObjectSearchIndexConf|❌|Not supported, but support could be added (but not for tracking)|
-|DeltaPricingPstSettings|✅||
 |EventRelayConfig|✅||
 |ExpressionSetMessageToken|✅||
 |ExtlClntAppSamlConfigurablePolicies|✅||
@@ -684,7 +683,6 @@ v63 introduces the following new types.  Here's their current level of support
 |ProcedureOutputResolution|❌|Not supported, but support could be added (but not for tracking)|
 |RelatedRecordAccessDef|❌|Not supported, but support could be added|
 |TransactionProcessingType|❌|Not supported, but support could be added (but not for tracking)|
-|TransactionProcessorSettings|✅||
 
 ## Additional Types
 

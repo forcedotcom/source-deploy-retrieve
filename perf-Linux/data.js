@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1733578718428,
+  "lastUpdate": 1733579184374,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -65907,6 +65907,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 5881,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ce16b0643ebc1cd393e2595a3e89ecc18c6c2a7d",
+          "message": "fix(deps): bump proxy-agent from 6.4.0 to 6.5.0\n\nBumps [proxy-agent](https://github.com/TooTallNate/proxy-agents/tree/HEAD/packages/proxy-agent) from 6.4.0 to 6.5.0.\n- [Release notes](https://github.com/TooTallNate/proxy-agents/releases)\n- [Changelog](https://github.com/TooTallNate/proxy-agents/blob/main/packages/proxy-agent/CHANGELOG.md)\n- [Commits](https://github.com/TooTallNate/proxy-agents/commits/proxy-agent@6.5.0/packages/proxy-agent)\n\n---\nupdated-dependencies:\n- dependency-name: proxy-agent\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2024-12-07T13:37:09Z",
+          "tree_id": "8a7c771f46999adf9b7c33db31977d4b4eb818fb",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/ce16b0643ebc1cd393e2595a3e89ecc18c6c2a7d"
+        },
+        "date": 1733579177713,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 217,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 1922,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 1739,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 2628,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 419,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 3471,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 2820,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 3338,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 723,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 6061,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 4781,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 5926,
             "unit": "ms"
           }
         ]

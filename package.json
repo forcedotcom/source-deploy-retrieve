@@ -55,7 +55,7 @@
     "mocha-snap": "^5.0.0",
     "ts-morph": "^24.0.0",
     "ts-node": "^10.9.2",
-    "ts-patch": "^3.2.1",
+    "ts-patch": "^3.3.0",
     "typescript": "^5.5.4"
   },
   "scripts": {

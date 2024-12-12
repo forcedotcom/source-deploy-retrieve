@@ -204,8 +204,8 @@ describe('ManifestResolver', () => {
         data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
       <Package xmlns="http://soap.sforce.com/2006/04/metadata">
         <types>
-          <members>foo/</members>
-          <members>foo/subfoo/</members>
+          <members>foo</members>
+          <members>foo/subfoo</members>
           <members>foo/subfoo/MySubFooReport1</members>
           <members>foo/subfoo/MySubFooReport2</members>
           <members>bar/MyBarReport1</members>

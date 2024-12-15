@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@jsforce/jsforce-node": "^3.6.3",
-    "@salesforce/cli-plugins-testkit": "^5.3.38",
+    "@salesforce/cli-plugins-testkit": "^5.3.39",
     "@salesforce/dev-scripts": "^10.2.11",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/fast-levenshtein": "^0.0.4",

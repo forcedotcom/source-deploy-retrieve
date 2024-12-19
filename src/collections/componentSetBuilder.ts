@@ -29,8 +29,18 @@ export type ManifestOption = {
 };
 
 type MetadataOption = {
+  /**
+   * Array of metadata type:name pairs to include in the ComponentSet.
+   */
   metadataEntries: string[];
+  /**
+   * Array of filesystem directory paths to search for local metadata to include in the ComponentSet.
+   */
   directoryPaths: string[];
+  /**
+   * Array of metadata type:name pairs to exclude from the ComponentSet.
+   */
+  excludedEntries?: string[];
   /**
    * Array of metadata type:name pairs to delete before the deploy. Use of wildcards is not allowed.
    */
@@ -60,6 +70,14 @@ export type ComponentSetOptions = {
 
 type MetadataMap = Map<string, string[]>;
 
+let logger: Logger;
+const getLogger = (): Logger => {
+  if (!logger) {
+    logger = Logger.childFromRoot('ComponentSetBuilder');
+  }
+  return logger;
+};
+
 export class ComponentSetBuilder {
   /**
    * Builds a ComponentSet that can be used for source conversion,
@@ -71,14 +89,13 @@ export class ComponentSetBuilder {
    */
 
   public static async build(options: ComponentSetOptions): Promise<ComponentSet> {
-    const logger = Logger.childFromRoot('componentSetBuilder');
     let componentSet: ComponentSet | undefined;
 
     const { sourcepath, manifest, metadata, packagenames, org } = options;
     const registry = new RegistryAccess(undefined, options.projectDir);
 
     if (sourcepath) {
-      logger.debug(`Building ComponentSet from sourcepath: ${sourcepath.join(', ')}`);
+      getLogger().debug(`Building ComponentSet from sourcepath: ${sourcepath.join(', ')}`);
       const fsPaths = sourcepath.map(validateAndResolvePath);
       componentSet = ComponentSet.fromSource({
         fsPaths,
@@ -88,16 +105,16 @@ export class ComponentSetBuilder {
 
     // Return empty ComponentSet and use packageNames in the connection via `.retrieve` options
     if (packagenames) {
-      logger.debug(`Building ComponentSet for packagenames: ${packagenames.toString()}`);
+      getLogger().debug(`Building ComponentSet for packagenames: ${packagenames.toString()}`);
       componentSet ??= new ComponentSet(undefined, registry);
     }
 
     // Resolve manifest with source in package directories.
     if (manifest) {
-      logger.debug(`Building ComponentSet from manifest: ${manifest.manifestPath}`);
+      getLogger().debug(`Building ComponentSet from manifest: ${manifest.manifestPath}`);
       assertFileExists(manifest.manifestPath);
 
-      logger.debug(`Searching in packageDir: ${manifest.directoryPaths.join(', ')} for matching metadata`);
+      getLogger().debug(`Searching in packageDir: ${manifest.directoryPaths.join(', ')} for matching metadata`);
       componentSet = await ComponentSet.fromManifest({
         manifestPath: manifest.manifestPath,
         resolveSourcePaths: manifest.directoryPaths,
@@ -108,9 +125,10 @@ export class ComponentSetBuilder {
       });
     }
 
-    // Resolve metadata entries with source in package directories.
-    if (metadata) {
-      logger.debug(`Building ComponentSet from metadata: ${metadata.metadataEntries.toString()}`);
+    // Resolve metadata entries with source in package directories, unless we are building a ComponentSet
+    // from metadata in an org.
+    if (metadata && !org) {
+      getLogger().debug(`Building ComponentSet from metadata: ${metadata.metadataEntries.toString()}`);
       const directoryPaths = metadata.directoryPaths;
       componentSet ??= new ComponentSet(undefined, registry);
       const componentSetFilter = new ComponentSet(undefined, registry);
@@ -122,7 +140,7 @@ export class ComponentSetBuilder {
         .map(addToComponentSet(componentSet))
         .map(addToComponentSet(componentSetFilter));
 
-      logger.debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
+      getLogger().debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
 
       // add destructive changes if defined. Because these are deletes, all entries
       // are resolved to SourceComponents
@@ -170,25 +188,8 @@ export class ComponentSetBuilder {
     // Resolve metadata entries with an org connection
     if (org) {
       componentSet ??= new ComponentSet(undefined, registry);
-
-      logger.debug(
-        `Building ComponentSet from targetUsername: ${org.username} ${
-          metadata ? `filtered by metadata: ${metadata.metadataEntries.toString()}` : ''
-        }`
-      );
-
-      const mdMap = metadata
-        ? buildMapFromComponents(metadata.metadataEntries.map(entryToTypeAndName(registry)))
-        : (new Map() as MetadataMap);
-
-      const fromConnection = await ComponentSet.fromConnection({
-        usernameOrConnection: (await StateAggregator.getInstance()).aliases.getUsername(org.username) ?? org.username,
-        componentFilter: getOrgComponentFilter(org, mdMap, metadata),
-        metadataTypes: mdMap.size ? Array.from(mdMap.keys()) : undefined,
-        registry,
-      });
-
-      fromConnection.toArray().map(addToComponentSet(componentSet));
+      const orgComponentSet = await this.resolveOrgComponents(registry, org, metadata);
+      orgComponentSet.toArray().map(addToComponentSet(componentSet));
     }
 
     // there should have been a componentSet created by this point.
@@ -197,8 +198,34 @@ export class ComponentSetBuilder {
     componentSet.sourceApiVersion ??= options.sourceapiversion;
     componentSet.projectDirectory = options.projectDir;
 
-    logComponents(logger, componentSet);
+    logComponents(componentSet);
     return componentSet;
+  }
+
+  private static async resolveOrgComponents(
+    registry: RegistryAccess,
+    org: OrgOption,
+    metadata?: MetadataOption
+  ): Promise<ComponentSet> {
+    let mdMap = new Map() as MetadataMap;
+    let debugMsg = `Building ComponentSet from metadata in an org using targetUsername: ${org.username}`;
+    if (metadata) {
+      if (metadata.metadataEntries?.length) {
+        debugMsg += ` filtering on metadata: ${metadata.metadataEntries.toString()}`;
+      }
+      if (metadata.excludedEntries?.length) {
+        debugMsg += ` excluding metadata: ${metadata.excludedEntries.toString()}`;
+      }
+      mdMap = buildMapFromMetadata(metadata, registry);
+    }
+    getLogger().debug(debugMsg);
+
+    return ComponentSet.fromConnection({
+      usernameOrConnection: (await StateAggregator.getInstance()).aliases.getUsername(org.username) ?? org.username,
+      componentFilter: getOrgComponentFilter(org, mdMap, metadata),
+      metadataTypes: mdMap.size ? Array.from(mdMap.keys()) : undefined,
+      registry,
+    });
   }
 }
 
@@ -234,19 +261,19 @@ const assertNoWildcardInDestructiveEntries = (mdEntry: MetadataTypeAndMetadataNa
 
 /** This is only for debug output of matched files based on the command flags.
  * It will log up to 20 file matches. */
-const logComponents = (logger: Logger, componentSet: ComponentSet): void => {
-  logger.debug(`Matching metadata files (${componentSet.size}):`);
+const logComponents = (componentSet: ComponentSet): void => {
+  getLogger().debug(`Matching metadata files (${componentSet.size}):`);
 
   const components = componentSet.getSourceComponents().toArray();
 
   components
     .slice(0, 20)
     .map((cmp) => cmp.content ?? cmp.xml ?? cmp.fullName)
-    .map((m) => logger.debug(m));
-  if (components.length > 20) logger.debug(`(showing 20 of ${componentSet.size} matches)`);
+    .map((m) => getLogger().debug(m));
+  if (components.length > 20) getLogger().debug(`(showing 20 of ${componentSet.size} matches)`);
 
-  logger.debug(`ComponentSet apiVersion = ${componentSet.apiVersion ?? '<not set>'}`);
-  logger.debug(`ComponentSet sourceApiVersion = ${componentSet.sourceApiVersion ?? '<not set>'}`);
+  getLogger().debug(`ComponentSet apiVersion = ${componentSet.apiVersion ?? '<not set>'}`);
+  getLogger().debug(`ComponentSet sourceApiVersion = ${componentSet.sourceApiVersion ?? '<not set>'}`);
 };
 
 const getOrgComponentFilter = (
@@ -254,7 +281,7 @@ const getOrgComponentFilter = (
   mdMap: MetadataMap,
   metadata?: MetadataOption
 ): FromConnectionOptions['componentFilter'] =>
-  metadata
+  metadata?.metadataEntries?.length
     ? (component: Partial<FileProperties>): boolean => {
         if (component.type && component.fullName) {
           const mdMapEntry = mdMap.get(component.type);
@@ -312,11 +339,33 @@ const typeAndNameToMetadataComponents =
           .filter((cs) => minimatch(cs.fullName, metadataName))
       : [{ type, fullName: metadataName }];
 
-// TODO: use Map.groupBy when it's available
-const buildMapFromComponents = (components: MetadataTypeAndMetadataName[]): MetadataMap => {
+const buildMapFromMetadata = (mdOption: MetadataOption, registry: RegistryAccess): MetadataMap => {
   const mdMap: MetadataMap = new Map<string, string[]>();
-  components.map((cmp) => {
-    mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), cmp.metadataName]);
-  });
+
+  // Add metadata type entries we were told to include
+  if (mdOption.metadataEntries?.length) {
+    mdOption.metadataEntries.map(entryToTypeAndName(registry)).map((cmp) => {
+      mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), cmp.metadataName]);
+    });
+  }
+
+  // Build an array of excluded types from the options
+  if (mdOption.excludedEntries?.length) {
+    const excludedTypes: string[] = [];
+    mdOption.excludedEntries.map(entryToTypeAndName(registry)).map((cmp) => {
+      if (cmp.metadataName === '*') {
+        excludedTypes.push(cmp.type.name);
+      }
+    });
+    if (mdMap.size === 0) {
+      // we are excluding specific metadata types from all supported types
+      Object.values(registry.getRegistry().types).map((t) => {
+        if (!excludedTypes.includes(t.name)) {
+          mdMap.set(t.name, []);
+        }
+      });
+    }
+  }
+
   return mdMap;
 };

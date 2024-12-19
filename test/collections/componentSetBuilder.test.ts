@@ -486,10 +486,10 @@ describe('ComponentSetBuilder', () => {
       };
 
       const compSet = await ComponentSetBuilder.build(options);
-      expect(fromSourceStub.callCount).to.equal(2);
+      expect(fromSourceStub.callCount).to.equal(0);
       expect(fromConnectionStub.callCount).to.equal(1);
-      expect(compSet.size).to.equal(2);
-      expect(compSet.has(apexClassComponent)).to.equal(true);
+      expect(compSet.size).to.equal(1);
+      expect(compSet.has(apexClassComponent)).to.equal(false);
       expect(compSet.has(apexClassWildcardMatch)).to.equal(true);
     });
 

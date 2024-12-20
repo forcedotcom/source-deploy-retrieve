@@ -675,9 +675,7 @@ v63 introduces the following new types.  Here's their current level of support
 |InsuranceBrokerageSettings|✅||
 |InventoryReplenishmentSettings|✅||
 |LaborCostOptimizationSettings|✅||
-|LifeSciConfigAssignment|❌|Not supported, but support could be added|
 |LifeSciConfigCategory|❌|Not supported, but support could be added|
-|LifeSciConfigFieldValue|❌|Not supported, but support could be added|
 |LifeSciConfigRecord|❌|Not supported, but support could be added|
 |LightningTypeBundle|❌|Not supported, but support could be added (but not for tracking)|
 |OmniStudioSettings|✅||

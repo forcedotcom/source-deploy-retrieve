@@ -739,7 +739,7 @@ const constructFullName = (registry: RegistryAccess, type: MetadataType, fullNam
   // ReportFolders are deployed/retrieved as Reports. If a ReportFolder is being added append
   // a "/" so the metadata API can identify it as a folder.
   ['DashboardFolder', 'ReportFolder', 'EmailTemplateFolder'].includes(type.name) && !fullName.endsWith('/')
-    ? `${fullName}/`
+    ? `${fullName}`
     : registry.getParentType(type.name)?.strategies?.recomposition === 'startEmpty' && fullName.includes('.')
     ? // they're reassembled like CustomLabels.MyLabel
       fullName.split('.')[1]

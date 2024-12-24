@@ -651,6 +651,37 @@ v63 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
+|AccountPlanObjMeasCalcDef|❌|Not supported, but support could be added|
+|AppFrameworkTemplateBundle|✅||
+|CmsnStmtLineItemConfig|❌|Not supported, but support could be added|
+|CmsnStmtLineItemTypConfig|❌|Not supported, but support could be added|
+|CommissionStatementConfig|❌|Not supported, but support could be added|
+|CommunicationChannelType|❌|Not supported, but support could be added|
+|CustomFieldDisplay|❌|Not supported, but support could be added|
+|DataObjectSearchIndexConf|❌|Not supported, but support could be added (but not for tracking)|
+|EventRelayConfig|✅||
+|ExpressionSetMessageToken|✅||
+|ExtlClntAppSamlConfigurablePolicies|✅||
+|FieldMappingConfig|❌|Not supported, but support could be added|
+|GenAiPromptTemplate|⚠️|Supports deploy/retrieve but not source tracking|
+|GenAiPromptTemplateActv|⚠️|Supports deploy/retrieve but not source tracking|
+|IndustriesChannelPartnerInventorySettings|✅||
+|InsPlcyCoverageSpecConfig|❌|Not supported, but support could be added|
+|InsPlcyLineOfBusConfig|❌|Not supported, but support could be added|
+|InsPolicyLifecycleConfig|❌|Not supported, but support could be added|
+|InsPolicyManagementConfig|❌|Not supported, but support could be added|
+|InsRatePlanCmsnConfig|❌|Not supported, but support could be added|
+|InsRatePlanTypeConfig|❌|Not supported, but support could be added|
+|InsuranceBrokerageSettings|✅||
+|InventoryReplenishmentSettings|✅||
+|LaborCostOptimizationSettings|✅||
+|LifeSciConfigCategory|❌|Not supported, but support could be added|
+|LifeSciConfigRecord|❌|Not supported, but support could be added|
+|LightningTypeBundle|❌|Not supported, but support could be added (but not for tracking)|
+|OmniStudioSettings|✅||
+|ProcedureOutputResolution|❌|Not supported, but support could be added (but not for tracking)|
+|RelatedRecordAccessDef|❌|Not supported, but support could be added|
+|TransactionProcessingType|❌|Not supported, but support could be added (but not for tracking)|
 
 ## Additional Types
 
@@ -679,18 +710,13 @@ v63 introduces the following new types.  Here's their current level of support
 - EntityImplements
 - EscalationRule
 - EventDelivery
-- EventRelayConfig
 - EventSubscription
 - EventType
-- ExpressionSetMessageToken
 - extDataTranFieldTemplate
-- ExtlClntAppSamlConfigurablePolicies
 - ExtlClntAppSampleConfigurablePolicies
 - ExtlClntAppSampleSettings
 - Form
 - FormSection
-- GenAiPromptTemplate
-- GenAiPromptTemplateActv
 - GlobalPicklist
 - InsightType
 - IntegrationHubSettings
@@ -720,4 +746,3 @@ v63 introduces the following new types.  Here's their current level of support
 - VisualizationPlugin
 - WorkSkillRoutingAttribute
 - XOrgHub
-- AppFrameworkTemplateBundle

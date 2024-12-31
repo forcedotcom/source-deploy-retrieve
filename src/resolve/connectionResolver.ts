@@ -5,8 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { inspect } from 'node:util';
 import { Connection, Logger, Messages, Lifecycle, SfError } from '@salesforce/core';
 import { ensurePlainObject, ensureString, isPlainObject } from '@salesforce/ts-types';
+import { env } from '@salesforce/kit';
 import { RegistryAccess } from '../registry/registryAccess';
 import { MetadataType } from '../registry/types';
 import { standardValueSet } from '../registry/standardvalueset';
@@ -24,8 +26,30 @@ export type ResolveConnectionResult = {
   apiVersion: string;
 };
 
+let requestCount = 0;
+let shouldQueryStandardValueSets = false;
+
+let logger: Logger;
+const getLogger = (): Logger => {
+  if (!logger) {
+    logger = Logger.childFromRoot('ConnectionResolver');
+  }
+  return logger;
+};
+
+// ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***
+//
+// NOTE: The `listMetadata` API supports passing 3 metadata types per call but we
+//       can't do this because if 1 of the 3 types is not supported by the org (or
+//       errors in some way) we don't get any data back about the other types. This
+//       means we are forced to make listMetadata calls for individual metadata types.
+//
+// ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***
+
 /**
- * Resolve MetadataComponents from an org connection
+ * Resolve MetadataComponents from an org connection by making listMetadata API calls
+ * for the specified metadata types (`mdTypes` arg) or all supported metadata types
+ * in the registry.
  */
 export class ConnectionResolver {
   private connection: Connection;
@@ -35,6 +59,8 @@ export class ConnectionResolver {
   // all types defined in the registry.
   private mdTypeNames: string[];
 
+  private requestBatchSize: number;
+
   public constructor(connection: Connection, registry = new RegistryAccess(), mdTypes?: string[]) {
     this.connection = connection;
     this.registry = registry;
@@ -42,21 +68,31 @@ export class ConnectionResolver {
       ? // ensure the types passed in are valid per the registry
         mdTypes.filter((t) => this.registry.getTypeByName(t))
       : Object.values(this.registry.getRegistry().types).map((t) => t.name);
+
+    // Always reset this. listMembers() function detects and sets it.
+    shouldQueryStandardValueSets = false;
+
+    // To limit the number of concurrent requests, batch them per an env var.
+    // By default there is no batching.
+    this.requestBatchSize = env.getNumber('SF_LIST_METADATA_BATCH_SIZE', -1);
   }
 
   public async resolve(
     componentFilter = (component: Partial<FileProperties>): boolean => isPlainObject(component)
   ): Promise<ResolveConnectionResult> {
+    // Aggregate array of metadata records in the org
     const Aggregator: Array<Partial<FileProperties>> = [];
-    const childrenPromises: Array<Promise<RelevantFileProperties[]>> = [];
-    const componentTypes: Set<MetadataType> = new Set();
+    // Folder component type names. Each array value has the form [type::folder]
+    const folderComponentTypes: string[] = [];
+    // Child component type names
+    const childComponentTypes: Set<string> = new Set();
+
     const lifecycle = Lifecycle.getInstance();
 
-    const componentFromDescribe = (
-      await Promise.all(this.mdTypeNames.map((type) => listMembers(this.registry)(this.connection)({ type })))
-    ).flat();
+    // Make batched listMetadata requests for top level metadata
+    const listMetadataResponses = await this.sendBatchedRequests(this.mdTypeNames);
 
-    for (const component of componentFromDescribe) {
+    for (const component of listMetadataResponses) {
       let componentType: MetadataType;
       if (isNonEmptyString(component.type)) {
         componentType = this.registry.getTypeByName(component.type);
@@ -86,29 +122,33 @@ export class ConnectionResolver {
       }
 
       Aggregator.push(component);
-      componentTypes.add(componentType);
       if (componentType.folderContentType) {
-        childrenPromises.push(
-          listMembers(this.registry)(this.connection)({
-            type: this.registry.getTypeByName(componentType.folderContentType).name,
-            folder: component.fullName,
-          })
-        );
+        const type = this.registry.getTypeByName(componentType.folderContentType).name;
+        const folder = component.fullName;
+        folderComponentTypes.push(`${type}::${folder}`);
       }
-    }
 
-    for (const componentType of componentTypes) {
       const childTypes = componentType.children?.types;
       if (childTypes) {
-        Object.values(childTypes).map((childType) => {
-          childrenPromises.push(listMembers(this.registry)(this.connection)({ type: childType.name }));
-        });
+        Object.values(childTypes).map((childType) => childComponentTypes.add(childType.name));
       }
     }
 
-    for await (const childrenResult of childrenPromises) {
-      Aggregator.push(...childrenResult);
+    if (folderComponentTypes.length) {
+      Aggregator.push(...(await this.sendBatchedRequests(folderComponentTypes)));
     }
+
+    if (childComponentTypes.size > 0) {
+      Aggregator.push(...(await this.sendBatchedRequests(Array.from(childComponentTypes))));
+    }
+
+    // If we need to query the list of StandardValueSets (i.e., it's included in this.mdTypeNames)
+    // make those requests now.
+    if (shouldQueryStandardValueSets) {
+      Aggregator.push(...(await this.sendBatchedQueries()));
+    }
+
+    getLogger().debug(`https request count = ${requestCount}`);
 
     return {
       components: Aggregator.filter(componentFilter).map((component) => ({
@@ -128,7 +168,107 @@ export class ConnectionResolver {
       apiVersion: this.connection.getApiVersion(),
     };
   }
+
+  // Send batched listMetadata requests based on the SF_LIST_METADATA_BATCH_SIZE env var.
+  private async sendBatchedRequests(listMdQueries: string[]): Promise<RelevantFileProperties[]> {
+    const listMetadataResponses: RelevantFileProperties[] = [];
+    let listMetadataRequests: Array<Promise<RelevantFileProperties[]>> = [];
+
+    const sendIt = async (): Promise<void> => {
+      const requestBatch = (await Promise.all(listMetadataRequests)).flat();
+      listMetadataResponses.push(...requestBatch);
+    };
+
+    // Make batched listMetadata requests
+    for (let i = 0; i < listMdQueries.length; ) {
+      const q = listMdQueries[i].split('::');
+      const listMdQuery = { type: q[0] } as ListMetadataQuery;
+      if (q[1]) {
+        listMdQuery.folder = q[1];
+      }
+      listMetadataRequests.push(listMembers(this.registry)(this.connection)(listMdQuery));
+      i++;
+      if (this.requestBatchSize > 0 && i % this.requestBatchSize === 0) {
+        getLogger().debug(`Awaiting listMetadata requests ${i - this.requestBatchSize + 1} - ${i}`);
+        // We are deliberately awaiting the results of batches to throttle requests.
+        // eslint-disable-next-line no-await-in-loop
+        await sendIt();
+        // Reset the requests for the next batch
+        listMetadataRequests = [];
+      }
+
+      // Always flush the last batch; or send non-batched requests
+      if (i === listMdQueries.length) {
+        getLogger().debug('Awaiting listMetadata requests');
+        // We are deliberately awaiting the results of batches to throttle requests.
+        // eslint-disable-next-line no-await-in-loop
+        await sendIt();
+      }
+    }
+    return listMetadataResponses;
+  }
+
+  // Send batched queries for a known subset of StandardValueSets based on the
+  // SF_LIST_METADATA_BATCH_SIZE env var.
+  private async sendBatchedQueries(): Promise<RelevantFileProperties[]> {
+    const mdType = this.registry.getTypeByName('StandardValueSet');
+    const queryResponses: RelevantFileProperties[] = [];
+    let queryRequests: Array<Promise<RelevantFileProperties | undefined>> = [];
+
+    const sendIt = async (): Promise<void> => {
+      const requestBatch = (await Promise.all(queryRequests)).flat();
+      queryResponses.push(...requestBatch.filter((rb) => !!rb));
+    };
+
+    // Make batched query requests
+    const svsNames = standardValueSet.fullnames;
+    for (let i = 0; i < svsNames.length; ) {
+      const svsFullName = svsNames[i];
+      queryRequests.push(querySvs(this.connection)(svsFullName, mdType));
+      i++;
+      if (this.requestBatchSize > 0 && i % this.requestBatchSize === 0) {
+        getLogger().debug(`Awaiting StandardValueSet queries ${i - this.requestBatchSize + 1} - ${i}`);
+        // We are deliberately awaiting the results of batches to throttle requests.
+        // eslint-disable-next-line no-await-in-loop
+        await sendIt();
+        // Reset the requests for the next batch
+        queryRequests = [];
+      }
+
+      // Always flush the last batch; or send non-batched requests
+      if (i === svsNames.length) {
+        getLogger().debug('Awaiting StandardValueSet queries');
+        // We are deliberately awaiting the results of batches to throttle requests.
+        // eslint-disable-next-line no-await-in-loop
+        await sendIt();
+      }
+    }
+    return queryResponses;
+  }
 }
+
+const querySvs =
+  (connection: Connection) =>
+  async (svsFullName: string, svsType: MetadataType): Promise<RelevantFileProperties | undefined> => {
+    try {
+      requestCount++;
+      getLogger().debug(`StandardValueSet query for ${svsFullName}`);
+      const standardValueSetRecord: StdValueSetRecord = await connection.singleRecordQuery(
+        `SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = '${svsFullName}'`,
+        { tooling: true }
+      );
+      if (standardValueSetRecord.Metadata.standardValue.length) {
+        return {
+          fullName: standardValueSetRecord.MasterLabel,
+          fileName: `${svsType.directoryName}/${standardValueSetRecord.MasterLabel}.${svsType.suffix ?? ''}`,
+          type: svsType.name,
+        };
+      }
+    } catch (error) {
+      const err = SfError.wrap(error);
+      getLogger().debug(`[${svsFullName}] ${err.message}`);
+    }
+  };
 
 const listMembers =
   (registry: RegistryAccess) =>
@@ -136,42 +276,20 @@ const listMembers =
   async (query: ListMetadataQuery): Promise<RelevantFileProperties[]> => {
     const mdType = registry.getTypeByName(query.type);
 
-    // Workaround because metadata.list({ type: 'StandardValueSet' }) returns []
+    // Workaround because metadata.list({ type: 'StandardValueSet' }) returns [].
+    // Query for a subset of known StandardValueSets after all listMetadata calls.
     if (mdType.name === registry.getRegistry().types.standardvalueset.name) {
-      const members: RelevantFileProperties[] = [];
-
-      const standardValueSetPromises = standardValueSet.fullnames.map(async (standardValueSetFullName) => {
-        try {
-          const standardValueSetRecord: StdValueSetRecord = await connection.singleRecordQuery(
-            `SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = '${standardValueSetFullName}'`,
-            { tooling: true }
-          );
-
-          return (
-            standardValueSetRecord.Metadata.standardValue.length && {
-              fullName: standardValueSetRecord.MasterLabel,
-              fileName: `${mdType.directoryName}/${standardValueSetRecord.MasterLabel}.${mdType.suffix ?? ''}`,
-              type: mdType.name,
-            }
-          );
-        } catch (err) {
-          const logger = Logger.childFromRoot('ConnectionResolver.listMembers');
-          logger.debug(err);
-        }
-      });
-      for await (const standardValueSetResult of standardValueSetPromises) {
-        if (standardValueSetResult) {
-          members.push(standardValueSetResult);
-        }
-      }
-      return members;
+      shouldQueryStandardValueSets = true;
+      return [];
     }
 
     try {
+      requestCount++;
+      getLogger().debug(`listMetadata for ${inspect(query)}`);
       return (await connection.metadata.list(query)).map(inferFilenamesFromType(mdType));
     } catch (error) {
-      const logger = Logger.childFromRoot('ConnectionResolver.listMembers');
-      logger.debug((error as Error).message);
+      const err = SfError.wrap(error);
+      getLogger().debug(`[${mdType.name}] ${err.message}`);
       return [];
     }
   };

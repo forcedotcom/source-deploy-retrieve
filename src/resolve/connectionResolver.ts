@@ -69,6 +69,9 @@ export class ConnectionResolver {
         mdTypes.filter((t) => this.registry.getTypeByName(t))
       : Object.values(this.registry.getRegistry().types).map((t) => t.name);
 
+    // Always reset this. listMembers() function detects and sets it.
+    shouldQueryStandardValueSets = false;
+
     // To limit the number of concurrent requests, batch them per an env var.
     // By default there is no batching.
     this.requestBatchSize = env.getNumber('SF_LIST_METADATA_BATCH_SIZE', -1);
@@ -177,14 +180,15 @@ export class ConnectionResolver {
     };
 
     // Make batched listMetadata requests
-    for (let i = 0; i < listMdQueries.length; i++) {
+    for (let i = 0; i < listMdQueries.length; ) {
       const q = listMdQueries[i].split('::');
       const listMdQuery = { type: q[0] } as ListMetadataQuery;
       if (q[1]) {
         listMdQuery.folder = q[1];
       }
       listMetadataRequests.push(listMembers(this.registry)(this.connection)(listMdQuery));
-      if (this.requestBatchSize > 0 && i !== 0 && i % this.requestBatchSize === 0) {
+      i++;
+      if (this.requestBatchSize > 0 && i % this.requestBatchSize === 0) {
         getLogger().debug(`Awaiting listMetadata requests ${i - this.requestBatchSize + 1} - ${i}`);
         // We are deliberately awaiting the results of batches to throttle requests.
         // eslint-disable-next-line no-await-in-loop
@@ -194,7 +198,7 @@ export class ConnectionResolver {
       }
 
       // Always flush the last batch; or send non-batched requests
-      if (i === listMdQueries.length - 1) {
+      if (i === listMdQueries.length) {
         getLogger().debug('Awaiting listMetadata requests');
         // We are deliberately awaiting the results of batches to throttle requests.
         // eslint-disable-next-line no-await-in-loop
@@ -218,10 +222,11 @@ export class ConnectionResolver {
 
     // Make batched query requests
     const svsNames = standardValueSet.fullnames;
-    for (let i = 0; i < svsNames.length; i++) {
+    for (let i = 0; i < svsNames.length; ) {
       const svsFullName = svsNames[i];
       queryRequests.push(querySvs(this.connection)(svsFullName, mdType));
-      if (this.requestBatchSize > 0 && i !== 0 && i % this.requestBatchSize === 0) {
+      i++;
+      if (this.requestBatchSize > 0 && i % this.requestBatchSize === 0) {
         getLogger().debug(`Awaiting StandardValueSet queries ${i - this.requestBatchSize + 1} - ${i}`);
         // We are deliberately awaiting the results of batches to throttle requests.
         // eslint-disable-next-line no-await-in-loop
@@ -231,7 +236,7 @@ export class ConnectionResolver {
       }
 
       // Always flush the last batch; or send non-batched requests
-      if (i === svsNames.length - 1) {
+      if (i === svsNames.length) {
         getLogger().debug('Awaiting StandardValueSet queries');
         // We are deliberately awaiting the results of batches to throttle requests.
         // eslint-disable-next-line no-await-in-loop

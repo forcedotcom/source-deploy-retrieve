@@ -8,6 +8,7 @@
 import { assert, expect, use } from 'chai';
 import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import { Connection } from '@salesforce/core';
+import { env } from '@salesforce/kit';
 import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { ManageableState } from '../../src/client/types';
 import { ConnectionResolver } from '../../src/resolve';
@@ -43,6 +44,8 @@ describe('ConnectionResolver', () => {
   describe('resolve', () => {
     it('should resolve parent and child components', async () => {
       const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+      // @ts-expect-error spying on private method
+      const resolverSpy = $$.SANDBOX.spy(ConnectionResolver.prototype, 'sendBatchedQueries');
 
       metadataQueryStub.withArgs({ type: 'CustomObject' }).resolves([
         {
@@ -95,6 +98,7 @@ describe('ConnectionResolver', () => {
         },
       ];
       expect(result.components).to.deep.equal(expected);
+      expect(resolverSpy.called).to.be.true;
     });
     it('should resolve components with different types', async () => {
       const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
@@ -163,6 +167,65 @@ describe('ConnectionResolver', () => {
       expect(result.components).to.deep.equal(expected);
       expect(metadataQueryStub.calledOnce).to.be.true;
     });
+
+    it('should batch requests per SF_LIST_METADATA_BATCH_SIZE', async () => {
+      $$.SANDBOX.stub(env, 'getNumber').returns(2);
+      const promiseAllSpy = $$.SANDBOX.spy(Promise, 'all');
+      // @ts-expect-error spying on private method
+      const resolverSpy = $$.SANDBOX.spy(ConnectionResolver.prototype, 'sendBatchedQueries');
+
+      const metadataListStub = $$.SANDBOX.stub(connection.metadata, 'list');
+
+      metadataListStub.withArgs({ type: 'ApexClass' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'classes/MyApexClass1.class',
+          fullName: 'MyApexClass1',
+          type: 'ApexClass',
+        },
+      ]);
+      metadataListStub.withArgs({ type: 'ApexTrigger' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'triggers/MyApexTrigger1.trigger',
+          fullName: 'MyApexTrigger1',
+          type: 'ApexTrigger',
+        },
+      ]);
+      metadataListStub.withArgs({ type: 'ApexPage' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'pages/MyApexPage1.page',
+          fullName: 'MyApexPage1',
+          type: 'ApexPage',
+        },
+      ]);
+
+      const mdTypes = ['ApexClass', 'ApexTrigger', 'ApexPage'];
+      const resolver = new ConnectionResolver(connection, undefined, mdTypes);
+      const result = await resolver.resolve();
+      const expected: MetadataComponent[] = [
+        {
+          fullName: 'MyApexClass1',
+          type: registry.types.apexclass,
+        },
+        {
+          fullName: 'MyApexTrigger1',
+          type: registry.types.apextrigger,
+        },
+        {
+          fullName: 'MyApexPage1',
+          type: registry.types.apexpage,
+        },
+      ];
+
+      expect(result.components).to.deep.equal(expected);
+      expect(promiseAllSpy.callCount, 'Expected Promise.all() to be called 2 times').to.equal(2);
+      expect(promiseAllSpy.firstCall.args[0]).to.be.an('array').with.lengthOf(2);
+      expect(promiseAllSpy.secondCall.args[0]).to.be.an('array').with.lengthOf(1);
+      expect(resolverSpy.called).to.be.false;
+    });
+
     it('should resolve components with invalid type returned by metadata api', async () => {
       const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
       metadataQueryStub.withArgs({ type: 'CustomLabels' }).resolves([
@@ -404,7 +467,7 @@ describe('ConnectionResolver', () => {
     });
   });
 
-  describe('missing filenane and type', () => {
+  describe('missing filename and type', () => {
     it('should skip if component has undefined type and filename', async () => {
       const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
 

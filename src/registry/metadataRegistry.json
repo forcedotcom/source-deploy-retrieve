@@ -526,7 +526,9 @@
     "ChoiceList": "choicelist",
     "ConvIntelligenceSignalRule": "convintelligencesignalrule",
     "PublicKeyCertificate": "publickeycertificate",
-    "PublicKeyCertificateSet": "publickeycertificateset"
+    "PublicKeyCertificateSet": "publickeycertificateset",
+    "aiEvaluationDefinition": "aievaluationdefinition",
+    "aiEvaluationTestSet": "aievaluationtestset"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4687,6 +4689,23 @@
       "directoryName": "PublicKeyCertificateSet",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "aievaluationdefinition": {
+      "id": "aievaluationdefinition",
+      "name": "AiEvaluationDefinition",
+      "suffix": "aiEvaluationDefinition",
+      "directoryName": "aiEvaluationDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "aievaluationtestset": {
+      "id": "aievaluationtestset",
+      "name": "AiEvaluationTestSet",
+      "suffix": "aiEvaluationTestSet",
+      "directoryName": "aiEvaluationTestSets",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   }
 }
+

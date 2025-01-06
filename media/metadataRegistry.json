@@ -29,6 +29,7 @@
     "weblink": "customobject",
     "workflowalert": "workflow",
     "workflowfieldupdate": "workflow",
+    "workflowflowaction": "workflow",
     "workflowknowledgepublish": "workflow",
     "workflowoutboundmessage": "workflow",
     "workflowrule": "workflow",
@@ -513,6 +514,7 @@
     "workflow": "workflow",
     "workflowAlert": "workflowalert",
     "workflowFieldUpdate": "workflowfieldupdate",
+    "workflowFlowAction": "workflowflowaction",
     "workflowKnowledgePublish": "workflowknowledgepublish",
     "workflowOutboundMessage": "workflowoutboundmessage",
     "workflowRule": "workflowrule",
@@ -4517,6 +4519,7 @@
         "directories": {
           "workflowAlerts": "workflowalert",
           "workflowFieldUpdates": "workflowfieldupdate",
+          "workflowFlowActions": "workflowflowaction",
           "workflowKnowledgePublishs": "workflowknowledgepublish",
           "workflowOutboundMessages": "workflowoutboundmessage",
           "workflowRules": "workflowrule",
@@ -4526,6 +4529,7 @@
         "suffixes": {
           "workflowAlert": "workflowalert",
           "workflowFieldUpdate": "workflowfieldupdate",
+          "workflowFlowAction": "workflowflowaction",
           "workflowKnowledgePublish": "workflowknowledgepublish",
           "workflowOutboundMessage": "workflowoutboundmessage",
           "workflowRule": "workflowrule",
@@ -4548,6 +4552,14 @@
             "suffix": "workflowFieldUpdate",
             "uniqueIdElement": "fullName",
             "xmlElementName": "fieldUpdates"
+          },
+          "workflowflowaction": {
+            "directoryName": "workflowFlowActions",
+            "id": "workflowflowaction",
+            "name": "WorkflowFlowAction",
+            "suffix": "workflowFlowAction",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "flowActions"
           },
           "workflowknowledgepublish": {
             "directoryName": "workflowKnowledgePublishs",

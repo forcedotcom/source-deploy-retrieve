@@ -1,3 +1,12 @@
+# [12.11.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.10.4...12.11.0) (2025-01-06)
+
+
+### Features
+
+* support throttling of listMetadata calls and queries; include and exclude metadata ([#1469](https://github.com/forcedotcom/source-deploy-retrieve/issues/1469)) ([ad4691f](https://github.com/forcedotcom/source-deploy-retrieve/commit/ad4691f3015c26254b83b74db0b40ebd6919852e))
+
+
+
 ## [12.10.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.10.3...12.10.4) (2024-12-29)
 
 

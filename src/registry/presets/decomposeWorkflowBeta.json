@@ -2,6 +2,7 @@
   "childTypes": {
     "workflowalert": "workflow",
     "workflowfieldupdate": "workflow",
+    "workflowflowaction": "workflow",
     "workflowknowledgepublish": "workflow",
     "workflowoutboundmessage": "workflow",
     "workflowrule": "workflow",
@@ -20,6 +21,7 @@
         "directories": {
           "workflowAlerts": "workflowalert",
           "workflowFieldUpdates": "workflowfieldupdate",
+          "workflowFlowActions": "workflowflowaction",
           "workflowKnowledgePublishes": "workflowknowledgepublish",
           "workflowOutboundMessages": "workflowoutboundmessage",
           "workflowRules": "workflowrule",
@@ -29,6 +31,7 @@
         "suffixes": {
           "workflowAlert": "workflowalert",
           "workflowFieldUpdate": "workflowfieldupdate",
+          "workflowFlowAction": "workflowflowaction",
           "workflowKnowledgePublish": "workflowknowledgepublish",
           "workflowOutboundMessage": "workflowoutboundmessage",
           "workflowRule": "workflowrule",
@@ -39,7 +42,6 @@
           "workflowalert": {
             "directoryName": "workflowAlerts",
             "id": "workflowalert",
-            "isAddressable": false,
             "name": "WorkflowAlert",
             "suffix": "workflowAlert",
             "xmlElementName": "alerts"
@@ -47,15 +49,20 @@
           "workflowfieldupdate": {
             "directoryName": "workflowFieldUpdates",
             "id": "workflowfieldupdate",
-            "isAddressable": false,
             "name": "WorkflowFieldUpdate",
             "suffix": "workflowFieldUpdate",
             "xmlElementName": "fieldUpdates"
           },
+          "workflowflowaction": {
+            "directoryName": "workflowFlowActions",
+            "id": "workflowflowaction",
+            "name": "WorkflowFlowAction",
+            "suffix": "workflowFlowAction",
+            "xmlElementName": "flowActions"
+          },
           "workflowknowledgepublish": {
             "directoryName": "workflowKnowledgePublishes",
             "id": "workflowknowledgepublish",
-            "isAddressable": false,
             "name": "WorkflowKnowledgePublish",
             "suffix": "workflowKnowledgePublish",
             "xmlElementName": "knowledgePublishes"
@@ -63,7 +70,6 @@
           "workflowoutboundmessage": {
             "directoryName": "workflowOutboundMessages",
             "id": "workflowoutboundmessage",
-            "isAddressable": false,
             "name": "WorkflowOutboundMessage",
             "suffix": "workflowOutboundMessage",
             "xmlElementName": "outboundMessages"
@@ -71,7 +77,6 @@
           "workflowrule": {
             "directoryName": "workflowRules",
             "id": "workflowrule",
-            "isAddressable": false,
             "name": "WorkflowRule",
             "suffix": "workflowRule",
             "xmlElementName": "rules"
@@ -79,7 +84,6 @@
           "workflowsend": {
             "directoryName": "workflowSends",
             "id": "workflowsend",
-            "isAddressable": false,
             "name": "WorkflowSend",
             "suffix": "workflowSend",
             "xmlElementName": "send"
@@ -87,7 +91,6 @@
           "workflowtask": {
             "directoryName": "workflowTasks",
             "id": "workflowtask",
-            "isAddressable": false,
             "name": "WorkflowTask",
             "suffix": "workflowTask",
             "xmlElementName": "tasks"

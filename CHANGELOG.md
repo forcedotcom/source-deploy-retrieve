@@ -1,3 +1,12 @@
+## [12.11.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.11.0...12.11.1) (2025-01-06)
+
+
+### Bug Fixes
+
+* add workflow flow actions to decomposed workflow preset and allow isAddressable ([#1467](https://github.com/forcedotcom/source-deploy-retrieve/issues/1467)) ([7558f5a](https://github.com/forcedotcom/source-deploy-retrieve/commit/7558f5a8a9a473d8fa7bf446878c3c158ac2aaec))
+
+
+
 # [12.11.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.10.4...12.11.0) (2025-01-06)
 
 

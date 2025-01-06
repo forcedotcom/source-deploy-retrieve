@@ -339,6 +339,7 @@ describe('will run preset tests', () => {
                     'staticResource',
                     'decomposedPermissionSet',
                     'decomposedLabels',
+                    'decomposeExternalServiceRegistration',
                   ].includes(type.strategies.transformer)
                 ).to.be.true;
                 expect(type.strategies.recomposition).to.be.undefined;

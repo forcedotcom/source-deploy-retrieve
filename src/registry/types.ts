@@ -146,7 +146,8 @@ export type MetadataType = {
       | 'nonDecomposed'
       | 'standard'
       | 'decomposedLabels'
-      | 'decomposedPermissionSet';
+      | 'decomposedPermissionSet'
+      | 'decomposeExternalServiceRegistration';
     decomposition?: 'topLevel' | 'folderPerType';
     recomposition?: 'startEmpty';
   };

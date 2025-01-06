@@ -1,0 +1,43 @@
+{
+  "types": {
+    "externalserviceregistration": {
+      "children": {
+        "types": {
+          "schema": {
+            "directoryName": "externalServiceRegistrations",
+            "id": "schema",
+            "isAddressable": false,
+            "name": "Schema",
+            "suffix": "schema",
+            "xmlElementName": "schema"
+          }
+        },
+        "suffixes": {
+          "schema": "schema"
+        }
+      },
+      "directoryName": "externalServiceRegistrations",
+      "id": "externalserviceregistration",
+      "ignoreParsedFullName": false,
+      "name": "ExternalServiceRegistration",
+      "strategies": {
+        "adapter": "decomposed",
+        "decomposition": "topLevel",
+        "transformer": "decomposeExternalServiceRegistration"
+      },
+      "strictDirectoryName": true,
+      "suffix": "externalServiceRegistration",
+      "supportsPartialDelete": true
+    }
+  },
+  "suffixes": {
+    "schema": "schema",
+    "externalServiceRegistration": "externalserviceregistration"
+  },
+  "strictDirectoryNames": {
+    "externalServiceRegistrations": "externalserviceregistration"
+  },
+  "childTypes": {
+    "schema": "externalserviceregistration"
+  }
+}

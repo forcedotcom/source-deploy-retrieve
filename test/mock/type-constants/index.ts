@@ -36,4 +36,5 @@ export {
   digitalExperienceBundle,
   experiencePropertyTypeContentSingleFile,
   decomposedPermissionSet,
+  decomposeExternalServiceRegistration,
 };

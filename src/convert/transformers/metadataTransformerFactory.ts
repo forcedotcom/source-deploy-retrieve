@@ -6,24 +6,22 @@
  */
 import { Messages } from '@salesforce/core';
 import { MetadataTransformer } from '../types';
-import { SourceComponent } from '../../resolve/sourceComponent';
+import { SourceComponent } from '../../resolve';
 import { ConvertContext } from '../convertContext/convertContext';
-import { RegistryAccess } from '../../registry/registryAccess';
+import { RegistryAccess } from '../../registry';
 import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
 import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 import { StaticResourceMetadataTransformer } from './staticResourceMetadataTransformer';
 import { NonDecomposedMetadataTransformer } from './nonDecomposedMetadataTransformer';
 import { LabelMetadataTransformer, LabelsMetadataTransformer } from './decomposeLabelsTransformer';
 import { DecomposedPermissionSetTransformer } from './decomposedPermissionSetTransformer';
+import { DecomposeExternalServiceRegistrationTransformer } from './decomposeExternalServiceRegistrationTransformer';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export class MetadataTransformerFactory {
-  private registry: RegistryAccess;
-  private context: ConvertContext;
-
-  public constructor(registry: RegistryAccess, context = new ConvertContext()) {
+  public constructor(private readonly registry: RegistryAccess, private readonly context = new ConvertContext()) {
     this.registry = registry;
     this.context = context;
   }
@@ -48,6 +46,8 @@ export class MetadataTransformerFactory {
         return component.type.name === 'CustomLabels'
           ? new LabelsMetadataTransformer(this.registry, this.context)
           : new LabelMetadataTransformer(this.registry, this.context);
+      case 'decomposeExternalServiceRegistration':
+        return new DecomposeExternalServiceRegistrationTransformer(this.registry, this.context);
       default:
         throw messages.createError('error_missing_transformer', [type.name, transformerId]);
     }

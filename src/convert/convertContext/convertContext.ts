@@ -11,6 +11,7 @@ import { DecompositionFinalizer } from './decompositionFinalizer';
 import { ConvertTransactionFinalizer } from './transactionFinalizer';
 import { DecomposedLabelsFinalizer } from './decomposedLabelsFinalizer';
 import { DecomposedPermissionSetFinalizer } from './decomposedPermissionSetFinalizer';
+import { DecomposedExternalServiceRegistrationFinalizer } from './decomposedExternalServiceRegistrationFinalizer';
 /**
  * A state manager over the course of a single metadata conversion call.
  */
@@ -20,6 +21,7 @@ export class ConvertContext {
   public readonly nonDecomposition = new NonDecompositionFinalizer();
   public readonly decomposedLabels = new DecomposedLabelsFinalizer();
   public readonly decomposedPermissionSet = new DecomposedPermissionSetFinalizer();
+  public readonly decomposedExternalServiceRegistration = new DecomposedExternalServiceRegistrationFinalizer();
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async *executeFinalizers(defaultDirectory?: string): AsyncIterable<WriterFormat[]> {

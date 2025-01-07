@@ -529,9 +529,11 @@
     "ConvIntelligenceSignalRule": "convintelligencesignalrule",
     "PublicKeyCertificate": "publickeycertificate",
     "PublicKeyCertificateSet": "publickeycertificateset",
+    "aiEvaluationDefinition": "aievaluationdefinition",
+    "aiEvaluationTestSet": "aievaluationtestset",
     "uaviz": "analyticsvisualization",
     "uavizview": "analyticsvizviewdef",
-    "uawork": "analyticsworkspace"
+    "uawork": "analyticsworkspace"    
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4703,6 +4705,22 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "aievaluationdefinition": {
+      "id": "aievaluationdefinition",
+      "name": "AiEvaluationDefinition",
+      "suffix": "aiEvaluationDefinition",
+      "directoryName": "aiEvaluationDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "aievaluationtestset": {
+      "id": "aievaluationtestset",
+      "name": "AiEvaluationTestSet",
+      "suffix": "aiEvaluationTestSet",
+      "directoryName": "aiEvaluationTestSets",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "analyticsvisualization": {
       "id": "analyticsvisualization",
       "name": "AnalyticsVisualization",
@@ -4725,7 +4743,8 @@
       "suffix": "uawork",
       "directoryName": "unified-analytics",
       "inFolder": false,
-      "strictDirectoryName": false
-    }
+      "strictDirectoryName": false      
+    }    
   }
 }
+

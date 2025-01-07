@@ -4744,7 +4744,31 @@
       "directoryName": "unified-analytics",
       "inFolder": false,
       "strictDirectoryName": false      
-    }    
+    },
+    "analyticsvisualization": {
+      "id": "analyticsvisualization",
+      "name": "AnalyticsVisualization",
+      "suffix": "uaviz",
+      "directoryName": "unified-analytics",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "analyticsvizviewdef": {
+      "id": "analyticsvizviewdef",
+      "name": "AnalyticsVizViewDef",
+      "suffix": "uavizview",
+      "directoryName": "unified-analytics",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "analyticsworkspace": {
+      "id": "analyticsworkspace",
+      "name": "AnalyticsWorkspace",
+      "suffix": "uawork",
+      "directoryName": "unified-analytics",
+      "inFolder": false,
+      "strictDirectoryName": false
+    }       
   }
 }
 

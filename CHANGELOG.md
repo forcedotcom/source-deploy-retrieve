@@ -1,3 +1,12 @@
+# [12.12.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.11.3...12.12.0) (2025-01-08)
+
+
+### Features
+
+* **mdTypes:** register tua viz and ws metadata types ([#1479](https://github.com/forcedotcom/source-deploy-retrieve/issues/1479)) ([11a98b6](https://github.com/forcedotcom/source-deploy-retrieve/commit/11a98b67d196774c333c2680483513a80fd2720f))
+
+
+
 ## [12.11.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.11.2...12.11.3) (2025-01-08)
 
 

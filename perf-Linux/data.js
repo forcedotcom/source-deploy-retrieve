@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1736294513165,
+  "lastUpdate": 1736357653171,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -67335,6 +67335,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 6240,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "p.viswanathan@salesforce.com",
+            "name": "Praveen Kumar Viswanathan",
+            "username": "PraveenViswanathan"
+          },
+          "committer": {
+            "email": "p.viswanathan@salesforce.com",
+            "name": "Praveen Kumar Viswanathan",
+            "username": "PraveenViswanathan"
+          },
+          "distinct": true,
+          "id": "5e38ac033284736bf772dd8779e9b1ad0067eb2d",
+          "message": "feat(mdTypes): register tua viz and ws metadata types",
+          "timestamp": "2025-01-07T16:44:49-08:00",
+          "tree_id": "8c59333cf506736a52b9e35a17eb138567140f87",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/5e38ac033284736bf772dd8779e9b1ad0067eb2d"
+        },
+        "date": 1736357646905,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 222,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2001,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 1732,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 2641,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 422,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 3572,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 2813,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 3400,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 723,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 6262,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 5100,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 6116,
             "unit": "ms"
           }
         ]

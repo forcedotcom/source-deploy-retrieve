@@ -1,3 +1,12 @@
+## [12.11.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.11.2...12.11.3) (2025-01-08)
+
+
+### Bug Fixes
+
+* update snapshot ([#1478](https://github.com/forcedotcom/source-deploy-retrieve/issues/1478)) ([1ee89f6](https://github.com/forcedotcom/source-deploy-retrieve/commit/1ee89f6145dabffb2550cc6044c04b3d5c9ef6e7))
+
+
+
 ## [12.11.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.11.1...12.11.2) (2025-01-07)
 
 

@@ -6,7 +6,7 @@
  */
 import * as path from 'node:path';
 import { assert, expect, config } from 'chai';
-import Sinon = require('sinon');
+import * as Sinon from 'sinon';
 import { Lifecycle } from '@salesforce/core';
 import {
   getReplacements,

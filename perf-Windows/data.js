@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1736294821039,
+  "lastUpdate": 1736358043230,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -61989,6 +61989,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 14730,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "p.viswanathan@salesforce.com",
+            "name": "Praveen Kumar Viswanathan",
+            "username": "PraveenViswanathan"
+          },
+          "committer": {
+            "email": "p.viswanathan@salesforce.com",
+            "name": "Praveen Kumar Viswanathan",
+            "username": "PraveenViswanathan"
+          },
+          "distinct": true,
+          "id": "5e38ac033284736bf772dd8779e9b1ad0067eb2d",
+          "message": "feat(mdTypes): register tua viz and ws metadata types",
+          "timestamp": "2025-01-07T16:44:49-08:00",
+          "tree_id": "8c59333cf506736a52b9e35a17eb138567140f87",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/5e38ac033284736bf772dd8779e9b1ad0067eb2d"
+        },
+        "date": 1736358018260,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 620,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 3775,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 2858,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 5557,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1259,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 7678,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 4901,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 7689,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 2152,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 13811,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 8671,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 13501,
             "unit": "ms"
           }
         ]

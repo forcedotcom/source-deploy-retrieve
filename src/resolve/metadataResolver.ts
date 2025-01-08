@@ -370,19 +370,15 @@ const resolveType =
 const parseAsContentMetadataXml =
   (registry: RegistryAccess) =>
   (fsPath: string): boolean => {
+    // just like resolveType() above, check strict folders first so we don't
+    // have false positive matches for duplicate suffixes like "rule" or "site"
+    const strictFolderType = resolveTypeFromStrictFolder(registry)(fsPath);
+    if (strictFolderType) return true;
+
     const suffixType = registry.getTypeBySuffix(extName(fsPath));
     if (!suffixType) return false;
 
-    const matchesSuffixType = fsPath.split(sep).includes(suffixType.directoryName);
-    if (matchesSuffixType) return matchesSuffixType;
-
-    // it might be a type that requires strict parent folder name.
-    const strictFolderSuffixType = registry
-      .getStrictFolderTypes()
-      .find((l) => l.suffix === suffixType.suffix && l.directoryName && l.name !== suffixType.name);
-    if (!strictFolderSuffixType) return false;
-
-    return fsPath.split(sep).includes(strictFolderSuffixType.directoryName);
+    return fsPath.split(sep).includes(suffixType.directoryName);
   };
 
 /**

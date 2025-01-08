@@ -55,7 +55,7 @@ describe('will respect forceignore when resolving from metadata ', () => {
     for (const file of convertedFiles) {
       await fileSnap(file, testDir);
     }
-    dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'source-format'), sourceOutput);
+    await dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'source-format'), sourceOutput);
   });
 
   after(async () => {

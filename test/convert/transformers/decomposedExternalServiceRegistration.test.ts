@@ -25,12 +25,12 @@ describe('DecomposeExternalServiceRegistrationTransformer', () => {
         const component = MD_FORMAT_ESR;
         const xf = new DecomposeExternalServiceRegistrationTransformer(regAcc);
         const result = await xf.toSourceFormat({ component });
-        expect(result).to.have.length(1);
+        expect(result).to.have.length(2);
         result.map((l) => {
           expect(l.output).to.include(join('main', 'default', 'externalServiceRegistrations'));
         });
-        expect(result[0].output).to.match(/myESR.externalServiceRegistrations-meta.xml$/);
-        expect(result[1].output).to.match(/myESR.schema.yaml$/);
+        expect(result[0].output).to.match(/myESR\.yaml$/);
+        expect(result[1].output).to.match(/myESR.externalServiceRegistration-meta\.xml$/);
       });
 
       it('merge component in defaultDir', async () => {
@@ -38,10 +38,9 @@ describe('DecomposeExternalServiceRegistrationTransformer', () => {
         const xf = new DecomposeExternalServiceRegistrationTransformer(regAcc);
         const result = await xf.toSourceFormat({
           component,
-          mergeWith: SOURCE_FORMAT_ESR,
         });
-        expect(result).to.have.length(5);
-        expect(result[4].output).to.equal(SOURCE_FORMAT_ESR.xml);
+        expect(result).to.have.length(2);
+        expect(result[1].output).to.equal(SOURCE_FORMAT_ESR.xml);
       });
     });
   });

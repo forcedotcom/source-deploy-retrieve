@@ -25,7 +25,7 @@ describe('decomposed Workflow and children (via preset)', () => {
     for (const file of sourceFiles) {
       await fileSnap(file, testDir);
     }
-    dirsAreIdentical(
+    await dirsAreIdentical(
       path.join(testDir, 'force-app'),
       path.join(testDir, '__snapshots__', 'verify-source-files.expected', 'force-app')
     );

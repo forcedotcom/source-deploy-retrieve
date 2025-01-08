@@ -102,11 +102,11 @@ export const SOURCE_FORMAT_ESR = new SourceComponent(
   {
     name: 'myESR',
     type: externalServiceRegistration,
-    content: join('main', 'default', 'externalServiceRegistrations', 'myESR', SOURCE_XML_NAME),
+    xml: join('main', 'default', 'externalServiceRegistrations', SOURCE_XML_NAME),
   },
   new VirtualTreeContainer([
     {
-      dirPath: join('main', 'default', 'externalServiceRegistrations', 'myESR'),
+      dirPath: join('main', 'default', 'externalServiceRegistrations'),
       children: [
         {
           name: 'myESR.externalServiceRegistrations-meta.xml',
@@ -127,7 +127,7 @@ export const SOURCE_FORMAT_ESR = new SourceComponent(
 `),
         },
         {
-          name: 'myESR.schema.yaml',
+          name: 'myESR.yaml',
           data: Buffer.from(`openapi: 3.0.0
 info:
   title: OpenAPIChallenge

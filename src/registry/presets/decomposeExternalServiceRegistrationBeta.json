@@ -3,17 +3,17 @@
     "externalserviceregistration": {
       "children": {
         "types": {
-          "schema": {
-            "directoryName": " ",
-            "id": "schema",
+          "yaml": {
+            "directoryName": "",
+            "id": "yaml",
             "isAddressable": false,
-            "name": "Schema",
-            "suffix": "schema",
+            "name": "OAS Yaml Schema",
+            "suffix": "yaml",
             "xmlElementName": "schema"
           }
         },
         "suffixes": {
-          "schema": "schema"
+          "yaml": "yaml"
         }
       },
       "directoryName": "externalServiceRegistrations",
@@ -31,13 +31,13 @@
     }
   },
   "suffixes": {
-    "schema": "schema",
+    "yaml": "yaml",
     "externalServiceRegistration": "externalserviceregistration"
   },
   "strictDirectoryNames": {
     "externalServiceRegistrations": "externalserviceregistration"
   },
   "childTypes": {
-    "schema": "externalserviceregistration"
+    "yaml": "externalserviceregistration"
   }
 }

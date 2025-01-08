@@ -59,7 +59,7 @@ describe('Multiple large custom labels files', () => {
     for (const file of convertedFiles) {
       await fileSnap(file, testDir);
     }
-    dirsAreIdentical(path.join(snapshotsDir, 'testOutput'), testOutput);
+    await dirsAreIdentical(path.join(snapshotsDir, 'testOutput'), testOutput);
   });
 
   after(async () => {

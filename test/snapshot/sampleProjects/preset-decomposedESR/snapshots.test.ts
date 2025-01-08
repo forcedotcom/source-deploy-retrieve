@@ -18,8 +18,8 @@ import {
 // we don't want failing tests outputting over each other
 /* eslint-disable no-await-in-loop */
 
-describe('fully decomposed permission set via decomposePermissionSetBeta2', () => {
-  const testDir = path.join('test', 'snapshot', 'sampleProjects', 'preset-decomposedPS2');
+describe('fully decomposed external service registration via decomposeExternalServiceRegistrationBeta', () => {
+  const testDir = path.join('test', 'snapshot', 'sampleProjects', 'preset-decomposedESR');
   let sourceFiles: string[];
   let mdFiles: string[];
 
@@ -40,19 +40,28 @@ describe('fully decomposed permission set via decomposePermissionSetBeta2', () =
     for (const file of mdFiles) {
       await fileSnap(file, testDir);
     }
+    await dirsAreIdentical(
+      path.join(testDir, 'force-app'),
+      path.join(testDir, '__snapshots__', 'verify-md-files.expected', 'force-app')
+    );
   });
   it('round trip of metadata format is equivalent', async () => {
     const [old1, updated1] = await Promise.all([
-      fs.promises.readFile(path.join(testDir, 'originalMdapi', 'permissionsets', 'dreamhouse.permissionset'), 'utf8'),
-      fs.promises.readFile(path.join(testDir, MDAPI_OUT, 'permissionsets', 'dreamhouse.permissionset'), 'utf8'),
+      fs.promises.readFile(
+        path.join(
+          testDir,
+          'originalMdapi',
+          'externalServiceRegistrations',
+          'OpenAPIChallenge.externalServiceRegistration'
+        ),
+        'utf8'
+      ),
+      fs.promises.readFile(
+        path.join(testDir, MDAPI_OUT, 'externalServiceRegistrations', 'OpenAPIChallenge.externalServiceRegistration'),
+        'utf8'
+      ),
     ]);
     compareTwoXml(old1, updated1);
-
-    const [old2, updated2] = await Promise.all([
-      fs.promises.readFile(path.join(testDir, 'originalMdapi', 'permissionsets', 'ebikes.permissionset'), 'utf8'),
-      fs.promises.readFile(path.join(testDir, MDAPI_OUT, 'permissionsets', 'ebikes.permissionset'), 'utf8'),
-    ]);
-    compareTwoXml(old2, updated2);
   });
 
   after(async () => {

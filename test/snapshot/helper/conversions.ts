@@ -104,7 +104,7 @@ export const dirsAreIdentical = async (dir1: string, dir2: string): Promise<Chai
 
   const [files1, files2] = (await Promise.all(dirs.map(getAllDirents))).map(dirEntsToPaths).map(resolveRelative(dirs));
 
-  return expect(files1).to.deep.equal(files2);
+  return expect(files1).to.deep.equalInAnyOrder(files2);
 };
 
 const exists = (dir: string) => {

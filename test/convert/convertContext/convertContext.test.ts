@@ -6,8 +6,8 @@
  */
 
 import { createSandbox } from 'sinon';
-import chai = require('chai');
-import deepEqualInAnyOrder = require('deep-equal-in-any-order');
+import * as chai from 'chai';
+import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { WriterFormat } from '../../../src';
 import { ConvertContext } from '../../../src/convert/convertContext/convertContext';
 import { decomposed, matchingContentFile, nonDecomposed } from '../../mock';

@@ -10,7 +10,7 @@ import chai, { assert, expect } from 'chai';
 import { AnyJson, ensureString, getString } from '@salesforce/ts-types';
 import { envVars, Lifecycle, Messages, PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
-import deepEqualInAnyOrder = require('deep-equal-in-any-order');
+import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import {
   ComponentSet,
   ComponentStatus,

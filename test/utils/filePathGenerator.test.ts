@@ -6,8 +6,8 @@
  */
 import * as path from 'node:path';
 import { expect } from 'chai';
-import deepEqualInAnyOrder = require('deep-equal-in-any-order');
-import chai = require('chai');
+import deepEqualInAnyOrder from 'deep-equal-in-any-order';
+import * as chai from 'chai';
 import { filePathsFromMetadataComponent } from '../../src/utils/filePathGenerator';
 import { MetadataComponent, MetadataResolver, MetadataType, RegistryAccess, VirtualTreeContainer } from '../../src';
 

@@ -9,11 +9,14 @@ import { expect } from 'chai';
 import { RegistryAccess } from '../../../src';
 import { getEffectiveRegistry } from '../../../src/registry/variants';
 import { presetMap } from '../../../src';
-import { MD_FORMAT_ESR, SOURCE_FORMAT_ESR } from '../../mock/type-constants/decomposeExternalServiceRegistration';
+import {
+  MD_FORMAT_ESR,
+  SOURCE_FORMAT_ESR,
+} from '../../mock/type-constants/decomposeExternalServiceRegistrationConstants';
 import { DecomposeExternalServiceRegistrationTransformer } from '../../../src/convert/transformers/decomposeExternalServiceRegistrationTransformer';
 
 describe('DecomposeExternalServiceRegistrationTransformer', () => {
-  const preset = presetMap.get('decomposeExternalServiceRegistration');
+  const preset = presetMap.get('decomposeExternalServiceRegistrationBeta');
   const regAcc = new RegistryAccess(getEffectiveRegistry({ presets: [preset!] }));
 
   describe('toSourceFormat', () => {

@@ -19,6 +19,7 @@ import * as nestedTypes from './territoryConstant';
 import * as lwcBundle from './lwcBundleConstant';
 import * as digitalExperienceBundle from './digitalExperienceBundleConstants';
 import * as decomposedPermissionSet from './decomposedPermissionSetConstant';
+import * as decomposeExternalServiceRegistration from './decomposeExternalServiceRegistrationConstants';
 
 export {
   xmlInFolder,

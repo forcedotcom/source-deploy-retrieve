@@ -1,1 +1,10 @@
-<ExternalServiceRegistration xmlns="http://soap.sforce.com/2006/04/metadata"><label>BankService</label><namedCredential>ntest</namedCredential><registrationProviderType>Custom</registrationProviderType><schemaType>OpenApi3</schemaType><schemaUrl>/accounts/schema</schemaUrl><serviceBinding>{&quot;host&quot;:&quot;&quot;,&quot;basePath&quot;:&quot;/&quot;,&quot;allowedSchemes&quot;:[],&quot;requestMediaTypes&quot;:[],&quot;responseMediaTypes&quot;:[],&quot;compatibleMediaTypes&quot;:{}}</serviceBinding><status>Complete</status><systemVersion>3</systemVersion></ExternalServiceRegistration>
+<ExternalServiceRegistration xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>BankService</label>
+    <namedCredential>ntest</namedCredential>
+    <registrationProviderType>Custom</registrationProviderType>
+    <schemaType>OpenApi3</schemaType>
+    <schemaUrl>/accounts/schema</schemaUrl>
+    <serviceBinding>{&quot;host&quot;:&quot;&quot;,&quot;basePath&quot;:&quot;/&quot;,&quot;allowedSchemes&quot;:[],&quot;requestMediaTypes&quot;:[],&quot;responseMediaTypes&quot;:[],&quot;compatibleMediaTypes&quot;:{}}</serviceBinding>
+    <status>Complete</status>
+    <systemVersion>3</systemVersion>
+</ExternalServiceRegistration>

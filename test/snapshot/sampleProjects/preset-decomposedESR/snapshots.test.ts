@@ -41,8 +41,8 @@ describe('fully decomposed external service registration via decomposeExternalSe
       await fileSnap(file, testDir);
     }
     await dirsAreIdentical(
-      path.join(testDir, 'force-app'),
-      path.join(testDir, '__snapshots__', 'verify-md-files.expected', 'force-app')
+      path.join(testDir, 'mdapiOutput'),
+      path.join(testDir, '__snapshots__', 'verify-md-files.expected')
     );
   });
   it('round trip of metadata format is equivalent', async () => {

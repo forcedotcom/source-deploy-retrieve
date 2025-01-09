@@ -21,8 +21,17 @@ export type ESR = JsonMap & {
 };
 
 export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadataTransformer {
-  private xmlParser = new XMLParser({ ignoreAttributes: false });
-  private xmlBuilder = new XMLBuilder({ ignoreAttributes: false });
+  private xmlParser = new XMLParser({
+    ignoreAttributes: false,
+    processEntities: false, // Disable automatic decoding of entities
+  });
+  private xmlBuilder = new XMLBuilder({
+    format: true,
+    ignoreAttributes: false,
+    suppressUnpairedNode: true,
+    processEntities: true,
+    indentBy: '    ',
+  });
 
   // eslint-disable-next-line @typescript-eslint/require-await,class-methods-use-this,@typescript-eslint/no-unused-vars
   public async toSourceFormat(input: {
@@ -88,19 +97,27 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
     const esrXml = this.xmlParser.parse(esrContent);
 
     // Read schema content from file
-    const schemaFileName = `${component.fullName}.schema.yaml`; // or .json based on your logic
-    const schemaFilePath = path.join(this.defaultDirectory ?? '', schemaFileName);
+    const schemaFileName = `${component.fullName}.yaml`; // or .json based on your logic
+    const schemaFilePath = path.join(path.dirname(esrFilePath) ?? '', schemaFileName);
     const schemaContent = await fs.readFile(schemaFilePath, 'utf8');
 
     // Add schema content back to ESR content
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    esrXml.ExternalServiceRegistration.schema = { _text: schemaContent };
+    esrXml.ExternalServiceRegistration['schema'] = schemaContent;
+    const esrMdApiFilePath = `${path.join(
+      this.defaultDirectory ?? '',
+      component.type.directoryName,
+      component.fullName
+    )}.externalServiceRegistration`;
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const source = this.xmlBuilder.build(esrXml);
 
     // Write combined content back to source format
     writeInfos.push({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      source: this.xmlBuilder.build(esrXml),
-      output: esrFilePath,
+      source,
+      output: path.resolve(esrMdApiFilePath),
     });
 
     return writeInfos;

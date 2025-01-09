@@ -25,18 +25,15 @@
         "decomposition": "topLevel",
         "transformer": "decomposeExternalServiceRegistration"
       },
-      "strictDirectoryName": true,
       "suffix": "externalServiceRegistration",
-      "supportsPartialDelete": true
+      "supportsPartialDelete": false
     }
   },
   "suffixes": {
     "yaml": "yaml",
     "externalServiceRegistration": "externalserviceregistration"
   },
-  "strictDirectoryNames": {
-    "externalServiceRegistrations": "externalserviceregistration"
-  },
+  "strictDirectoryNames": {},
   "childTypes": {
     "yaml": "externalserviceregistration"
   }

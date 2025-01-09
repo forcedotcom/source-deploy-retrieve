@@ -92,8 +92,11 @@ export const sourceToMdapi = async (testDir: string): Promise<string[]> => {
 };
 
 /** checks that the two xml bodies have the same equivalent json (handles out-of-order things, etc) */
-export const compareTwoXml = (file1: string, file2: string): Chai.Assertion =>
-  expect(parser.parse(file1)).to.deep.equalInAnyOrder(parser.parse(file2));
+export const compareTwoXml = (file1: string, file2: string): Chai.Assertion => {
+  const f1doc = parser.parse(file1);
+  const f2doc = parser.parse(file2);
+  return expect(f1doc).to.deep.equalInAnyOrder(f2doc);
+};
 
 /**
  * catches missing files by asserting that two directories have the exact same children

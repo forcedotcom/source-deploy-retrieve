@@ -511,6 +511,21 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       this.components.set(key, new DecodeableMap<string, SourceComponent>());
     }
 
+    if (!deletionType && typeof component.type !== 'string') {
+      // this component is meant to be added to manifestComponents, even if it's not a fully validated source component,
+      // this ensures when getObject is called, we created consistent manifests  whether using this.components, or this.manifestComponents
+      // when no destructive changes are present, we use this.components (not fully validated as source components, so typos end up in the generated manifest)
+      // when destructive changes are used, we use this.manifestComponents (fully validated, would not match this.components)
+      // this ensures this.components manifest === this.manifestComponents manifest
+      const sc = new SourceComponent({ type: component.type, name: component.fullName });
+      const srcKey = sourceKey(sc);
+
+      if (!this.manifestComponents.has(key)) {
+        this.manifestComponents.set(key, new DecodeableMap<string, SourceComponent>());
+      }
+      this.manifestComponents.get(key)?.set(srcKey, sc);
+    }
+
     if (!(component instanceof SourceComponent)) {
       return;
     }

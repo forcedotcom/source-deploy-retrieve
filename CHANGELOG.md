@@ -1,3 +1,12 @@
+## [12.12.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.12.0...12.12.1) (2025-01-09)
+
+
+### Bug Fixes
+
+* resolve strict dirs before suffixes for potential metadata files ([#1480](https://github.com/forcedotcom/source-deploy-retrieve/issues/1480)) ([50cb744](https://github.com/forcedotcom/source-deploy-retrieve/commit/50cb7443c20ed3fe1c3f2eb36db63e45ccbdcb5e))
+
+
+
 # [12.12.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.11.3...12.12.0) (2025-01-08)
 
 

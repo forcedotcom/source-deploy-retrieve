@@ -476,6 +476,29 @@ describe('MetadataResolver', () => {
         expect(mdResolver.getComponentsFromPath(nonMetadataDirPath, filter)).to.deep.equal([]);
       });
 
+      it('Should resolve RestrictionRules metadata in mdapi format', () => {
+        const unpackagedPath = 'unpackaged';
+        const packageXmlPath = join(unpackagedPath, 'package.xml');
+        const restrictionRulesPath = join('unpackaged', 'restrictionRules');
+        const restrictionRulePath = join(restrictionRulesPath, 'Foo.rule');
+        const treeContainer = VirtualTreeContainer.fromFilePaths([
+          unpackagedPath,
+          packageXmlPath,
+          restrictionRulesPath,
+          restrictionRulePath,
+        ]);
+        const restrictionRuleComponent = new SourceComponent(
+          {
+            name: 'Foo',
+            type: registry.types.restrictionrule,
+            xml: restrictionRulePath,
+          },
+          treeContainer
+        );
+        const mdResolver = new MetadataResolver(undefined, treeContainer, false);
+        expect(mdResolver.getComponentsFromPath(unpackagedPath)).to.deep.equal([restrictionRuleComponent]);
+      });
+
       it('Should not return a component if path to folder metadata xml is forceignored', () => {
         const path = xmlInFolder.FOLDER_XML_PATH;
         const access = testUtil.createMetadataResolver([

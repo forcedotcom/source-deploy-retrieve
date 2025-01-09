@@ -376,13 +376,8 @@ const parseAsContentMetadataXml =
     const matchesSuffixType = fsPath.split(sep).includes(suffixType.directoryName);
     if (matchesSuffixType) return matchesSuffixType;
 
-    // it might be a type that requires strict parent folder name.
-    const strictFolderSuffixType = registry
-      .getStrictFolderTypes()
-      .find((l) => l.suffix === suffixType.suffix && l.directoryName && l.name !== suffixType.name);
-    if (!strictFolderSuffixType) return false;
-
-    return fsPath.split(sep).includes(strictFolderSuffixType.directoryName);
+    // at this point, the suffixType is not a match, so check for strict folder types
+    return !!resolveTypeFromStrictFolder(registry)(fsPath);
   };
 
 /**

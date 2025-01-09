@@ -1251,7 +1251,7 @@ describe('ComponentSet', () => {
 
     it('should keep manifestComponents/components in sync', async () => {
       const set = new ComponentSet(undefined, registryAccess);
-      const jerryComponent = new SourceComponent({ name: 'Jerry', type: registry.types.staticresource });
+      const jerryComponent = { fullName: 'Jerry', type: registry.types.staticresource };
       const billComponent = new SourceComponent({ name: 'Bill', type: registry.types.staticresource });
       const philComponent = new SourceComponent({ name: 'Phil', type: registry.types.staticresource });
 

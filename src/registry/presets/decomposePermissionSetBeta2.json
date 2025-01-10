@@ -3,7 +3,7 @@
     "applicationvisibility": "permissionset",
     "classaccess": "permissionset",
     "custommetadatatypeaccess": "permissionset",
-    "custompermissions": "permissionset",
+    "custompermission": "permissionset",
     "customsettingaccess": "permissionset",
     "externalcredentialprincipalaccess": "permissionset",
     "externaldatasourceaccess": "permissionset",
@@ -28,7 +28,7 @@
           "applicationVisibilities": "applicationvisibility",
           "classAccesses": "classaccess",
           "customMetadataTypeAccesses": "custommetadatatypeaccess",
-          "customPermissions": "custompermissions",
+          "customPermissions": "custompermission",
           "customSettingAccesses": "customsettingaccess",
           "externalCredentialPrincipalAccesses": "externalcredentialprincipalaccess",
           "externalDataSourceAccesses": "externaldatasourceaccess",
@@ -44,7 +44,7 @@
           "applicationVisibility": "applicationvisibility",
           "classAccess": "classaccess",
           "customMetadataTypeAccess": "custommetadatatypeaccess",
-          "customPermission": "custompermissions",
+          "customPermission": "custompermission",
           "customSettingAccess": "customsettingaccess",
           "externalCredentialPrincipalAccess": "externalcredentialprincipalaccess",
           "externalDataSourceAccess": "externaldatasourceaccess",
@@ -82,9 +82,9 @@
             "suffix": "customMetadataTypeAccess",
             "uniqueIdElement": "name"
           },
-          "custompermissions": {
+          "custompermission": {
             "directoryName": "",
-            "id": "custompermissions",
+            "id": "custompermission",
             "isAddressable": false,
             "name": "CustomPermission",
             "suffix": "customPermission",

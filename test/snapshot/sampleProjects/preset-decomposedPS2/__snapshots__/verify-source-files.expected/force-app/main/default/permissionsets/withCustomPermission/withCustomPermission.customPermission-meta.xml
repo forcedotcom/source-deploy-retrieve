@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet>
-    <>
+    <customPermissions>
         <enabled>true</enabled>
         <name>myCustomPerm</name>
-    </>
-    <>
+    </customPermissions>
+    <customPermissions>
         <enabled>true</enabled>
         <name>myCustomPerm1</name>
-    </>
+    </customPermissions>
 </PermissionSet>

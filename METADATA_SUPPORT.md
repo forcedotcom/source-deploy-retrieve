@@ -652,6 +652,7 @@ v63 introduces the following new types.  Here's their current level of support
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
 |AccountPlanObjMeasCalcDef|❌|Not supported, but support could be added|
+|AnalyticsWorkspace|✅||
 |AppFrameworkTemplateBundle|✅||
 |CmsnStmtLineItemConfig|❌|Not supported, but support could be added|
 |CmsnStmtLineItemTypConfig|❌|Not supported, but support could be added|
@@ -750,4 +751,3 @@ v63 introduces the following new types.  Here's their current level of support
 - AiEvaluationTestSet
 - AnalyticsVisualization
 - AnalyticsVizViewDef
-- AnalyticsWorkspace

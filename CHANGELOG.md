@@ -1,3 +1,12 @@
+## [12.12.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.12.1...12.12.2) (2025-01-10)
+
+
+### Bug Fixes
+
+* sharing rule children are now addressable in the beta preset ([#1482](https://github.com/forcedotcom/source-deploy-retrieve/issues/1482)) ([c0d834c](https://github.com/forcedotcom/source-deploy-retrieve/commit/c0d834c8ffe60dc9f9e4a10b8e638d7e60ca4256))
+
+
+
 ## [12.12.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.12.0...12.12.1) (2025-01-09)
 
 

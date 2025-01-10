@@ -1,3 +1,12 @@
+## [12.12.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.12.2...12.12.3) (2025-01-10)
+
+
+### Bug Fixes
+
+* populate manifestComponents consistently ([#1481](https://github.com/forcedotcom/source-deploy-retrieve/issues/1481)) ([84ba5bd](https://github.com/forcedotcom/source-deploy-retrieve/commit/84ba5bd74bdcb447e7d6bedd94a00be6d84df19b))
+
+
+
 ## [12.12.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.12.1...12.12.2) (2025-01-10)
 
 

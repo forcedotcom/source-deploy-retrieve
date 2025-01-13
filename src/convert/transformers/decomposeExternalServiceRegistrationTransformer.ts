@@ -21,18 +21,6 @@ export type ESR = JsonMap & {
 };
 
 export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadataTransformer {
-  private xmlParser = new XMLParser({
-    ignoreAttributes: false,
-    processEntities: false, // Disable automatic decoding of entities
-  });
-  private xmlBuilder = new XMLBuilder({
-    format: true,
-    ignoreAttributes: false,
-    suppressUnpairedNode: true,
-    processEntities: true,
-    indentBy: '    ',
-  });
-
   // eslint-disable-next-line @typescript-eslint/require-await,class-methods-use-this,@typescript-eslint/no-unused-vars
   public async toSourceFormat(input: {
     component: SourceComponent;
@@ -76,9 +64,16 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
       component.type.directoryName,
       `${esrFileName}-meta.xml`
     );
+    const xmlBuilder = new XMLBuilder({
+      format: true,
+      ignoreAttributes: false,
+      suppressUnpairedNode: true,
+      processEntities: false,
+      indentBy: '    ',
+    });
     writeInfos.push({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      source: this.xmlBuilder.build({ ExternalServiceRegistration: esrContent }),
+      source: xmlBuilder.build({ ExternalServiceRegistration: esrContent }),
       output: esrFilePath,
     });
 
@@ -93,25 +88,34 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
     const writeInfos: WriteInfo[] = [];
     const esrFilePath = this.getOutputFile(component);
     const esrContent = await fs.readFile(esrFilePath, 'utf8');
+    const xmlParser = new XMLParser({
+      ignoreAttributes: false,
+    });
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const esrXml = this.xmlParser.parse(esrContent);
+    const esrXml = xmlParser.parse(esrContent);
 
     // Read schema content from file
     const schemaFileName = `${component.fullName}.yaml`; // or .json based on your logic
     const schemaFilePath = path.join(path.dirname(esrFilePath) ?? '', schemaFileName);
-    const schemaContent = await fs.readFile(schemaFilePath, 'utf8');
-
     // Add schema content back to ESR content
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    esrXml.ExternalServiceRegistration['schema'] = schemaContent;
+    esrXml.ExternalServiceRegistration['schema'] = await fs.readFile(schemaFilePath, 'utf8');
     const esrMdApiFilePath = `${path.join(
       this.defaultDirectory ?? '',
       component.type.directoryName,
       component.fullName
     )}.externalServiceRegistration`;
 
+    const xmlBuilder = new XMLBuilder({
+      format: true,
+      ignoreAttributes: false,
+      suppressUnpairedNode: true,
+      processEntities: true,
+      indentBy: '    ',
+    });
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const source = this.xmlBuilder.build(esrXml);
+    const source = xmlBuilder.build(esrXml);
 
     // Write combined content back to source format
     writeInfos.push({

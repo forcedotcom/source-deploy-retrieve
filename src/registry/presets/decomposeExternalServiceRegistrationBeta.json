@@ -1,28 +1,12 @@
 {
   "types": {
     "externalserviceregistration": {
-      "children": {
-        "types": {
-          "yaml": {
-            "directoryName": "",
-            "id": "yaml",
-            "isAddressable": false,
-            "name": "OAS Yaml Schema",
-            "suffix": "yaml",
-            "xmlElementName": "schema"
-          }
-        },
-        "suffixes": {
-          "yaml": "yaml"
-        }
-      },
       "directoryName": "externalServiceRegistrations",
       "id": "externalserviceregistration",
       "ignoreParsedFullName": false,
       "name": "ExternalServiceRegistration",
       "strategies": {
-        "adapter": "decomposed",
-        "decomposition": "topLevel",
+        "adapter": "mixedContent",
         "transformer": "decomposeExternalServiceRegistration"
       },
       "suffix": "externalServiceRegistration",
@@ -30,11 +14,8 @@
     }
   },
   "suffixes": {
-    "yaml": "yaml",
     "externalServiceRegistration": "externalserviceregistration"
   },
   "strictDirectoryNames": {},
-  "childTypes": {
-    "yaml": "externalserviceregistration"
-  }
+  "childTypes": {}
 }

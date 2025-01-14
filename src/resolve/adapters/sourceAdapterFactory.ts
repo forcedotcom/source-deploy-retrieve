@@ -16,6 +16,7 @@ import { MatchingContentSourceAdapter } from './matchingContentSourceAdapter';
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { DefaultSourceAdapter } from './defaultSourceAdapter';
 import { DigitalExperienceSourceAdapter } from './digitalExperienceSourceAdapter';
+import { EsrSourceAdapter } from './esrSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -40,6 +41,8 @@ export class SourceAdapterFactory {
         return new MatchingContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case 'mixedContent':
         return new MixedContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
+      case 'externalServiceRegistration':
+        return new EsrSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case 'digitalExperience':
         return new DigitalExperienceSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case 'default':

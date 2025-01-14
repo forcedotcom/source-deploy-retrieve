@@ -283,6 +283,7 @@ describe('will run preset tests', () => {
                 'matchingContentFile',
                 'decomposed',
                 'digitalExperience',
+                'externalServiceRegistration',
               ]).includes(type.strategies?.adapter);
             });
           });

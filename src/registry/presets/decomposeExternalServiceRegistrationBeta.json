@@ -2,11 +2,12 @@
   "types": {
     "externalserviceregistration": {
       "directoryName": "externalServiceRegistrations",
+      "strictDirectoryName": true,
       "id": "externalserviceregistration",
       "ignoreParsedFullName": false,
       "name": "ExternalServiceRegistration",
       "strategies": {
-        "adapter": "mixedContent",
+        "adapter": "externalServiceRegistration",
         "transformer": "decomposeExternalServiceRegistration"
       },
       "suffix": "externalServiceRegistration",
@@ -16,6 +17,8 @@
   "suffixes": {
     "externalServiceRegistration": "externalserviceregistration"
   },
-  "strictDirectoryNames": {},
+  "strictDirectoryNames": {
+    "externalServiceRegistrations": "externalserviceregistration"
+  },
   "childTypes": {}
 }

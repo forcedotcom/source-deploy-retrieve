@@ -26,8 +26,6 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
     component: SourceComponent;
     mergeWith?: SourceComponent | undefined;
   }): Promise<WriteInfo[]> {
-    this.context.decomposedExternalServiceRegistration.externalServiceRegistration ??=
-      this.registry.getTypeByName('ExternalServiceRegistration');
     const writeInfos: WriteInfo[] = [];
     const { component } = input;
     const xmlContent = await component.parseXml<ESR>();
@@ -38,13 +36,7 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
     const schemaContent: string = esrContent.schema ?? '';
     const schemaExtension = this.getSchemaExtension(schemaContent);
     const schemaFileName = `${component.fullName}.${schemaExtension}`;
-    const schemaFilePath = path.join(
-      this.defaultDirectory ?? '',
-      'main',
-      'default',
-      component.type.directoryName,
-      schemaFileName
-    );
+    const schemaFilePath = path.join(this.defaultDirectory ?? '', component.type.directoryName, schemaFileName);
 
     // Write schema content to file
     writeInfos.push({
@@ -57,13 +49,7 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
 
     // Write remaining ESR content to file
     const esrFileName = `${component.fullName}.externalServiceRegistration`;
-    const esrFilePath = path.join(
-      this.defaultDirectory ?? '',
-      'main',
-      'default',
-      component.type.directoryName,
-      `${esrFileName}-meta.xml`
-    );
+    const esrFilePath = path.join(this.defaultDirectory ?? '', component.type.directoryName, `${esrFileName}-meta.xml`);
     const xmlBuilder = new XMLBuilder({
       format: true,
       ignoreAttributes: false,

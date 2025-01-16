@@ -27,7 +27,7 @@ describe('DecomposeExternalServiceRegistrationTransformer', () => {
         const result = await xf.toSourceFormat({ component });
         expect(result).to.have.length(2);
         result.map((l) => {
-          expect(l.output).to.include(join('main', 'default', 'externalServiceRegistrations'));
+          expect(l.output).to.include(join('externalServiceRegistrations'));
         });
         expect(result[0].output).to.match(/myESR\.yaml$/);
         expect(result[1].output).to.match(/myESR.externalServiceRegistration-meta\.xml$/);
@@ -51,7 +51,9 @@ describe('DecomposeExternalServiceRegistrationTransformer', () => {
       const xf = new DecomposeExternalServiceRegistrationTransformer(regAcc);
       const result = await xf.toMetadataFormat(component);
       expect(result).to.deep.equal([]);
-      expect(xf.context.decomposedPermissionSet.permissionSetType).to.equal(regAcc.getTypeByName('PermissionSet'));
+      expect(xf.context.decomposedExternalServiceRegistration.externalServiceRegistration).to.equal(
+        regAcc.getTypeByName('externalServiceRegistration')
+      );
     });
   });
 });

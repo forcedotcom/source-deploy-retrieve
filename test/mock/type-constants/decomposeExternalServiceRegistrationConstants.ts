@@ -102,11 +102,11 @@ export const SOURCE_FORMAT_ESR = new SourceComponent(
   {
     name: 'myESR',
     type: externalServiceRegistration,
-    xml: join('main', 'default', 'externalServiceRegistrations', SOURCE_XML_NAME),
+    xml: join('externalServiceRegistrations', SOURCE_XML_NAME),
   },
   new VirtualTreeContainer([
     {
-      dirPath: join('main', 'default', 'externalServiceRegistrations'),
+      dirPath: join('externalServiceRegistrations'),
       children: [
         {
           name: 'myESR.externalServiceRegistrations-meta.xml',

@@ -674,7 +674,7 @@ v63 introduces the following new types. Here's their current level of support
 | LaborCostOptimizationSettings             | ✅      |                                                                  |
 | LifeSciConfigCategory                     | ❌      | Not supported, but support could be added                        |
 | LifeSciConfigRecord                       | ❌      | Not supported, but support could be added                        |
-| LightningTypeBundle                       | ❌      | Not supported, but support could be added (but not for tracking) |
+| LightningTypeBundle                       | ⚠️      | Supports deploy/retrieve but not source tracking                 |
 | OmniStudioSettings                        | ✅      |                                                                  |
 | ProcedureOutputResolution                 | ❌      | Not supported, but support could be added (but not for tracking) |
 | RelatedRecordAccessDef                    | ❌      | Not supported, but support could be added                        |

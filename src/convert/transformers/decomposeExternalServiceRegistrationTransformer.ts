@@ -20,6 +20,8 @@ type ESR = JsonMap & {
   ExternalServiceRegistration: ExternalServiceRegistration;
 };
 
+const xmlDeclaration = '<?xml version="1.0" encoding="UTF-8"?>\n';
+
 export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line @typescript-eslint/require-await,class-methods-use-this,@typescript-eslint/no-unused-vars
   public async toSourceFormat(input: {
@@ -59,12 +61,14 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
       format: true,
       ignoreAttributes: false,
       suppressUnpairedNode: true,
-      processEntities: false,
+      processEntities: true,
       indentBy: '    ',
     });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const source = xmlBuilder.build({ ExternalServiceRegistration: xmlContent });
     writeInfos.push({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      source: xmlBuilder.build({ ExternalServiceRegistration: xmlContent }),
+      source: Readable.from(Buffer.from(xmlDeclaration + source)),
       output: esrFilePath,
     });
 
@@ -104,7 +108,7 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
     // Write combined content back to md format
     writeInfos.push({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-assignment
-      source: Readable.from(Buffer.from(source)),
+      source: Readable.from(Buffer.from(xmlDeclaration + source)),
       output: path.resolve(esrMdApiFilePath),
     });
     this.context.decomposedExternalServiceRegistration.transactionState.esrRecords.push({ component, writeInfos });

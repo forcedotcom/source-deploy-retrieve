@@ -14,45 +14,39 @@ info:
   version: 63.1.0
 paths:
   /getAccountSummaryWithOpportunities:
-    operations:
-      get:
-        summary: need to figure out what this means
-        description: need to figure out what this means
-        operationId: getAccountSummaryWithOpportunities
-        responses: {}
+    get:
+      summary: need to figure out what this means
+      description: need to figure out what this means
+      operationId: getAccountSummaryWithOpportunities
+      responses: {}
   /getActiveCases:
-    operations:
-      get:
-        summary: need to figure out what this means
-        description: need to figure out what this means
-        operationId: getActiveCases
-        responses: {}
+    get:
+      summary: need to figure out what this means
+      description: need to figure out what this means
+      operationId: getActiveCases
+      responses: {}
   /getAllAccounts:
-    operations:
-      get:
-        summary: need to figure out what this means
-        description: need to figure out what this means
-        operationId: getAllAccounts
-        responses: {}
+    get:
+      summary: need to figure out what this means
+      description: need to figure out what this means
+      operationId: getAllAccounts
+      responses: {}
   /getUserDetails:
-    operations:
-      get:
-        summary: need to figure out what this means
-        description: need to figure out what this means
-        operationId: getUserDetails
-        responses: {}
+    get:
+      summary: need to figure out what this means
+      description: need to figure out what this means
+      operationId: getUserDetails
+      responses: {}
   /updateContactDetails:
-    operations:
-      get:
-        summary: need to figure out what this means
-        description: need to figure out what this means
-        operationId: updateContactDetails
-        responses: {}
+    get:
+      summary: need to figure out what this means
+      description: need to figure out what this means
+      operationId: updateContactDetails
+      responses: {}
   /getWelcomeMessage:
-    operations:
-      get:
-        summary: need to figure out what this means
-        description: need to figure out what this means
-        operationId: getWelcomeMessage
-        responses: {}</schema>
+    get:
+      summary: need to figure out what this means
+      description: need to figure out what this means
+      operationId: getWelcomeMessage
+      responses: {}</schema>
 </ExternalServiceRegistration>

@@ -5,7 +5,6 @@
     <registrationProviderType>Custom</registrationProviderType>
     <schemaType>OpenApi3</schemaType>
     <schemaUrl>/accounts/schema</schemaUrl>
-    <serviceBinding>{&quot;host&quot;:&quot;&quot;,&quot;basePath&quot;:&quot;/&quot;,&quot;allowedSchemes&quot;:[],&quot;requestMediaTypes&quot;:[],&quot;responseMediaTypes&quot;:[],&quot;compatibleMediaTypes&quot;:{}}</serviceBinding>
     <status>Complete</status>
     <systemVersion>3</systemVersion>
     <schema>openapi: 3.0.0

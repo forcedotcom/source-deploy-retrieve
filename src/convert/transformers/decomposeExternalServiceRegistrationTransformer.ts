@@ -13,7 +13,7 @@ import type { ExternalServiceRegistration } from '@jsforce/jsforce-node/lib/api/
 import { JsonMap } from '@salesforce/ts-types';
 import { WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve';
-import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../../common';
+import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX, XML_DECL, XML_NS_KEY } from '../../common';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 type ESR = JsonMap & {
@@ -80,7 +80,6 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
     // only need to do this once
     this.context.decomposedExternalServiceRegistration.externalServiceRegistration ??=
       this.registry.getTypeByName('ExternalServiceRegistration');
-    const writeInfos: WriteInfo[] = [];
     const esrFilePath = component.xml;
     const esrContent = { ...(await component.parseXml<ESR>()).ExternalServiceRegistration };
 
@@ -89,29 +88,15 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
     const schemaFilePath = path.join(path.dirname(esrFilePath ?? ''), schemaFileName);
     // Add schema content back to ESR content
     esrContent.schema = await fs.readFile(schemaFilePath, 'utf8');
-    const esrMdApiFilePath = `${path.join(
-      this.defaultDirectory ?? '',
-      component.type.directoryName,
-      component.fullName
-    )}.externalServiceRegistration`;
-
-    const xmlBuilder = new XMLBuilder({
-      format: true,
-      ignoreAttributes: false,
-      suppressUnpairedNode: true,
-      processEntities: true,
-      indentBy: '    ',
-    });
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const source = xmlBuilder.build({ ExternalServiceRegistration: esrContent });
     // Write combined content back to md format
-    writeInfos.push({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-assignment
-      source: Readable.from(Buffer.from(xmlDeclaration + source)),
-      output: path.resolve(esrMdApiFilePath),
+
+    this.context.decomposedExternalServiceRegistration.transactionState.esrRecords.set(component.fullName, {
+      // @ts-expect-error abdc
+      [XML_NS_KEY]: XML_DECL,
+      ...esrContent,
     });
-    this.context.decomposedExternalServiceRegistration.transactionState.esrRecords.push({ component, writeInfos });
 
     return [];
   }

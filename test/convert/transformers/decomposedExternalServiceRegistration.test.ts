@@ -6,11 +6,13 @@
  */
 import { join } from 'node:path';
 import { expect } from 'chai';
-import { RegistryAccess } from '../../../src';
+import { createSandbox } from 'sinon';
+import { RegistryAccess, VirtualTreeContainer } from '../../../src';
 import { getEffectiveRegistry } from '../../../src/registry/variants';
 import { presetMap } from '../../../src';
 import {
   MD_FORMAT_ESR,
+  SAMPLE_OAS_DOC,
   SOURCE_FORMAT_ESR,
 } from '../../mock/type-constants/decomposeExternalServiceRegistrationConstants';
 import { DecomposeExternalServiceRegistrationTransformer } from '../../../src/convert/transformers/decomposeExternalServiceRegistrationTransformer';
@@ -46,6 +48,19 @@ describe('DecomposeExternalServiceRegistrationTransformer', () => {
   });
 
   describe('toMetadataFormat', () => {
+    const sandbox = createSandbox();
+
+    beforeEach(() => {
+      sandbox.stub(VirtualTreeContainer.prototype, 'readFileSync').returns(Buffer.from(SAMPLE_OAS_DOC));
+      sandbox
+        .stub(DecomposeExternalServiceRegistrationTransformer.prototype, 'readSchemaFile')
+        .resolves(SAMPLE_OAS_DOC);
+    });
+
+    afterEach(() => {
+      sandbox.restore();
+    });
+
     it('decomposed ESR combined to md-format', async () => {
       const component = SOURCE_FORMAT_ESR;
       const xf = new DecomposeExternalServiceRegistrationTransformer(regAcc);

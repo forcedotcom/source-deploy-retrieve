@@ -16,25 +16,7 @@ const externalServiceRegistration = regAcc.getTypeByName('ExternalServiceRegistr
 const MDAPI_XML_NAME = 'myESR.externalServiceRegistration';
 const SOURCE_XML_NAME = 'myESR.externalServiceRegistration-meta.xml';
 
-export const MD_FORMAT_ESR = new SourceComponent(
-  {
-    name: 'myESR',
-    type: externalServiceRegistration,
-    xml: join('externalServiceRegistrations', MDAPI_XML_NAME),
-  },
-  new VirtualTreeContainer([
-    {
-      dirPath: 'externalServiceRegistrations',
-      children: [
-        {
-          name: MDAPI_XML_NAME,
-          data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
-<ExternalServiceRegistration xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>external service</description>
-    <label>OpenAPIChallenge</label>
-    <namedCredentialReference>ncred</namedCredentialReference>
-    <registrationProviderType>Custom</registrationProviderType>
-    <schema>openapi: 3.0.0
+export const SAMPLE_OAS_DOC = `openapi: 3.0.0
 info:
   title: OpenAPIChallenge
   description: Now is the time for Apex OpenAPI
@@ -82,7 +64,28 @@ paths:
         description: need to figure out what this means
         operationId: getWelcomeMessage
         responses: {}
-</schema>
+`;
+
+export const MD_FORMAT_ESR = new SourceComponent(
+  {
+    name: 'myESR',
+    type: externalServiceRegistration,
+    xml: join('externalServiceRegistrations', MDAPI_XML_NAME),
+  },
+  new VirtualTreeContainer([
+    {
+      dirPath: 'externalServiceRegistrations',
+      children: [
+        {
+          name: MDAPI_XML_NAME,
+          data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<ExternalServiceRegistration xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>external service</description>
+    <label>OpenAPIChallenge</label>
+    <namedCredentialReference>ncred</namedCredentialReference>
+    <registrationProviderType>Custom</registrationProviderType>
+    <schema>${SAMPLE_OAS_DOC}
+    </schema>
     <schemaType>OpenApi3</schemaType>
     <schemaUploadFileExtension>yaml</schemaUploadFileExtension>
     <schemaUploadFileName>OpenAPIChallenge</schemaUploadFileName>
@@ -102,7 +105,7 @@ export const SOURCE_FORMAT_ESR = new SourceComponent(
   {
     name: 'myESR',
     type: externalServiceRegistration,
-    xml: join('externalServiceRegistrations', SOURCE_XML_NAME),
+    xml: join('main', 'default', 'externalServiceRegistrations', SOURCE_XML_NAME),
   },
   new VirtualTreeContainer([
     {
@@ -128,55 +131,7 @@ export const SOURCE_FORMAT_ESR = new SourceComponent(
         },
         {
           name: 'myESR.yaml',
-          data: Buffer.from(`openapi: 3.0.0
-info:
-  title: OpenAPIChallenge
-  description: Now is the time for Apex OpenAPI
-  version: 63.1.0
-paths:
-  /getAccountSummaryWithOpportunities:
-    operations:
-      get:
-        summary: need to figure out what this means
-        description: need to figure out what this means
-        operationId: getAccountSummaryWithOpportunities
-        responses: {}
-  /getActiveCases:
-    operations:
-      get:
-        summary: need to figure out what this means
-        description: need to figure out what this means
-        operationId: getActiveCases
-        responses: {}
-  /getAllAccounts:
-    operations:
-      get:
-        summary: need to figure out what this means
-        description: need to figure out what this means
-        operationId: getAllAccounts
-        responses: {}
-  /getUserDetails:
-    operations:
-      get:
-        summary: need to figure out what this means
-        description: need to figure out what this means
-        operationId: getUserDetails
-        responses: {}
-  /updateContactDetails:
-    operations:
-      get:
-        summary: need to figure out what this means
-        description: need to figure out what this means
-        operationId: updateContactDetails
-        responses: {}
-  /getWelcomeMessage:
-    operations:
-      get:
-        summary: need to figure out what this means
-        description: need to figure out what this means
-        operationId: getWelcomeMessage
-        responses: {}
-`),
+          data: Buffer.from(SAMPLE_OAS_DOC),
         },
       ],
     },

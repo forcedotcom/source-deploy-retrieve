@@ -23,7 +23,6 @@ type ESR = JsonMap & {
 const xmlDeclaration = '<?xml version="1.0" encoding="UTF-8"?>\n';
 
 export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadataTransformer {
-  // eslint-disable-next-line @typescript-eslint/require-await,class-methods-use-this,@typescript-eslint/no-unused-vars
   public async toSourceFormat(input: {
     component: SourceComponent;
     mergeWith?: SourceComponent | undefined;
@@ -75,7 +74,6 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
     return writeInfos;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/require-await
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     // only need to do this once
     this.context.decomposedExternalServiceRegistration.externalServiceRegistration ??=
@@ -87,13 +85,11 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
     const schemaFileName = `${component.fullName}.yaml`; // or .json based on your logic
     const schemaFilePath = path.join(path.dirname(esrFilePath ?? ''), schemaFileName);
     // Add schema content back to ESR content
-    esrContent.schema = await fs.readFile(schemaFilePath, 'utf8');
+    esrContent.schema = await this.readSchemaFile(schemaFilePath);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     // Write combined content back to md format
-
     this.context.decomposedExternalServiceRegistration.transactionState.esrRecords.set(component.fullName, {
-      // @ts-expect-error abdc
+      // @ts-expect-error Object literal may only specify known properties
       [XML_NS_KEY]: XML_DECL,
       ...esrContent,
     });
@@ -101,7 +97,12 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
     return [];
   }
 
-  // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
+  // eslint-disable-next-line class-methods-use-this
+  public readSchemaFile(schemaFilePath: string): Promise<string> {
+    return fs.readFile(schemaFilePath, 'utf8');
+  }
+
+  // eslint-disable-next-line class-methods-use-this
   private getOutputFolder(format: string, component: SourceComponent, mergeWith?: SourceComponent): string {
     const base = format === 'source' ? DEFAULT_PACKAGE_ROOT_SFDX : '';
     const { type } = mergeWith ?? component;

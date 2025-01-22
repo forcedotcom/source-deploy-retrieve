@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { Readable } from 'node:stream';
 import * as yaml from 'yaml';
@@ -85,7 +84,7 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
     const schemaFileName = `${component.fullName}.yaml`; // or .json based on your logic
     const schemaFilePath = path.join(path.dirname(esrFilePath ?? ''), schemaFileName);
     // Add schema content back to ESR content
-    esrContent.schema = await this.readSchemaFile(schemaFilePath);
+    esrContent.schema = (await component.tree.readFile(schemaFilePath)).toString();
 
     // Write combined content back to md format
     this.context.decomposedExternalServiceRegistration.transactionState.esrRecords.set(component.fullName, {
@@ -95,11 +94,6 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
     });
 
     return [];
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  public readSchemaFile(schemaFilePath: string): Promise<string> {
-    return fs.readFile(schemaFilePath, 'utf8');
   }
 
   // eslint-disable-next-line class-methods-use-this

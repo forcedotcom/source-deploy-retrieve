@@ -32,7 +32,7 @@ describe('decompose Sharing Rules via preset', () => {
     for (const file of sourceFiles) {
       await fileSnap(file, testDir);
     }
-    await dirsAreIdentical(
+    dirsAreIdentical(
       path.join(testDir, FORCE_APP),
       path.join(testDir, '__snapshots__', 'verify-source-files.expected', FORCE_APP)
     );

@@ -52,9 +52,6 @@ describe('DecomposeExternalServiceRegistrationTransformer', () => {
 
     beforeEach(() => {
       sandbox.stub(VirtualTreeContainer.prototype, 'readFileSync').returns(Buffer.from(SAMPLE_OAS_DOC));
-      sandbox
-        .stub(DecomposeExternalServiceRegistrationTransformer.prototype, 'readSchemaFile')
-        .resolves(SAMPLE_OAS_DOC);
     });
 
     afterEach(() => {

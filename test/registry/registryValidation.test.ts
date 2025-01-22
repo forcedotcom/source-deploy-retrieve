@@ -282,6 +282,7 @@ describe('will run preset tests', () => {
                 'bundle',
                 'matchingContentFile',
                 'decomposed',
+                'partiallyDecomposed',
                 'digitalExperience',
               ]).includes(type.strategies?.adapter);
             });

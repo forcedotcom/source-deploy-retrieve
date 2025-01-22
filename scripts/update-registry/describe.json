@@ -4931,5 +4931,13 @@
     "inFolder": false,
     "metaFile": false,
     "hasChildren": false
+  },
+  "LightningTypeBundle": {
+    "name": "LightningTypeBundle",
+    "directoryName": "lightningTypes",
+    "suffix": "lightningType",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
   }
 }

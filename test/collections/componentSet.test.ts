@@ -31,12 +31,11 @@ import {
   SourceComponent,
   ZipTreeContainer,
 } from '../../src';
-import { decomposedtoplevel, matchingContentFile, mixedContentSingleFile, digitalExperienceBundle } from '../mock';
+import { decomposedtoplevel, digitalExperienceBundle, matchingContentFile, mixedContentSingleFile } from '../mock';
 import { MATCHING_RULES_COMPONENT } from '../mock/type-constants/customlabelsConstant';
 import * as manifestFiles from '../mock/manifestConstants';
-import { testApiVersionAsString } from '../mock/manifestConstants';
+import { testApiVersion, testApiVersionAsString } from '../mock/manifestConstants';
 import * as coverage from '../../src/registry/coverage';
-import { testApiVersion } from '../mock/manifestConstants';
 
 const registryAccess = new RegistryAccess();
 
@@ -1248,6 +1247,32 @@ describe('ComponentSet', () => {
       set.add(component);
 
       expect(Array.from(set)).to.deep.equal([component]);
+    });
+
+    it('should keep manifestComponents/components in sync', async () => {
+      const set = new ComponentSet(undefined, registryAccess);
+      const jerryComponent = { fullName: 'Jerry', type: registry.types.staticresource };
+      const billComponent = new SourceComponent({ name: 'Bill', type: registry.types.staticresource });
+      const philComponent = new SourceComponent({ name: 'Phil', type: registry.types.staticresource });
+
+      expect(set.size).to.equal(0);
+
+      set.add(jerryComponent);
+
+      expect(set.size).to.equal(1); // @ts-ignore - private
+      expect(set.manifestComponents.size).to.equal(1); // @ts-ignore - private
+      expect(set.components.size).to.equal(1);
+      const allToDeployObject = await set.getObject();
+
+      set.add(philComponent, DestructiveChangesType.PRE); // @ts-ignore - private
+      expect(set.manifestComponents.size).to.equal(1); // @ts-ignore - private
+      expect(set.components.size).to.equal(2);
+
+      set.add(billComponent, DestructiveChangesType.POST); // @ts-ignore - private
+      expect(set.manifestComponents.size).to.equal(1); // @ts-ignore - private
+      expect(set.components.size).to.equal(3);
+
+      expect(await set.getObject()).to.deep.equal(allToDeployObject);
     });
 
     it('should add metadata component marked for delete to package components', () => {

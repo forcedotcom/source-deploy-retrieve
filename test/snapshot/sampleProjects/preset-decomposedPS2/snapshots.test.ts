@@ -53,6 +53,27 @@ describe('fully decomposed permission set via decomposePermissionSetBeta2', () =
       fs.promises.readFile(path.join(testDir, MDAPI_OUT, 'permissionsets', 'ebikes.permissionset'), 'utf8'),
     ]);
     compareTwoXml(old2, updated2);
+
+    const [old3, updated3] = await Promise.all([
+      fs.promises.readFile(
+        path.join(testDir, 'originalMdapi', 'permissionsets', 'noObjectSettings.permissionset'),
+        'utf8'
+      ),
+      fs.promises.readFile(path.join(testDir, MDAPI_OUT, 'permissionsets', 'noObjectSettings.permissionset'), 'utf8'),
+    ]);
+    compareTwoXml(old3, updated3);
+
+    const [old4, updated4] = await Promise.all([
+      fs.promises.readFile(
+        path.join(testDir, 'originalMdapi', 'permissionsets', 'withCustomPermission.permissionset'),
+        'utf8'
+      ),
+      fs.promises.readFile(
+        path.join(testDir, MDAPI_OUT, 'permissionsets', 'withCustomPermission.permissionset'),
+        'utf8'
+      ),
+    ]);
+    compareTwoXml(old4, updated4);
   });
 
   after(async () => {

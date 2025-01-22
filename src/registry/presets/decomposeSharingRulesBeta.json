@@ -30,7 +30,6 @@
           "sharingcriteriarule": {
             "directoryName": "sharingCriteriaRules",
             "id": "sharingcriteriarule",
-            "isAddressable": false,
             "name": "SharingCriteriaRule",
             "suffix": "sharingCriteriaRule",
             "uniqueIdElement": "fullName",
@@ -39,7 +38,6 @@
           "sharingguestrule": {
             "directoryName": "sharingGuestRules",
             "id": "sharingguestrule",
-            "isAddressable": false,
             "name": "SharingGuestRule",
             "suffix": "sharingGuestRule",
             "uniqueIdElement": "fullName",
@@ -48,7 +46,6 @@
           "sharingownerrule": {
             "directoryName": "sharingOwnerRules",
             "id": "sharingownerrule",
-            "isAddressable": false,
             "name": "SharingOwnerRule",
             "suffix": "sharingOwnerRule",
             "uniqueIdElement": "fullName",
@@ -57,7 +54,6 @@
           "sharingterritoryrule": {
             "directoryName": "sharingTerritoryRules",
             "id": "sharingterritoryrule",
-            "isAddressable": false,
             "name": "SharingTerritoryRule",
             "suffix": "sharingTerritoryRule",
             "uniqueIdElement": "fullName",

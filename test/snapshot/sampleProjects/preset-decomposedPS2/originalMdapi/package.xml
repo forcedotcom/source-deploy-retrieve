@@ -4,6 +4,7 @@
         <members>ebikes</members>
         <members>dreamhouse</members>
         <members>noObjectSettings</members>
+        <members>withCustomPermission</members>
         <name>PermissionSet</name>
     </types>
     <version>59.0</version>

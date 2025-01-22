@@ -123,7 +123,7 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
     return [...writeInfosForChildren, ...writeInfoForParent];
   }
 }
-/** for a component, parse the xml and create an json object with contents, child typeId, etc */
+/** for a component, parse the xml and create a json object with contents, child typeId, etc */
 const getComposedMetadataEntries = async (component: SourceComponent): Promise<ComposedMetadata[]> =>
   // composedMetadata might be undefined if you call toSourceFormat() from a non-source-backed Component
   Object.entries((await component.parseXml())[component.type.name] ?? {}).map(

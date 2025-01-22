@@ -4,7 +4,10 @@
       "children": {
         "types": {
           "yaml": {
-            "directoryName": "",
+            "strategies": {
+              "adapter": "partiallyDecomposed"
+            },
+            "directoryName": "externalServiceRegistrations",
             "id": "yaml",
             "isAddressable": false,
             "name": "OAS Yaml Schema",
@@ -21,7 +24,7 @@
       "ignoreParsedFullName": false,
       "name": "ExternalServiceRegistration",
       "strategies": {
-        "adapter": "decomposed",
+        "adapter": "partiallyDecomposed",
         "decomposition": "topLevel",
         "transformer": "decomposeExternalServiceRegistration"
       },

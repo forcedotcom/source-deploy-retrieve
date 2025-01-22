@@ -16,6 +16,7 @@ import { MatchingContentSourceAdapter } from './matchingContentSourceAdapter';
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { DefaultSourceAdapter } from './defaultSourceAdapter';
 import { DigitalExperienceSourceAdapter } from './digitalExperienceSourceAdapter';
+import { PartialDecomposedAdapter } from './partialDecomposedAdapter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -42,6 +43,8 @@ export class SourceAdapterFactory {
         return new MixedContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case 'digitalExperience':
         return new DigitalExperienceSourceAdapter(type, this.registry, forceIgnore, this.tree);
+      case 'partiallyDecomposed':
+        return new PartialDecomposedAdapter(type, this.registry, forceIgnore, this.tree);
       case 'default':
       case undefined:
         return new DefaultSourceAdapter(type, this.registry, forceIgnore, this.tree);

@@ -13,8 +13,11 @@ const regAcc = new RegistryAccess(getEffectiveRegistry({ presets: [presetMap.get
 
 const externalServiceRegistration = regAcc.getTypeByName('ExternalServiceRegistration');
 
-const MDAPI_XML_NAME = 'myESR.externalServiceRegistration';
-const SOURCE_XML_NAME = 'myESR.externalServiceRegistration-meta.xml';
+export const MDAPI_XML = 'myESR.externalServiceRegistration';
+export const SOURCE_META_FILE = 'myESR.externalServiceRegistration-meta.xml';
+export const CHILD_YAML = 'myESR.yaml';
+
+export const TYPE_DIRECTORY = 'externalServiceRegistrations';
 
 export const SAMPLE_OAS_DOC = `openapi: 3.0.0
 info:
@@ -70,14 +73,14 @@ export const MD_FORMAT_ESR = new SourceComponent(
   {
     name: 'myESR',
     type: externalServiceRegistration,
-    xml: join('externalServiceRegistrations', MDAPI_XML_NAME),
+    xml: join('externalServiceRegistrations', MDAPI_XML),
   },
   new VirtualTreeContainer([
     {
       dirPath: 'externalServiceRegistrations',
       children: [
         {
-          name: MDAPI_XML_NAME,
+          name: MDAPI_XML,
           data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
 <ExternalServiceRegistration xmlns="http://soap.sforce.com/2006/04/metadata">
     <description>external service</description>
@@ -105,7 +108,7 @@ export const SOURCE_FORMAT_ESR = new SourceComponent(
   {
     name: 'myESR',
     type: externalServiceRegistration,
-    xml: join('main', 'default', 'externalServiceRegistrations', SOURCE_XML_NAME),
+    xml: join('main', 'default', 'externalServiceRegistrations', SOURCE_META_FILE),
   },
   new VirtualTreeContainer([
     {

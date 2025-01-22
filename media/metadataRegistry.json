@@ -65,7 +65,8 @@
     "sites": "customsite",
     "staticresources": "staticresource",
     "waveTemplates": "wavetemplatebundle",
-    "appTemplates": "appframeworktemplatebundle"
+    "appTemplates": "appframeworktemplatebundle",
+    "lightningTypes": "lightningtypebundle"
   },
   "suffixes": {
     "Canvas": "canvasmetadata",
@@ -4744,6 +4745,18 @@
       "directoryName": "unified-analytics",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "lightningtypebundle": {
+      "id": "lightningtypebundle",
+      "name": "LightningTypeBundle",
+      "directoryName": "lightningTypes",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "metaFileSuffix": "schema.json",
+      "strategies": {
+        "adapter": "bundle"
+      },
+      "supportsPartialDelete": true
     }
   }
 }

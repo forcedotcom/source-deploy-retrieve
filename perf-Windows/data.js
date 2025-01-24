@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1737742317103,
+  "lastUpdate": 1737744345917,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -64341,6 +64341,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 13867,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1f7d429b4e7b5f58e4da3dd0eacf7849d4ffb566",
+          "message": "Wr/decompose esr (#1492)\n\n* chore: reset snapshots to main\n\n* fix: deploy ESR yaml and -meta\n\n* test: fix registry test\n\n* chore: bump core\n\n* chore: always decompose to yaml\n\nThe schema property contents in an esr can be either yaml of json.\nFor simplicity, given the property alwasy represents an Open API spec, the decomposed format of schema will be yaml.\nRecomposition will use an existing xml property, schemaUploadFileExtension, to determine the format when build the MD type.\n\n* chore: add missing expected artifacts\n\n---------\n\nCo-authored-by: peternhale <peter.hale@salesforce.com>",
+          "timestamp": "2025-01-24T11:38:48-07:00",
+          "tree_id": "96cf3915f5fe897d2d4238db24500f0cb9528440",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/1f7d429b4e7b5f58e4da3dd0eacf7849d4ffb566"
+        },
+        "date": 1737744328363,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 682,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4296,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3315,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 6087,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1453,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 8496,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 5399,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 8525,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 2604,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 14636,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 9017,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 14136,
             "unit": "ms"
           }
         ]

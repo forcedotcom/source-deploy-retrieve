@@ -68,7 +68,7 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
   }
 
   /**
-   * will decomopse a .permissionset into a directory containing files, and an 'objectSettings' folder for object-specific settings
+   * will decompose a .permissionset into a directory containing files, and an 'objectSettings' folder for object-specific settings
    *
    * @param {SourceComponent} component A SourceComponent representing a metadata-formatted permission set
    * @param {SourceComponent | undefined} mergeWith any existing source-formatted permission sets to be merged with, think existing source merging with new information from a retrieve

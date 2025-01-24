@@ -25,8 +25,8 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^8.8.0",
-    "@salesforce/kit": "^3.2.2",
+    "@salesforce/core": "^8.8.2",
+    "@salesforce/kit": "^3.2.3",
     "@salesforce/ts-types": "^2.0.12",
     "fast-levenshtein": "^3.0.0",
     "fast-xml-parser": "^4.5.1",
@@ -37,7 +37,8 @@
     "jszip": "^3.10.1",
     "mime": "2.6.0",
     "minimatch": "^9.0.5",
-    "proxy-agent": "^6.4.0"
+    "proxy-agent": "^6.4.0",
+    "yaml": "^2.6.1"
   },
   "devDependencies": {
     "@jsforce/jsforce-node": "^3.6.3",

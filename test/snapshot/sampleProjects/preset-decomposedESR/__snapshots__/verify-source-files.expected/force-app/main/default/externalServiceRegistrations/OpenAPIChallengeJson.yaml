@@ -1,0 +1,42 @@
+openapi: 3.0.0
+info:
+  title: OpenAPIChallengeJson
+  description: Now is the time for Apex OpenAPI
+  version: 63.1.0
+paths:
+  /getAccountSummaryWithOpportunities:
+    get:
+      summary: need to figure out what this means
+      description: need to figure out what this means
+      operationId: getAccountSummaryWithOpportunities
+      responses: {}
+  /getActiveCases:
+    get:
+      summary: need to figure out what this means
+      description: need to figure out what this means
+      operationId: getActiveCases
+      responses: {}
+  /getAllAccounts:
+    get:
+      summary: need to figure out what this means
+      description: need to figure out what this means
+      operationId: getAllAccounts
+      responses: {}
+  /getUserDetails:
+    get:
+      summary: need to figure out what this means
+      description: need to figure out what this means
+      operationId: getUserDetails
+      responses: {}
+  /updateContactDetails:
+    get:
+      summary: need to figure out what this means
+      description: need to figure out what this means
+      operationId: updateContactDetails
+      responses: {}
+  /getWelcomeMessage:
+    get:
+      summary: need to figure out what this means
+      description: need to figure out what this means
+      operationId: getWelcomeMessage
+      responses: {}

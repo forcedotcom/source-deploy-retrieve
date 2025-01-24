@@ -32,7 +32,7 @@ describe('Territory2 types', () => {
     for (const file of sourceFiles) {
       await fileSnap(file, testDir);
     }
-    dirsAreIdentical(
+    await dirsAreIdentical(
       path.join(testDir, FORCE_APP),
       path.join(testDir, '__snapshots__', 'verify-source-files.expected', FORCE_APP)
     );

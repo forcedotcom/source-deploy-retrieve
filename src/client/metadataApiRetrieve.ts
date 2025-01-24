@@ -41,6 +41,7 @@ export class RetrieveResult implements MetadataTransferResult {
    * @param response The metadata retrieve response from the server
    * @param components The ComponentSet of retrieved source components
    * @param localComponents The ComponentSet used to create the retrieve request
+   * @param partialDeleteFileResponses any partially deleted file responses
    */
   public constructor(
     public readonly response: MetadataApiRetrieveStatus,

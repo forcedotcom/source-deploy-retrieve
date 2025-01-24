@@ -287,7 +287,7 @@ export class SourceComponent implements MetadataComponent {
   }
 
   private parse<T extends JsonMap>(contents: string): T {
-    const parsed = parser.parse(String(contents)) as T;
+    const parsed = parser.parse(contents) as T;
     const [firstElement] = Object.keys(parsed);
     if (firstElement === this.type.name) {
       return parsed;
@@ -390,12 +390,12 @@ export class SourceComponent implements MetadataComponent {
     } else {
       for (const child of this.treeContainer.readDirectory(fsPath)) {
         const childPath = join(fsPath, child);
-        if (this.forceIgnore.denies(childPath)) {
-          continue;
-        } else if (this.treeContainer.isDirectory(childPath)) {
-          yield* this.walk(childPath);
-        } else {
-          yield childPath;
+        if (!this.forceIgnore.denies(childPath)) {
+          if (this.treeContainer.isDirectory(childPath)) {
+            yield* this.walk(childPath);
+          } else {
+            yield childPath;
+          }
         }
       }
     }

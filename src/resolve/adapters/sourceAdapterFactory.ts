@@ -21,8 +21,8 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export class SourceAdapterFactory {
-  private registry: RegistryAccess;
-  private tree: TreeContainer;
+  private readonly registry: RegistryAccess;
+  private readonly tree: TreeContainer;
 
   public constructor(registry: RegistryAccess, tree: TreeContainer) {
     this.registry = registry;

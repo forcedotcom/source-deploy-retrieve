@@ -271,7 +271,7 @@ const getSuggestionsForUnresolvedTypes =
           ...guesses.map((guess) =>
             messages.getMessage('suggest_type_did_you_mean', [
               guess.suffixGuess,
-              typeof metaSuffix === 'string' || closeMetaSuffix ? '-meta.xml' : '',
+              typeof metaSuffix === 'string' || closeMetaSuffix ? META_XML_SUFFIX : '',
               guess.metadataTypeGuess.name,
             ])
           ),

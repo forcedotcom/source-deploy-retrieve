@@ -46,7 +46,7 @@ export abstract class MetadataTransfer<
   private transferId: Options['id'];
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
-  private apiVersion?: string;
+  private readonly apiVersion?: string;
 
   public constructor({ usernameOrConnection, components, apiVersion, id }: Options) {
     this.usernameOrConnection = usernameOrConnection;

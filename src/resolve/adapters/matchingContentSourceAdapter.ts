@@ -39,8 +39,9 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
 
   protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
     let sourcePath: SourcePath | undefined;
+    const toBeReturned = component;
 
-    if (component.xml === trigger) {
+    if (toBeReturned.xml === trigger) {
       const fsPath = removeMetaXmlSuffix(trigger);
       if (this.tree.exists(fsPath)) {
         sourcePath = fsPath;
@@ -58,8 +59,8 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
       throw messages.createError('noSourceIgnore', [this.type.name, sourcePath]);
     }
 
-    component.content = sourcePath;
-    return component;
+    toBeReturned.content = sourcePath;
+    return toBeReturned;
   }
 }
 

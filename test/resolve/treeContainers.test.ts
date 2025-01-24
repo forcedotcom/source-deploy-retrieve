@@ -119,10 +119,21 @@ describe('Tree Containers', () => {
     it('should use expected Node API for readFileSync', () => {
       const readFileStub = env.stub(fs, 'readFileSync');
       // @ts-ignore wants Dirents but string[] works as well
-      readFileStub.withArgs(path).returns(Buffer.from('test'));
-      const data = tree.readFileSync(path);
+      readFileStub.withArgs('myNewPath').returns(Buffer.from('test'));
+      const data = tree.readFileSync('myNewPath');
       expect(data.toString()).to.deep.equal('test');
       expect(readFileStub.calledOnce).to.be.true;
+    });
+
+    it('should use cached value for readFileSync', () => {
+      const readFileStub = env.stub(fs, 'readFileSync');
+      // @ts-ignore wants Dirents but string[] works as well
+      readFileStub.withArgs('myNewPath').returns(Buffer.from('test'));
+      const data = tree.readFileSync('myNewPath');
+      // returns same value
+      expect(data.toString()).to.deep.equal('test');
+      // didn't re-read the file
+      expect(readFileStub.called).to.be.false;
     });
 
     it('should use expected Node API for stream', () => {

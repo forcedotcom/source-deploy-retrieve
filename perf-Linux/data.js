@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1737742082706,
+  "lastUpdate": 1737744041376,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -69687,6 +69687,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 6408,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1f7d429b4e7b5f58e4da3dd0eacf7849d4ffb566",
+          "message": "Wr/decompose esr (#1492)\n\n* chore: reset snapshots to main\n\n* fix: deploy ESR yaml and -meta\n\n* test: fix registry test\n\n* chore: bump core\n\n* chore: always decompose to yaml\n\nThe schema property contents in an esr can be either yaml of json.\nFor simplicity, given the property alwasy represents an Open API spec, the decomposed format of schema will be yaml.\nRecomposition will use an existing xml property, schemaUploadFileExtension, to determine the format when build the MD type.\n\n* chore: add missing expected artifacts\n\n---------\n\nCo-authored-by: peternhale <peter.hale@salesforce.com>",
+          "timestamp": "2025-01-24T11:38:48-07:00",
+          "tree_id": "96cf3915f5fe897d2d4238db24500f0cb9528440",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/1f7d429b4e7b5f58e4da3dd0eacf7849d4ffb566"
+        },
+        "date": 1737744034033,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 227,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2056,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 1831,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 2638,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 463,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 3644,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 2902,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 3477,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 817,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 6387,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 5073,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 6302,
             "unit": "ms"
           }
         ]

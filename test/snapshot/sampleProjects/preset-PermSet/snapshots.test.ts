@@ -31,7 +31,7 @@ describe('fully decomposed permission set via preset', () => {
     for (const file of sourceFiles) {
       await fileSnap(file, testDir);
     }
-    await dirsAreIdentical(
+    dirsAreIdentical(
       path.join(testDir, 'force-app'),
       path.join(testDir, '__snapshots__', 'verify-source-files.expected', 'force-app')
     );

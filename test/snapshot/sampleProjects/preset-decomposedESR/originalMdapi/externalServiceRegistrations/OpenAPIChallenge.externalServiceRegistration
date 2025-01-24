@@ -3,6 +3,7 @@
     <label>BankService</label>
     <namedCredential>ntest</namedCredential>
     <registrationProviderType>Custom</registrationProviderType>
+    <schemaUploadFileExtension>yaml</schemaUploadFileExtension>
     <schema>
 openapi: 3.0.0
 info:

@@ -1,15 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ExternalServiceRegistration xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label>BankService</label>
-    <namedCredential>ntest</namedCredential>
-    <registrationProviderType>Custom</registrationProviderType>
-    <schemaType>OpenApi3</schemaType>
-    <schemaUrl>/accounts/schema</schemaUrl>
-    <status>Complete</status>
-    <systemVersion>3</systemVersion>
-    <schema>openapi: 3.0.0
+openapi: 3.0.0
 info:
-  title: OpenAPIChallenge
+  title: OpenAPIChallengeJson
   description: Now is the time for Apex OpenAPI
   version: 63.1.0
 paths:
@@ -48,5 +39,4 @@ paths:
       summary: need to figure out what this means
       description: need to figure out what this means
       operationId: getWelcomeMessage
-      responses: {}</schema>
-</ExternalServiceRegistration>
+      responses: {}

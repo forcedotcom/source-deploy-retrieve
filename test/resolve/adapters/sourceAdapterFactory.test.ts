@@ -6,7 +6,7 @@
  */
 import { assert, expect } from 'chai';
 import { Messages, SfError } from '@salesforce/core';
-import { MetadataType, registry, RegistryAccess, VirtualTreeContainer } from '../../../src';
+import { MetadataType, presetMap, registry, RegistryAccess, VirtualTreeContainer } from '../../../src';
 import {
   BundleSourceAdapter,
   DecomposedSourceAdapter,
@@ -15,7 +15,8 @@ import {
   MixedContentSourceAdapter,
 } from '../../../src/resolve/adapters';
 import { SourceAdapterFactory } from '../../../src/resolve/adapters/sourceAdapterFactory';
-import { DigitalExperienceSourceAdapter } from '../../../src/resolve/adapters/digitalExperienceSourceAdapter';
+import { DigitalExperienceSourceAdapter } from '../../../src/resolve/adapters';
+import { PartialDecomposedAdapter } from '../../../src/resolve/adapters/partialDecomposedAdapter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -46,7 +47,13 @@ describe('SourceAdapterFactory', () => {
     const type = registry.types.staticresource;
     const adapter = factory.getAdapter(type);
     expect(adapter).to.deep.equal(new MixedContentSourceAdapter(type, registryAccess, undefined, tree));
-    tree;
+  });
+
+  it('Should return PartiallyDecomposedAdapter for partiallyDecomposed AdapterId', () => {
+    const type = presetMap.get('decomposeExternalServiceRegistrationBeta');
+    const adapter = factory.getAdapter(type!.types['externalserviceregistration']);
+    // unable to deep.equal asserts because of different registries loaded with preset value
+    expect(adapter instanceof PartialDecomposedAdapter).to.be.true;
   });
 
   it('Should return MatchingContentSourceAdapter for matchingContentFile AdapterId', () => {

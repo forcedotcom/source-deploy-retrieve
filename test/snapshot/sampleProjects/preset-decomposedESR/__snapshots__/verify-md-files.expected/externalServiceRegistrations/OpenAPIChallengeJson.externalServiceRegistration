@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExternalServiceRegistration xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>BankServiceJson</label>
+    <namedCredential>ntest</namedCredential>
+    <registrationProviderType>Custom</registrationProviderType>
+    <schemaUploadFileExtension>json</schemaUploadFileExtension>
+    <schemaType>OpenApi3</schemaType>
+    <schemaUrl>/accounts/schema</schemaUrl>
+    <status>Complete</status>
+    <systemVersion>3</systemVersion>
+    <schema>{
+  &quot;openapi&quot;: &quot;3.0.0&quot;,
+  &quot;info&quot;: {
+    &quot;title&quot;: &quot;OpenAPIChallengeJson&quot;,
+    &quot;description&quot;: &quot;Now is the time for Apex OpenAPI&quot;,
+    &quot;version&quot;: &quot;63.1.0&quot;
+  },
+  &quot;paths&quot;: {
+    &quot;/getAccountSummaryWithOpportunities&quot;: {
+      &quot;get&quot;: {
+        &quot;summary&quot;: &quot;need to figure out what this means&quot;,
+        &quot;description&quot;: &quot;need to figure out what this means&quot;,
+        &quot;operationId&quot;: &quot;getAccountSummaryWithOpportunities&quot;,
+        &quot;responses&quot;: {}
+      }
+    },
+    &quot;/getActiveCases&quot;: {
+      &quot;get&quot;: {
+        &quot;summary&quot;: &quot;need to figure out what this means&quot;,
+        &quot;description&quot;: &quot;need to figure out what this means&quot;,
+        &quot;operationId&quot;: &quot;getActiveCases&quot;,
+        &quot;responses&quot;: {}
+      }
+    },
+    &quot;/getAllAccounts&quot;: {
+      &quot;get&quot;: {
+        &quot;summary&quot;: &quot;need to figure out what this means&quot;,
+        &quot;description&quot;: &quot;need to figure out what this means&quot;,
+        &quot;operationId&quot;: &quot;getAllAccounts&quot;,
+        &quot;responses&quot;: {}
+      }
+    },
+    &quot;/getUserDetails&quot;: {
+      &quot;get&quot;: {
+        &quot;summary&quot;: &quot;need to figure out what this means&quot;,
+        &quot;description&quot;: &quot;need to figure out what this means&quot;,
+        &quot;operationId&quot;: &quot;getUserDetails&quot;,
+        &quot;responses&quot;: {}
+      }
+    },
+    &quot;/updateContactDetails&quot;: {
+      &quot;get&quot;: {
+        &quot;summary&quot;: &quot;need to figure out what this means&quot;,
+        &quot;description&quot;: &quot;need to figure out what this means&quot;,
+        &quot;operationId&quot;: &quot;updateContactDetails&quot;,
+        &quot;responses&quot;: {}
+      }
+    },
+    &quot;/getWelcomeMessage&quot;: {
+      &quot;get&quot;: {
+        &quot;summary&quot;: &quot;need to figure out what this means&quot;,
+        &quot;description&quot;: &quot;need to figure out what this means&quot;,
+        &quot;operationId&quot;: &quot;getWelcomeMessage&quot;,
+        &quot;responses&quot;: {}
+      }
+    }
+  }
+}</schema>
+</ExternalServiceRegistration>

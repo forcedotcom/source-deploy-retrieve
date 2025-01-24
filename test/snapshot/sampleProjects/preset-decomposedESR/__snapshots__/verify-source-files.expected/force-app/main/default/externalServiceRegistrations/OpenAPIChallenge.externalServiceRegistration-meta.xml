@@ -3,6 +3,7 @@
     <label>BankService</label>
     <namedCredential>ntest</namedCredential>
     <registrationProviderType>Custom</registrationProviderType>
+    <schemaUploadFileExtension>yaml</schemaUploadFileExtension>
     <schemaType>OpenApi3</schemaType>
     <schemaUrl>/accounts/schema</schemaUrl>
     <status>Complete</status>

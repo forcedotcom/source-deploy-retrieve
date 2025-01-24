@@ -139,7 +139,14 @@ export type MetadataType = {
    * Configuration for resolving and converting components of the type.
    */
   strategies?: {
-    adapter: 'mixedContent' | 'matchingContentFile' | 'decomposed' | 'digitalExperience' | 'bundle' | 'default';
+    adapter:
+      | 'mixedContent'
+      | 'matchingContentFile'
+      | 'decomposed'
+      | 'digitalExperience'
+      | 'bundle'
+      | 'default'
+      | 'partiallyDecomposed';
     transformer?:
       | 'decomposed'
       | 'staticResource'

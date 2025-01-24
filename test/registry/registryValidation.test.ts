@@ -10,7 +10,7 @@ import { metadataTypes as UnsupportedTypes } from '../../src/registry/nonSupport
 import { presets } from './presetTesting';
 
 describe('will run preset tests', () => {
-  for (const preset of presets.filter((preset) => preset.name.includes('decomposeExternalServiceRegistrationBeta'))) {
+  for (const preset of presets) {
     describe(`Registry Validation ${preset.name}`, () => {
       const registry = preset.registry;
       const typesWithChildren = Object.values(registry.types).filter((type) => type.children);
@@ -113,7 +113,7 @@ describe('will run preset tests', () => {
               if (registry.childTypes[typeId]) {
                 expect(registry.types[registry.childTypes[typeId]].children?.types[typeId].suffix).to.equal(suffix);
               } else if (registry.types[typeId].legacySuffix) {
-                // if there are legacy  suffixes, this could be either that or the regular suffix
+                // if there are legacy suffixes, this could be either that or the regular suffix
                 expect([registry.types[typeId].legacySuffix, registry.types[typeId].suffix]).to.include(suffix);
               } else {
                 expect(registry.types[typeId].suffix).to.equal(suffix);
@@ -340,7 +340,6 @@ describe('will run preset tests', () => {
                     'staticResource',
                     'decomposedPermissionSet',
                     'decomposedLabels',
-                    'decomposeExternalServiceRegistration',
                   ].includes(type.strategies.transformer)
                 ).to.be.true;
                 expect(type.strategies.recomposition).to.be.undefined;

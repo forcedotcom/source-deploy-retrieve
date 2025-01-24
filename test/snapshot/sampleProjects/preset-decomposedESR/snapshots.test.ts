@@ -66,8 +66,8 @@ describe('fully decomposed external service registration via decomposeExternalSe
 
   after(async () => {
     await Promise.all([
-      // fs.promises.rm(path.join(testDir, 'force-app'), { recursive: true, force: true }),
-      // fs.promises.rm(path.join(testDir, MDAPI_OUT), { recursive: true, force: true }),
+      fs.promises.rm(path.join(testDir, 'force-app'), { recursive: true, force: true }),
+      fs.promises.rm(path.join(testDir, MDAPI_OUT), { recursive: true, force: true }),
     ]);
   });
 });

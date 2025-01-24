@@ -9,7 +9,6 @@ import { Readable } from 'node:stream';
 import * as yaml from 'yaml';
 import { XMLBuilder } from 'fast-xml-parser';
 import type { ExternalServiceRegistration } from '@jsforce/jsforce-node/lib/api/metadata/schema';
-import { JsonMap } from '@salesforce/ts-types';
 import { WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve';
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX, XML_DECL, XML_NS_KEY } from '../../common';
@@ -17,12 +16,9 @@ import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 type SchemaType = 'json' | 'yaml';
 
-type ESR = JsonMap & {
-  ExternalServiceRegistration: ExternalServiceRegistration &
-    { schemaUploadFileExtension: SchemaType };
+type ESR = {
+  ExternalServiceRegistration: ExternalServiceRegistration & { schemaUploadFileExtension: SchemaType };
 };
-
-
 
 const xmlDeclaration = '<?xml version="1.0" encoding="UTF-8"?>\n';
 
@@ -42,7 +38,6 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
     const xmlContent = { ...(await component.parseXml<ESR>()).ExternalServiceRegistration };
 
     // Extract schema content
-    // eslint-disable-next-line no-underscore-dangle
     const schemaContent: string = xmlContent.schema ?? '';
     const schemaType = xmlContent.schemaUploadFileExtension ?? this.getSchemaType(schemaContent);
     const asYaml = schemaType === 'yaml' ? schemaContent : yaml.stringify(JSON.parse(schemaContent));
@@ -74,7 +69,6 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const source = xmlBuilder.build({ ExternalServiceRegistration: xmlContent });
     writeInfos.push({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       source: Readable.from(Buffer.from(xmlDeclaration + source)),
       output: esrFilePath,
     });
@@ -96,7 +90,10 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
     const schemaContent = (await component.tree.readFile(schemaFilePath)).toString();
     // Add schema content back to ESR content in its original format
     // if the original format was JSON, then convert the yaml to json otherwise leave as is
-    esrContent.schema = esrContent.schemaUploadFileExtension === 'json' ? JSON.stringify(yaml.parse(schemaContent), undefined, 2) : schemaContent;
+    esrContent.schema =
+      esrContent.schemaUploadFileExtension === 'json'
+        ? JSON.stringify(yaml.parse(schemaContent), undefined, 2)
+        : schemaContent;
 
     // Write combined content back to md format
     this.context.decomposedExternalServiceRegistration.transactionState.esrRecords.set(component.fullName, {

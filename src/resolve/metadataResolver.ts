@@ -390,7 +390,7 @@ const parseAsMetadata =
     if (tree.isDirectory(fsPath)) {
       return;
     }
-    return ['DigitalExperience', 'ExperiencePropertyTypeBundle']
+    return ['DigitalExperience', 'ExperiencePropertyTypeBundle', 'LightningTypeBundle']
       .map((type) => registry.getTypeByName(type))
       .find((type) => fsPath.split(sep).includes(type.directoryName))?.name;
   };

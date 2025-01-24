@@ -1,3 +1,12 @@
+# [12.13.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.12.4...12.13.0) (2025-01-22)
+
+
+### Features
+
+* sf cmd support for lightning type bundle ([#1487](https://github.com/forcedotcom/source-deploy-retrieve/issues/1487)) ([0821764](https://github.com/forcedotcom/source-deploy-retrieve/commit/082176475dfb73096e3b0d70dbeb988788ae6845))
+
+
+
 ## [12.12.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.12.3...12.12.4) (2025-01-21)
 
 ## [12.12.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.12.2...12.12.3) (2025-01-10)

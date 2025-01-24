@@ -680,6 +680,7 @@ v63 introduces the following new types. Here's their current level of support
 | RelatedRecordAccessDef                    | ❌      | Not supported, but support could be added                        |
 | TransactionProcessingType                 | ❌      | Not supported, but support could be added (but not for tracking) |
 
+
 ## Additional Types
 
 > The following types are supported by this library but not in the coverage reports for either version. These are typically

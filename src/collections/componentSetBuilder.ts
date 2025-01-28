@@ -78,7 +78,7 @@ const getLogger = (): Logger => {
   return logger;
 };
 
-const PSEUDO_TYPES = ['Agent'];
+const PSEUDO_TYPES = { AGENT: 'Agent' };
 
 export class ComponentSetBuilder {
   /**
@@ -387,11 +387,11 @@ const buildMapFromMetadata = (mdOption: MetadataOption, registry: RegistryAccess
 // Replace pseudo types with actual types.
 const replacePseudoTypes = async (mdEntries: string[], connection: Connection): Promise<string[]> => {
   const pseudoEntries: string[][] = [];
-  const replacedEntries: string[] = [];
+  let replacedEntries: string[] = [];
 
   mdEntries.map((rawEntry) => {
     const [typeName, ...name] = rawEntry.split(':');
-    if (PSEUDO_TYPES.includes(typeName)) {
+    if (Object.values(PSEUDO_TYPES).includes(typeName)) {
       pseudoEntries.push([typeName, name.join(':').trim()]);
     } else {
       replacedEntries.push(rawEntry);
@@ -404,9 +404,9 @@ const replacePseudoTypes = async (mdEntries: string[], connection: Connection): 
         const pseudoType = pseudoEntry[0];
         const pseudoName = pseudoEntry[1] || '*';
         getLogger().debug(`Converting pseudo-type ${pseudoType}:${pseudoName}`);
-        if (pseudoType === 'Agent') {
+        if (pseudoType === PSEUDO_TYPES.AGENT) {
           const agentMdEntries = await buildAgentMdEntries(pseudoName, connection);
-          agentMdEntries.map((e) => replacedEntries.push(e));
+          replacedEntries = [...replacedEntries, ...agentMdEntries];
         }
       })
     );

@@ -6,7 +6,7 @@
  */
 
 import * as path from 'node:path';
-import { Logger, Messages, SfError, StateAggregator } from '@salesforce/core';
+import { AuthInfo, Connection, Logger, Messages, SfError, StateAggregator, trimTo15 } from '@salesforce/core';
 import fs from 'graceful-fs';
 import { minimatch } from 'minimatch';
 import { MetadataComponent } from '../resolve/types';
@@ -77,6 +77,8 @@ const getLogger = (): Logger => {
   }
   return logger;
 };
+
+const PSEUDO_TYPES = ['Agent'];
 
 export class ComponentSetBuilder {
   /**
@@ -188,7 +190,7 @@ export class ComponentSetBuilder {
     // Resolve metadata entries with an org connection
     if (org) {
       componentSet ??= new ComponentSet(undefined, registry);
-      const orgComponentSet = await this.resolveOrgComponents(registry, org, metadata);
+      const orgComponentSet = await this.resolveOrgComponents(registry, options);
       orgComponentSet.toArray().map(addToComponentSet(componentSet));
     }
 
@@ -204,14 +206,26 @@ export class ComponentSetBuilder {
 
   private static async resolveOrgComponents(
     registry: RegistryAccess,
-    org: OrgOption,
-    metadata?: MetadataOption
+    options: ComponentSetOptions
   ): Promise<ComponentSet> {
+    // Get a connection from the OrgOption
+    const { apiversion, org, metadata } = options;
+    if (!org) {
+      throw SfError.create({ message: 'ComponentSetBuilder.resolveOrgComponents() requires an OrgOption' });
+    }
+    const username = (await StateAggregator.getInstance()).aliases.getUsername(org.username) ?? org.username;
+    const connection = await Connection.create({ authInfo: await AuthInfo.create({ username }) });
+    if (apiversion) {
+      connection.setApiVersion(apiversion);
+    }
+
     let mdMap = new Map() as MetadataMap;
-    let debugMsg = `Building ComponentSet from metadata in an org using targetUsername: ${org.username}`;
+    let debugMsg = `Building ComponentSet from metadata in an org using targetUsername: ${username}`;
     if (metadata) {
       if (metadata.metadataEntries?.length) {
         debugMsg += ` filtering on metadata: ${metadata.metadataEntries.toString()}`;
+        // Replace pseudo-types from the metadataEntries
+        metadata.metadataEntries = await replacePseudoTypes(metadata.metadataEntries, connection);
       }
       if (metadata.excludedEntries?.length) {
         debugMsg += ` excluding metadata: ${metadata.excludedEntries.toString()}`;
@@ -221,7 +235,7 @@ export class ComponentSetBuilder {
     getLogger().debug(debugMsg);
 
     return ComponentSet.fromConnection({
-      usernameOrConnection: (await StateAggregator.getInstance()).aliases.getUsername(org.username) ?? org.username,
+      usernameOrConnection: connection,
       componentFilter: getOrgComponentFilter(org, mdMap, metadata),
       metadataTypes: mdMap.size ? Array.from(mdMap.keys()) : undefined,
       registry,
@@ -368,4 +382,77 @@ const buildMapFromMetadata = (mdOption: MetadataOption, registry: RegistryAccess
   }
 
   return mdMap;
+};
+
+// Replace pseudo types with actual types.
+const replacePseudoTypes = async (mdEntries: string[], connection: Connection): Promise<string[]> => {
+  const pseudoEntries: string[][] = [];
+  const replacedEntries: string[] = [];
+
+  mdEntries.map((rawEntry) => {
+    const [typeName, ...name] = rawEntry.split(':');
+    if (PSEUDO_TYPES.includes(typeName)) {
+      pseudoEntries.push([typeName, name.join(':').trim()]);
+    } else {
+      replacedEntries.push(rawEntry);
+    }
+  });
+
+  if (pseudoEntries.length) {
+    await Promise.all(
+      pseudoEntries.map(async (pseudoEntry) => {
+        const pseudoType = pseudoEntry[0];
+        const pseudoName = pseudoEntry[1] || '*';
+        getLogger().debug(`Converting pseudo-type ${pseudoType}:${pseudoName}`);
+        if (pseudoType === 'Agent') {
+          const agentMdEntries = await buildAgentMdEntries(pseudoName, connection);
+          agentMdEntries.map((e) => replacedEntries.push(e));
+        }
+      })
+    );
+  }
+
+  return replacedEntries;
+};
+
+// From a Bot developer name, get all related BotVersion, GenAiPlanner, and GenAiPlugin metadata.
+const buildAgentMdEntries = async (botName: string, connection: Connection): Promise<string[]> => {
+  if (botName === '*') {
+    // Get all Agent top level metadata
+    return Promise.resolve(['Bot', 'BotVersion', 'GenAiPlanner', 'GenAiPlugin']);
+  }
+
+  const mdEntries = [`Bot:${botName}`, `BotVersion:${botName}.v1`, `GenAiPlanner:${botName}`];
+
+  try {
+    // Query for the GenAiPlannerId
+    const genAiPlannerIdQuery = `SELECT Id FROM GenAiPlannerDefinition WHERE DeveloperName = '${botName}'`;
+    const plannerId = (await connection.singleRecordQuery<{ Id: string }>(genAiPlannerIdQuery, { tooling: true })).Id;
+
+    if (plannerId) {
+      const plannerId15 = trimTo15(plannerId);
+      // Query for the GenAiPlugins associated with the 15 char GenAiPlannerId
+      const genAiPluginNames = (
+        await connection.tooling.query<{ DeveloperName: string }>(
+          `SELECT DeveloperName FROM GenAiPluginDefinition WHERE DeveloperName LIKE 'p_${plannerId15}%'`
+        )
+      ).records;
+      if (genAiPluginNames.length) {
+        genAiPluginNames.map((r) => mdEntries.push(`GenAiPlugin:${r.DeveloperName}`));
+      } else {
+        getLogger().debug(`No GenAiPlugin metadata matches for plannerId: ${plannerId15}`);
+      }
+    } else {
+      getLogger().debug(`No GenAiPlanner metadata matches for Bot: ${botName}`);
+    }
+  } catch (err) {
+    const wrappedErr = SfError.wrap(err);
+    getLogger().debug(`Error when querying for GenAiPlugin by Bot name: ${botName}\n${wrappedErr.message}`);
+    if (wrappedErr.stack) {
+      getLogger().debug(wrappedErr.stack);
+    }
+  }
+
+  // Get specific Agent top level metadata.
+  return Promise.resolve(mdEntries);
 };

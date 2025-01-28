@@ -10,7 +10,8 @@ import { join } from 'node:path';
 import fs from 'graceful-fs';
 import * as sinon from 'sinon';
 import { assert, expect, config } from 'chai';
-import { SfError } from '@salesforce/core';
+import { Connection, SfError } from '@salesforce/core';
+import { instantiateContext, MockTestOrgData, restoreContext, stubContext } from '@salesforce/core/testSetup';
 import { RegistryAccess } from '../../src/registry/registryAccess';
 import { ComponentSetBuilder, entryToTypeAndName } from '../../src/collections/componentSetBuilder';
 import { ComponentSet } from '../../src/collections/componentSet';
@@ -440,59 +441,6 @@ describe('ComponentSetBuilder', () => {
       expect(compSet.has(apexClassComponent)).to.equal(true);
     });
 
-    it('should create ComponentSet from org connection', async () => {
-      componentSet.add(apexClassComponent);
-      fromConnectionStub.resolves(componentSet);
-      const options = {
-        sourcepath: undefined,
-        metadata: undefined,
-        manifest: undefined,
-        org: {
-          username: 'manifest-test@org.com',
-          exclude: [],
-        },
-      };
-
-      const compSet = await ComponentSetBuilder.build(options);
-      expect(fromConnectionStub.callCount).to.equal(1);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(fromConnectionStub.firstCall.firstArg['usernameOrConnection']).equal(options.org.username);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      expect(fromConnectionStub.firstCall.firstArg['componentFilter'].call()).equal(true);
-      expect(compSet.size).to.equal(1);
-      expect(compSet.has(apexClassComponent)).to.equal(true);
-    });
-
-    it('should create ComponentSet from org connection and metadata', async () => {
-      const mdCompSet = new ComponentSet();
-      mdCompSet.add(apexClassComponent);
-
-      fromSourceStub.returns(mdCompSet);
-      const packageDir1 = path.resolve('force-app');
-
-      componentSet.add(apexClassWildcardMatch);
-      fromConnectionStub.resolves(componentSet);
-      const options = {
-        sourcepath: undefined,
-        metadata: {
-          metadataEntries: ['ApexClass:MyClas*'],
-          directoryPaths: [packageDir1],
-        },
-        manifest: undefined,
-        org: {
-          username: 'manifest-test@org.com',
-          exclude: [],
-        },
-      };
-
-      const compSet = await ComponentSetBuilder.build(options);
-      expect(fromSourceStub.callCount).to.equal(0);
-      expect(fromConnectionStub.callCount).to.equal(1);
-      expect(compSet.size).to.equal(1);
-      expect(compSet.has(apexClassComponent)).to.equal(false);
-      expect(compSet.has(apexClassWildcardMatch)).to.equal(true);
-    });
-
     it('should create ComponentSet from manifest and multiple package', async () => {
       fileExistsSyncStub.returns(true);
 
@@ -525,6 +473,168 @@ describe('ComponentSetBuilder', () => {
       expect(compSet.size).to.equal(2);
       expect(compSet.has(apexClassComponent)).to.equal(true);
       expect(compSet.has(apexClassComponent2)).to.equal(true);
+    });
+
+    describe('from org', () => {
+      const $$ = instantiateContext();
+      const testOrg = new MockTestOrgData();
+      let connection: Connection;
+
+      beforeEach(async () => {
+        stubContext($$);
+        await $$.stubAuths(testOrg);
+        connection = await testOrg.getConnection();
+        $$.SANDBOX.stub(Connection, 'create').resolves(connection);
+      });
+
+      afterEach(() => {
+        restoreContext($$);
+      });
+
+      it('should create ComponentSet from org connection', async () => {
+        componentSet.add(apexClassComponent);
+        fromConnectionStub.resolves(componentSet);
+        const options = {
+          sourcepath: undefined,
+          metadata: undefined,
+          manifest: undefined,
+          org: {
+            username: testOrg.username,
+            exclude: [],
+          },
+        };
+
+        const compSet = await ComponentSetBuilder.build(options);
+        expect(fromConnectionStub.callCount).to.equal(1);
+        const fromConnectionArgs = fromConnectionStub.firstCall.firstArg;
+        expect(fromConnectionArgs).has.property('usernameOrConnection').and.instanceOf(Connection);
+        expect(fromConnectionArgs['usernameOrConnection'].getUsername()).to.equal(options.org.username);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        expect(fromConnectionArgs['componentFilter'].call()).equal(true);
+        expect(compSet.size).to.equal(1);
+        expect(compSet.has(apexClassComponent)).to.equal(true);
+      });
+
+      it('should create ComponentSet from org connection and metadata', async () => {
+        const mdCompSet = new ComponentSet();
+        mdCompSet.add(apexClassComponent);
+
+        fromSourceStub.returns(mdCompSet);
+        const packageDir1 = path.resolve('force-app');
+
+        componentSet.add(apexClassWildcardMatch);
+        fromConnectionStub.resolves(componentSet);
+        const options = {
+          sourcepath: undefined,
+          metadata: {
+            metadataEntries: ['ApexClass:MyClas*'],
+            directoryPaths: [packageDir1],
+          },
+          manifest: undefined,
+          org: {
+            username: testOrg.username,
+            exclude: [],
+          },
+        };
+
+        const compSet = await ComponentSetBuilder.build(options);
+        expect(fromSourceStub.callCount).to.equal(0);
+        expect(fromConnectionStub.callCount).to.equal(1);
+        expect(compSet.size).to.equal(1);
+        expect(compSet.has(apexClassComponent)).to.equal(false);
+        expect(compSet.has(apexClassWildcardMatch)).to.equal(true);
+      });
+
+      describe('Agent pseudo type', () => {
+        const genAiPlannerId = '16jSB000000H3JFYA0';
+        const genAiPlannerId15 = '16jSB000000H3JF';
+        const packageDir1 = path.resolve('force-app');
+        const botComponent = {
+          type: 'Bot',
+          fullName: 'MyBot',
+          xml: 'MyBot.bot-meta.xml',
+        };
+        const genAiPlannerComponent = {
+          type: 'GenAiPlanner',
+          fullName: 'MyGenAiPlanner',
+          xml: 'MyGenAiPlanner.genAiPlanner-meta.xml',
+        };
+        const genAiPluginComponent = {
+          type: 'GenAiPlugin',
+          fullName: `p_${genAiPlannerId15}_MyGenAiPlugin`,
+          xml: `p_${genAiPlannerId15}_MyGenAiPlugin.genAiPlugin-meta.xml`,
+        };
+        let singleRecordQueryStub: sinon.SinonStub;
+        let queryStub: sinon.SinonStub;
+
+        beforeEach(() => {
+          // Stub queries for agent metadata (GenAiPlanner and GenAiPlugin)
+          singleRecordQueryStub = $$.SANDBOX.stub(connection, 'singleRecordQuery');
+          queryStub = $$.SANDBOX.stub(connection.tooling, 'query');
+        });
+
+        it('should create ComponentSet from org connection and wildcarded Agent', async () => {
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(botComponent);
+          mdCompSet.add(genAiPlannerComponent);
+          mdCompSet.add(genAiPluginComponent);
+
+          fromConnectionStub.resolves(mdCompSet);
+          const options = {
+            metadata: {
+              metadataEntries: ['Agent'],
+              directoryPaths: [packageDir1],
+            },
+            org: {
+              username: testOrg.username,
+              exclude: [],
+            },
+          };
+
+          const compSet = await ComponentSetBuilder.build(options);
+          expect(singleRecordQueryStub.callCount).to.equal(0);
+          expect(queryStub.callCount).to.equal(0);
+          expect(fromConnectionStub.callCount).to.equal(1);
+          const fromConnectionArgs = fromConnectionStub.firstCall.args[0];
+          const expectedMdTypes = ['Bot', 'BotVersion', 'GenAiPlanner', 'GenAiPlugin'];
+          expect(fromConnectionArgs).to.have.deep.property('metadataTypes', expectedMdTypes);
+          expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
+        });
+
+        it('should create ComponentSet from org connection and Agent developer name', async () => {
+          const botName = botComponent.fullName;
+          const srq = `SELECT Id FROM GenAiPlannerDefinition WHERE DeveloperName = '${botName}'`;
+          const query = `SELECT DeveloperName FROM GenAiPluginDefinition WHERE DeveloperName LIKE 'p_${genAiPlannerId15}%'`;
+          singleRecordQueryStub.withArgs(srq, { tooling: true }).resolves({ Id: genAiPlannerId });
+          queryStub.withArgs(query).resolves({ records: [{ DeveloperName: genAiPluginComponent.fullName }] });
+
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(botComponent);
+          mdCompSet.add(genAiPlannerComponent);
+          mdCompSet.add(genAiPluginComponent);
+
+          fromConnectionStub.resolves(mdCompSet);
+          const options = {
+            metadata: {
+              metadataEntries: [`Agent:${botName}`],
+              directoryPaths: [packageDir1],
+            },
+            org: {
+              username: testOrg.username,
+              exclude: [],
+            },
+          };
+
+          const compSet = await ComponentSetBuilder.build(options);
+          expect(singleRecordQueryStub.callCount, 'Expected singleRecordQuery stub to be called').to.equal(1);
+          expect(queryStub.callCount, 'Expected tooling query stub to be called').to.equal(1);
+          expect(fromConnectionStub.callCount).to.equal(1);
+          const fromConnectionArgs = fromConnectionStub.firstCall.args[0];
+          const expectedMdTypes = ['Bot', 'BotVersion', 'GenAiPlanner', 'GenAiPlugin'];
+          expect(fromConnectionArgs).to.have.deep.property('metadataTypes', expectedMdTypes);
+          expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
+        });
+      });
     });
   });
 });

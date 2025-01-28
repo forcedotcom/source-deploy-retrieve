@@ -283,6 +283,34 @@ const listMembers =
       return [];
     }
 
+    // Workaround because metadata.list({ type: 'BotVersion' }) returns [].
+    if (mdType.name === 'BotVersion') {
+      try {
+        const botDefQuery = 'SELECT Id, DeveloperName FROM BotDefinition';
+        const botVersionQuery = 'SELECT BotDefinitionId, DeveloperName FROM BotVersion';
+        const botDefs = (await connection.query<{ Id: string; DeveloperName: string }>(botDefQuery)).records;
+        const botVersionDefs = (
+          await connection.query<{ BotDefinitionId: string; DeveloperName: string }>(botVersionQuery)
+        ).records;
+        return botVersionDefs
+          .map((bvd) => {
+            const botName = botDefs.find((bd) => bd.Id === bvd.BotDefinitionId)?.DeveloperName;
+            if (botName) {
+              return {
+                fullName: `${botName}.${bvd.DeveloperName}`,
+                fileName: `bots/${bvd.DeveloperName}.botVersion`,
+                type: 'BotVersion',
+              };
+            }
+          })
+          .filter((b) => !!b);
+      } catch (error) {
+        const err = SfError.wrap(error);
+        getLogger().debug(`[${mdType.name}] ${err.message}`);
+        return [];
+      }
+    }
+
     try {
       requestCount++;
       getLogger().debug(`listMetadata for ${inspect(query)}`);

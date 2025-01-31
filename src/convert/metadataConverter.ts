@@ -180,7 +180,11 @@ function getMergeConfigOutputs(
   const mergeSet = new ComponentSet(undefined, registry);
   // since child components are composed in metadata format, we need to merge using the parent
   for (const component of output.mergeWith) {
-    mergeSet.add(component.parent ?? component);
+    if (component.type.id === 'digitalexperience' && !component.parent?.content) {
+      mergeSet.add(component);
+    } else {
+      mergeSet.add(component.parent ?? component);
+    }
   }
   const writer = new StandardWriter(output.defaultDirectory);
 

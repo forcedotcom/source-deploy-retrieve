@@ -4742,7 +4742,7 @@
       "id": "analyticsworkspace",
       "name": "AnalyticsWorkspace",
       "suffix": "uawork",
-      "directoryName": "unified-analytics",
+      "directoryName": "unified-analytics-workspace",
       "inFolder": false,
       "strictDirectoryName": false
     },

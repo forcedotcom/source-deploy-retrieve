@@ -664,6 +664,8 @@ v63 introduces the following new types.  Here's their current level of support
 |ExpressionSetMessageToken|✅||
 |ExtlClntAppSamlConfigurablePolicies|✅||
 |FieldMappingConfig|❌|Not supported, but support could be added|
+|GenAiPromptTemplate|⚠️|Supports deploy/retrieve but not source tracking|
+|GenAiPromptTemplateActv|⚠️|Supports deploy/retrieve but not source tracking|
 |IndustriesChannelPartnerInventorySettings|✅||
 |InsPlcyCoverageSpecConfig|❌|Not supported, but support could be added|
 |InsPlcyLineOfBusConfig|❌|Not supported, but support could be added|
@@ -716,8 +718,6 @@ v63 introduces the following new types.  Here's their current level of support
 - ExtlClntAppSampleSettings
 - Form
 - FormSection
-- GenAiPromptTemplate
-- GenAiPromptTemplateActv
 - GlobalPicklist
 - InsightType
 - IntegrationHubSettings

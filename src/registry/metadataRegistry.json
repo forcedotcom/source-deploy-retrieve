@@ -531,7 +531,6 @@
     "PublicKeyCertificate": "publickeycertificate",
     "PublicKeyCertificateSet": "publickeycertificateset",
     "aiEvaluationDefinition": "aievaluationdefinition",
-    "aiEvaluationTestSet": "aievaluationtestset",
     "uaviz": "analyticsvisualization",
     "uavizview": "analyticsvizviewdef",
     "uawork": "analyticsworkspace"
@@ -4711,14 +4710,6 @@
       "name": "AiEvaluationDefinition",
       "suffix": "aiEvaluationDefinition",
       "directoryName": "aiEvaluationDefinitions",
-      "inFolder": false,
-      "strictDirectoryName": false
-    },
-    "aievaluationtestset": {
-      "id": "aievaluationtestset",
-      "name": "AiEvaluationTestSet",
-      "suffix": "aiEvaluationTestSet",
-      "directoryName": "aiEvaluationTestSets",
       "inFolder": false,
       "strictDirectoryName": false
     },

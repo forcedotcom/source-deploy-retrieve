@@ -153,8 +153,9 @@ export class ComponentSetBuilder {
       const componentSetFilter = new ComponentSet(undefined, registry);
 
       // Build a Set of metadata entries
-      const l = metadata.metadataEntries.filter(filterPsuedoTypes);
-      l.map(entryToTypeAndName(registry))
+      metadata.metadataEntries
+        .filter(filterPsuedoTypes)
+        .map(entryToTypeAndName(registry))
         .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry }))
         .map(addToComponentSet(componentSetToReturn))
         .map(addToComponentSet(componentSetFilter));
@@ -350,9 +351,10 @@ export const entryToTypeAndName =
   };
 
 const filterPsuedoTypes = (value: string): boolean => {
-  const x = Object.values(PSEUDO_TYPES).map((p) => p.toLowerCase());
   const [typeName] = value.split(':');
-  return !x.includes(typeName.toLowerCase());
+  return !Object.values(PSEUDO_TYPES)
+    .map((p) => p.toLowerCase())
+    .includes(typeName.toLowerCase());
 };
 
 const typeAndNameToMetadataComponents =

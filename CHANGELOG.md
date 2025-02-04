@@ -1,3 +1,12 @@
+## [12.14.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.14.2...12.14.3) (2025-02-04)
+
+
+### Bug Fixes
+
+* add genAiFunction bundle type W-17750901 ([#1499](https://github.com/forcedotcom/source-deploy-retrieve/issues/1499)) ([fcf6662](https://github.com/forcedotcom/source-deploy-retrieve/commit/fcf66621c9a7255e479e5969933ea94c2d0381eb))
+
+
+
 ## [12.14.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.14.1...12.14.2) (2025-02-03)
 
 

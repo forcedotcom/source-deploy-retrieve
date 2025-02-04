@@ -118,7 +118,7 @@ export const filePathsFromMetadataComponent = (
       ['WaveTemplateBundle', [join(packageDirWithTypeDir, `${fullName}${sep}template-info.json`)]],
       ['LightningComponentBundle', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.js${META_XML_SUFFIX}`)]],
       ['AuraDefinitionBundle', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.cmp${META_XML_SUFFIX}`)]],
-      ['GenAiFunction', [join(packageDirWithTypeDir, `${fullName}.xml${META_XML_SUFFIX}`)]],
+      ['GenAiFunction', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.genAiFunction${META_XML_SUFFIX}`)]],
       [
         'AppFrameworkTemplateBundle',
         [

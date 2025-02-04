@@ -1,0 +1,53 @@
+{
+  "required" : [ "query" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "query" : {
+      "title" : "Query",
+      "description" : "Required. A string created by generative AI to be used in the knowledge article search.",
+      "const" : "",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    },
+    "citationsUrl" : {
+      "title" : "Citations Url",
+      "description" : "The URL to use for citations for custom Agents.",
+      "const" : "",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    },
+    "ragFeatureConfigId" : {
+      "title" : "RAG Feature Configuration Id",
+      "description" : "The RAG Feature ID to use for grounding this copilot action invocation.",
+      "const" : "",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    },
+    "citationsEnabled" : {
+      "title" : "Citations Enabled",
+      "description" : "Whether or not citations are enabled.",
+      "const" : false,
+      "lightning:type" : "lightning__booleanType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    },
+    "mode" : {
+      "title" : "The mode to run in.",
+      "description" : "The mode to use (Professor/Smart/Basic). Determines which prompt template to use.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "retrieverMode" : {
+      "title" : "The retriever mode to use.",
+      "description" : "The retriever mode to use (Simple/Augmented). Determines whether to do query regeneration",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

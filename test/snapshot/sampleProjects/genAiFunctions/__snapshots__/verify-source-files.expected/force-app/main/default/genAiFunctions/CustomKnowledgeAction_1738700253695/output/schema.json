@@ -1,0 +1,14 @@
+{
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "knowledgeSummary" : {
+      "title" : "Knowledge Summary",
+      "description" : "A string formatted as rich text that includes a summary of the information retrieved from the knowledge articles and citations to those articles.",
+      "lightning:type" : "lightning__richTextType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : true,
+      "copilotAction:isUsedByPlanner" : true
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

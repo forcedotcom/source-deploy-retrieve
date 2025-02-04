@@ -218,6 +218,24 @@ const testData = {
       },
     ],
   },
+  genAiFunction: {
+    fullName: 'CustomKnowledgeAction_1738700253695',
+    typeName: 'genAiFunction',
+    expectedFilePaths: [
+      getFilePath(
+        'genAiFunctions/CustomKnowledgeAction_1738700253695/CustomKnowledgeAction_1738700253695.genAiFunction-meta.xml'
+      ),
+    ],
+    expectedComponents: [
+      {
+        name: 'CustomKnowledgeAction_1738700253695',
+        type: registryAccess.getTypeByName('GenAiFunction'),
+        xml: getFilePath(
+          'genAiFunctions/CustomKnowledgeAction_1738700253695/CustomKnowledgeAction_1738700253695.genAiFunction-meta.xml'
+        ),
+      },
+    ],
+  },
 };
 
 describe('generating virtual tree from component name/type', () => {
@@ -308,6 +326,10 @@ describe('generating virtual tree from component name/type', () => {
   describe('strategy = bundle', () => {
     it('lwc', () => {
       runTest(testData.bundleLwc);
+    });
+
+    it('genAiFunction', () => {
+      runTest(testData.genAiFunction);
     });
 
     it('aura', () => {

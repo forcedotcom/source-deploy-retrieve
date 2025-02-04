@@ -13,9 +13,13 @@ import { assert, expect, config } from 'chai';
 import { Connection, SfError } from '@salesforce/core';
 import { instantiateContext, MockTestOrgData, restoreContext, stubContext } from '@salesforce/core/testSetup';
 import { RegistryAccess } from '../../src/registry/registryAccess';
-import { ComponentSetBuilder, entryToTypeAndName } from '../../src/collections/componentSetBuilder';
+import {
+  ComponentSetBuilder,
+  ComponentSetOptions,
+  entryToTypeAndName,
+} from '../../src/collections/componentSetBuilder';
 import { ComponentSet } from '../../src/collections/componentSet';
-import { FromSourceOptions } from '../../src/collections/types';
+import type { FromSourceOptions } from '../../src/collections/types';
 import { MetadataResolver, SourceComponent } from '../../src';
 
 config.truncateThreshold = 0;
@@ -434,8 +438,6 @@ describe('ComponentSetBuilder', () => {
         forceAddWildcards: true,
         manifestPath: options.manifest.manifestPath,
         resolveSourcePaths: [packageDir1],
-        destructivePre: undefined,
-        destructivePost: undefined,
       });
       expect(compSet.size).to.equal(1);
       expect(compSet.has(apexClassComponent)).to.equal(true);
@@ -467,8 +469,6 @@ describe('ComponentSetBuilder', () => {
         forceAddWildcards: true,
         manifestPath: options.manifest.manifestPath,
         resolveSourcePaths: [packageDir1, packageDir2],
-        destructivePre: undefined,
-        destructivePost: undefined,
       });
       expect(compSet.size).to.equal(2);
       expect(compSet.has(apexClassComponent)).to.equal(true);
@@ -489,6 +489,39 @@ describe('ComponentSetBuilder', () => {
 
       afterEach(() => {
         restoreContext($$);
+      });
+
+      it('should create a CS from every option possible', async () => {
+        fileExistsSyncStub.returns(true);
+        fromSourceStub.returns(new ComponentSet([customObjectComponent]));
+        fromManifestStub.resolves(new ComponentSet([apexClassWildcardMatch]));
+        fromConnectionStub.resolves(new ComponentSet([apexClassWildcardNoMatch]));
+
+        const packageDir1 = path.resolve('force-app');
+        const sourcepath = ['force-app', 'my-app'];
+
+        const options: ComponentSetOptions = {
+          sourcepath,
+          org: {
+            username: testOrg.username,
+            exclude: [],
+          },
+          metadata: { directoryPaths: [packageDir1], metadataEntries: ['ApexClass:MyClass'] },
+          manifest: {
+            manifestPath: 'apex-package.xml',
+            directoryPaths: [packageDir1],
+          },
+        };
+
+        const compSet = await ComponentSetBuilder.build(options);
+        expect(fromManifestStub.callCount).to.equal(1);
+        expect(fromSourceStub.callCount).to.equal(2);
+
+        expect(compSet.size).to.equal(4);
+        expect(compSet.has(apexClassComponent)).to.equal(true);
+        expect(compSet.has(customObjectComponent)).to.equal(true);
+        expect(compSet.has(apexClassWildcardNoMatch)).to.equal(true);
+        expect(compSet.has(apexClassWildcardMatch)).to.equal(true);
       });
 
       it('should create ComponentSet from org connection', async () => {
@@ -538,10 +571,10 @@ describe('ComponentSetBuilder', () => {
         };
 
         const compSet = await ComponentSetBuilder.build(options);
-        expect(fromSourceStub.callCount).to.equal(0);
+        expect(fromSourceStub.callCount).to.equal(2);
         expect(fromConnectionStub.callCount).to.equal(1);
-        expect(compSet.size).to.equal(1);
-        expect(compSet.has(apexClassComponent)).to.equal(false);
+        expect(compSet.size).to.equal(2);
+        expect(compSet.has(apexClassComponent)).to.equal(true);
         expect(compSet.has(apexClassWildcardMatch)).to.equal(true);
       });
 

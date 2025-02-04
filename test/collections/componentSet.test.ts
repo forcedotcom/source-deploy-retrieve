@@ -34,7 +34,6 @@ import {
 import { decomposedtoplevel, digitalExperienceBundle, matchingContentFile, mixedContentSingleFile } from '../mock';
 import { MATCHING_RULES_COMPONENT } from '../mock/type-constants/customlabelsConstant';
 import * as manifestFiles from '../mock/manifestConstants';
-import { testApiVersion, testApiVersionAsString } from '../mock/manifestConstants';
 import * as coverage from '../../src/registry/coverage';
 
 const registryAccess = new RegistryAccess();
@@ -436,7 +435,7 @@ describe('ComponentSet', () => {
         ];
         const resolveStub = $$.SANDBOX.stub(ManifestResolver.prototype, 'resolve').resolves({
           components: expected,
-          apiVersion: testApiVersionAsString,
+          apiVersion: manifestFiles.testApiVersionAsString,
         });
         $$.SANDBOX.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
         const manifest = manifestFiles.ONE_FOLDER_MEMBER;
@@ -581,7 +580,7 @@ describe('ComponentSet', () => {
         ];
         const resolveStub = $$.SANDBOX.stub(ConnectionResolver.prototype, 'resolve').resolves({
           components: expected,
-          apiVersion: testApiVersionAsString,
+          apiVersion: manifestFiles.testApiVersionAsString,
         });
         $$.SANDBOX.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
         const set = await ComponentSet.fromConnection({ usernameOrConnection: connection });
@@ -684,7 +683,9 @@ describe('ComponentSet', () => {
     let getCurrentApiVersionStub: SinonStub;
 
     beforeEach(() => {
-      getCurrentApiVersionStub = $$.SANDBOX.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
+      getCurrentApiVersionStub = $$.SANDBOX.stub(coverage, 'getCurrentApiVersion').resolves(
+        manifestFiles.testApiVersion
+      );
     });
 
     afterEach(() => {
@@ -712,7 +713,7 @@ describe('ComponentSet', () => {
               members: ['b', 'c'],
             },
           ],
-          version: testApiVersionAsString,
+          version: manifestFiles.testApiVersionAsString,
         },
       });
       expect(getCurrentApiVersionStub.calledOnce).to.be.true;
@@ -725,7 +726,7 @@ describe('ComponentSet', () => {
         registry: registryAccess,
         tree: manifestFiles.TREE,
       });
-      set.apiVersion = testApiVersionAsString;
+      set.apiVersion = manifestFiles.testApiVersionAsString;
       expect(await set.getObject()).to.deep.equal({
         Package: {
           types: [
@@ -738,7 +739,7 @@ describe('ComponentSet', () => {
               members: ['b', 'c'],
             },
           ],
-          version: testApiVersionAsString,
+          version: manifestFiles.testApiVersionAsString,
         },
       });
       expect(resolveSpy.called).to.be.false;
@@ -778,7 +779,7 @@ describe('ComponentSet', () => {
         registry: registryAccess,
         tree: manifestFiles.TREE,
       });
-      process.env.SF_ORG_API_VERSION = testApiVersionAsString;
+      process.env.SF_ORG_API_VERSION = manifestFiles.testApiVersionAsString;
       expect(await set.getObject()).to.deep.equal({
         Package: {
           types: [
@@ -791,7 +792,7 @@ describe('ComponentSet', () => {
               members: ['b', 'c'],
             },
           ],
-          version: testApiVersionAsString,
+          version: manifestFiles.testApiVersionAsString,
         },
       });
       expect(getCurrentApiVersionStub.called).to.be.false;
@@ -843,7 +844,7 @@ describe('ComponentSet', () => {
               members: ['b', 'c'],
             },
           ],
-          version: testApiVersionAsString,
+          version: manifestFiles.testApiVersionAsString,
         },
       });
     });
@@ -868,7 +869,7 @@ describe('ComponentSet', () => {
               members: ['b', 'c'],
             },
           ],
-          version: testApiVersionAsString,
+          version: manifestFiles.testApiVersionAsString,
         },
       });
     });
@@ -1003,7 +1004,7 @@ describe('ComponentSet', () => {
 
   describe('getPackageXml', () => {
     beforeEach(() => {
-      $$.SANDBOX.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
+      $$.SANDBOX.stub(coverage, 'getCurrentApiVersion').resolves(manifestFiles.testApiVersion);
     });
     it('should return manifest string when initialized from manifest file', async () => {
       const manifest = manifestFiles.ONE_OF_EACH;

@@ -14,7 +14,7 @@ import { SourceComponent } from '../resolve/sourceComponent';
 import { ComponentSet } from '../collections/componentSet';
 import { RegistryAccess } from '../registry/registryAccess';
 import type { FileProperties } from '../client/types';
-import { MetadataType } from '../registry/types';
+import type { MetadataType } from '../registry/types';
 import { MetadataResolver } from '../resolve';
 import { DestructiveChangesType, FromConnectionOptions } from './types';
 
@@ -91,15 +91,15 @@ export class ComponentSetBuilder {
    */
 
   public static async build(options: ComponentSetOptions): Promise<ComponentSet> {
-    let componentSet: ComponentSet | undefined;
-
     const { sourcepath, manifest, metadata, packagenames, org } = options;
     const registry = new RegistryAccess(undefined, options.projectDir);
+    let componentSetToReturn = new ComponentSet(undefined, registry);
 
     if (sourcepath) {
       getLogger().debug(`Building ComponentSet from sourcepath: ${sourcepath.join(', ')}`);
       const fsPaths = sourcepath.map(validateAndResolvePath);
-      componentSet = ComponentSet.fromSource({
+      // first possible option, so we can just set it, next CSB options, must add to this componentSet
+      componentSetToReturn = ComponentSet.fromSource({
         fsPaths,
         registry,
       });
@@ -108,7 +108,6 @@ export class ComponentSetBuilder {
     // Return empty ComponentSet and use packageNames in the connection via `.retrieve` options
     if (packagenames) {
       getLogger().debug(`Building ComponentSet for packagenames: ${packagenames.toString()}`);
-      componentSet ??= new ComponentSet(undefined, registry);
     }
 
     // Resolve manifest with source in package directories.
@@ -117,29 +116,48 @@ export class ComponentSetBuilder {
       assertFileExists(manifest.manifestPath);
 
       getLogger().debug(`Searching in packageDir: ${manifest.directoryPaths.join(', ')} for matching metadata`);
-      componentSet = await ComponentSet.fromManifest({
+      const constructiveCS = await ComponentSet.fromManifest({
         manifestPath: manifest.manifestPath,
         resolveSourcePaths: manifest.directoryPaths,
         forceAddWildcards: true,
-        destructivePre: manifest.destructiveChangesPre,
-        destructivePost: manifest.destructiveChangesPost,
         registry,
       });
+      constructiveCS.toArray().map(addToComponentSet(componentSetToReturn));
+
+      if (manifest.destructiveChangesPre) {
+        // build this up as if it were constructive, to satisfy fromManifest parameter types
+        const destructivePre = await ComponentSet.fromManifest({
+          resolveSourcePaths: manifest.directoryPaths,
+          manifestPath: manifest.destructiveChangesPre,
+          registry,
+        });
+        destructivePre.toArray().map(addToComponentSet(componentSetToReturn, DestructiveChangesType.PRE));
+      }
+
+      if (manifest.destructiveChangesPost) {
+        const destrutivePost = await ComponentSet.fromManifest({
+          manifestPath: manifest.destructiveChangesPost,
+          resolveSourcePaths: manifest.directoryPaths,
+          registry,
+        });
+        destrutivePost.toArray().map(addToComponentSet(componentSetToReturn, DestructiveChangesType.POST));
+      }
+      componentSetToReturn.sourceApiVersion ??= constructiveCS.sourceApiVersion;
+      componentSetToReturn.apiVersion ??= constructiveCS.apiVersion;
     }
 
-    // Resolve metadata entries with source in package directories, unless we are building a ComponentSet
-    // from metadata in an org.
-    if (metadata && !org) {
+    // Resolve metadata entries with source in package directories
+    if (metadata) {
       getLogger().debug(`Building ComponentSet from metadata: ${metadata.metadataEntries.toString()}`);
       const directoryPaths = metadata.directoryPaths;
-      componentSet ??= new ComponentSet(undefined, registry);
       const componentSetFilter = new ComponentSet(undefined, registry);
 
       // Build a Set of metadata entries
       metadata.metadataEntries
+        .filter(filterPsuedoTypes)
         .map(entryToTypeAndName(registry))
         .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry }))
-        .map(addToComponentSet(componentSet))
+        .map(addToComponentSet(componentSetToReturn))
         .map(addToComponentSet(componentSetFilter));
 
       getLogger().debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
@@ -148,19 +166,21 @@ export class ComponentSetBuilder {
       // are resolved to SourceComponents
       if (metadata.destructiveEntriesPre) {
         metadata.destructiveEntriesPre
+          .filter(filterPsuedoTypes)
           .map(entryToTypeAndName(registry))
           .map(assertNoWildcardInDestructiveEntries)
           .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry }))
           .map((mdComponent) => new SourceComponent({ type: mdComponent.type, name: mdComponent.fullName }))
-          .map(addToComponentSet(componentSet, DestructiveChangesType.PRE));
+          .map(addToComponentSet(componentSetToReturn, DestructiveChangesType.PRE));
       }
       if (metadata.destructiveEntriesPost) {
         metadata.destructiveEntriesPost
+          .filter(filterPsuedoTypes)
           .map(entryToTypeAndName(registry))
           .map(assertNoWildcardInDestructiveEntries)
           .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry }))
           .map((mdComponent) => new SourceComponent({ type: mdComponent.type, name: mdComponent.fullName }))
-          .map(addToComponentSet(componentSet, DestructiveChangesType.POST));
+          .map(addToComponentSet(componentSetToReturn, DestructiveChangesType.POST));
       }
 
       const resolvedComponents = ComponentSet.fromSource({
@@ -169,39 +189,38 @@ export class ComponentSetBuilder {
         registry,
       });
 
-      if (resolvedComponents.forceIgnoredPaths) {
+      if (resolvedComponents?.forceIgnoredPaths) {
         // if useFsForceIgnore = true, then we won't be able to resolve a forceignored path,
         // which we need to do to get the ignored source component
         const resolver = new MetadataResolver(registry, undefined, false);
 
         for (const ignoredPath of resolvedComponents.forceIgnoredPaths ?? []) {
           resolver.getComponentsFromPath(ignoredPath).map((ignored) => {
-            componentSet = componentSet?.filter(
+            componentSetToReturn = componentSetToReturn?.filter(
               (resolved) => !(resolved.fullName === ignored.name && resolved.type === ignored.type)
             );
           });
         }
-        componentSet.forceIgnoredPaths = resolvedComponents.forceIgnoredPaths;
+        componentSetToReturn.forceIgnoredPaths = resolvedComponents.forceIgnoredPaths;
       }
 
-      resolvedComponents.toArray().map(addToComponentSet(componentSet));
+      resolvedComponents?.toArray().map(addToComponentSet(componentSetToReturn));
     }
 
     // Resolve metadata entries with an org connection
     if (org) {
-      componentSet ??= new ComponentSet(undefined, registry);
       const orgComponentSet = await this.resolveOrgComponents(registry, options);
-      orgComponentSet.toArray().map(addToComponentSet(componentSet));
+      orgComponentSet.toArray().map(addToComponentSet(componentSetToReturn));
     }
 
     // there should have been a componentSet created by this point.
-    componentSet = assertComponentSetIsNotUndefined(componentSet);
-    componentSet.apiVersion ??= options.apiversion;
-    componentSet.sourceApiVersion ??= options.sourceapiversion;
-    componentSet.projectDirectory = options.projectDir;
+    componentSetToReturn = assertComponentSetIsNotUndefined(componentSetToReturn);
+    componentSetToReturn.apiVersion ??= options.apiversion;
+    componentSetToReturn.sourceApiVersion ??= options.sourceapiversion;
+    componentSetToReturn.projectDirectory = options.projectDir;
 
-    logComponents(componentSet);
-    return componentSet;
+    logComponents(componentSetToReturn);
+    return componentSetToReturn;
   }
 
   private static async resolveOrgComponents(
@@ -330,6 +349,13 @@ export const entryToTypeAndName =
     }
     return { type, metadataName: name.length ? name.join(':').trim() : '*' };
   };
+
+const filterPsuedoTypes = (value: string): boolean => {
+  const [typeName] = value.split(':');
+  return !Object.values(PSEUDO_TYPES)
+    .map((p) => p.toLowerCase())
+    .includes(typeName.toLowerCase());
+};
 
 const typeAndNameToMetadataComponents =
   (context: { directoryPaths: ManifestOption['directoryPaths']; registry: RegistryAccess }) =>

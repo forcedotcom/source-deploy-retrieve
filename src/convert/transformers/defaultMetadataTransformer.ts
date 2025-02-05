@@ -71,16 +71,15 @@ const getContentSourceDestination = (
   component: SourceComponent,
   mergeWith?: SourceComponent
 ): SourcePath => {
-  // TODO: remove this and fix how the source dest path is built for DEs being merged.
-  // bad path:
-  //   `force-app/main/default/digitalExperiences/site/bundle1/sfdc_cms__site/bundle1/sfdc_cms__site`
-  if (component.type.id === 'digitalexperience') {
-    return component.getPackageRelativePath(source, targetFormat);
-  }
   if (mergeWith?.content) {
     if (component.content && component.tree.isDirectory(component.content)) {
-      const relative = trimUntil(source, basename(component.content));
-      return join(dirname(mergeWith.content), relative);
+      // DEs are always inside a dir.
+      if (component.type.id === 'digitalexperience') {
+        return join(mergeWith.content, basename(source));
+      } else {
+        const relative = trimUntil(source, basename(component.content));
+        return join(dirname(mergeWith.content), relative);
+      }
     }
     return mergeWith.content;
   }

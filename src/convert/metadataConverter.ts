@@ -178,11 +178,12 @@ function getMergeConfigOutputs(
   }
   const defaultDirectory = output.defaultDirectory;
   const mergeSet = new ComponentSet(undefined, registry);
-  // since child components are composed in metadata format, we need to merge using the parent
   for (const component of output.mergeWith) {
     if (component.type.id === 'digitalexperience' && !component.parent?.content) {
+      // DE is addressable without its parent (DEB)
       mergeSet.add(component);
     } else {
+      // since child components are composed in metadata format, we need to merge using the parent
       mergeSet.add(component.parent ?? component);
     }
   }

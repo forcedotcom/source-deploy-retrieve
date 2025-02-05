@@ -103,11 +103,22 @@ export class ComponentSetBuilder {
         fsPaths,
         registry,
       });
-      if (metadata?.excludedEntries) {
+      if (metadata?.excludedEntries?.length) {
         const toRemove = metadata.excludedEntries
           .map(entryToTypeAndName(registry))
           .flatMap(typeAndNameToMetadataComponents({ directoryPaths: fsPaths, registry }));
-        componentSet = componentSet.filter((md) => !toRemove.includes(md));
+        componentSet = componentSet.filter(
+          (md) =>
+            !toRemove.some((n) => n.type.name === md.type.name && (n.fullName === md.fullName || n.fullName === '*'))
+        );
+      }
+      if (metadata?.metadataEntries?.length) {
+        const toKeep = metadata.metadataEntries
+          .map(entryToTypeAndName(registry))
+          .flatMap(typeAndNameToMetadataComponents({ directoryPaths: fsPaths, registry }));
+        componentSet = componentSet.filter((md) =>
+          toKeep.some((n) => n.type.name === md.type.name && (n.fullName === md.fullName || n.fullName === '*'))
+        );
       }
     }
 
@@ -135,7 +146,7 @@ export class ComponentSetBuilder {
 
     // Resolve metadata entries with source in package directories, unless we are building a ComponentSet
     // from metadata in an org.
-    if (metadata && !org) {
+    if (metadata && !org && !sourcepath) {
       getLogger().debug(`Building ComponentSet from metadata: ${metadata.metadataEntries.toString()}`);
       const directoryPaths = metadata.directoryPaths;
       componentSet ??= new ComponentSet(undefined, registry);

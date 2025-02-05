@@ -103,6 +103,12 @@ export class ComponentSetBuilder {
         fsPaths,
         registry,
       });
+      if (metadata?.excludedEntries) {
+        const toRemove = metadata.excludedEntries
+          .map(entryToTypeAndName(registry))
+          .flatMap(typeAndNameToMetadataComponents({ directoryPaths: fsPaths, registry }));
+        componentSet = componentSet.filter((md) => !toRemove.includes(md));
+      }
     }
 
     // Return empty ComponentSet and use packageNames in the connection via `.retrieve` options

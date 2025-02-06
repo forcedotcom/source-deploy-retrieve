@@ -146,7 +146,7 @@ export class ComponentSetBuilder {
 
     // Resolve metadata entries with source in package directories, unless we are building a ComponentSet
     // from metadata in an org.
-    if (metadata && !org && !sourcepath) {
+    if (metadata && !org && !sourcepath?.length) {
       getLogger().debug(`Building ComponentSet from metadata: ${metadata.metadataEntries.toString()}`);
       const directoryPaths = metadata.directoryPaths;
       componentSet ??= new ComponentSet(undefined, registry);

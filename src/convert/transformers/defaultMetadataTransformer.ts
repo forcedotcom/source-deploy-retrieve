@@ -73,8 +73,13 @@ const getContentSourceDestination = (
 ): SourcePath => {
   if (mergeWith?.content) {
     if (component.content && component.tree.isDirectory(component.content)) {
-      const relative = trimUntil(source, basename(component.content));
-      return join(dirname(mergeWith.content), relative);
+      // DEs are always inside a dir.
+      if (component.type.strategies?.adapter === 'digitalExperience') {
+        return join(mergeWith.content, basename(source));
+      } else {
+        const relative = trimUntil(source, basename(component.content));
+        return join(dirname(mergeWith.content), relative);
+      }
     }
     return mergeWith.content;
   }

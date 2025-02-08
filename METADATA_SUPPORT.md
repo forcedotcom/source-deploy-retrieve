@@ -1,10 +1,10 @@
 # Supported CLI Metadata Types
 
-This list compares metadata types found in Salesforce v62 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
+This list compares metadata types found in Salesforce v63 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 619/632 supported metadata types.
+Currently, there are 631/663 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -18,6 +18,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AIUsecaseDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |AccountForecastSettings|✅||
 |AccountIntelligenceSettings|✅||
+|AccountPlanObjMeasCalcDef|❌|Not supported, but support could be added|
 |AccountPlanSettings|✅||
 |AccountRelationshipShareRule|✅||
 |AccountSettings|✅||
@@ -46,6 +47,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AnalyticSnapshot|✅||
 |AnalyticsDashboard|❌|Not supported, but support could be added|
 |AnalyticsSettings|✅||
+|AnalyticsWorkspace|✅||
 |AnimationRule|✅||
 |ApexClass|✅||
 |ApexComponent|✅||
@@ -56,6 +58,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ApexTrigger|✅||
 |AppAnalyticsSettings|✅||
 |AppExperienceSettings|✅||
+|AppFrameworkTemplateBundle|✅||
 |AppMenu|✅||
 |ApplicationRecordTypeConfig|✅||
 |ApplicationSubtypeDefinition|✅||
@@ -76,7 +79,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AuraDefinitionBundle|✅||
 |AuthProvider|✅||
 |AutoResponseRules|✅||
-|AutomatedContactsSettings|✅||
 |BatchCalcJobDefinition|✅||
 |BatchProcessJobDefinition|✅||
 |BenefitAction|✅||
@@ -125,11 +127,15 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ClaimMgmtFoundationEnabledSettings|✅||
 |ClauseCatgConfiguration|✅||
 |CleanDataService|✅||
+|CmsnStmtLineItemConfig|❌|Not supported, but support could be added|
+|CmsnStmtLineItemTypConfig|❌|Not supported, but support could be added|
 |CodeBuilderSettings|✅||
 |CollectionsDashboardSettings|✅||
 |CommandAction|✅||
 |CommerceSettings|✅||
+|CommissionStatementConfig|❌|Not supported, but support could be added|
 |CommsServiceConsoleSettings|✅||
+|CommunicationChannelType|❌|Not supported, but support could be added|
 |CommunitiesSettings|✅||
 |Community|✅||
 |CommunityTemplateDefinition|✅||
@@ -158,6 +164,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CustomApplicationComponent|✅||
 |CustomFeedFilter|✅||
 |CustomField|✅||
+|CustomFieldDisplay|❌|Not supported, but support could be added|
 |CustomHelpMenuSection|✅||
 |CustomIndex|✅||
 |CustomLabels|✅||
@@ -182,6 +189,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DataImportManagementSettings|✅||
 |DataKitObjectDependency|✅||
 |DataKitObjectTemplate|✅||
+|DataObjectSearchIndexConf|❌|Not supported, but support could be added (but not for tracking)|
 |DataPackageKitDefinition|✅||
 |DataPackageKitObject|✅||
 |DataSource|✅||
@@ -256,6 +264,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |EscalationRules|✅||
 |EssentialsSettings|✅||
 |EventLogObjectSettings|✅||
+|EventRelayConfig|✅||
 |EventSettings|✅||
 |EvfSettings|✅||
 |ExperienceBundle|✅||
@@ -266,6 +275,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExplainabilityMsgTemplate|✅||
 |ExpressionSetDefinition|✅||
 |ExpressionSetDefinitionVersion|✅||
+|ExpressionSetMessageToken|✅||
 |ExpressionSetObjectAlias|✅||
 |ExtDataTranFieldTemplate|❌|Not supported, but support could be added|
 |ExtDataTranObjectTemplate|✅||
@@ -288,11 +298,13 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExtlClntAppNotificationSettings|✅||
 |ExtlClntAppOauthConfigurablePolicies|✅||
 |ExtlClntAppOauthSettings|✅||
-|ExtlClntAppPushConfigurablePolicies|⚠️|Supports deploy/retrieve but not source tracking|
+|ExtlClntAppPushConfigurablePolicies|✅||
 |ExtlClntAppPushSettings|✅||
+|ExtlClntAppSamlConfigurablePolicies|✅||
 |FeatureParameterBoolean|✅||
 |FeatureParameterDate|✅||
 |FeatureParameterInteger|✅||
+|FieldMappingConfig|❌|Not supported, but support could be added|
 |FieldRestrictionRule|✅||
 |FieldServiceMobileExtension|✅||
 |FieldServiceSettings|✅||
@@ -324,6 +336,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |GenAiPlanner|✅||
 |GenAiPlugin|✅||
 |GenAiPluginInstructionDef|❌|Not supported, but support could be added|
+|GenAiPromptTemplate|⚠️|Supports deploy/retrieve but not source tracking|
+|GenAiPromptTemplateActv|⚠️|Supports deploy/retrieve but not source tracking|
 |GlobalValueSet|✅||
 |GlobalValueSetTranslation|✅||
 |GoogleAppsSettings|✅||
@@ -345,6 +359,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |IncludeEstTaxInQuoteSettings|✅||
 |Index|⚠️|Supports deploy/retrieve but not source tracking|
 |IndustriesAutomotiveSettings|✅||
+|IndustriesChannelPartnerInventorySettings|✅||
 |IndustriesContextSettings|✅||
 |IndustriesEinsteinFeatureSettings|✅||
 |IndustriesEventOrchSettings|✅||
@@ -358,17 +373,26 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |IndustriesSettings|✅||
 |IndustriesUnifiedPromotionsSettings|✅||
 |IndustriesUsageSettings|✅||
+|InsPlcyCoverageSpecConfig|❌|Not supported, but support could be added|
+|InsPlcyLineOfBusConfig|❌|Not supported, but support could be added|
+|InsPolicyLifecycleConfig|❌|Not supported, but support could be added|
+|InsPolicyManagementConfig|❌|Not supported, but support could be added|
+|InsRatePlanCmsnConfig|❌|Not supported, but support could be added|
+|InsRatePlanTypeConfig|❌|Not supported, but support could be added|
 |InstalledPackage|⚠️|Supports deploy/retrieve but not source tracking|
+|InsuranceBrokerageSettings|✅||
 |IntegrationProviderDef|✅||
 |InterestTaggingSettings|✅||
 |InternalDataConnector|✅||
 |InvLatePymntRiskCalcSettings|✅||
+|InventoryReplenishmentSettings|✅||
 |InventorySettings|✅||
 |InvocableActionSettings|✅||
 |IoTSettings|✅||
 |KeywordList|✅||
 |KnowledgeGenerationSettings|✅||
 |KnowledgeSettings|✅||
+|LaborCostOptimizationSettings|✅||
 |LanguageSettings|✅||
 |LargeQuotesandOrdersForRlmSettings|✅||
 |Layout|✅||
@@ -378,12 +402,15 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |LearningItemType|✅||
 |Letterhead|✅||
 |LicensingSettings|✅||
+|LifeSciConfigCategory|❌|Not supported, but support could be added|
+|LifeSciConfigRecord|❌|Not supported, but support could be added|
 |LightningBolt|✅||
 |LightningComponentBundle|✅||
 |LightningExperienceSettings|✅||
 |LightningExperienceTheme|✅||
 |LightningMessageChannel|✅||
 |LightningOnboardingConfig|✅||
+|LightningTypeBundle|⚠️|Supports deploy/retrieve but not source tracking|
 |ListView|✅||
 |LiveAgentSettings|✅||
 |LiveChatAgentConfig|✅||
@@ -447,6 +474,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |OmniInteractionAccessConfig|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniInteractionConfig|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniScript|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniStudioSettings|✅||
 |OmniSupervisorConfig|✅||
 |OmniTrackingGroup|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniUiCard|⚠️|Supports deploy/retrieve but not source tracking|
@@ -488,6 +516,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PricingActionParameters|✅||
 |PricingRecipe|✅||
 |PrivacySettings|✅||
+|ProcedureOutputResolution|❌|Not supported, but support could be added (but not for tracking)|
 |ProcessFlowMigration|✅||
 |ProductAttrDisplayConfig|✅||
 |ProductAttributeSet|✅||
@@ -522,6 +551,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ReferencedDashboard|✅||
 |ReferralMarketingSettings|✅||
 |RegisteredExternalService|✅||
+|RelatedRecordAccessDef|❌|Not supported, but support could be added|
 |RelatedRecordAssocCriteria|✅||
 |RelationshipGraphDefinition|✅||
 |RemoteSiteSetting|✅||
@@ -595,6 +625,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |TimelineObjectDefinition|✅||
 |TopicsForObjects|✅||
 |TrailheadSettings|✅||
+|TransactionProcessingType|❌|Not supported, but support could be added (but not for tracking)|
 |TransactionSecurityPolicy|✅||
 |Translations|✅||
 |TrialOrgSettings|✅||
@@ -645,44 +676,10 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 
 
-## Next Release (v63)
+## Next Release (v64)
 
-v63 introduces the following new types.  Here's their current level of support
-
-|Metadata Type|Support|Notes|
-|:---|:---|:---|
-|AccountPlanObjMeasCalcDef|❌|Not supported, but support could be added|
-|AnalyticsWorkspace|✅||
-|AppFrameworkTemplateBundle|✅||
-|CmsnStmtLineItemConfig|❌|Not supported, but support could be added|
-|CmsnStmtLineItemTypConfig|❌|Not supported, but support could be added|
-|CommissionStatementConfig|❌|Not supported, but support could be added|
-|CommunicationChannelType|❌|Not supported, but support could be added|
-|CustomFieldDisplay|❌|Not supported, but support could be added|
-|DataObjectSearchIndexConf|❌|Not supported, but support could be added (but not for tracking)|
-|EventRelayConfig|✅||
-|ExpressionSetMessageToken|✅||
-|ExtlClntAppSamlConfigurablePolicies|✅||
-|FieldMappingConfig|❌|Not supported, but support could be added|
-|GenAiPromptTemplate|⚠️|Supports deploy/retrieve but not source tracking|
-|GenAiPromptTemplateActv|⚠️|Supports deploy/retrieve but not source tracking|
-|IndustriesChannelPartnerInventorySettings|✅||
-|InsPlcyCoverageSpecConfig|❌|Not supported, but support could be added|
-|InsPlcyLineOfBusConfig|❌|Not supported, but support could be added|
-|InsPolicyLifecycleConfig|❌|Not supported, but support could be added|
-|InsPolicyManagementConfig|❌|Not supported, but support could be added|
-|InsRatePlanCmsnConfig|❌|Not supported, but support could be added|
-|InsRatePlanTypeConfig|❌|Not supported, but support could be added|
-|InsuranceBrokerageSettings|✅||
-|InventoryReplenishmentSettings|✅||
-|LaborCostOptimizationSettings|✅||
-|LifeSciConfigCategory|❌|Not supported, but support could be added|
-|LifeSciConfigRecord|❌|Not supported, but support could be added|
-|LightningTypeBundle|⚠️|Supports deploy/retrieve but not source tracking|
-|OmniStudioSettings|✅||
-|ProcedureOutputResolution|❌|Not supported, but support could be added (but not for tracking)|
-|RelatedRecordAccessDef|❌|Not supported, but support could be added|
-|TransactionProcessingType|❌|Not supported, but support could be added (but not for tracking)|
+> **Note**
+> v64 coverage not available at this time
 
 ## Additional Types
 

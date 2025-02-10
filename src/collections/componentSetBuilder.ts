@@ -6,7 +6,16 @@
  */
 
 import * as path from 'node:path';
-import { AuthInfo, Connection, Logger, Messages, SfError, StateAggregator, trimTo15 } from '@salesforce/core';
+import {
+  AuthInfo,
+  Connection,
+  Lifecycle,
+  Logger,
+  Messages,
+  SfError,
+  StateAggregator,
+  trimTo15,
+} from '@salesforce/core';
 import fs from 'graceful-fs';
 import { minimatch } from 'minimatch';
 import { MetadataComponent } from '../resolve/types';
@@ -399,6 +408,11 @@ const replacePseudoTypes = async (mdEntries: string[], connection: Connection): 
   });
 
   if (pseudoEntries.length) {
+    void Lifecycle.getInstance().emitTelemetry({
+      library: 'SDR',
+      eventName: 'PseudoTypesConverted',
+      types: pseudoEntries.map((p) => p[0]).join(),
+    });
     await Promise.all(
       pseudoEntries.map(async (pseudoEntry) => {
         const pseudoType = pseudoEntry[0];

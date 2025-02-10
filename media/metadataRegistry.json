@@ -533,7 +533,8 @@
     "aiEvaluationDefinition": "aievaluationdefinition",
     "uaviz": "analyticsvisualization",
     "uavizview": "analyticsvizviewdef",
-    "uawork": "analyticsworkspace"
+    "uawork": "analyticsworkspace",
+    "annotationextensionset": "annotationextensionset"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4748,6 +4749,14 @@
         "adapter": "bundle"
       },
       "supportsPartialDelete": true
+    },
+    "annotationextensionset": {
+      "id": "annotationextensionset",
+      "name": "AnnotationExtensionSet",
+      "suffix": "annotationextensionset",
+      "directoryName": "annotationextensionsets",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   }
 }

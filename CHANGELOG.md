@@ -1,3 +1,12 @@
+## [12.14.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.14.5...12.14.6) (2025-02-10)
+
+
+### Bug Fixes
+
+* add support for type `AnnotationExtensionSet` ([#1503](https://github.com/forcedotcom/source-deploy-retrieve/issues/1503)) ([9ac85ca](https://github.com/forcedotcom/source-deploy-retrieve/commit/9ac85cab79bea23a6f2f655e26b05849100ad021))
+
+
+
 ## [12.14.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.14.3...12.14.5) (2025-02-07)
 
 

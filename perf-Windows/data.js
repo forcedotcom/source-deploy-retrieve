@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1739207093352,
+  "lastUpdate": 1739217656191,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -66609,6 +66609,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 14137,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "bkeni@salesforce.com",
+            "name": "bkeni",
+            "username": "bkeni"
+          },
+          "committer": {
+            "email": "bkeni@salesforce.com",
+            "name": "bkeni",
+            "username": "bkeni"
+          },
+          "distinct": true,
+          "id": "730aa79634f67ea5fb5b2988c39474b1e428c7fb",
+          "message": "fix: @W-16815182 - Add support for type AnnotationExtensionSet",
+          "timestamp": "2025-02-10T13:54:28-05:00",
+          "tree_id": "0f8e316a0e7be7d1c870a3e57f3c7d7c4d884154",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/730aa79634f67ea5fb5b2988c39474b1e428c7fb"
+        },
+        "date": 1739217635718,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 749,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 5256,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3254,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 6263,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1463,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 8475,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 5281,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 8432,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 2323,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 13898,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 8949,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 13979,
             "unit": "ms"
           }
         ]

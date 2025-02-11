@@ -1,3 +1,12 @@
+## [12.14.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.14.6...12.14.7) (2025-02-11)
+
+
+### Bug Fixes
+
+* **mdTypes:** update tua viz metadata types ([#1504](https://github.com/forcedotcom/source-deploy-retrieve/issues/1504)) ([a204d2c](https://github.com/forcedotcom/source-deploy-retrieve/commit/a204d2c678133104bc933889979113fc903df720))
+
+
+
 ## [12.14.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.14.5...12.14.6) (2025-02-10)
 
 

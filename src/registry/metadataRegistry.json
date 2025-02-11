@@ -533,7 +533,9 @@
     "aiEvaluationDefinition": "aievaluationdefinition",
     "uaviz": "analyticsvisualization",
     "uawork": "analyticsworkspace",
-    "annotationextensionset": "annotationextensionset"
+    "annotationextensionset": "annotationextensionset",
+    "lifeSciConfigCategory": "lifesciconfigcategory",
+    "lifeSciConfigRecord": "lifesciconfigrecord"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4746,6 +4748,22 @@
       "name": "AnnotationExtensionSet",
       "suffix": "annotationextensionset",
       "directoryName": "annotationextensionsets",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "lifesciconfigcategory": {
+      "id": "lifesciconfigcategory",
+      "name": "LifeSciConfigCategory",
+      "suffix": "lifeSciConfigCategory",
+      "directoryName": "lifeSciConfigCategories",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "lifesciconfigrecord": {
+      "id": "lifesciconfigrecord",
+      "name": "LifeSciConfigRecord",
+      "suffix": "lifeSciConfigRecord",
+      "directoryName": "lifeSciConfigRecords",
       "inFolder": false,
       "strictDirectoryName": false
     }

@@ -746,5 +746,4 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - XOrgHub
 - AiEvaluationDefinition
 - AnalyticsVisualization
-- AnalyticsVizViewDef
 - AnnotationExtensionSet

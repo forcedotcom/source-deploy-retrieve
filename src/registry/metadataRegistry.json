@@ -532,7 +532,6 @@
     "PublicKeyCertificateSet": "publickeycertificateset",
     "aiEvaluationDefinition": "aievaluationdefinition",
     "uaviz": "analyticsvisualization",
-    "uavizview": "analyticsvizviewdef",
     "uawork": "analyticsworkspace",
     "annotationextensionset": "annotationextensionset"
   },
@@ -4718,15 +4717,7 @@
       "id": "analyticsvisualization",
       "name": "AnalyticsVisualization",
       "suffix": "uaviz",
-      "directoryName": "unified-analytics",
-      "inFolder": false,
-      "strictDirectoryName": false
-    },
-    "analyticsvizviewdef": {
-      "id": "analyticsvizviewdef",
-      "name": "AnalyticsVizViewDef",
-      "suffix": "uavizview",
-      "directoryName": "unified-analytics",
+      "directoryName": "unified-analytics-visualization",
       "inFolder": false,
       "strictDirectoryName": false
     },

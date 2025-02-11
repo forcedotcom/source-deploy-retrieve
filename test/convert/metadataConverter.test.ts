@@ -11,7 +11,7 @@ import { SinonStub } from 'sinon';
 import fs from 'graceful-fs';
 import { assert, expect } from 'chai';
 import { TestContext } from '@salesforce/core/testSetup';
-import { xmlInFolder } from '../mock';
+import { xmlInFolder, digitalExperienceBundle } from '../mock';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { COMPONENTS } from '../mock/type-constants/documentFolderConstant';
@@ -470,6 +470,20 @@ describe('MetadataConverter', () => {
       // pop off the CFT that should be filtered off for the assertion
       components.pop();
       expect(pipelineArgs[3].rootDestination).to.equal(defaultDirectory);
+    });
+
+    it('should ensure the merge set contains child DE instead of parent DEB', async () => {
+      assert(digitalExperienceBundle.DE_COMPONENT.parent?.xml);
+
+      await converter.convert(new ComponentSet([digitalExperienceBundle.DE_COMPONENT]), 'source', {
+        type: 'merge',
+        defaultDirectory,
+        mergeWith: [digitalExperienceBundle.DE_COMPONENT],
+      });
+
+      const pipelineArgs = pipelineStub.firstCall.args;
+      validatePipelineArgs(pipelineArgs, 'source');
+      expect(pipelineArgs[2].mergeSet).to.deep.equal(new ComponentSet([digitalExperienceBundle.DE_COMPONENT]));
     });
 
     it('should ensure merge set contains parents of child components instead of the children themselves', async () => {

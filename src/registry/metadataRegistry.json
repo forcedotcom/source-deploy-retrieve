@@ -532,8 +532,8 @@
     "PublicKeyCertificateSet": "publickeycertificateset",
     "aiEvaluationDefinition": "aievaluationdefinition",
     "uaviz": "analyticsvisualization",
-    "uavizview": "analyticsvizviewdef",
-    "uawork": "analyticsworkspace"
+    "uawork": "analyticsworkspace",
+    "annotationextensionset": "annotationextensionset"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4717,15 +4717,7 @@
       "id": "analyticsvisualization",
       "name": "AnalyticsVisualization",
       "suffix": "uaviz",
-      "directoryName": "unified-analytics",
-      "inFolder": false,
-      "strictDirectoryName": false
-    },
-    "analyticsvizviewdef": {
-      "id": "analyticsvizviewdef",
-      "name": "AnalyticsVizViewDef",
-      "suffix": "uavizview",
-      "directoryName": "unified-analytics",
+      "directoryName": "unified-analytics-visualization",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -4748,6 +4740,14 @@
         "adapter": "bundle"
       },
       "supportsPartialDelete": true
+    },
+    "annotationextensionset": {
+      "id": "annotationextensionset",
+      "name": "AnnotationExtensionSet",
+      "suffix": "annotationextensionset",
+      "directoryName": "annotationextensionsets",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   }
 }

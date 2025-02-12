@@ -4718,7 +4718,7 @@
       "id": "analyticsdashboard",
       "name": "AnalyticsDashboard",
       "suffix": "uadash",
-      "directoryName": "unified-analytics-dashboard",
+      "directoryName": "unifieddashboards",
       "inFolder": false,
       "strictDirectoryName": false
     },

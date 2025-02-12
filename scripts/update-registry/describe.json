@@ -1084,6 +1084,14 @@
     "metaFile": false,
     "hasChildren": false
   },
+  "ContentTypeBundle": {
+    "name": "ContentTypeBundle",
+    "directoryName": "contentTypes",
+    "suffix": "contentType",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
+  },
   "CorsWhitelistOrigin": {
     "name": "CorsWhitelistOrigin",
     "directoryName": "corsWhitelistOrigins",

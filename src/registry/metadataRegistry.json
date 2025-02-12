@@ -4717,7 +4717,7 @@
       "id": "analyticsvisualization",
       "name": "AnalyticsVisualization",
       "suffix": "uaviz",
-      "directoryName": "unified-analytics-visualization",
+      "directoryName": "analyticsVisualizations",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -4725,7 +4725,7 @@
       "id": "analyticsworkspace",
       "name": "AnalyticsWorkspace",
       "suffix": "uawork",
-      "directoryName": "unified-analytics-workspace",
+      "directoryName": "analyticsWorkspaces",
       "inFolder": false,
       "strictDirectoryName": false
     },

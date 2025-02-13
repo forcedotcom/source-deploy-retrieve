@@ -1,3 +1,12 @@
+# [12.15.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.14.9...12.15.0) (2025-02-13)
+
+
+### Features
+
+* **@W-17522423:** enable 2gp and source tracking for contenttypebundle ([#1506](https://github.com/forcedotcom/source-deploy-retrieve/issues/1506)) ([e2c8edf](https://github.com/forcedotcom/source-deploy-retrieve/commit/e2c8edf4640dab77ac4908ade0eaae25f633463f))
+
+
+
 ## [12.14.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.14.8...12.14.9) (2025-02-13)
 
 

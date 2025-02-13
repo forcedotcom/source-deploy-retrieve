@@ -532,6 +532,7 @@
     "PublicKeyCertificate": "publickeycertificate",
     "PublicKeyCertificateSet": "publickeycertificateset",
     "aiEvaluationDefinition": "aievaluationdefinition",
+    "uadash": "analyticsdashboard",
     "uaviz": "analyticsvisualization",
     "uawork": "analyticsworkspace",
     "annotationextensionset": "annotationextensionset"
@@ -4711,6 +4712,14 @@
       "name": "AiEvaluationDefinition",
       "suffix": "aiEvaluationDefinition",
       "directoryName": "aiEvaluationDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "analyticsdashboard": {
+      "id": "analyticsdashboard",
+      "name": "AnalyticsDashboard",
+      "suffix": "uadash",
+      "directoryName": "analyticsDashboards",
       "inFolder": false,
       "strictDirectoryName": false
     },

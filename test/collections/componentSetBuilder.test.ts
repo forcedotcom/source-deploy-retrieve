@@ -10,7 +10,7 @@ import { join } from 'node:path';
 import fs from 'graceful-fs';
 import * as sinon from 'sinon';
 import { assert, expect, config } from 'chai';
-import { Connection, SfError } from '@salesforce/core';
+import { Connection, Lifecycle, SfError } from '@salesforce/core';
 import { instantiateContext, MockTestOrgData, restoreContext, stubContext } from '@salesforce/core/testSetup';
 import { RegistryAccess } from '../../src/registry/registryAccess';
 import { ComponentSetBuilder, entryToTypeAndName } from '../../src/collections/componentSetBuilder';
@@ -61,6 +61,7 @@ describe('ComponentSetBuilder', () => {
     let fromSourceStub: sinon.SinonStub;
     let fromManifestStub: sinon.SinonStub;
     let fromConnectionStub: sinon.SinonStub;
+    let emitTelemetrySpy: sinon.SinonStub;
 
     beforeEach(() => {
       fileExistsSyncStub = sandbox.stub(fs, 'existsSync');
@@ -68,6 +69,7 @@ describe('ComponentSetBuilder', () => {
       fromManifestStub = sandbox.stub(ComponentSet, 'fromManifest');
       fromConnectionStub = sandbox.stub(ComponentSet, 'fromConnection');
       componentSet = new ComponentSet();
+      emitTelemetrySpy = sandbox.stub(Lifecycle.prototype, 'emitTelemetry');
     });
 
     it('should create ComponentSet from single sourcepath', async () => {
@@ -89,6 +91,7 @@ describe('ComponentSetBuilder', () => {
       expect(argWithoutRegistry).to.deep.equal(expectedArg);
       expect(compSet.size).to.equal(1);
       expect(compSet.has(apexClassComponent)).to.equal(true);
+      expect(emitTelemetrySpy.called).to.be.false;
     });
 
     it('should create ComponentSet from multiple sourcepaths', async () => {
@@ -132,6 +135,7 @@ describe('ComponentSetBuilder', () => {
       expect(argWithoutRegistry).to.deep.equal(expectedArg);
       expect(compSet.size).to.equal(0);
       expect(compSet.apiVersion).to.equal(options.apiversion);
+      expect(emitTelemetrySpy.called).to.be.false;
     });
 
     it('should create ComponentSet with sourceApiVersion', async () => {
@@ -208,6 +212,7 @@ describe('ComponentSetBuilder', () => {
       expect(compSet.size).to.equal(2);
       expect(compSet.has(apexClassComponent)).to.equal(true);
       expect(compSet.has({ type: 'ApexClass', fullName: '*' })).to.equal(true);
+      expect(emitTelemetrySpy.called).to.be.false;
     });
 
     it('should create ComponentSet from metadata with spaces between : (ApexClass: MyApexClass)', async () => {
@@ -276,6 +281,7 @@ describe('ComponentSetBuilder', () => {
       expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
       expect(compSet.size).to.equal(1);
       expect(compSet.has(apexClassComponent)).to.equal(true);
+      expect(emitTelemetrySpy.called).to.be.false;
     });
 
     it('should create ComponentSet from multiple metadata (ApexClass:MyClass,CustomObject)', async () => {
@@ -513,6 +519,7 @@ describe('ComponentSetBuilder', () => {
         expect(fromConnectionArgs['componentFilter'].call()).equal(true);
         expect(compSet.size).to.equal(1);
         expect(compSet.has(apexClassComponent)).to.equal(true);
+        expect(emitTelemetrySpy.args.flat()).to.not.include('PseudoTypesConverted');
       });
 
       it('should create ComponentSet from org connection and metadata', async () => {
@@ -599,6 +606,14 @@ describe('ComponentSetBuilder', () => {
           const expectedMdTypes = ['Bot', 'BotVersion', 'GenAiPlanner', 'GenAiPlugin'];
           expect(fromConnectionArgs).to.have.deep.property('metadataTypes', expectedMdTypes);
           expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
+          expect(emitTelemetrySpy.calledOnce).to.be.true;
+          expect(emitTelemetrySpy.args[0]).to.deep.equal([
+            {
+              eventName: 'PseudoTypesConverted',
+              library: 'SDR',
+              types: 'Agent',
+            },
+          ]);
         });
 
         it('should create ComponentSet from org connection and Agent developer name', async () => {
@@ -633,6 +648,14 @@ describe('ComponentSetBuilder', () => {
           const expectedMdTypes = ['Bot', 'BotVersion', 'GenAiPlanner', 'GenAiPlugin'];
           expect(fromConnectionArgs).to.have.deep.property('metadataTypes', expectedMdTypes);
           expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
+          expect(emitTelemetrySpy.calledOnce).to.be.true;
+          expect(emitTelemetrySpy.args[0]).to.deep.equal([
+            {
+              eventName: 'PseudoTypesConverted',
+              library: 'SDR',
+              types: 'Agent',
+            },
+          ]);
         });
       });
     });

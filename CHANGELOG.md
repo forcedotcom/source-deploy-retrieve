@@ -1,3 +1,12 @@
+## [12.14.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.14.8...12.14.9) (2025-02-13)
+
+
+### Bug Fixes
+
+* **mdTypes:** update tua assets md types directory names ([#1508](https://github.com/forcedotcom/source-deploy-retrieve/issues/1508)) ([5fa0408](https://github.com/forcedotcom/source-deploy-retrieve/commit/5fa0408b8a8bc391dfac85451dd2e98ef8291221))
+
+
+
 ## [12.14.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.14.7...12.14.8) (2025-02-11)
 
 

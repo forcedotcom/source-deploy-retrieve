@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlugin xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <canEscalate>false</canEscalate>
+    <description>Use this topic when customers inquire about the gym&apos;s operating hours and class schedules.</description>
+    <developerName>p_16jQP0000000PG9_Gym_Hours_and_Schedule</developerName>
+    <genAiFunctions>
+        <functionName>CustomKnowledgeAction_1738277095539</functionName>
+    </genAiFunctions>
+    <genAiPluginInstructions>
+        <description>If the query is about gym hours, use CustomKnowledgeAction_1738277095539.</description>
+        <developerName>instruction_0</developerName>
+        <language xsi:nil="true"/>
+        <masterLabel>instruction_0</masterLabel>
+    </genAiPluginInstructions>
+    <genAiPluginInstructions>
+        <description>If the query is about class schedules, use CustomKnowledgeAction_1738277095539.</description>
+        <developerName>instruction_1</developerName>
+        <language xsi:nil="true"/>
+        <masterLabel>instruction_1</masterLabel>
+    </genAiPluginInstructions>
+    <language>en_US</language>
+    <masterLabel>Gym Hours and Schedule</masterLabel>
+    <pluginType>Topic</pluginType>
+    <scope>Your job is to only provide real-time information on the gym&apos;s operating hours and class schedules.</scope>
+</GenAiPlugin>

@@ -6,7 +6,7 @@
  */
 
 import * as path from 'node:path';
-import { AuthInfo, Connection, Logger, Messages, SfError, StateAggregator, trimTo15 } from '@salesforce/core';
+import { AuthInfo, Connection, Logger, Messages, SfError, StateAggregator } from '@salesforce/core';
 import fs from 'graceful-fs';
 import { minimatch } from 'minimatch';
 import { MetadataComponent } from '../resolve/types';
@@ -16,6 +16,7 @@ import { RegistryAccess } from '../registry/registryAccess';
 import type { FileProperties } from '../client/types';
 import { MetadataType } from '../registry/types';
 import { MetadataResolver } from '../resolve';
+import { resolveAgentMdEntries } from '../resolve/pseudoTypes/agentResolver';
 import { DestructiveChangesType, FromConnectionOptions } from './types';
 
 Messages.importMessagesDirectory(__dirname);
@@ -152,6 +153,10 @@ export class ComponentSetBuilder {
       componentSet ??= new ComponentSet(undefined, registry);
       const componentSetFilter = new ComponentSet(undefined, registry);
 
+      // If pseudo types were passed without an org option replace the pseudo types with
+      // "client side spidering"
+      metadata.metadataEntries = await replacePseudoTypes({ mdOption: metadata, registry });
+
       // Build a Set of metadata entries
       metadata.metadataEntries
         .map(entryToTypeAndName(registry))
@@ -242,7 +247,7 @@ export class ComponentSetBuilder {
       if (metadata.metadataEntries?.length) {
         debugMsg += ` filtering on metadata: ${metadata.metadataEntries.toString()}`;
         // Replace pseudo-types from the metadataEntries
-        metadata.metadataEntries = await replacePseudoTypes(metadata.metadataEntries, connection);
+        metadata.metadataEntries = await replacePseudoTypes({ mdOption: metadata, connection, registry });
       }
       if (metadata.excludedEntries?.length) {
         debugMsg += ` excluding metadata: ${metadata.excludedEntries.toString()}`;
@@ -402,11 +407,16 @@ const buildMapFromMetadata = (mdOption: MetadataOption, registry: RegistryAccess
 };
 
 // Replace pseudo types with actual types.
-const replacePseudoTypes = async (mdEntries: string[], connection: Connection): Promise<string[]> => {
+const replacePseudoTypes = async (pseudoTypeInfo: {
+  mdOption: MetadataOption;
+  connection?: Connection;
+  registry: RegistryAccess;
+}): Promise<string[]> => {
+  const { mdOption, connection, registry } = pseudoTypeInfo;
   const pseudoEntries: string[][] = [];
   let replacedEntries: string[] = [];
 
-  mdEntries.map((rawEntry) => {
+  mdOption.metadataEntries.map((rawEntry) => {
     const [typeName, ...name] = rawEntry.split(':');
     if (Object.values(PSEUDO_TYPES).includes(typeName)) {
       pseudoEntries.push([typeName, name.join(':').trim()]);
@@ -422,7 +432,12 @@ const replacePseudoTypes = async (mdEntries: string[], connection: Connection): 
         const pseudoName = pseudoEntry[1] || '*';
         getLogger().debug(`Converting pseudo-type ${pseudoType}:${pseudoName}`);
         if (pseudoType === PSEUDO_TYPES.AGENT) {
-          const agentMdEntries = await buildAgentMdEntries(pseudoName, connection);
+          const agentMdEntries = await resolveAgentMdEntries({
+            botName: pseudoName,
+            connection,
+            directoryPaths: mdOption.directoryPaths,
+            registry,
+          });
           replacedEntries = [...replacedEntries, ...agentMdEntries];
         }
       })
@@ -430,46 +445,4 @@ const replacePseudoTypes = async (mdEntries: string[], connection: Connection): 
   }
 
   return replacedEntries;
-};
-
-// From a Bot developer name, get all related BotVersion, GenAiPlanner, and GenAiPlugin metadata.
-const buildAgentMdEntries = async (botName: string, connection: Connection): Promise<string[]> => {
-  if (botName === '*') {
-    // Get all Agent top level metadata
-    return Promise.resolve(['Bot', 'BotVersion', 'GenAiPlanner', 'GenAiPlugin']);
-  }
-
-  const mdEntries = [`Bot:${botName}`, `BotVersion:${botName}.v1`, `GenAiPlanner:${botName}`];
-
-  try {
-    // Query for the GenAiPlannerId
-    const genAiPlannerIdQuery = `SELECT Id FROM GenAiPlannerDefinition WHERE DeveloperName = '${botName}'`;
-    const plannerId = (await connection.singleRecordQuery<{ Id: string }>(genAiPlannerIdQuery, { tooling: true })).Id;
-
-    if (plannerId) {
-      const plannerId15 = trimTo15(plannerId);
-      // Query for the GenAiPlugins associated with the 15 char GenAiPlannerId
-      const genAiPluginNames = (
-        await connection.tooling.query<{ DeveloperName: string }>(
-          `SELECT DeveloperName FROM GenAiPluginDefinition WHERE DeveloperName LIKE 'p_${plannerId15}%'`
-        )
-      ).records;
-      if (genAiPluginNames.length) {
-        genAiPluginNames.map((r) => mdEntries.push(`GenAiPlugin:${r.DeveloperName}`));
-      } else {
-        getLogger().debug(`No GenAiPlugin metadata matches for plannerId: ${plannerId15}`);
-      }
-    } else {
-      getLogger().debug(`No GenAiPlanner metadata matches for Bot: ${botName}`);
-    }
-  } catch (err) {
-    const wrappedErr = SfError.wrap(err);
-    getLogger().debug(`Error when querying for GenAiPlugin by Bot name: ${botName}\n${wrappedErr.message}`);
-    if (wrappedErr.stack) {
-      getLogger().debug(wrappedErr.stack);
-    }
-  }
-
-  // Get specific Agent top level metadata.
-  return Promise.resolve(mdEntries);
 };

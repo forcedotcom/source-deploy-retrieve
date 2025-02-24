@@ -1,0 +1,10 @@
+{
+  "name": "agentsProject",
+  "namespace": "",
+  "packageDirectories": [
+    {
+      "default": true,
+      "path": "force-app"
+    }
+  ]
+}

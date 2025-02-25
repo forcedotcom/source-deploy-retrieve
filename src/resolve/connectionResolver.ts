@@ -73,8 +73,8 @@ export class ConnectionResolver {
     shouldQueryStandardValueSets = false;
 
     // To limit the number of concurrent requests, batch them per an env var.
-    // By default there is no batching.
-    this.requestBatchSize = env.getNumber('SF_LIST_METADATA_BATCH_SIZE', -1);
+    // Default is 500. From testing we saw jsforce gets stuck on ~1K reqs.
+    this.requestBatchSize = env.getNumber('SF_LIST_METADATA_BATCH_SIZE', 500);
   }
 
   public async resolve(

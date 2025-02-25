@@ -175,7 +175,8 @@ describe('ConnectionResolver', () => {
 
       const metadataListStub = $$.SANDBOX.stub(connection.metadata, 'list');
 
-      const tonsOfApexClasses = Array.from({ length: 120_000 }, (_value, index) => ({
+      const classesQty = 200_000;
+      const tonsOfApexClasses = Array.from({ length: classesQty }, (_value, index) => ({
         ...StdFileProperty,
         fileName: `classes/MyApexClass${index}.class`,
         fullName: `MyApexClass${index}`,
@@ -187,7 +188,7 @@ describe('ConnectionResolver', () => {
       const mdTypes = ['ApexClass'];
       const resolver = new ConnectionResolver(connection, undefined, mdTypes);
       const result = await resolver.resolve();
-      const expected = Array.from({ length: 120_000 }, (_value, index) => ({
+      const expected = Array.from({ length: classesQty }, (_value, index) => ({
         fullName: `MyApexClass${index}`,
         type: registry.types.apexclass,
       }));

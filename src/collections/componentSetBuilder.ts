@@ -97,7 +97,7 @@ export class ComponentSetBuilder {
     const { sourcepath, manifest, metadata, packagenames, org } = options;
     const registry = new RegistryAccess(undefined, options.projectDir);
 
-    if (sourcepath) {
+    if (sourcepath?.length) {
       getLogger().debug(`Building ComponentSet from sourcepath: ${sourcepath.join(', ')}`);
       const fsPaths = sourcepath.map(validateAndResolvePath);
       componentSet = ComponentSet.fromSource({

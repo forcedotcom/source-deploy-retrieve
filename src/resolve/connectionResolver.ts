@@ -171,12 +171,12 @@ export class ConnectionResolver {
 
   // Send batched listMetadata requests based on the SF_LIST_METADATA_BATCH_SIZE env var.
   private async sendBatchedRequests(listMdQueries: string[]): Promise<RelevantFileProperties[]> {
-    const listMetadataResponses: RelevantFileProperties[] = [];
+    let listMetadataResponses: RelevantFileProperties[] = [];
     let listMetadataRequests: Array<Promise<RelevantFileProperties[]>> = [];
 
     const sendIt = async (): Promise<void> => {
       const requestBatch = (await Promise.all(listMetadataRequests)).flat();
-      listMetadataResponses.push(...requestBatch);
+      listMetadataResponses = listMetadataResponses.concat(requestBatch);
     };
 
     // Make batched listMetadata requests
@@ -212,12 +212,12 @@ export class ConnectionResolver {
   // SF_LIST_METADATA_BATCH_SIZE env var.
   private async sendBatchedQueries(): Promise<RelevantFileProperties[]> {
     const mdType = this.registry.getTypeByName('StandardValueSet');
-    const queryResponses: RelevantFileProperties[] = [];
+    let queryResponses: RelevantFileProperties[] = [];
     let queryRequests: Array<Promise<RelevantFileProperties | undefined>> = [];
 
     const sendIt = async (): Promise<void> => {
       const requestBatch = (await Promise.all(queryRequests)).flat();
-      queryResponses.push(...requestBatch.filter((rb) => !!rb));
+      queryResponses = queryResponses.concat(requestBatch.filter((rb) => !!rb));
     };
 
     // Make batched query requests

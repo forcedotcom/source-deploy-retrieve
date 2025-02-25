@@ -168,6 +168,35 @@ describe('ConnectionResolver', () => {
       expect(metadataQueryStub.calledOnce).to.be.true;
     });
 
+    it('should resolve +100K components', async () => {
+      const promiseAllSpy = $$.SANDBOX.spy(Promise, 'all');
+      // @ts-expect-error spying on private method
+      const resolverSpy = $$.SANDBOX.spy(ConnectionResolver.prototype, 'sendBatchedQueries');
+
+      const metadataListStub = $$.SANDBOX.stub(connection.metadata, 'list');
+
+      const tonsOfApexClasses = Array.from({ length: 120_000 }, (_value, index) => ({
+        ...StdFileProperty,
+        fileName: `classes/MyApexClass${index}.class`,
+        fullName: `MyApexClass${index}`,
+        type: 'ApexClass',
+      }));
+
+      metadataListStub.withArgs({ type: 'ApexClass' }).resolves(tonsOfApexClasses);
+
+      const mdTypes = ['ApexClass'];
+      const resolver = new ConnectionResolver(connection, undefined, mdTypes);
+      const result = await resolver.resolve();
+      const expected = Array.from({ length: 120_000 }, (_value, index) => ({
+        fullName: `MyApexClass${index}`,
+        type: registry.types.apexclass,
+      }));
+
+      expect(result.components).to.deep.equal(expected);
+      expect(promiseAllSpy.callCount, 'Expected Promise.all() to be called 2 times').to.equal(1);
+      expect(promiseAllSpy.firstCall.args[0]).to.be.an('array').with.lengthOf(1);
+      expect(resolverSpy.called).to.be.false;
+    });
     it('should batch requests per SF_LIST_METADATA_BATCH_SIZE', async () => {
       $$.SANDBOX.stub(env, 'getNumber').returns(2);
       const promiseAllSpy = $$.SANDBOX.spy(Promise, 'all');

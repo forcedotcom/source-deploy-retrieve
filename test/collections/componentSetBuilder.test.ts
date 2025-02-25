@@ -185,230 +185,308 @@ describe('ComponentSetBuilder', () => {
       expect(fromManifestStub.callCount).to.equal(0);
     });
 
-    it('should create ComponentSet from wildcarded metadata (ApexClass)', async () => {
-      componentSet.add(apexClassComponent);
-      fromSourceStub.returns(componentSet);
-      const packageDir1 = path.resolve('force-app');
+    describe('from metadata', () => {
+      it('should create ComponentSet from wildcarded metadata (ApexClass)', async () => {
+        componentSet.add(apexClassComponent);
+        fromSourceStub.returns(componentSet);
+        const packageDir1 = path.resolve('force-app');
 
-      const compSet = await ComponentSetBuilder.build({
-        sourcepath: undefined,
-        manifest: undefined,
-        metadata: {
-          metadataEntries: ['ApexClass'],
-          directoryPaths: [packageDir1],
-        },
-      });
-      expect(fromSourceStub.callCount).to.equal(1);
-      const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
-      expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
-      const filter = new ComponentSet();
-      filter.add({ type: 'ApexClass', fullName: '*' });
-      assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
-      expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
-      expect(compSet.size).to.equal(2);
-      expect(compSet.has(apexClassComponent)).to.equal(true);
-      expect(compSet.has({ type: 'ApexClass', fullName: '*' })).to.equal(true);
-    });
-
-    it('should create ComponentSet from metadata with spaces between : (ApexClass: MyApexClass)', async () => {
-      componentSet.add(apexClassComponent);
-      fromSourceStub.returns(componentSet);
-      const packageDir1 = path.resolve('force-app');
-
-      const compSet = await ComponentSetBuilder.build({
-        sourcepath: undefined,
-        manifest: undefined,
-        metadata: {
-          metadataEntries: ['ApexClass: MyApexClass'],
-          directoryPaths: [packageDir1],
-        },
-      });
-      expect(fromSourceStub.callCount).to.equal(1);
-      const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
-      expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
-      const filter = new ComponentSet();
-      filter.add({ type: 'ApexClass', fullName: 'MyApexClass' });
-      assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
-      expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
-      expect(compSet.size).to.equal(2);
-      expect(compSet.has(apexClassComponent)).to.equal(true);
-      expect(compSet.has({ type: 'ApexClass', fullName: 'MyApexClass' })).to.equal(true);
-    });
-
-    it('should throw an error when it cant resolve a metadata type (Metadata)', async () => {
-      const packageDir1 = path.resolve('force-app');
-
-      try {
-        await ComponentSetBuilder.build({
+        const compSet = await ComponentSetBuilder.build({
           sourcepath: undefined,
           manifest: undefined,
           metadata: {
-            metadataEntries: ['NotAType', 'ApexClass:MyClass'],
+            metadataEntries: ['ApexClass'],
             directoryPaths: [packageDir1],
           },
         });
-        assert.fail('the above should throw an error');
-      } catch (e) {
-        expect(e).to.not.be.null;
-        expect((e as Error).message).to.include("Missing metadata type definition in registry for id 'NotAType'");
-      }
-    });
-
-    it('should create ComponentSet from specific metadata (ApexClass:MyClass)', async () => {
-      componentSet.add(apexClassComponent);
-      fromSourceStub.returns(componentSet);
-      const packageDir1 = path.resolve('force-app');
-
-      const compSet = await ComponentSetBuilder.build({
-        sourcepath: undefined,
-        manifest: undefined,
-        metadata: {
-          metadataEntries: ['ApexClass:MyClass'],
-          directoryPaths: [packageDir1],
-        },
-      });
-      expect(fromSourceStub.callCount).to.equal(1);
-      const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
-      expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
-      const filter = new ComponentSet();
-      filter.add({ type: 'ApexClass', fullName: 'MyClass' });
-      assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
-      expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
-      expect(compSet.size).to.equal(1);
-      expect(compSet.has(apexClassComponent)).to.equal(true);
-    });
-
-    it('should create ComponentSet from multiple metadata (ApexClass:MyClass,CustomObject)', async () => {
-      componentSet.add(apexClassComponent);
-      componentSet.add(customObjectComponent);
-      fromSourceStub.returns(componentSet);
-      const packageDir1 = path.resolve('force-app');
-
-      const compSet = await ComponentSetBuilder.build({
-        sourcepath: undefined,
-        manifest: undefined,
-        metadata: {
-          metadataEntries: ['ApexClass:MyClass', 'CustomObject'],
-          directoryPaths: [packageDir1],
-        },
-      });
-      expect(fromSourceStub.callCount).to.equal(1);
-      expect(compSet.forceIgnoredPaths).to.equal(undefined);
-      const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
-      expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
-      const filter = new ComponentSet();
-      filter.add({ type: 'ApexClass', fullName: 'MyClass' });
-      filter.add({ type: 'CustomObject', fullName: '*' });
-      assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
-      expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
-      expect(compSet.size).to.equal(3);
-      expect(compSet.has(apexClassComponent)).to.equal(true);
-      expect(compSet.has(customObjectComponent)).to.equal(true);
-      expect(compSet.has({ type: 'CustomObject', fullName: '*' })).to.equal(true);
-    });
-    it('should create ComponentSet from multiple metadata (ApexClass:MyClass,CustomObject), one of which is forceignored', async () => {
-      const customObjSourceComponent = new SourceComponent({
-        name: 'myCO',
-        content: join('my', 'path', 'to', 'a', 'customobject.xml'),
-        parentType: undefined,
-        type: { id: 'customobject', directoryName: 'objects', name: 'CustomObject' },
-        xml: '',
+        expect(fromSourceStub.callCount).to.equal(1);
+        const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
+        expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
+        const filter = new ComponentSet();
+        filter.add({ type: 'ApexClass', fullName: '*' });
+        assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
+        expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
+        expect(compSet.size).to.equal(2);
+        expect(compSet.has(apexClassComponent)).to.equal(true);
+        expect(compSet.has({ type: 'ApexClass', fullName: '*' })).to.equal(true);
       });
 
-      componentSet.add(apexClassComponent);
-      componentSet.add(customObjSourceComponent);
+      it('should create ComponentSet from metadata with spaces between : (ApexClass: MyApexClass)', async () => {
+        componentSet.add(apexClassComponent);
+        fromSourceStub.returns(componentSet);
+        const packageDir1 = path.resolve('force-app');
 
-      componentSet.add(apexClassWildcardMatch);
-      componentSet.forceIgnoredPaths = new Set<string>();
-      componentSet.forceIgnoredPaths.add(join('my', 'path', 'to', 'a', 'customobject.xml'));
-      fromSourceStub.returns(componentSet);
-      const packageDir1 = path.resolve('force-app');
-
-      sandbox.stub(MetadataResolver.prototype, 'getComponentsFromPath').returns([customObjSourceComponent]);
-
-      const compSet = await ComponentSetBuilder.build({
-        sourcepath: undefined,
-        manifest: undefined,
-        metadata: {
-          metadataEntries: ['ApexClass:MyClass', 'ApexClass:MyClassIsAwesome', 'CustomObject:myCO'],
-          directoryPaths: [packageDir1],
-        },
+        const compSet = await ComponentSetBuilder.build({
+          sourcepath: undefined,
+          manifest: undefined,
+          metadata: {
+            metadataEntries: ['ApexClass: MyApexClass'],
+            directoryPaths: [packageDir1],
+          },
+        });
+        expect(fromSourceStub.callCount).to.equal(1);
+        const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
+        expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
+        const filter = new ComponentSet();
+        filter.add({ type: 'ApexClass', fullName: 'MyApexClass' });
+        assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
+        expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
+        expect(compSet.size).to.equal(2);
+        expect(compSet.has(apexClassComponent)).to.equal(true);
+        expect(compSet.has({ type: 'ApexClass', fullName: 'MyApexClass' })).to.equal(true);
       });
-      expect(fromSourceStub.callCount).to.equal(1);
-      expect(compSet.forceIgnoredPaths?.size).to.equal(1);
-      expect(compSet.forceIgnoredPaths).to.deep.equal(new Set([join('my', 'path', 'to', 'a', 'customobject.xml')]));
-      const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
-      expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
-      const filter = new ComponentSet();
-      filter.add({ type: 'ApexClass', fullName: 'MyClass' });
-      filter.add({ type: 'ApexClass', fullName: 'MyClassIsAwesome' });
-      filter.add({ type: 'CustomObject', fullName: 'myCO' });
-      assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
-      expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
-      expect(compSet.size).to.equal(3);
-      expect(compSet.has(apexClassComponent)).to.equal(true);
-      expect(compSet.has(customObjectComponent)).to.equal(false);
-      expect(compSet.has({ type: 'CustomObject', fullName: '*' })).to.equal(false);
-      expect(compSet.has({ type: 'ApexClass', fullName: 'MyClass' })).to.equal(true);
-      expect(compSet.has({ type: 'ApexClass', fullName: 'MyClassIsAwesome' })).to.equal(true);
-    });
 
-    it('should create ComponentSet from partial-match fullName (ApexClass:Prop*)', async () => {
-      componentSet.add(apexClassComponent);
-      componentSet.add(apexClassWildcardMatch);
-      fromSourceStub.returns(componentSet);
-      const packageDir1 = path.resolve('force-app');
+      it('should throw an error when it cant resolve a metadata type (Metadata)', async () => {
+        const packageDir1 = path.resolve('force-app');
 
-      const compSet = await ComponentSetBuilder.build({
-        sourcepath: undefined,
-        manifest: undefined,
-        metadata: {
-          metadataEntries: ['ApexClass:MyClas*'],
-          directoryPaths: [packageDir1],
-        },
+        try {
+          await ComponentSetBuilder.build({
+            sourcepath: undefined,
+            manifest: undefined,
+            metadata: {
+              metadataEntries: ['NotAType', 'ApexClass:MyClass'],
+              directoryPaths: [packageDir1],
+            },
+          });
+          assert.fail('the above should throw an error');
+        } catch (e) {
+          expect(e).to.not.be.null;
+          expect((e as Error).message).to.include("Missing metadata type definition in registry for id 'NotAType'");
+        }
       });
-      expect(fromSourceStub.callCount).to.equal(2);
-      const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
-      expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
-      const filter = new ComponentSet();
-      filter.add({ type: 'ApexClass', fullName: 'MyClass' });
-      filter.add({ type: 'ApexClass', fullName: 'MyClassIsAwesome' });
-      filter.add({ type: 'ApexClass', fullName: 'MyTableIsAwesome' });
-      assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
-      expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
-      expect(compSet.size).to.equal(2);
-      expect(compSet.has(apexClassComponent)).to.equal(true);
-      expect(compSet.has(apexClassWildcardMatch)).to.equal(true);
-      expect(compSet.has(apexClassWildcardNoMatch)).to.equal(false);
-    });
 
-    it('should create ComponentSet from metadata and multiple package directories', async () => {
-      componentSet.add(apexClassComponent);
-      const apexClassComponent2 = { type: 'ApexClass', fullName: 'MyClass2' };
-      componentSet.add(apexClassComponent2);
-      fromSourceStub.returns(componentSet);
-      const packageDir1 = path.resolve('force-app');
-      const packageDir2 = path.resolve('my-app');
+      it('should create ComponentSet from specific metadata (ApexClass:MyClass)', async () => {
+        componentSet.add(apexClassComponent);
+        fromSourceStub.returns(componentSet);
+        const packageDir1 = path.resolve('force-app');
 
-      const compSet = await ComponentSetBuilder.build({
-        sourcepath: undefined,
-        manifest: undefined,
-        metadata: {
-          metadataEntries: ['ApexClass'],
-          directoryPaths: [packageDir1, packageDir2],
-        },
+        const compSet = await ComponentSetBuilder.build({
+          sourcepath: undefined,
+          manifest: undefined,
+          metadata: {
+            metadataEntries: ['ApexClass:MyClass'],
+            directoryPaths: [packageDir1],
+          },
+        });
+        expect(fromSourceStub.callCount).to.equal(1);
+        const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
+        expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
+        const filter = new ComponentSet();
+        filter.add({ type: 'ApexClass', fullName: 'MyClass' });
+        assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
+        expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
+        expect(compSet.size).to.equal(1);
+        expect(compSet.has(apexClassComponent)).to.equal(true);
       });
-      expect(fromSourceStub.callCount).to.equal(1);
-      const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
-      expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1, packageDir2]);
-      const filter = new ComponentSet();
-      filter.add({ type: 'ApexClass', fullName: '*' });
-      assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
-      expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
-      expect(compSet.size).to.equal(3);
-      expect(compSet.has(apexClassComponent)).to.equal(true);
-      expect(compSet.has(apexClassComponent2)).to.equal(true);
-      expect(compSet.has({ type: 'ApexClass', fullName: '*' })).to.equal(true);
+
+      it('should create ComponentSet from multiple metadata (ApexClass:MyClass,CustomObject)', async () => {
+        componentSet.add(apexClassComponent);
+        componentSet.add(customObjectComponent);
+        fromSourceStub.returns(componentSet);
+        const packageDir1 = path.resolve('force-app');
+
+        const compSet = await ComponentSetBuilder.build({
+          sourcepath: undefined,
+          manifest: undefined,
+          metadata: {
+            metadataEntries: ['ApexClass:MyClass', 'CustomObject'],
+            directoryPaths: [packageDir1],
+          },
+        });
+        expect(fromSourceStub.callCount).to.equal(1);
+        expect(compSet.forceIgnoredPaths).to.equal(undefined);
+        const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
+        expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
+        const filter = new ComponentSet();
+        filter.add({ type: 'ApexClass', fullName: 'MyClass' });
+        filter.add({ type: 'CustomObject', fullName: '*' });
+        assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
+        expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
+        expect(compSet.size).to.equal(3);
+        expect(compSet.has(apexClassComponent)).to.equal(true);
+        expect(compSet.has(customObjectComponent)).to.equal(true);
+        expect(compSet.has({ type: 'CustomObject', fullName: '*' })).to.equal(true);
+      });
+
+      it('should create ComponentSet from multiple metadata (ApexClass:MyClass,CustomObject), one of which is forceignored', async () => {
+        const customObjSourceComponent = new SourceComponent({
+          name: 'myCO',
+          content: join('my', 'path', 'to', 'a', 'customobject.xml'),
+          parentType: undefined,
+          type: { id: 'customobject', directoryName: 'objects', name: 'CustomObject' },
+          xml: '',
+        });
+
+        componentSet.add(apexClassComponent);
+        componentSet.add(customObjSourceComponent);
+
+        componentSet.add(apexClassWildcardMatch);
+        componentSet.forceIgnoredPaths = new Set<string>();
+        componentSet.forceIgnoredPaths.add(join('my', 'path', 'to', 'a', 'customobject.xml'));
+        fromSourceStub.returns(componentSet);
+        const packageDir1 = path.resolve('force-app');
+
+        sandbox.stub(MetadataResolver.prototype, 'getComponentsFromPath').returns([customObjSourceComponent]);
+
+        const compSet = await ComponentSetBuilder.build({
+          sourcepath: undefined,
+          manifest: undefined,
+          metadata: {
+            metadataEntries: ['ApexClass:MyClass', 'ApexClass:MyClassIsAwesome', 'CustomObject:myCO'],
+            directoryPaths: [packageDir1],
+          },
+        });
+        expect(fromSourceStub.callCount).to.equal(1);
+        expect(compSet.forceIgnoredPaths?.size).to.equal(1);
+        expect(compSet.forceIgnoredPaths).to.deep.equal(new Set([join('my', 'path', 'to', 'a', 'customobject.xml')]));
+        const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
+        expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
+        const filter = new ComponentSet();
+        filter.add({ type: 'ApexClass', fullName: 'MyClass' });
+        filter.add({ type: 'ApexClass', fullName: 'MyClassIsAwesome' });
+        filter.add({ type: 'CustomObject', fullName: 'myCO' });
+        assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
+        expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
+        expect(compSet.size).to.equal(3);
+        expect(compSet.has(apexClassComponent)).to.equal(true);
+        expect(compSet.has(customObjectComponent)).to.equal(false);
+        expect(compSet.has({ type: 'CustomObject', fullName: '*' })).to.equal(false);
+        expect(compSet.has({ type: 'ApexClass', fullName: 'MyClass' })).to.equal(true);
+        expect(compSet.has({ type: 'ApexClass', fullName: 'MyClassIsAwesome' })).to.equal(true);
+      });
+
+      it('should create ComponentSet from partial-match fullName (ApexClass:Prop*)', async () => {
+        componentSet.add(apexClassComponent);
+        componentSet.add(apexClassWildcardMatch);
+        fromSourceStub.returns(componentSet);
+        const packageDir1 = path.resolve('force-app');
+
+        const compSet = await ComponentSetBuilder.build({
+          sourcepath: undefined,
+          manifest: undefined,
+          metadata: {
+            metadataEntries: ['ApexClass:MyClas*'],
+            directoryPaths: [packageDir1],
+          },
+        });
+        expect(fromSourceStub.callCount).to.equal(2);
+        const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
+        expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
+        const filter = new ComponentSet();
+        filter.add({ type: 'ApexClass', fullName: 'MyClass' });
+        filter.add({ type: 'ApexClass', fullName: 'MyClassIsAwesome' });
+        filter.add({ type: 'ApexClass', fullName: 'MyTableIsAwesome' });
+        assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
+        expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
+        expect(compSet.size).to.equal(2);
+        expect(compSet.has(apexClassComponent)).to.equal(true);
+        expect(compSet.has(apexClassWildcardMatch)).to.equal(true);
+        expect(compSet.has(apexClassWildcardNoMatch)).to.equal(false);
+      });
+
+      it('should create ComponentSet from metadata and multiple package directories', async () => {
+        componentSet.add(apexClassComponent);
+        const apexClassComponent2 = { type: 'ApexClass', fullName: 'MyClass2' };
+        componentSet.add(apexClassComponent2);
+        fromSourceStub.returns(componentSet);
+        const packageDir1 = path.resolve('force-app');
+        const packageDir2 = path.resolve('my-app');
+
+        const compSet = await ComponentSetBuilder.build({
+          sourcepath: undefined,
+          manifest: undefined,
+          metadata: {
+            metadataEntries: ['ApexClass'],
+            directoryPaths: [packageDir1, packageDir2],
+          },
+        });
+        expect(fromSourceStub.callCount).to.equal(1);
+        const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
+        expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1, packageDir2]);
+        const filter = new ComponentSet();
+        filter.add({ type: 'ApexClass', fullName: '*' });
+        assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
+        expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
+        expect(compSet.size).to.equal(3);
+        expect(compSet.has(apexClassComponent)).to.equal(true);
+        expect(compSet.has(apexClassComponent2)).to.equal(true);
+        expect(compSet.has({ type: 'ApexClass', fullName: '*' })).to.equal(true);
+      });
+
+      describe('Agent pseudo type', () => {
+        const packageDir1 = path.resolve('force-app');
+        const genAiPlannerId15 = '16jSB000000H3JF';
+        const botComponent = {
+          type: 'Bot',
+          fullName: 'MyBot',
+          xml: 'MyBot.bot-meta.xml',
+        };
+        const genAiPlannerComponent = {
+          type: 'GenAiPlanner',
+          fullName: 'MyGenAiPlanner',
+          xml: 'MyGenAiPlanner.genAiPlanner-meta.xml',
+        };
+        const genAiPluginComponent = {
+          type: 'GenAiPlugin',
+          fullName: `p_${genAiPlannerId15}_MyGenAiPlugin`,
+          xml: `p_${genAiPlannerId15}_MyGenAiPlugin.genAiPlugin-meta.xml`,
+        };
+
+        it('should create ComponentSet from local source and wildcarded Agent', async () => {
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(botComponent);
+          mdCompSet.add(genAiPlannerComponent);
+          mdCompSet.add(genAiPluginComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['Agent'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          const compSet = await ComponentSetBuilder.build(options);
+          expect(fromConnectionStub.callCount).to.equal(0);
+          expect(fromSourceStub.callCount).to.equal(1);
+          const fromSourceArg = fromSourceStub.firstCall.firstArg;
+          expect(fromSourceArg).to.have.deep.property('fsPaths', [packageDir1]);
+          expect(fromSourceArg).to.have.property('include');
+          const expectedComps = ['bot#*', 'genaiplanner#*', 'genaiplugin#*', 'genaifunction#*'];
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(expectedComps);
+          expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
+        });
+
+        it('should create ComponentSet from local source and specific Agent', async () => {
+          // NOTE: this is pretty basic, happy path testing. In depth testing is done
+          //       as part of agentResolver tests.
+
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(botComponent);
+          mdCompSet.add(genAiPlannerComponent);
+          mdCompSet.add(genAiPluginComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['Agent:MyBot'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          const compSet = await ComponentSetBuilder.build(options);
+          expect(fromConnectionStub.callCount).to.equal(0);
+          expect(fromSourceStub.callCount).to.equal(3);
+          const fromSourceArg = fromSourceStub.thirdCall.firstArg;
+          expect(fromSourceArg).to.have.deep.property('fsPaths', [packageDir1]);
+          expect(fromSourceArg).to.have.property('include');
+          const expectedComps = ['bot#MyBot', 'genaiplanner#MyBot'];
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(expectedComps);
+          expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
+        });
+      });
     });
 
     it('should create ComponentSet from manifest', async () => {
@@ -596,7 +674,7 @@ describe('ComponentSetBuilder', () => {
           expect(queryStub.callCount).to.equal(0);
           expect(fromConnectionStub.callCount).to.equal(1);
           const fromConnectionArgs = fromConnectionStub.firstCall.args[0];
-          const expectedMdTypes = ['Bot', 'BotVersion', 'GenAiPlanner', 'GenAiPlugin'];
+          const expectedMdTypes = ['Bot', 'GenAiPlanner', 'GenAiPlugin', 'GenAiFunction'];
           expect(fromConnectionArgs).to.have.deep.property('metadataTypes', expectedMdTypes);
           expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
         });
@@ -630,7 +708,7 @@ describe('ComponentSetBuilder', () => {
           expect(queryStub.callCount, 'Expected tooling query stub to be called').to.equal(1);
           expect(fromConnectionStub.callCount).to.equal(1);
           const fromConnectionArgs = fromConnectionStub.firstCall.args[0];
-          const expectedMdTypes = ['Bot', 'BotVersion', 'GenAiPlanner', 'GenAiPlugin'];
+          const expectedMdTypes = ['Bot', 'GenAiPlanner', 'GenAiPlugin'];
           expect(fromConnectionArgs).to.have.deep.property('metadataTypes', expectedMdTypes);
           expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
         });

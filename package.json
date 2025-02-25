@@ -52,7 +52,7 @@
     "@types/minimatch": "^5.1.2",
     "deep-equal-in-any-order": "^1.1.19",
     "esbuild": "^0.24.2",
-    "eslint-plugin-sf-plugin": "^1.20.13",
+    "eslint-plugin-sf-plugin": "^1.20.15",
     "mocha-junit-reporter": "^1.23.3",
     "mocha-snap": "^5.0.0",
     "ts-morph": "^24.0.0",

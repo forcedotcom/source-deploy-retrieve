@@ -186,7 +186,7 @@ export class ConnectionResolver {
       if (q[1]) {
         listMdQuery.folder = q[1];
       }
-      listMetadataRequests.push(listMembers(this.registry)(this.connection)(listMdQuery));
+      listMetadataRequests.push(listMembers(this.registry, this.connection, listMdQuery));
       i++;
       if (this.requestBatchSize > 0 && i % this.requestBatchSize === 0) {
         getLogger().debug(`Awaiting listMetadata requests ${i - this.requestBatchSize + 1} - ${i}`);
@@ -270,57 +270,58 @@ const querySvs =
     }
   };
 
-const listMembers =
-  (registry: RegistryAccess) =>
-  (connection: Connection) =>
-  async (query: ListMetadataQuery): Promise<RelevantFileProperties[]> => {
-    const mdType = registry.getTypeByName(query.type);
+async function listMembers(
+  registry: RegistryAccess,
+  connection: Connection,
+  query: ListMetadataQuery
+): Promise<RelevantFileProperties[]> {
+  const mdType = registry.getTypeByName(query.type);
 
-    // Workaround because metadata.list({ type: 'StandardValueSet' }) returns [].
-    // Query for a subset of known StandardValueSets after all listMetadata calls.
-    if (mdType.name === registry.getRegistry().types.standardvalueset.name) {
-      shouldQueryStandardValueSets = true;
-      return [];
-    }
+  // Workaround because metadata.list({ type: 'StandardValueSet' }) returns [].
+  // Query for a subset of known StandardValueSets after all listMetadata calls.
+  if (mdType.name === registry.getRegistry().types.standardvalueset.name) {
+    shouldQueryStandardValueSets = true;
+    return [];
+  }
 
-    // Workaround because metadata.list({ type: 'BotVersion' }) returns [].
-    if (mdType.name === 'BotVersion') {
-      try {
-        const botDefQuery = 'SELECT Id, DeveloperName FROM BotDefinition';
-        const botVersionQuery = 'SELECT BotDefinitionId, DeveloperName FROM BotVersion';
-        const botDefs = (await connection.query<{ Id: string; DeveloperName: string }>(botDefQuery)).records;
-        const botVersionDefs = (
-          await connection.query<{ BotDefinitionId: string; DeveloperName: string }>(botVersionQuery)
-        ).records;
-        return botVersionDefs
-          .map((bvd) => {
-            const botName = botDefs.find((bd) => bd.Id === bvd.BotDefinitionId)?.DeveloperName;
-            if (botName) {
-              return {
-                fullName: `${botName}.${bvd.DeveloperName}`,
-                fileName: `bots/${bvd.DeveloperName}.botVersion`,
-                type: 'BotVersion',
-              };
-            }
-          })
-          .filter((b) => !!b);
-      } catch (error) {
-        const err = SfError.wrap(error);
-        getLogger().debug(`[${mdType.name}] ${err.message}`);
-        return [];
-      }
-    }
-
+  // Workaround because metadata.list({ type: 'BotVersion' }) returns [].
+  if (mdType.name === 'BotVersion') {
     try {
-      requestCount++;
-      getLogger().debug(`listMetadata for ${inspect(query)}`);
-      return (await connection.metadata.list(query)).map(inferFilenamesFromType(mdType));
+      const botDefQuery = 'SELECT Id, DeveloperName FROM BotDefinition';
+      const botVersionQuery = 'SELECT BotDefinitionId, DeveloperName FROM BotVersion';
+      const botDefs = (await connection.query<{ Id: string; DeveloperName: string }>(botDefQuery)).records;
+      const botVersionDefs = (
+        await connection.query<{ BotDefinitionId: string; DeveloperName: string }>(botVersionQuery)
+      ).records;
+      return botVersionDefs
+        .map((bvd) => {
+          const botName = botDefs.find((bd) => bd.Id === bvd.BotDefinitionId)?.DeveloperName;
+          if (botName) {
+            return {
+              fullName: `${botName}.${bvd.DeveloperName}`,
+              fileName: `bots/${bvd.DeveloperName}.botVersion`,
+              type: 'BotVersion',
+            };
+          }
+        })
+        .filter((b) => !!b);
     } catch (error) {
       const err = SfError.wrap(error);
       getLogger().debug(`[${mdType.name}] ${err.message}`);
       return [];
     }
-  };
+  }
+
+  try {
+    requestCount++;
+    getLogger().debug(`listMetadata for ${inspect(query)}`);
+    return (await connection.metadata.list(query)).map(inferFilenamesFromType(mdType));
+  } catch (error) {
+    const err = SfError.wrap(error);
+    getLogger().debug(`[${mdType.name}] ${err.message}`);
+    return [];
+  }
+}
 
 /* if the Metadata Type doesn't return a correct fileName then help it out */
 const inferFilenamesFromType =

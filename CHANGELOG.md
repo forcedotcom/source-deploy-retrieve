@@ -1,3 +1,12 @@
+## [12.15.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.15.1...12.15.2) (2025-02-26)
+
+
+### Bug Fixes
+
+* handle +100K comps when resolving from org W-17876861 ([#1511](https://github.com/forcedotcom/source-deploy-retrieve/issues/1511)) ([7b2207b](https://github.com/forcedotcom/source-deploy-retrieve/commit/7b2207b1249704e0b77b75b8432c9040d86255f3))
+
+
+
 ## [12.15.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.15.0...12.15.1) (2025-02-24)
 
 

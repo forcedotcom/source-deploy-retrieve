@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlugin xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <canEscalate>false</canEscalate>
+    <description>Use this topic when customers seek details about the available climbing routes and their difficulty levels.</description>
+    <developerName>p_16jQP0000000PG9_Climbing_Routes_Information</developerName>
+    <genAiFunctions>
+        <functionName>CustomKnowledgeAction_1738277095539</functionName>
+    </genAiFunctions>
+    <genAiPluginInstructions>
+        <description>If the query is about climbing routes, use CustomKnowledgeAction_1738277095539.</description>
+        <developerName>instruction_0</developerName>
+        <language xsi:nil="true"/>
+        <masterLabel>instruction_0</masterLabel>
+    </genAiPluginInstructions>
+    <language>en_US</language>
+    <masterLabel>Climbing Routes Information</masterLabel>
+    <pluginType>Topic</pluginType>
+    <scope>Your job is to only provide information on the climbing routes and their respective difficulty levels.</scope>
+</GenAiPlugin>

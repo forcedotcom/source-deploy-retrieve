@@ -124,7 +124,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
 
   protected parseMetadataXml(path: SourcePath): MetadataXml | undefined {
     const xml = super.parseMetadataXml(path);
-    if (xml) {
+    if (xml && this.isBundleType()) {
       return {
         fullName: this.getBundleName(path),
         suffix: xml.suffix,

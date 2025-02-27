@@ -30,6 +30,12 @@ describe('DigitalExperienceSourceAdapter', () => {
   const HOME_VIEW_MOBILE_VARIANT_FILE = join(HOME_VIEW_MOBILE_PATH, 'mobile.json');
   const HOME_VIEW_TABLET_VARIANT_FILE = join(HOME_VIEW_TABLET_PATH, 'tablet.json');
 
+  const LWC_NAME = 'sfdc_cms__lwc/localComp';
+  const LWC_PATH = join(BUNDLE_PATH, 'sfdc_cms__lwc', 'localComp');
+  const LWC_META_FILE = join(LWC_PATH, DE_METAFILE);
+  const LWC_CONTENT_FILE = join(LWC_PATH, 'content.json');
+  const LWC_JS_META_XML_FILE = join(LWC_PATH, 'localComp.js-meta.xml');
+
   const registryAccess = new RegistryAccess();
   const forceIgnore = new ForceIgnore();
   const tree = VirtualTreeContainer.fromFilePaths([
@@ -39,6 +45,9 @@ describe('DigitalExperienceSourceAdapter', () => {
     HOME_VIEW_FRENCH_VARIANT_FILE,
     HOME_VIEW_MOBILE_VARIANT_FILE,
     HOME_VIEW_TABLET_VARIANT_FILE,
+    LWC_META_FILE,
+    LWC_CONTENT_FILE,
+    LWC_JS_META_XML_FILE,
   ]);
 
   const bundleAdapter = new DigitalExperienceSourceAdapter(
@@ -119,6 +128,36 @@ describe('DigitalExperienceSourceAdapter', () => {
     it('should return a SourceComponent for mobile and tablet variant json', () => {
       expect(digitalExperienceAdapter.getComponent(HOME_VIEW_MOBILE_VARIANT_FILE)).to.deep.equal(component);
       expect(digitalExperienceAdapter.getComponent(HOME_VIEW_TABLET_VARIANT_FILE)).to.deep.equal(component);
+    });
+  });
+
+  describe('DigitalExperienceSourceAdapter for DE LWC Content', () => {
+    assert(registry.types.digitalexperiencebundle.children?.types.digitalexperience);
+    const component = new SourceComponent(
+      {
+        name: LWC_NAME,
+        type: registry.types.digitalexperiencebundle.children.types.digitalexperience,
+        content: LWC_PATH,
+        xml: LWC_META_FILE,
+        parent: new SourceComponent(
+          {
+            name: BUNDLE_NAME,
+            type: registry.types.digitalexperiencebundle,
+            xml: BUNDLE_META_FILE,
+          },
+          tree,
+          forceIgnore
+        ),
+        parentType: registry.types.digitalexperiencebundle,
+      },
+      tree,
+      forceIgnore
+    );
+
+    it('should return a SourceComponent for content json and .js-meta.xml', () => {
+      expect(digitalExperienceAdapter.getComponent(LWC_CONTENT_FILE)).to.deep.equal(component);
+      expect(digitalExperienceAdapter.getComponent(LWC_META_FILE)).to.deep.equal(component);
+      expect(digitalExperienceAdapter.getComponent(LWC_JS_META_XML_FILE)).to.deep.equal(component);
     });
   });
 });

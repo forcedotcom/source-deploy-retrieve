@@ -1,3 +1,12 @@
+# [12.16.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.15.2...12.16.0) (2025-02-27)
+
+
+### Features
+
+* **@W-17728287:** introducing lwc content type in site metadata ([#1513](https://github.com/forcedotcom/source-deploy-retrieve/issues/1513)) ([7d9b736](https://github.com/forcedotcom/source-deploy-retrieve/commit/7d9b7366afcd2d2afb00cee2cd8d213312d174da))
+
+
+
 ## [12.15.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.15.1...12.15.2) (2025-02-26)
 
 

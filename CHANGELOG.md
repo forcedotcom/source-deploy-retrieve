@@ -1,3 +1,12 @@
+## [12.16.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.0...12.16.1) (2025-02-28)
+
+
+### Bug Fixes
+
+* Add LifeSciConfigCategory and LifeSciConfigRecord ([#1505](https://github.com/forcedotcom/source-deploy-retrieve/issues/1505)) ([0f72bfd](https://github.com/forcedotcom/source-deploy-retrieve/commit/0f72bfde8c4d14cc681e4b871bf96e9cfab1affb))
+
+
+
 # [12.16.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.15.2...12.16.0) (2025-02-27)
 
 

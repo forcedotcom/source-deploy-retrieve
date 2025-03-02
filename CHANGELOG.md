@@ -1,3 +1,39 @@
+## [12.16.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.1...12.16.2) (2025-03-02)
+
+
+### Bug Fixes
+
+* **deps:** bump fast-xml-parser from 4.5.1 to 4.5.3 ([#1514](https://github.com/forcedotcom/source-deploy-retrieve/issues/1514)) ([f8862cd](https://github.com/forcedotcom/source-deploy-retrieve/commit/f8862cd9ceaca4a0c61752a173796215b41bf192))
+
+
+
+## [12.16.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.0...12.16.1) (2025-02-28)
+
+
+### Bug Fixes
+
+* Add LifeSciConfigCategory and LifeSciConfigRecord ([#1505](https://github.com/forcedotcom/source-deploy-retrieve/issues/1505)) ([0f72bfd](https://github.com/forcedotcom/source-deploy-retrieve/commit/0f72bfde8c4d14cc681e4b871bf96e9cfab1affb))
+
+
+
+# [12.16.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.15.2...12.16.0) (2025-02-27)
+
+
+### Features
+
+* **@W-17728287:** introducing lwc content type in site metadata ([#1513](https://github.com/forcedotcom/source-deploy-retrieve/issues/1513)) ([7d9b736](https://github.com/forcedotcom/source-deploy-retrieve/commit/7d9b7366afcd2d2afb00cee2cd8d213312d174da))
+
+
+
+## [12.15.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.15.1...12.15.2) (2025-02-26)
+
+
+### Bug Fixes
+
+* handle +100K comps when resolving from org W-17876861 ([#1511](https://github.com/forcedotcom/source-deploy-retrieve/issues/1511)) ([7b2207b](https://github.com/forcedotcom/source-deploy-retrieve/commit/7b2207b1249704e0b77b75b8432c9040d86255f3))
+
+
+
 ## [12.15.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.15.0...12.15.1) (2025-02-24)
 
 

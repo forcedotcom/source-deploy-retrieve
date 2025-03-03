@@ -166,5 +166,5 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
  * @returns name of type/apiName format
  */
 const calculateNameFromPath = (contentPath: string): string => `${parentName(contentPath)}/${baseName(contentPath)}`;
-const digitalExperienceStructure = 'BaseType/SpaceApiName/ContentType/ContentApiName';
+const digitalExperienceStructure = join('BaseType', 'SpaceApiName', 'ContentType', 'ContentApiName');
 const contentParts = digitalExperienceStructure.split(sep);

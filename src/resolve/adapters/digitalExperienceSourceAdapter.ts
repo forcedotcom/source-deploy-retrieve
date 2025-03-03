@@ -78,11 +78,14 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
       or inline media files where files can be in any subdiretory. Eg - digitalExperiences/site/lwr11/sfdc_cms__lwc/localComp/folder1/foler1_1/localCompHelper.html
       from the digitalExperience folder go till we find the ContentApiName folder
      */
-    const digitalExperienceslength = parts.indexOf('digitalExperiences') + 1;
-    const contentFolderLength = digitalExperienceslength + contentParts.length;
-    if (parts.length > contentFolderLength) {
-      parts.length = contentFolderLength;
-      return parts.join(sep);
+    const digitalExperiencesIndex = parts.indexOf('digitalExperiences');
+    if (digitalExperiencesIndex > -1) {
+      const digitalExperiencesLength = digitalExperiencesIndex + 1;
+      const contentFolderLength = digitalExperiencesLength + contentParts.length;
+      if (parts.length > contentFolderLength) {
+        parts.length = contentFolderLength;
+        return parts.join(sep);
+      }
     }
     return pathToContent;
   }

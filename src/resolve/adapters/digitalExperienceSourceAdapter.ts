@@ -75,15 +75,14 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     const pathToContent = dirname(path);
     const parts = pathToContent.split(sep);
     /* Handle mobile or tablet variants.Eg- digitalExperiences/site/lwr11/sfdc_cms__view/home/mobile/mobile.json
-     Go back to one level in that case
-     Bundle hierarchy baseType/spaceApiName/contentType/contentApiName/variantFolders/file */
-    const digitalExperiencesIndex = parts.indexOf('digitalExperiences');
-    if (digitalExperiencesIndex > -1) {
-      const depth = parts.length - digitalExperiencesIndex - 1;
-      if (depth === digitalExperienceBundleWithVariantsDepth) {
-        parts.pop();
-        return parts.join(sep);
-      }
+      or inline media files where files can be in any subdiretory. Eg - digitalExperiences/site/lwr11/sfdc_cms__lwc/localComp/folder1/foler1_1/localCompHelper.html
+      from the digitalExperience folder go till we find the ContentApiName folder
+     */
+    const digitalExperienceslength = parts.indexOf('digitalExperiences') + 1;
+    const contentFolderLength = digitalExperienceslength + contentParts.length;
+    if (parts.length > contentFolderLength) {
+      parts.length = contentFolderLength;
+      return parts.join(sep);
     }
     return pathToContent;
   }
@@ -164,6 +163,5 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
  * @returns name of type/apiName format
  */
 const calculateNameFromPath = (contentPath: string): string => `${parentName(contentPath)}/${baseName(contentPath)}`;
-
-// Bundle hierarchy baseType/spaceApiName/contentType/contentApiName/variantFolders/file
-const digitalExperienceBundleWithVariantsDepth = 5;
+const digitalExperienceStructure = 'BaseType/SpaceApiName/ContentType/ContentApiName';
+const contentParts = digitalExperienceStructure.split(sep);

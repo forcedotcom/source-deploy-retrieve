@@ -35,6 +35,12 @@ describe('DigitalExperienceSourceAdapter', () => {
   const LWC_META_FILE = join(LWC_PATH, DE_METAFILE);
   const LWC_CONTENT_FILE = join(LWC_PATH, 'content.json');
   const LWC_JS_META_XML_FILE = join(LWC_PATH, 'localComp.js-meta.xml');
+  const LWC_JS_FILE = join(LWC_PATH, 'localComp.js');
+  const LWC_HTML_FILE = join(LWC_PATH, 'localComp.html');
+  const LWC_CSS_FILE = join(LWC_PATH, 'localComp.css');
+  const LWC_EDITOR_JSON_FILE = join(LWC_PATH, 'editor.json');
+  const LWC_SVG_FILE = join(LWC_PATH, 'localComp.svg');
+  const LWC_NESTED_FOLDERS_HTML_FILE = join(LWC_PATH, 'folder1', 'folder1_1', 'folder1_1_1', 'compHelper.html');
 
   const registryAccess = new RegistryAccess();
   const forceIgnore = new ForceIgnore();
@@ -48,6 +54,12 @@ describe('DigitalExperienceSourceAdapter', () => {
     LWC_META_FILE,
     LWC_CONTENT_FILE,
     LWC_JS_META_XML_FILE,
+    LWC_JS_FILE,
+    LWC_HTML_FILE,
+    LWC_CSS_FILE,
+    LWC_EDITOR_JSON_FILE,
+    LWC_SVG_FILE,
+    LWC_NESTED_FOLDERS_HTML_FILE,
   ]);
 
   const bundleAdapter = new DigitalExperienceSourceAdapter(
@@ -154,10 +166,21 @@ describe('DigitalExperienceSourceAdapter', () => {
       forceIgnore
     );
 
-    it('should return a SourceComponent for content json and .js-meta.xml', () => {
-      expect(digitalExperienceAdapter.getComponent(LWC_CONTENT_FILE)).to.deep.equal(component);
-      expect(digitalExperienceAdapter.getComponent(LWC_META_FILE)).to.deep.equal(component);
-      expect(digitalExperienceAdapter.getComponent(LWC_JS_META_XML_FILE)).to.deep.equal(component);
+    it('should return a SourceComponent for files in inline media content', () => {
+      const files: string[] = [
+        LWC_CONTENT_FILE,
+        LWC_META_FILE,
+        LWC_JS_META_XML_FILE,
+        LWC_JS_FILE,
+        LWC_HTML_FILE,
+        LWC_CSS_FILE,
+        LWC_EDITOR_JSON_FILE,
+        LWC_SVG_FILE,
+        LWC_NESTED_FOLDERS_HTML_FILE,
+      ];
+      files.forEach((file) => {
+        expect(digitalExperienceAdapter.getComponent(file)).to.deep.equal(component);
+      });
     });
   });
 });

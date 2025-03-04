@@ -1,3 +1,12 @@
+## [12.16.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.2...12.16.3) (2025-03-04)
+
+
+### Bug Fixes
+
+* **@W-17943542:** fix content path for inline media file inside nested folders ([#1518](https://github.com/forcedotcom/source-deploy-retrieve/issues/1518)) ([bdfd128](https://github.com/forcedotcom/source-deploy-retrieve/commit/bdfd12868fce434b5f62bbaeda7440850c57c037))
+
+
+
 ## [12.16.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.1...12.16.2) (2025-03-02)
 
 

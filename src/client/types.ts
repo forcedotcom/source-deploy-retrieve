@@ -140,8 +140,6 @@ export type MetadataApiDeployStatus = {
 export type DeployDetails = {
   componentFailures?: DeployMessage | DeployMessage[];
   componentSuccesses?: DeployMessage | DeployMessage[];
-  // TODO: Add types for RetrieveResult
-  // retrieveResult?:
   runTestResult?: RunTestResult;
 };
 

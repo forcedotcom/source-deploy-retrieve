@@ -66,10 +66,7 @@ export const replacementIterations = async (input: string, replacements: MarkedR
   const lifecycleInstance = Lifecycle.getInstance();
   let output = input;
   for (const replacement of replacements) {
-    // TODO: node 16+ has String.replaceAll for non-regex scenarios
-    const regex =
-      typeof replacement.toReplace === 'string' ? new RegExp(replacement.toReplace, 'g') : replacement.toReplace;
-    const replaced = output.replace(regex, replacement.replaceWith ?? '');
+    const replaced = output.replaceAll(new RegExp(replacement.toReplace, 'g'), replacement.replaceWith ?? '');
 
     if (replaced !== output) {
       output = replaced;

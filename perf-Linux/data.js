@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1741104824829,
+  "lastUpdate": 1741275359155,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -74137,6 +74137,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 6493,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "bkeni@salesforce.com",
+            "name": "bkeni",
+            "username": "bkeni"
+          },
+          "committer": {
+            "email": "bkeni@salesforce.com",
+            "name": "bkeni",
+            "username": "bkeni"
+          },
+          "distinct": true,
+          "id": "38bb3085ae957c50df64a92932b0469db5db2c00",
+          "message": "fix: @W-17936678 - Rename AnnotationExtensionSet metadata type to InvocabeActionExtension",
+          "timestamp": "2025-03-06T09:33:54-05:00",
+          "tree_id": "58ce1068ead6edea85c5c5eb9a150cbd9832dcc8",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/38bb3085ae957c50df64a92932b0469db5db2c00"
+        },
+        "date": 1741275351893,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 228,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2116,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 1982,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 2712,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 486,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 3739,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 3069,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 3608,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 859,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 6452,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 5145,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 6239,
             "unit": "ms"
           }
         ]

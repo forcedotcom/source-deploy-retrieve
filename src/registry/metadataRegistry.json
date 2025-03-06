@@ -534,7 +534,7 @@
     "uaviz": "analyticsvisualization",
     "uavizview": "analyticsvizviewdef",
     "uawork": "analyticsworkspace",
-    "annotationextensionset": "annotationextensionset"
+    "invocableactionextension": "invocableactionextension"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4750,11 +4750,11 @@
       },
       "supportsPartialDelete": true
     },
-    "annotationextensionset": {
-      "id": "annotationextensionset",
-      "name": "AnnotationExtensionSet",
-      "suffix": "annotationextensionset",
-      "directoryName": "annotationextensionsets",
+    "invocableactionextension": {
+      "id": "invocableactionextension",
+      "name": "InvocableActionExtension",
+      "suffix": "invocableactionextension",
+      "directoryName": "invocableactionextensions",
       "inFolder": false,
       "strictDirectoryName": false
     }

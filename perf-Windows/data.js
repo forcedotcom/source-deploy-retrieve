@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1741105035698,
+  "lastUpdate": 1741275721599,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -68791,6 +68791,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 13749,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "bkeni@salesforce.com",
+            "name": "bkeni",
+            "username": "bkeni"
+          },
+          "committer": {
+            "email": "bkeni@salesforce.com",
+            "name": "bkeni",
+            "username": "bkeni"
+          },
+          "distinct": true,
+          "id": "38bb3085ae957c50df64a92932b0469db5db2c00",
+          "message": "fix: @W-17936678 - Rename AnnotationExtensionSet metadata type to InvocabeActionExtension",
+          "timestamp": "2025-03-06T09:33:54-05:00",
+          "tree_id": "58ce1068ead6edea85c5c5eb9a150cbd9832dcc8",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/38bb3085ae957c50df64a92932b0469db5db2c00"
+        },
+        "date": 1741275706965,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 681,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4027,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3214,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 5779,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1395,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 8266,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 5212,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 8146,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 2247,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 13356,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 8544,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 13638,
             "unit": "ms"
           }
         ]

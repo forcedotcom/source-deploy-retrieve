@@ -747,4 +747,4 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - AiEvaluationDefinition
 - AnalyticsVisualization
 - ContentTypeBundle
-- AnnotationExtensionSet
+- InvocableActionExtension

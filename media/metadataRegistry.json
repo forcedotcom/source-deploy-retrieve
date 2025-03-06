@@ -535,9 +535,9 @@
     "uadash": "analyticsdashboard",
     "uaviz": "analyticsvisualization",
     "uawork": "analyticsworkspace",
-    "annotationextensionset": "annotationextensionset",
     "lifeSciConfigCategory": "lifesciconfigcategory",
-    "lifeSciConfigRecord": "lifesciconfigrecord"
+    "lifeSciConfigRecord": "lifesciconfigrecord",
+    "invocableactionextension": "invocableactionextension"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4765,14 +4765,6 @@
       },
       "supportsPartialDelete": true
     },
-    "annotationextensionset": {
-      "id": "annotationextensionset",
-      "name": "AnnotationExtensionSet",
-      "suffix": "annotationextensionset",
-      "directoryName": "annotationextensionsets",
-      "inFolder": false,
-      "strictDirectoryName": false
-    },
     "lifesciconfigcategory": {
       "id": "lifesciconfigcategory",
       "name": "LifeSciConfigCategory",
@@ -4786,6 +4778,14 @@
       "name": "LifeSciConfigRecord",
       "suffix": "lifeSciConfigRecord",
       "directoryName": "lifeSciConfigRecords",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "invocableactionextension": {
+      "id": "invocableactionextension",
+      "name": "InvocableActionExtension",
+      "suffix": "invocableactionextension",
+      "directoryName": "invocableactionextensions",
       "inFolder": false,
       "strictDirectoryName": false
     }

@@ -1,3 +1,12 @@
+## [12.16.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.3...12.16.4) (2025-03-06)
+
+
+### Bug Fixes
+
+* @W-17936678 - Rename AnnotationExtensionSet metadata type to InvocabeActionExtension ([#1520](https://github.com/forcedotcom/source-deploy-retrieve/issues/1520)) ([3279c43](https://github.com/forcedotcom/source-deploy-retrieve/commit/3279c439ba14245bf32b1f6b48980e84ef8059c6))
+
+
+
 ## [12.16.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.2...12.16.3) (2025-03-04)
 
 

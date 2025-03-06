@@ -52,14 +52,14 @@ const getLogger = (): Logger => {
  * in the registry.
  */
 export class ConnectionResolver {
-  private connection: Connection;
-  private registry: RegistryAccess;
+  private readonly connection: Connection;
+  private readonly registry: RegistryAccess;
 
   // Array of metadata type names to use for listMembers. By default it includes
   // all types defined in the registry.
-  private mdTypeNames: string[];
+  private readonly mdTypeNames: string[];
 
-  private requestBatchSize: number;
+  private readonly requestBatchSize: number;
 
   public constructor(connection: Connection, registry = new RegistryAccess(), mdTypes?: string[]) {
     this.connection = connection;

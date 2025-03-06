@@ -29,7 +29,7 @@ export class MetadataConverter {
   public static readonly DESTRUCTIVE_CHANGES_PRE_XML_FILE = 'destructiveChangesPre.xml';
   public static readonly DEFAULT_PACKAGE_PREFIX = 'metadataPackage';
 
-  private registry: RegistryAccess;
+  private readonly registry: RegistryAccess;
 
   public constructor(registry = new RegistryAccess()) {
     this.registry = registry;

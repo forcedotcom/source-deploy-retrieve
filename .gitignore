@@ -20,9 +20,6 @@ xunit.xml
 junit-custom.xml
 *.received.*
 
-# nyc test coverage
-.nyc_output
-
 # Eclipse
 .project
 
@@ -90,9 +87,6 @@ typings/
 
 # Optional REPL history
 .node_repl_history
-
-# Output of 'npm pack'
-*.tgz
 
 # Yarn Integrity file
 .yarn-integrity

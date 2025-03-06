@@ -199,6 +199,7 @@
     "dataConnectorIngestApi": "dataconnectoringestapi",
     "dataKitObjectDependency": "datakitobjectdependency",
     "dataKitObjectTemplate": "datakitobjecttemplate",
+    "dataObjectBuildOrgTemplate": "dataobjectbuildorgtemplate",
     "dataPackageKitDefinition": "datapackagekitdefinition",
     "dataPipeline": "datapipeline",
     "dataSource": "externaldatasource",
@@ -1740,6 +1741,13 @@
       "name": "DataKitObjectTemplate",
       "strictDirectoryName": false,
       "suffix": "dataKitObjectTemplate"
+    },
+    "dataobjectbuildorgtemplate": {
+      "directoryName": "dataObjectBuilOrgTemplates",
+      "id": "dataobjectbuildorgtemplate",
+      "name": "DataObjectBuildOrgTemplate",
+      "strictDirectoryName": false,
+      "suffix": "dataObjectBuildOrgTemplate"
     },
     "datapackagekitdefinition": {
       "directoryName": "dataPackageKitDefinitions",

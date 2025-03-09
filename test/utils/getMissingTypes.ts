@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { CoverageObjectType, CoverageObject } from '../../src/registry/types';
+import { CoverageObject, CoverageObjectType } from '../../src/registry/types';
 import { hasUnsupportedFeatures, metadataTypes } from '../../src/registry/nonSupportedTypes';
 import { MetadataRegistry } from '../../src';
 
@@ -23,6 +23,5 @@ export const getMissingTypes = (
     regType.name,
     ...(regType.children ? Object.values(regType.children.types).map((child) => child.name) : []),
   ]);
-  const missingTypes = metadataApiTypesFromCoverage.filter(([key]) => !registryTypeNames.includes(key));
-  return missingTypes;
+  return metadataApiTypesFromCoverage.filter(([key]) => !registryTypeNames.includes(key));
 };

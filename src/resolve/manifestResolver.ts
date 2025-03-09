@@ -102,7 +102,7 @@ const getValidatedType =
   (typeMembers: ParsedPackageTypeMembers): ParsedPackageTypeMembers => {
     let typeName = typeMembers.name;
     // protect against empty/invalid typeMember definitions in the manifest
-    if (typeof typeName !== 'string' || typeName.length === 0) {
+    if (typeName.length === 0) {
       if (typeof typeName === 'object') {
         typeName = JSON.stringify(typeName);
       }

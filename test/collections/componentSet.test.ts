@@ -439,8 +439,7 @@ describe('ComponentSet', () => {
           apiVersion: testApiVersionAsString,
         });
         $$.SANDBOX.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
-        const manifest = manifestFiles.ONE_FOLDER_MEMBER;
-        const set = await ComponentSet.fromManifest(manifest.name);
+        const set = await ComponentSet.fromManifest(manifestFiles.ONE_FOLDER_MEMBER.name);
 
         const result = set.toArray();
 

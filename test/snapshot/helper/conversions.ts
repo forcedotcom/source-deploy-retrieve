@@ -128,11 +128,9 @@ const getFullPath = (file: fs.Dirent) => path.join(file.path, file.name);
 /** dirEnts are sometimes folder, we don't want those.  And we need the full paths */
 export const dirEntsToPaths = (dirEnts: fs.Dirent[]): string[] => dirEnts.filter(isFile).map(getFullPath);
 
-const shouldIgnore = (file: string): boolean => {
+const shouldIgnore = (file: string): boolean =>
   // binary zip/unzip isn't exactly the same, so we "skip" that one
-  if (file.includes('leafletjs.resource')) return true;
-  return false;
-};
+  file.includes('leafletjs.resource');
 
 /**
  * rather than the full path, gets the "project relative" parts based on format
@@ -150,13 +148,4 @@ const getPartsFromForceAppOnwards = (file: string): string => {
 const pathPartsAfter = (file: string, after: string): string => {
   const parts = file.split(path.sep);
   return parts.slice(parts.indexOf(after) + 1).join(path.sep);
-};
-
-/** Wrap a function with it or pass it to map, and it will log the contents */
-// @ts-ignore - keep this around for use when debugging.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const logArgs = <T>(args: T): T => {
-  // eslint-disable-next-line no-console
-  typeof args === 'string' ? console.log(args) : JSON.stringify(args, null, 2);
-  return args;
 };

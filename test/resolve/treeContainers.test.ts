@@ -108,7 +108,7 @@ describe('Tree Containers', () => {
     });
 
     it('should use expected Node API for readFile', async () => {
-      const readFileStub = env.stub(fs, 'readFileSync');
+      const readFileStub = env.stub(fs.promises, 'readFile');
       // @ts-ignore wants Dirents but string[] works as well
       readFileStub.withArgs(path).resolves(Buffer.from('test'));
       const data = await tree.readFile(path);

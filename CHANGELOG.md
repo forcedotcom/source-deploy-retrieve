@@ -1,3 +1,12 @@
+## [12.16.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.5...12.16.6) (2025-03-11)
+
+
+### Bug Fixes
+
+* add support for data object build org template ([#1524](https://github.com/forcedotcom/source-deploy-retrieve/issues/1524)) ([5943f1d](https://github.com/forcedotcom/source-deploy-retrieve/commit/5943f1d637d773f9f08f6b01a27936fe309be463)), closes [#1489](https://github.com/forcedotcom/source-deploy-retrieve/issues/1489)
+
+
+
 ## [12.16.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.4...12.16.5) (2025-03-09)
 
 

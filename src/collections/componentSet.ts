@@ -221,12 +221,10 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       if (resolveIncludeSet && !deletionType) {
         resolveIncludeSet.add(component);
       }
-      if (resolvePreSet && deletionType === DestructiveChangesType.PRE) {
-        resolvePreSet.add(component, DestructiveChangesType.PRE);
+      if (resolvePreSet && deletionType) {
+        resolvePreSet.add(component, deletionType);
       }
-      if (resolvePostSet && deletionType === DestructiveChangesType.POST) {
-        resolvePostSet.add(component, DestructiveChangesType.POST);
-      }
+
       const memberIsWildcard = component.fullName === ComponentSet.WILDCARD;
       if (options.resolveSourcePaths === undefined || !memberIsWildcard || options.forceAddWildcards) {
         result.add(component, deletionType);

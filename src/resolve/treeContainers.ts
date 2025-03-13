@@ -7,7 +7,7 @@
 /* eslint-disable class-methods-use-this */
 import { join, dirname, basename, normalize, sep } from 'node:path';
 import { Readable } from 'node:stream';
-import { statSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
+import { statSync, existsSync, readdirSync, createReadStream, promises, readFileSync } from 'graceful-fs';
 import JSZip from 'jszip';
 import { Messages, SfError } from '@salesforce/core';
 import { isString } from '@salesforce/ts-types';
@@ -105,8 +105,7 @@ export class NodeFSTreeContainer extends TreeContainer {
   }
 
   public readFile(fsPath: SourcePath): Promise<Buffer> {
-    // significant enough performance increase using sync instead of fs.promise version
-    return Promise.resolve(readFileSync(fsPath));
+    return promises.readFile(fsPath);
   }
 
   public readFileSync(fsPath: SourcePath): Buffer {

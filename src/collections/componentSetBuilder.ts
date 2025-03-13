@@ -319,6 +319,19 @@ const getOrgComponentFilter = (
 ): FromConnectionOptions['componentFilter'] =>
   metadata?.metadataEntries?.length
     ? (component: Partial<FileProperties>): boolean => {
+        // {
+        //   "createdById": "005KR000000mVHLYA2",
+        //   "createdByName": "User User",
+        //   "createdDate": "2025-03-05T21:15:23.000Z",
+        //   "fileName": "classes/FileUtilitiesTest.cls",
+        //   "fullName": "FileUtilitiesTest",
+        //   "id": "01pKR000000FgMQYA0",
+        //   "lastModifiedById": "005KR000000mVHLYA2",
+        //   "lastModifiedByName": "User User",
+        //   "lastModifiedDate": "2025-03-05T21:15:23.000Z",
+        //   "manageableState": "unmanaged",
+        //   "type": "ApexClass"
+        // }
         if (component.type && component.fullName) {
           const mdMapEntry = mdMap.get(component.type);
           // using minimatch versus RegExp provides better (more expected) matching results

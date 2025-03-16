@@ -1,3 +1,12 @@
+## [12.16.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.6...12.16.7) (2025-03-16)
+
+
+### Bug Fixes
+
+* **deps:** bump yaml from 2.6.1 to 2.7.0 ([#1527](https://github.com/forcedotcom/source-deploy-retrieve/issues/1527)) ([aceea65](https://github.com/forcedotcom/source-deploy-retrieve/commit/aceea652d0a92980ba02812f7c1df946cb81c476))
+
+
+
 ## [12.16.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.5...12.16.6) (2025-03-11)
 
 

@@ -1135,7 +1135,8 @@
       "inFolder": false,
       "name": "CallCenter",
       "strictDirectoryName": false,
-      "suffix": "callCenter"
+      "suffix": "callCenter",
+      "supportsWildcardAndName": true
     },
     "callcenterroutingmap": {
       "directoryName": "callCenterRoutingMaps",

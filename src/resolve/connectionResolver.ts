@@ -81,7 +81,7 @@ export class ConnectionResolver {
     componentFilter = (component: Partial<FileProperties>): boolean => isPlainObject(component)
   ): Promise<ResolveConnectionResult> {
     // Aggregate array of metadata records in the org
-    const Aggregator: Array<Partial<FileProperties>> = [];
+    let aggregator: Array<Partial<FileProperties>> = [];
     // Folder component type names. Each array value has the form [type::folder]
     const folderComponentTypes: string[] = [];
     // Child component type names
@@ -121,7 +121,7 @@ export class ConnectionResolver {
         );
       }
 
-      Aggregator.push(component);
+      aggregator.push(component);
       if (componentType.folderContentType) {
         const type = this.registry.getTypeByName(componentType.folderContentType).name;
         const folder = component.fullName;
@@ -135,23 +135,26 @@ export class ConnectionResolver {
     }
 
     if (folderComponentTypes.length) {
-      Aggregator.push(...(await this.sendBatchedRequests(folderComponentTypes)));
+      const folderFileProps = await this.sendBatchedRequests(folderComponentTypes);
+      aggregator = aggregator.concat(folderFileProps);
     }
 
     if (childComponentTypes.size > 0) {
-      Aggregator.push(...(await this.sendBatchedRequests(Array.from(childComponentTypes))));
+      const childComponentFileProps = await this.sendBatchedRequests(Array.from(childComponentTypes));
+      aggregator = aggregator.concat(childComponentFileProps);
     }
 
     // If we need to query the list of StandardValueSets (i.e., it's included in this.mdTypeNames)
     // make those requests now.
     if (shouldQueryStandardValueSets) {
-      Aggregator.push(...(await this.sendBatchedQueries()));
+      const svsFileProps = await this.sendBatchedQueries();
+      aggregator = aggregator.concat(svsFileProps);
     }
 
     getLogger().debug(`https request count = ${requestCount}`);
 
     return {
-      components: Aggregator.filter(componentFilter).map((component) => ({
+      components: aggregator.filter(componentFilter).map((component) => ({
         fullName: ensureString(
           component.fullName,
           `Component fullName was not set for ${component.fileName ?? '<missing filename>'}`

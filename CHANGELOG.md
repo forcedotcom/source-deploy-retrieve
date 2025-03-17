@@ -1,3 +1,12 @@
+## [12.16.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.8...12.16.9) (2025-03-17)
+
+
+### Bug Fixes
+
+* add call center in wildcard and name support ([#1525](https://github.com/forcedotcom/source-deploy-retrieve/issues/1525)) ([785592a](https://github.com/forcedotcom/source-deploy-retrieve/commit/785592a5621b02b472b17a41034577c376f7edc3))
+
+
+
 ## [12.16.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.7...12.16.8) (2025-03-17)
 
 

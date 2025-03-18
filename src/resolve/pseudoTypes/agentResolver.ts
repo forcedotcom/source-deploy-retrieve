@@ -110,7 +110,23 @@ const resolveAgentFromConnection = async (connection: Connection, botName: strin
       if (genAiPluginNames.length) {
         genAiPluginNames.map((r) => mdEntries.push(`GenAiPlugin:${r.DeveloperName}`));
       } else {
-        getLogger().debug(`No GenAiPlugin metadata matches for plannerId: ${plannerId15}`);
+        getLogger().debug(
+          `No GenAiPlugin metadata matches for plannerId: ${plannerId15}. Reading the planner metadata for plugins...`
+        );
+        // read the planner metadata from the org
+        // @ts-expect-error jsForce types don't know about GenAiPlanner yet
+        const genAiPlannerMd = ensureArray(
+          await connection.metadata.read<GenAiPlanner>('GenAiPlanner', botName)
+        ) as GenAiPlanner[];
+        if (genAiPlannerMd?.length && genAiPlannerMd[0]?.genAiPlugins.length) {
+          genAiPlannerMd[0].genAiPlugins.map((plugin) => {
+            if (plugin.genAiPluginName?.length) {
+              mdEntries.push(`GenAiPlugin:${plugin.genAiPluginName}`);
+            }
+          });
+        } else {
+          getLogger().debug(`No GenAiPlugin metadata found in planner file for API name: ${botName}`);
+        }
       }
     } else {
       getLogger().debug(`No GenAiPlanner metadata matches for Bot: ${botName}`);

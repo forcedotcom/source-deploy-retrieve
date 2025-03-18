@@ -1,3 +1,7 @@
+## [12.16.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.9...12.16.10) (2025-03-18)
+
+
+
 ## [12.16.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.8...12.16.9) (2025-03-17)
 
 

@@ -115,11 +115,10 @@ const resolveAgentFromConnection = async (connection: Connection, botName: strin
         );
         // read the planner metadata from the org
         // @ts-expect-error jsForce types don't know about GenAiPlanner yet
-        const genAiPlannerMd = ensureArray(
-          await connection.metadata.read<GenAiPlanner>('GenAiPlanner', botName)
-        ) as GenAiPlanner[];
-        if (genAiPlannerMd?.length && genAiPlannerMd[0]?.genAiPlugins.length) {
-          genAiPlannerMd[0].genAiPlugins.map((plugin) => {
+        const genAiPlannerMd = await connection.metadata.read<GenAiPlanner>('GenAiPlanner', botName);
+        const genAiPlannerMdArr = ensureArray(genAiPlannerMd) as unknown as GenAiPlanner[];
+        if (genAiPlannerMdArr?.length && genAiPlannerMdArr[0]?.genAiPlugins.length) {
+          genAiPlannerMdArr[0].genAiPlugins.map((plugin) => {
             if (plugin.genAiPluginName?.length) {
               mdEntries.push(`GenAiPlugin:${plugin.genAiPluginName}`);
             }

@@ -317,6 +317,33 @@ describe('MetadataApiDeploy', () => {
         expect(e.message).to.equal(expectedError.message);
       }
     });
+
+    it('should pass isRestDeploy=true to checkDeployStatus', async () => {
+      const options = {
+        id: MOCK_ASYNC_RESULT.id,
+        apiOptions: { rest: true },
+        components: new ComponentSet(),
+      }
+      const { operation, checkStatusStub } = await stubMetadataDeploy($$, testOrg, options);
+      await operation.checkStatus();
+      expect(checkStatusStub.calledOnce).to.be.true;
+      expect(checkStatusStub.firstCall.firstArg).to.equal(MOCK_ASYNC_RESULT.id);
+      expect(checkStatusStub.firstCall.args[1]).to.equal(true);
+      expect(checkStatusStub.firstCall.args[2]).to.equal(true);
+    });
+
+    it('should pass isRestDeploy=false to checkDeployStatus', async () => {
+      const options = {
+        id: MOCK_ASYNC_RESULT.id,
+        components: new ComponentSet(),
+      }
+      const { operation, checkStatusStub } = await stubMetadataDeploy($$, testOrg, options);
+      await operation.checkStatus();
+      expect(checkStatusStub.calledOnce).to.be.true;
+      expect(checkStatusStub.firstCall.firstArg).to.equal(MOCK_ASYNC_RESULT.id);
+      expect(checkStatusStub.firstCall.args[1]).to.equal(true);
+      expect(checkStatusStub.firstCall.args[2]).to.equal(false);
+    });
   });
 
   describe('deployRecentValidation', () => {

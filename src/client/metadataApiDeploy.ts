@@ -152,7 +152,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
     }
     const connection = await this.getConnection();
     // Recasting to use the project's version of the type
-    return connection.metadata.checkDeployStatus(this.id, true) as unknown as MetadataApiDeployStatus;
+    return connection.metadata.checkDeployStatus(this.id, true, this.isRestDeploy) as unknown as MetadataApiDeployStatus;
   }
 
   /**

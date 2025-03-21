@@ -118,7 +118,7 @@ export async function stubMetadataDeploy(
   status.done = true;
   const checkStatusStub = sandbox.stub(connection.metadata, 'checkDeployStatus');
   // @ts-ignore
-  checkStatusStub.withArgs(MOCK_ASYNC_RESULT.id, true).resolves(status);
+  checkStatusStub.withArgs(MOCK_ASYNC_RESULT.id, true, sinon.match.any).resolves(status);
 
   // @ts-ignore
   const invokeStub = sandbox.stub(connection.metadata, '_invoke');

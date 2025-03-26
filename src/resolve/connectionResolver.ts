@@ -167,6 +167,7 @@ export class ConnectionResolver {
             })`
           )
         ),
+        namespacePrefix: ensureString(component.namespacePrefix, 'no namespace!'),
       })),
       apiVersion: this.connection.getApiVersion(),
     };

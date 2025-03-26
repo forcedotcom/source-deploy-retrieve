@@ -13,10 +13,12 @@ export type MetadataComponent = {
   fullName: string;
   type: MetadataType;
   parent?: MetadataComponent;
+  namespacePrefix?: string;
 };
 
 export type MetadataMember = {
   fullName: string;
+  namespacePrefix?: string;
   type: string;
 };
 

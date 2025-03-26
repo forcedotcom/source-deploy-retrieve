@@ -312,31 +312,43 @@ const logComponents = (componentSet: ComponentSet): void => {
   getLogger().debug(`ComponentSet sourceApiVersion = ${componentSet.sourceApiVersion ?? '<not set>'}`);
 };
 
-const getOrgComponentFilter = (
+function getOrgComponentFilter(
   org: OrgOption,
   mdMap: MetadataMap,
   metadata?: MetadataOption
-): FromConnectionOptions['componentFilter'] =>
-  metadata?.metadataEntries?.length
-    ? (component: Partial<FileProperties>): boolean => {
-        if (component.type && component.fullName) {
-          const mdMapEntry = mdMap.get(component.type);
-          // using minimatch versus RegExp provides better (more expected) matching results
-          return (
-            !!mdMapEntry &&
-            mdMapEntry.some((mdName) => typeof component.fullName === 'string' && minimatch(component.fullName, mdName))
-          );
-        }
-        return false;
-      }
-    : // *** Default Filter ***
-      // exclude components based on the results of componentFilter function
-      // components with namespacePrefix where org.exclude includes manageableState (to exclude managed packages)
-      // components with namespacePrefix where manageableState equals undefined (to exclude components e.g. InstalledPackage)
-      // components where org.exclude includes manageableState (to exclude packages without namespacePrefix e.g. unlocked packages)
+): FromConnectionOptions['componentFilter'] {
+  if (metadata?.metadataEntries?.length) {
+    return (component: Partial<FileProperties>): boolean => {
+      if (component.type && component.fullName) {
+        const mdMapEntry = mdMap.get(component.type);
 
-      (component: Partial<FileProperties>): boolean =>
-        !component?.manageableState || !org.exclude?.includes(component.manageableState);
+        const mapEntryFilter = (entry: string): boolean => {
+          const entryIsNamespace = entry.match(/^[a-zA-Z0-9]{1,15}__\*$/);
+          if (entryIsNamespace) {
+            const namespace = entryIsNamespace[0].slice(0, -3);
+            // TODO: this is wrong, should match namespace + fullName.
+            return (
+              typeof component.fullName === 'string' &&
+              minimatch(component.namespacePrefix ?? component.fullName, namespace)
+            );
+          }
+          return typeof component.fullName === 'string' && minimatch(component.fullName, entry);
+        };
+        // using minimatch versus RegExp provides better (more expected) matching results
+        return !!mdMapEntry && mdMapEntry.some(mapEntryFilter);
+      }
+      return false;
+    };
+  }
+
+  // *** Default Filter ***
+  // exclude components based on the results of componentFilter function
+  // components with namespacePrefix where org.exclude includes manageableState (to exclude managed packages)
+  // components with namespacePrefix where manageableState equals undefined (to exclude components e.g. InstalledPackage)
+  // components where org.exclude includes manageableState (to exclude packages without namespacePrefix e.g. unlocked packages)
+  return (component: Partial<FileProperties>): boolean =>
+    !component?.manageableState || !org.exclude?.includes(component.manageableState);
+}
 
 type MetadataTypeAndMetadataName = { type: MetadataType; metadataName: string };
 

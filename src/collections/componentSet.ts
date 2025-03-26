@@ -421,6 +421,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     [...components.entries()].map(([key, cmpMap]) => {
       const [typeId, fullName] = splitOnFirstDelimiter(key);
       const type = this.registry.getTypeByName(typeId);
+      const namespacePrefix = cmpMap.get(key)?.namespacePrefix;
 
       // Add children
       [...(cmpMap?.values() ?? [])]
@@ -443,7 +444,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       addToTypeMap({
         typeMap,
         type: type.folderContentType ? this.registry.getTypeByName(type.folderContentType) : type,
-        fullName: constructFullName(this.registry, type, fullName),
+        fullName: constructFullName(this.registry, type, fullName, namespacePrefix),
         destructiveType,
       });
     });
@@ -517,7 +518,14 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       // when no destructive changes are present, we use this.components (not fully validated as source components, so typos end up in the generated manifest)
       // when destructive changes are used, we use this.manifestComponents (fully validated, would not match this.components)
       // this ensures this.components manifest === this.manifestComponents manifest
-      const sc = new SourceComponent({ type: component.type, name: component.fullName });
+      const sc = new SourceComponent({
+        type: component.type,
+        name: component.fullName,
+        namespacePrefix: component.namespacePrefix,
+      });
+
+      this.components.get(key)?.set(key, sc);
+
       const srcKey = sourceKey(sc);
 
       if (!this.manifestComponents.has(key)) {
@@ -749,16 +757,24 @@ const splitOnFirstDelimiter = (input: string): [string, string] => {
   return [input.substring(0, indexOfSplitChar), input.substring(indexOfSplitChar + 1)];
 };
 
-const constructFullName = (registry: RegistryAccess, type: MetadataType, fullName: string): string =>
-  // Some InFolder types are different. e.g., Report/ReportFolder & Dashboard/DashboardFolder.
-  // ReportFolders are deployed/retrieved as Reports. If a ReportFolder is being added append
-  // a "/" so the metadata API can identify it as a folder.
-  ['DashboardFolder', 'ReportFolder', 'EmailTemplateFolder'].includes(type.name) && !fullName.endsWith('/')
-    ? `${fullName}/`
-    : registry.getParentType(type.name)?.strategies?.recomposition === 'startEmpty' && fullName.includes('.')
-    ? // they're reassembled like CustomLabels.MyLabel
-      fullName.split('.')[1]
-    : fullName;
+function constructFullName(
+  registry: RegistryAccess,
+  type: MetadataType,
+  fullName: string,
+  namespacePrefix?: string
+): string {
+  if (['DashboardFolder', 'ReportFolder', 'EmailTemplateFolder'].includes(type.name) && !fullName.endsWith('/')) {
+    return `${fullName}/`;
+  } else if (registry.getParentType(type.name)?.strategies?.recomposition === 'startEmpty' && fullName.includes('.')) {
+    // they're reassembled like CustomLabels.MyLabel
+    return fullName.split('.')[1];
+  } else if (namespacePrefix) {
+    // TODO: handle specific notation for namespaced custom fields on standard objects
+    return `${namespacePrefix}__${fullName}`;
+  } else {
+    return fullName;
+  }
+}
 
 /** side effect: mutates the typeMap property */
 const addToTypeMap = ({

@@ -33,6 +33,7 @@ export type ComponentProperties = {
   name: string;
   type: MetadataType;
   xml?: string;
+  namespacePrefix?: string;
   content?: string;
   parent?: SourceComponent;
   parentType?: MetadataType;
@@ -45,6 +46,7 @@ export class SourceComponent implements MetadataComponent {
   public readonly name: string;
   public readonly type: MetadataType;
   public readonly xml?: string;
+  public readonly namespacePrefix?: string;
   public readonly parent?: SourceComponent;
   public parentType?: MetadataType;
   public content?: string;
@@ -65,6 +67,7 @@ export class SourceComponent implements MetadataComponent {
     this.xml = props.xml;
     this.parent = props.parent;
     this.content = props.content;
+    this.namespacePrefix = props.namespacePrefix;
     this.parentType = props.parentType;
     this.treeContainer = tree;
     this.forceIgnore = forceIgnore;

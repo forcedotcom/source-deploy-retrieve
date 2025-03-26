@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1742997077939,
+  "lastUpdate": 1743020198303,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -69967,6 +69967,80 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 13833,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cdominguez@salesforce.com",
+            "name": "Cristian Dominguez",
+            "username": "cristiand391"
+          },
+          "committer": {
+            "email": "cdominguez@salesforce.com",
+            "name": "Cristian Dominguez",
+            "username": "cristiand391"
+          },
+          "distinct": true,
+          "id": "a71bc4912d1bdb6d074ab548fadfb30c0eca1461",
+          "message": "feat: support namespaces, part 1",
+          "timestamp": "2025-03-26T16:33:07-03:00",
+          "tree_id": "2b3e7730baae4d667bf6945373dbb1721349c6ab",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/a71bc4912d1bdb6d074ab548fadfb30c0eca1461"
+        },
+        "date": 1743020185702,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 673,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 1462,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1368,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 7894,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 5079,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 7818,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 2358,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 14054,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 9204,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 14181,
             "unit": "ms"
           }
         ]

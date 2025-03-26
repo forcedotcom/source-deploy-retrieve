@@ -750,3 +750,4 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - AiEvaluationDefinition
 - ContentTypeBundle
 - InvocableActionExtension
+- FieldServiceMobileConfig

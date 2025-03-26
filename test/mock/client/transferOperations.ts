@@ -13,6 +13,7 @@ import { PollingClient } from '@salesforce/core';
 import { match, SinonSpy, SinonStub } from 'sinon';
 import type { AsyncResult } from '@jsforce/jsforce-node/lib/api/metadata';
 import { ensureString } from '@salesforce/ts-types';
+import * as sinon from 'sinon';
 import {
   ComponentSet,
   ConvertOutputConfig,
@@ -141,6 +142,9 @@ export async function stubMetadataDeploy(
       usernameOrConnection: connection,
       components: options.components,
       id: options.id,
+      apiOptions: {
+        rest: options.apiOptions?.rest,
+      },
     }),
     response: status as MetadataApiDeployStatus,
   };

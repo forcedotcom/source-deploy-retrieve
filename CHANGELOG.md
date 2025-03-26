@@ -1,3 +1,12 @@
+# [12.17.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.10...12.17.0) (2025-03-26)
+
+
+### Features
+
+* add metadata support for FieldServiceMobileConfig ([7a529f7](https://github.com/forcedotcom/source-deploy-retrieve/commit/7a529f735f8a856e4b56211509a58ff741961ed0))
+
+
+
 ## [12.16.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.9...12.16.10) (2025-03-18)
 
 

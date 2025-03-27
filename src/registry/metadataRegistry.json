@@ -538,7 +538,8 @@
     "uawork": "analyticsworkspace",
     "lifeSciConfigCategory": "lifesciconfigcategory",
     "lifeSciConfigRecord": "lifesciconfigrecord",
-    "invocableactionextension": "invocableactionextension"
+    "invocableactionextension": "invocableactionextension",
+    "fieldServiceMobileConfig": "fieldservicemobileconfig"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4795,6 +4796,14 @@
       "name": "InvocableActionExtension",
       "suffix": "invocableactionextension",
       "directoryName": "invocableactionextensions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "fieldservicemobileconfig": {
+      "id": "fieldservicemobileconfig",
+      "name": "FieldServiceMobileConfig",
+      "suffix": "fieldServiceMobileConfig",
+      "directoryName": "fieldServiceMobileConfigs",
       "inFolder": false,
       "strictDirectoryName": false
     }

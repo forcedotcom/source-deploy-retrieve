@@ -94,4 +94,8 @@ export type FromConnectionOptions = {
    * array of metadata type names to use for `connection.metadata.list()`
    */
   metadataTypes?: string[];
+  /**
+   * array of metadata type names to exclude
+   */
+  excludedTypes?: string[];
 } & OptionalTreeRegistryOptions;

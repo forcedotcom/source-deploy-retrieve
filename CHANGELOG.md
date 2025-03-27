@@ -1,3 +1,12 @@
+# [12.18.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.17.0...12.18.0) (2025-03-27)
+
+
+### Features
+
+* add checkDeployStatus for REST ([#1529](https://github.com/forcedotcom/source-deploy-retrieve/issues/1529)) ([2cfe5f4](https://github.com/forcedotcom/source-deploy-retrieve/commit/2cfe5f46216eb0f001e38d0d7c86b523d8c78344))
+
+
+
 # [12.17.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.16.10...12.17.0) (2025-03-26)
 
 

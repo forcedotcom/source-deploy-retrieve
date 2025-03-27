@@ -13,6 +13,7 @@ import { PollingClient } from '@salesforce/core';
 import { match, SinonSpy, SinonStub } from 'sinon';
 import type { AsyncResult } from '@jsforce/jsforce-node/lib/api/metadata';
 import { ensureString } from '@salesforce/ts-types';
+import * as sinon from 'sinon';
 import {
   ComponentSet,
   ConvertOutputConfig,
@@ -118,7 +119,7 @@ export async function stubMetadataDeploy(
   status.done = true;
   const checkStatusStub = sandbox.stub(connection.metadata, 'checkDeployStatus');
   // @ts-ignore
-  checkStatusStub.withArgs(MOCK_ASYNC_RESULT.id, true).resolves(status);
+  checkStatusStub.withArgs(MOCK_ASYNC_RESULT.id, true, sinon.match.any).resolves(status);
 
   // @ts-ignore
   const invokeStub = sandbox.stub(connection.metadata, '_invoke');
@@ -141,6 +142,9 @@ export async function stubMetadataDeploy(
       usernameOrConnection: connection,
       components: options.components,
       id: options.id,
+      apiOptions: {
+        rest: options.apiOptions?.rest,
+      },
     }),
     response: status as MetadataApiDeployStatus,
   };

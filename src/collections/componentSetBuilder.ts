@@ -260,6 +260,7 @@ export class ComponentSetBuilder {
       usernameOrConnection: connection,
       componentFilter: getOrgComponentFilter(org, mdMap, metadata),
       metadataTypes: mdMap.size ? Array.from(mdMap.keys()) : undefined,
+      excludedTypes: metadata?.excludedEntries?.length ? metadata.excludedEntries : undefined,
       registry,
     });
   }

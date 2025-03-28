@@ -321,7 +321,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       }
     }
 
-    const connectionResolver = new ConnectionResolver(usernameOrConnection, options.registry, options.metadataTypes);
+    const connectionResolver = new ConnectionResolver(
+      usernameOrConnection,
+      options.registry,
+      options.metadataTypes,
+      options.excludedTypes
+    );
     const manifest = await connectionResolver.resolve(options.componentFilter);
     const result = new ComponentSet([], options.registry);
     result.apiVersion = manifest.apiVersion;

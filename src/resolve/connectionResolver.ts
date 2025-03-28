@@ -58,16 +58,24 @@ export class ConnectionResolver {
   // Array of metadata type names to use for listMembers. By default it includes
   // all types defined in the registry.
   private mdTypeNames: string[];
+  // Array of metadata type names to exclude from the result.
+  private excludedTypes: string[];
 
   private requestBatchSize: number;
 
-  public constructor(connection: Connection, registry = new RegistryAccess(), mdTypes?: string[]) {
+  public constructor(
+    connection: Connection,
+    registry = new RegistryAccess(),
+    mdTypes?: string[],
+    excludedTypes?: string[]
+  ) {
     this.connection = connection;
     this.registry = registry;
     this.mdTypeNames = mdTypes?.length
       ? // ensure the types passed in are valid per the registry
         mdTypes.filter((t) => this.registry.getTypeByName(t))
       : Object.values(this.registry.getRegistry().types).map((t) => t.name);
+    this.excludedTypes = excludedTypes?.length ? excludedTypes : [];
 
     // Always reset this. listMembers() function detects and sets it.
     shouldQueryStandardValueSets = false;
@@ -121,16 +129,24 @@ export class ConnectionResolver {
         );
       }
 
-      aggregator.push(component);
+      if (!this.isExcluded(component.type)) {
+        aggregator.push(component);
+      }
       if (componentType.folderContentType) {
         const type = this.registry.getTypeByName(componentType.folderContentType).name;
         const folder = component.fullName;
-        folderComponentTypes.push(`${type}::${folder}`);
+        if (!this.isExcluded(type)) {
+          folderComponentTypes.push(`${type}::${folder}`);
+        }
       }
 
       const childTypes = componentType.children?.types;
       if (childTypes) {
-        Object.values(childTypes).map((childType) => childComponentTypes.add(childType.name));
+        Object.values(childTypes).map((childType) => {
+          if (!this.isExcluded(childType.name)) {
+            childComponentTypes.add(childType.name);
+          }
+        });
       }
     }
 
@@ -248,6 +264,8 @@ export class ConnectionResolver {
     }
     return queryResponses;
   }
+
+  private isExcluded = (type: string): boolean => this.excludedTypes.includes(type);
 }
 
 const querySvs =

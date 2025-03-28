@@ -495,6 +495,132 @@ describe('ConnectionResolver', () => {
       ];
       expect(result.components).to.deep.equalInAnyOrder(expected);
     });
+    it('should skip components if they are specifically excluded', async () => {
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+      metadataQueryStub.withArgs({ type: 'ApexClass' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'classes/MyApexClass1.class',
+          fullName: 'MyApexClass1',
+          type: 'ApexClass',
+        },
+      ]);
+      metadataQueryStub.withArgs({ type: 'ApexTrigger' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'triggers/MyApexTrigger1.trigger',
+          fullName: 'MyApexTrigger1',
+          type: 'ApexTrigger',
+        },
+      ]);
+      metadataQueryStub.withArgs({ type: 'ApexPage' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'pages/MyApexPage1.page',
+          fullName: 'MyApexPage1',
+          type: 'ApexPage',
+        },
+      ]);
+
+      const excludedTypes = ['ApexClass', 'ApexTrigger'];
+      const resolver = new ConnectionResolver(connection, undefined, [], excludedTypes);
+      const result = await resolver.resolve(undefined);
+      const expected: MetadataComponent[] = [
+        {
+          fullName: 'MyApexPage1',
+          type: registry.types.apexpage,
+        },
+      ];
+
+      expect(result.components).to.deep.equal(expected);
+    });
+    it('should skip components in folders if they are specifically excluded', async () => {
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+      metadataQueryStub.withArgs({ type: 'DashboardFolder' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'dashboards/Knowledge_Dashboard',
+          fullName: 'Knowledge_Dashboard',
+          manageableState: 'unmanaged',
+          type: 'DashboardFolder',
+        },
+      ]);
+      metadataQueryStub.withArgs({ type: 'ReportFolder' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'reports/FooNewFolder',
+          fullName: 'FooNewFolder',
+          manageableState: 'unmanaged',
+          type: 'ReportFolder',
+        },
+      ]);
+      metadataQueryStub.withArgs({ type: 'Report' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'reports/FooNewFolder/Bar.report',
+          fullName: 'FooNewFolder/Bar',
+          manageableState: 'unmanaged',
+          type: 'Report',
+        },
+      ]);
+      const excludedTypes = ['Report'];
+      const resolver = new ConnectionResolver(connection, undefined, [], excludedTypes);
+      const result = await resolver.resolve(undefined);
+      const expected: MetadataComponent[] = [
+        {
+          fullName: 'Knowledge_Dashboard',
+          type: registry.types.dashboardfolder,
+        },
+        {
+          fullName: 'FooNewFolder',
+          type: registry.types.reportfolder,
+        },
+      ];
+      expect(result.components).to.deep.equal(expected);
+    });
+    it('should skip child components if they are specifically excluded', async () => {
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+      metadataQueryStub.withArgs({ type: 'CustomObject' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'objects/Account.object',
+          fullName: 'Account',
+          type: 'CustomObject',
+        },
+      ]);
+      metadataQueryStub.withArgs({ type: 'CustomField' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'objects/Account.object',
+          fullName: 'Account.testc',
+          type: 'CustomField',
+        },
+        {
+          ...StdFileProperty,
+          fileName: 'objects/Account.object',
+          fullName: 'Account.testa',
+          type: 'CustomField',
+        },
+        {
+          ...StdFileProperty,
+          fileName: 'objects/Account.object',
+          fullName: 'Account.testb',
+          type: 'CustomField',
+        },
+      ]);
+
+      const excludedTypes = ['CustomField'];
+      const resolver = new ConnectionResolver(connection, undefined, [], excludedTypes);
+      const result = await resolver.resolve();
+      assert(registry.types.customobject.children?.types.customfield);
+      const expected: MetadataComponent[] = [
+        {
+          fullName: 'Account',
+          type: registry.types.customobject,
+        },
+      ];
+      expect(result.components).to.deep.equal(expected);
+    });
   });
 
   describe('missing filename and type', () => {

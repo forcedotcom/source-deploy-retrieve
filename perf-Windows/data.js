@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1743102951782,
+  "lastUpdate": 1743170444679,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -70377,6 +70377,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 15598,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "estebanromero84@outlook.com",
+            "name": "Esteban Romero",
+            "username": "EstebanRomero84"
+          },
+          "committer": {
+            "email": "estebanromero84@outlook.com",
+            "name": "Esteban Romero",
+            "username": "EstebanRomero84"
+          },
+          "distinct": true,
+          "id": "92f32bbf860773652b3baaec0660f3da29e3be64",
+          "message": "feat: add functionallity to exclude md types from connection resolver",
+          "timestamp": "2025-03-28T10:51:48-03:00",
+          "tree_id": "9aeb035ed16a47c18ebbd43d8eee150aa101ca3a",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/92f32bbf860773652b3baaec0660f3da29e3be64"
+        },
+        "date": 1743170427330,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 689,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4137,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3331,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 5993,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1330,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 7657,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 4944,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 7567,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 2287,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 13631,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 8938,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 13815,
             "unit": "ms"
           }
         ]

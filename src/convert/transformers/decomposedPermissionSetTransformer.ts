@@ -10,13 +10,11 @@ import { AnyJson, ensureString, JsonMap } from '@salesforce/ts-types';
 import type { PermissionSet } from '@jsforce/jsforce-node/lib/api/metadata/schema';
 import { calculateRelativePath } from '../../utils/path';
 import { unwrapAndOmitNS } from '../../utils/decomposed';
-import type { MetadataComponent } from '../../resolve/types';
-import { type MetadataType } from '../../registry/types';
-import { SourceComponent } from '../../resolve/sourceComponent';
+import type { MetadataType } from '../../registry';
+import { SourceComponent, type MetadataComponent } from '../../resolve';
 import { JsToXml } from '../streams';
 import type { ToSourceFormatInput, WriteInfo, XmlObj } from '../types';
-import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../common/constants';
-import type { SourcePath } from '../../common/types';
+import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL, type SourcePath } from '../../common';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import {
   addChildType,

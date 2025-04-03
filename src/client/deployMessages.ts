@@ -62,7 +62,7 @@ export const sanitizeDeployMessage = (message: DeployMessage): DeployMessageWith
   return message;
 };
 
-// components with children are already taken care of through the messages, so don't walk their content directories.
+// components with children are already taken care of through the messages, so don't walk their content directories....
 const shouldWalkContent = (component: SourceComponent): boolean =>
   typeof component.content === 'string' &&
   (!component.type.children ||

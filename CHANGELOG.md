@@ -1,3 +1,12 @@
+## [12.18.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.18.1...12.18.2) (2025-04-04)
+
+
+### Bug Fixes
+
+* suffix should be genAiPlannerBundle ([#1537](https://github.com/forcedotcom/source-deploy-retrieve/issues/1537)) ([62a889e](https://github.com/forcedotcom/source-deploy-retrieve/commit/62a889e4bf431400df4ed30f2e117bc1859d18f8))
+
+
+
 ## [12.18.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.18.0...12.18.1) (2025-04-04)
 
 

@@ -1,3 +1,12 @@
+## [12.18.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.18.0...12.18.1) (2025-04-04)
+
+
+### Bug Fixes
+
+* add support for GenAiPlannerBundle ([#1536](https://github.com/forcedotcom/source-deploy-retrieve/issues/1536)) ([580ada7](https://github.com/forcedotcom/source-deploy-retrieve/commit/580ada785c5de9540f351d29f51f9c2c04ccba2a))
+
+
+
 # [12.18.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.17.0...12.18.0) (2025-03-27)
 
 

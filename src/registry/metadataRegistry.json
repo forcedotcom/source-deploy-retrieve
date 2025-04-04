@@ -56,6 +56,7 @@
     "experiences": "experiencebundle",
     "fieldRestrictionRules": "fieldrestrictionrule",
     "genAiFunctions": "genaifunction",
+    "genAiPlannerBundles": "genaiplannerbundle",
     "integrationHub": "integrationhubsettings",
     "lwc": "lightningcomponentbundle",
     "mktDataSources": "datasource",
@@ -2724,6 +2725,16 @@
       "inFolder": false,
       "name": "GenAiPlanner",
       "suffix": "genAiPlanner"
+    },
+    "genaiplannerbundle": {
+      "directoryName": "genAiPlannerBundles",
+      "id": "genaiplannerbundle",
+      "inFolder": false,
+      "name": "GenAiPlannerBundle",
+      "strategies": {
+        "adapter": "bundle"
+      },
+      "strictDirectoryName": true
     },
     "genaiplugin": {
       "directoryName": "genAiPlugins",

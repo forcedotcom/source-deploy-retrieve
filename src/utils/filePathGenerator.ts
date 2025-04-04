@@ -121,6 +121,10 @@ export const filePathsFromMetadataComponent = (
       ['AuraDefinitionBundle', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.cmp${META_XML_SUFFIX}`)]],
       ['GenAiFunction', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.genAiFunction${META_XML_SUFFIX}`)]],
       [
+        'GenAiPlannerBundle',
+        [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.genAiPlanner${META_XML_SUFFIX}`)],
+      ],
+      [
         'AppFrameworkTemplateBundle',
         [
           join(packageDirWithTypeDir, `${fullName}${sep}template-info.json`),

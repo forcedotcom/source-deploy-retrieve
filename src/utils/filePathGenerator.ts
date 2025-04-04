@@ -122,7 +122,7 @@ export const filePathsFromMetadataComponent = (
       ['GenAiFunction', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.genAiFunction${META_XML_SUFFIX}`)]],
       [
         'GenAiPlannerBundle',
-        [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.genAiPlanner${META_XML_SUFFIX}`)],
+        [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.genAiPlannerBundle${META_XML_SUFFIX}`)],
       ],
       [
         'AppFrameworkTemplateBundle',

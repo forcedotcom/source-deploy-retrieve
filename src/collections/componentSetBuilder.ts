@@ -392,6 +392,9 @@ const buildMapFromMetadata = (mdOption: MetadataOption, registry: RegistryAccess
       if (cmp.metadataName === '*') {
         excludedTypes.push(cmp.type.name);
       }
+      if (cmp.type.folderType) {
+        excludedTypes.push(registry.getTypeByName(cmp.type.folderType).name);
+      }
     });
     if (mdMap.size === 0) {
       // we are excluding specific metadata types from all supported types

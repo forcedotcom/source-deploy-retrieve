@@ -623,6 +623,63 @@ describe('ComponentSetBuilder', () => {
         expect(compSet.has(apexClassWildcardMatch)).to.equal(true);
       });
 
+      it('should exclude folder type when excluding a type that is stored in folders', async () => {
+        const packageDir1 = path.resolve('force-app');
+        const registry = new RegistryAccess();
+        const dashboardType = registry.getTypeByName('Dashboard');
+        const dashboardFolderType = registry.getTypeByName('DashboardFolder');
+
+        fromConnectionStub.resolves(new ComponentSet());
+        await ComponentSetBuilder.build({
+          sourcepath: undefined,
+          manifest: undefined,
+          metadata: {
+            metadataEntries: [],
+            excludedEntries: ['Dashboard'],
+            directoryPaths: [packageDir1],
+          },
+          org: {
+            username: testOrg.username,
+            exclude: [],
+          },
+        });
+
+        expect(fromConnectionStub.callCount).to.equal(1);
+        const fromConnectionArgs = fromConnectionStub.firstCall.args[0];
+        const expectedMdTypes = Object.values(registry.getRegistry().types)
+          .filter((t) => t.name !== dashboardType.name && t.name !== dashboardFolderType.name)
+          .map((t) => t.name);
+        expect(fromConnectionArgs).to.have.deep.property('metadataTypes', expectedMdTypes);
+      });
+
+      it('should not exclude folder type when excluding a type that is not stored in folders', async () => {
+        const packageDir1 = path.resolve('force-app');
+        const registry = new RegistryAccess();
+        const apexClassType = registry.getTypeByName('ApexClass');
+
+        fromConnectionStub.resolves(new ComponentSet());
+        await ComponentSetBuilder.build({
+          sourcepath: undefined,
+          manifest: undefined,
+          metadata: {
+            metadataEntries: [],
+            excludedEntries: ['ApexClass'],
+            directoryPaths: [packageDir1],
+          },
+          org: {
+            username: testOrg.username,
+            exclude: [],
+          },
+        });
+
+        expect(fromConnectionStub.callCount).to.equal(1);
+        const fromConnectionArgs = fromConnectionStub.firstCall.args[0];
+        const expectedMdTypes = Object.values(registry.getRegistry().types)
+          .filter((t) => t.name !== apexClassType.name)
+          .map((t) => t.name);
+        expect(fromConnectionArgs).to.have.deep.property('metadataTypes', expectedMdTypes);
+      });
+
       describe('Agent pseudo type', () => {
         const genAiPlannerId = '16jSB000000H3JFYA0';
         const genAiPlannerId15 = '16jSB000000H3JF';

@@ -718,6 +718,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - ExtlClntAppSampleSettings
 - Form
 - FormSection
+- GenAiPlannerBundle
 - GlobalPicklist
 - InsightType
 - IntegrationHubSettings

@@ -1,3 +1,12 @@
+## [12.18.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.18.3...12.18.4) (2025-04-07)
+
+
+### Bug Fixes
+
+* .customPermissions vs .customPermission (the MD type) ([#1534](https://github.com/forcedotcom/source-deploy-retrieve/issues/1534)) ([5bc32c8](https://github.com/forcedotcom/source-deploy-retrieve/commit/5bc32c8de7a5709d309044dbec7c9c31e8f92884))
+
+
+
 ## [12.18.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.18.2...12.18.3) (2025-04-06)
 
 

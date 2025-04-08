@@ -1,3 +1,12 @@
+## [12.18.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.18.4...12.18.5) (2025-04-08)
+
+
+### Bug Fixes
+
+* exclude folder when folder content is excluded from org connection ([#1535](https://github.com/forcedotcom/source-deploy-retrieve/issues/1535)) ([5b44448](https://github.com/forcedotcom/source-deploy-retrieve/commit/5b444488e84b30c854e5b59710668b40c55ba477))
+
+
+
 ## [12.18.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.18.3...12.18.4) (2025-04-07)
 
 

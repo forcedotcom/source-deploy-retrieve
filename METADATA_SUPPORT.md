@@ -339,8 +339,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |GenAiPlanner|✅||
 |GenAiPlugin|✅||
 |GenAiPluginInstructionDef|❌|Not supported, but support could be added|
-|GenAiPromptTemplate|⚠️|Supports deploy/retrieve but not source tracking|
-|GenAiPromptTemplateActv|⚠️|Supports deploy/retrieve but not source tracking|
+|GenAiPromptTemplate|✅||
+|GenAiPromptTemplateActv|✅||
 |GlobalValueSet|✅||
 |GlobalValueSetTranslation|✅||
 |GoogleAppsSettings|✅||

@@ -245,6 +245,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       apiVersion: this.components?.sourceApiVersion ?? (await connection.retrieveMaxApiVersion()),
       ...(manifestData ? { unpackaged: manifestData } : {}),
       ...(this.options.singlePackage ? { singlePackage: this.options.singlePackage } : {}),
+      ...(this.options.rootTypesWithDependencies ? { rootTypesWithDependencies: this.options.rootTypesWithDependencies } : {}),
       // if we're retrieving with packageNames add it
       // otherwise don't - it causes errors if undefined or an empty array
       ...(packageNames.length ? { packageNames } : {}),

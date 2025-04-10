@@ -156,6 +156,7 @@ type RetrieveStubOptions = {
   toRetrieve?: ComponentSet;
   messages?: Partial<RetrieveMessage> | Array<Partial<RetrieveMessage>>;
   successes?: ComponentSet;
+  rootTypesWithDependencies?: string[];
 };
 
 type RetrieveOperationLifecycle = {
@@ -321,6 +322,7 @@ export async function stubMetadataRetrieve(
       packageOptions: options.packageOptions,
       usernameOrConnection: connection,
       components: retrievedComponents,
+      rootTypesWithDependencies: options.rootTypesWithDependencies,
       output: MOCK_DEFAULT_OUTPUT,
       registry: undefined,
       merge: options.merge,

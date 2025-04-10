@@ -1,3 +1,12 @@
+# [12.19.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.18.5...12.19.0) (2025-04-10)
+
+
+### Features
+
+* add support for rootTypesWithDependencies to RetrieveRequest ([#1541](https://github.com/forcedotcom/source-deploy-retrieve/issues/1541)) ([eceed3f](https://github.com/forcedotcom/source-deploy-retrieve/commit/eceed3fdde919723dc8bd1e83f414c3d3f7e7c4d))
+
+
+
 ## [12.18.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.18.4...12.18.5) (2025-04-08)
 
 

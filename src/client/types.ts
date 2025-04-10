@@ -216,6 +216,7 @@ export type DeployMessage = {
 export type RetrieveRequest = {
   apiVersion: string;
   packageNames?: string[];
+  rootTypesWithDependencies?: string[];
   singlePackage?: boolean;
   specificFiles?: string[];
   unpackaged?: {
@@ -313,6 +314,11 @@ export type RetrieveOptions = {
    * A list of package names to retrieve, or package names and their retrieval locations.
    */
   packageOptions?: PackageOptions;
+  /**
+   * An array of metadata type names for which related, dependent metadata
+   * will be retrieved. At this time only `Bot` is supported.
+   */
+  rootTypesWithDependencies?: string[];
   /**
    * The file format desired for the retrieved files.
    */

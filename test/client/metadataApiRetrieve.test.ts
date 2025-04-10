@@ -163,6 +163,25 @@ describe('MetadataApiRetrieve', () => {
         });
       });
 
+      it('should call retrieve with rootTypesWithDependencies', async () => {
+        const toRetrieve = new ComponentSet([COMPONENT]);
+        const options = {
+          toRetrieve,
+          rootTypesWithDependencies: [ 'Bot' ],
+          merge: true,
+          successes: toRetrieve,
+        };
+        const { operation, retrieveStub } = await stubMetadataRetrieve($$, testOrg, options);
+        await operation.start();
+
+        expect(retrieveStub.calledOnce).to.be.true;
+        expect(retrieveStub.firstCall.args[0]).to.deep.equal({
+          apiVersion: (await testOrg.getConnection()).getApiVersion(),
+          rootTypesWithDependencies: options.rootTypesWithDependencies,
+          unpackaged: (await toRetrieve.getObject()).Package,
+        });
+      });
+
       it('should return an AsyncResult', async () => {
         const toRetrieve = new ComponentSet([COMPONENT]);
         const options = {

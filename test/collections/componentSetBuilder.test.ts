@@ -481,7 +481,9 @@ describe('ComponentSetBuilder', () => {
           const fromSourceArg = fromSourceStub.thirdCall.firstArg;
           expect(fromSourceArg).to.have.deep.property('fsPaths', [packageDir1]);
           expect(fromSourceArg).to.have.property('include');
-          const expectedComps = ['bot#MyBot', 'genaiplanner#MyBot'];
+          // expect genaiplannerbundle because it's now the default and the stubbing
+          // for this test is very naive.
+          const expectedComps = ['bot#MyBot', 'genaiplannerbundle#MyBot'];
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(expectedComps);
           expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());

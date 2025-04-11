@@ -6,13 +6,13 @@
  */
 
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { XMLParser } from 'fast-xml-parser';
 import { Connection, Logger, SfError, trimTo15 } from '@salesforce/core';
-import type { BotVersion, GenAiPlanner, GenAiPlugin } from '@salesforce/types/metadata';
+import type { BotVersion, GenAiPlanner, GenAiPlannerFunctionDef, GenAiPlugin } from '@salesforce/types/metadata';
 import { ensureArray } from '@salesforce/kit';
 import { RegistryAccess } from '../../registry';
 import { ComponentSet } from '../../collections/componentSet';
-import { SourceComponent } from '../sourceComponent';
 import { MetadataComponent } from '../types';
 
 type BotVersionExt = {
@@ -61,6 +61,9 @@ export async function resolveAgentMdEntries(agentMdInfo: {
   registry?: RegistryAccess;
 }): Promise<string[]> {
   const { botName, connection, directoryPaths } = agentMdInfo;
+  const v63topLevelMd = ['Bot', 'GenAiPlanner', 'GenAiPlugin', 'GenAiFunction'];
+  const v64topLevelMd = ['Bot', 'GenAiPlannerBundle', 'GenAiPlugin', 'GenAiFunction'];
+
   let debugMsg = `Resolving agent metadata with botName: ${botName}`;
   if (connection) {
     debugMsg += ` and org connection ${connection.getUsername() as string}`;
@@ -72,7 +75,10 @@ export async function resolveAgentMdEntries(agentMdInfo: {
 
   if (botName === '*') {
     // Get all Agent top level metadata
-    return Promise.resolve(['Bot', 'GenAiPlanner', 'GenAiPlugin', 'GenAiFunction']);
+    if (connection && Number(connection.getApiVersion()) > 63.0) {
+      return Promise.resolve(v64topLevelMd);
+    }
+    return Promise.resolve(v63topLevelMd);
   }
 
   if (connection) {
@@ -99,7 +105,8 @@ const resolveAgentFromConnection = async (connection: Connection, botName: strin
     const plannerId = (await connection.singleRecordQuery<{ Id: string }>(genAiPlannerIdQuery, { tooling: true })).Id;
 
     if (plannerId) {
-      mdEntries.push(`GenAiPlanner:${botName}`);
+      const plannerType = Number(connection.getApiVersion()) > 63.0 ? 'GenAiPlannerBundle' : 'GenAiPlanner';
+      mdEntries.push(`${plannerType}:${botName}`);
       const plannerId15 = trimTo15(plannerId);
       // Query for the GenAiPlugins associated with the 15 char GenAiPlannerId
       const genAiPluginNames = (
@@ -111,11 +118,11 @@ const resolveAgentFromConnection = async (connection: Connection, botName: strin
         genAiPluginNames.map((r) => mdEntries.push(`GenAiPlugin:${r.DeveloperName}`));
       } else {
         getLogger().debug(
-          `No GenAiPlugin metadata matches for plannerId: ${plannerId15}. Reading the planner metadata for plugins...`
+          `No GenAiPlugin metadata matches for plannerId: ${plannerId15}. Reading the ${plannerType} metadata for plugins...`
         );
         // read the planner metadata from the org
         // @ts-expect-error jsForce types don't know about GenAiPlanner yet
-        const genAiPlannerMd = await connection.metadata.read<GenAiPlanner>('GenAiPlanner', botName);
+        const genAiPlannerMd = await connection.metadata.read<GenAiPlanner>(plannerType, botName);
         const genAiPlannerMdArr = ensureArray(genAiPlannerMd) as unknown as GenAiPlanner[];
         if (genAiPlannerMdArr?.length && genAiPlannerMdArr[0]?.genAiPlugins.length) {
           genAiPlannerMdArr[0].genAiPlugins.map((plugin) => {
@@ -162,19 +169,20 @@ const resolveAgentFromLocalMetadata = (
   }
   const parser = new XMLParser({ ignoreAttributes: false });
   const botFiles = botCompSet.getComponentFilenamesByNameAndType({ type: 'Bot', fullName: botName });
-  const plannerType = registry.getTypeByName('GenAiPlanner');
+  let plannerType = registry.getTypeByName('GenAiPlannerBundle');
+  let plannerTypeName = 'GenAiPlannerBundle';
   let plannerCompSet = ComponentSet.fromSource({
     fsPaths: directoryPaths,
     include: new ComponentSet([{ type: plannerType, fullName: botName }], registry),
     registry,
   });
-  // If the plannerCompSet is empty it might be due to the GenAiPlanner having a
+  // If the plannerCompSet is empty it might be due to the GenAiPlannerBundle having a
   // different name than the Bot. We need to search the BotVersion for the
   // planner API name.
   if (plannerCompSet.size < 1) {
     const botVersionFile = botFiles.find((botFile) => botFile.endsWith('.botVersion-meta.xml'));
     if (botVersionFile) {
-      getLogger().debug(`Reading and parsing ${botVersionFile} to find all GenAiPlanner references`);
+      getLogger().debug(`Reading and parsing ${botVersionFile} to find all GenAiPlanner/GenAiPlannerBundle references`);
       const botVersionJson = xmlToJson<BotVersionExt>(botVersionFile, parser);
       // Per the schema, there can be multiple GenAiPlanners linked to a BotVersion
       // but I'm not sure how that would work so for now just using the first one.
@@ -186,36 +194,61 @@ const resolveAgentFromLocalMetadata = (
           include: new ComponentSet([{ type: plannerType, fullName: genAiPlannerName }], registry),
           registry,
         });
+        // If the plannerCompSet is empty look for a GenAiPlanner
         if (plannerCompSet.size < 1) {
-          getLogger().debug(`Cannot find GenAiPlanner with name: ${genAiPlannerName}`);
+          plannerTypeName = 'GenAiPlanner';
+          plannerType = registry.getTypeByName('GenAiPlanner');
+          plannerCompSet = ComponentSet.fromSource({
+            fsPaths: directoryPaths,
+            include: new ComponentSet([{ type: plannerType, fullName: genAiPlannerName }], registry),
+            registry,
+          });
+          if (plannerCompSet.size < 1) {
+            getLogger().debug(`Cannot find GenAiPlanner or GenAiPlannerBundle with name: ${genAiPlannerName}`);
+          }
         }
-        getLogger().debug(`Adding GenAiPlanner:${genAiPlannerName}`);
-        mdEntries.add(`GenAiPlanner:${genAiPlannerName}`);
+        getLogger().debug(`Adding ${plannerTypeName}:${genAiPlannerName}`);
+        mdEntries.add(`${plannerTypeName}:${genAiPlannerName}`);
       } else {
         getLogger().debug(`Cannot find GenAiPlannerName in BotVersion file: ${botVersionFile}`);
       }
     }
   } else {
-    getLogger().debug(`Adding GenAiPlanner:${botName}`);
-    mdEntries.add(`GenAiPlanner:${botName}`);
+    getLogger().debug(`Adding ${plannerTypeName}:${botName}`);
+    mdEntries.add(`${plannerTypeName}:${botName}`);
   }
 
-  // Read the GenAiPlanner file for GenAiPlugins
-  const plannerComp = plannerCompSet.find((mdComp) => mdComp.type.name === 'GenAiPlanner');
-  if (plannerComp && 'xml' in plannerComp) {
-    const plannerFile = (plannerComp as SourceComponent).xml;
+  // Read the GenAiPlanner or GenAiPlannerBundle file for GenAiPlugins
+  const plannerComp = plannerCompSet.getSourceComponents().first();
+  if (plannerComp) {
+    let plannerFilePath;
+    if (plannerTypeName === 'GenAiPlannerBundle' && plannerComp.content) {
+      const plannerFileName = plannerComp.tree
+        .readDirectory(plannerComp.content)
+        .find((p) => p.endsWith('.genAiPlannerBundle'));
+      if (plannerFileName) {
+        plannerFilePath = join(plannerComp.content, plannerFileName);
+      } else {
+        getLogger().debug(`Cannot find GenAiPlannerBundle file in ${plannerComp.content}`);
+      }
+    } else {
+      plannerFilePath = plannerComp.xml;
+    }
+
     // Certain internal plugins and functions cannot be retrieved/deployed so don't include them.
-    const internalPrefix = 'EmployeeCopilot__';
-    if (plannerFile) {
-      getLogger().debug(`Reading and parsing ${plannerFile} to find all GenAiPlugin references`);
-      const plannerJson = xmlToJson<GenAiPlannerExt>(plannerFile, parser);
+    const internalPrefixes = ['EmployeeCopilot__', 'SvcCopilotTmpl__'];
+    if (plannerFilePath) {
+      getLogger().debug(`Reading and parsing ${plannerFilePath} to find all GenAiPlugin references`);
+      const plannerJson = xmlToJson<GenAiPlannerExt>(plannerFilePath, parser);
 
       // Add plugins defined in the planner
-      const genAiPlugins = ensureArray(plannerJson.GenAiPlanner.genAiPlugins);
+      // @ts-expect-error temporary until GenAiPlannerBundle metadata type is defined
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const genAiPlugins = ensureArray(plannerJson[plannerTypeName].genAiPlugins) as GenAiPlannerFunctionDef[];
       const pluginType = registry.getTypeByName('GenAiPlugin');
       const genAiPluginComps: MetadataComponent[] = [];
       genAiPlugins?.map((plugin) => {
-        if (plugin.genAiPluginName && !plugin.genAiPluginName.startsWith(internalPrefix)) {
+        if (plugin.genAiPluginName && !internalPrefixes.some((prefix) => plugin.genAiPluginName?.startsWith(prefix))) {
           genAiPluginComps.push({ type: pluginType, fullName: plugin.genAiPluginName });
           getLogger().debug(`Adding GenAiPlugin:${plugin.genAiPluginName}`);
           mdEntries.add(`GenAiPlugin:${plugin.genAiPluginName}`);
@@ -237,7 +270,7 @@ const resolveAgentFromLocalMetadata = (
               const genAiPlugin = xmlToJson<GenAiPluginExt>(comp.xml, parser);
               const genAiFunctions = ensureArray(genAiPlugin.GenAiPlugin.genAiFunctions);
               genAiFunctions.map((func) => {
-                if (func.functionName && !func.functionName.startsWith(internalPrefix)) {
+                if (func.functionName && !internalPrefixes.some((prefix) => func.functionName.startsWith(prefix))) {
                   getLogger().debug(`Adding GenAiFunction:${func.functionName}`);
                   mdEntries.add(`GenAiFunction:${func.functionName}`);
                 }

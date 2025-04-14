@@ -15,8 +15,11 @@ config.truncateThreshold = 0;
 
 describe('agentResolver', () => {
   const projectDir = join('test', 'nuts', 'agents', 'agentsProject');
+  const projectDir64 = join('test', 'nuts', 'agents', 'agentsProject64');
   const sourceDir = join(projectDir, 'force-app', 'main', 'default');
+  const sourceDir64 = join(projectDir64, 'force-app', 'main', 'default');
   const allAgentMetadata = ['Bot', 'GenAiPlanner', 'GenAiPlugin', 'GenAiFunction'];
+  const allAgentMetadata64 = ['Bot', 'GenAiPlannerBundle', 'GenAiPlugin', 'GenAiFunction'];
   const $$ = instantiateContext();
   const testOrg = new MockTestOrgData();
   let connection: Connection;
@@ -32,39 +35,75 @@ describe('agentResolver', () => {
     restoreContext($$);
   });
 
-  it('should return all top level agent metadata for wildcard and connection', async () => {
-    const agentPseudoConfig = { botName: '*', connection };
-    expect(await resolveAgentMdEntries(agentPseudoConfig)).to.deep.equal(allAgentMetadata);
+  describe('apiVersion 63.0 and lower', () => {
+    it('should return all top level agent metadata for wildcard and connection', async () => {
+      const agentPseudoConfig = { botName: '*', connection };
+      expect(await resolveAgentMdEntries(agentPseudoConfig)).to.deep.equal(allAgentMetadata);
+    });
+
+    it('should return all top level agent metadata for wildcard and directory', async () => {
+      const agentPseudoConfig = { botName: '*', directoryPaths: [sourceDir] };
+      expect(await resolveAgentMdEntries(agentPseudoConfig)).to.deep.equal(allAgentMetadata);
+    });
+
+    // Tests correct resolution when Bot API name does not match GenAiPlanner API name.
+    it('should return metadata for internal agent and directory', async () => {
+      const agentPseudoConfig = { botName: 'Copilot_for_Salesforce', directoryPaths: [sourceDir] };
+      const expectedAgentMdEntries = ['Bot:Copilot_for_Salesforce', 'GenAiPlanner:EmployeeCopilotPlanner'];
+      expect(await resolveAgentMdEntries(agentPseudoConfig)).to.deep.equal(expectedAgentMdEntries);
+    });
+
+    it('should return metadata for agent (no plugins or functions) and directory', async () => {
+      const agentPseudoConfig = { botName: 'My_Macys', directoryPaths: [sourceDir] };
+      const expectedAgentMdEntries = ['Bot:My_Macys', 'GenAiPlanner:My_Macys'];
+      expect(await resolveAgentMdEntries(agentPseudoConfig)).to.deep.equal(expectedAgentMdEntries);
+    });
+
+    it('should return metadata for agent (with plugins and functions) and directory', async () => {
+      const agentPseudoConfig = { botName: 'The_Campus_Assistant', directoryPaths: [sourceDir] };
+      const expectedAgentMdEntries = [
+        'Bot:The_Campus_Assistant',
+        'GenAiPlanner:The_Campus_Assistant',
+        'GenAiPlugin:p_16jQP0000000PG9_Climbing_Routes_Information',
+        'GenAiPlugin:p_16jQP0000000PG9_Gym_Hours_and_Schedule',
+        'GenAiPlugin:p_16jQP0000000PG9_Membership_Plans',
+        'GenAiFunction:CustomKnowledgeAction_1738277095539',
+      ];
+      expect(await resolveAgentMdEntries(agentPseudoConfig)).to.deep.equal(expectedAgentMdEntries);
+    });
   });
 
-  it('should return all top level agent metadata for wildcard and directory', async () => {
-    const agentPseudoConfig = { botName: '*', directoryPaths: [sourceDir] };
-    expect(await resolveAgentMdEntries(agentPseudoConfig)).to.deep.equal(allAgentMetadata);
-  });
+  describe('apiVersion 64.0 and higher', () => {
+    it('should return all top level agent metadata for wildcard and connection', async () => {
+      connection.setApiVersion('64.0');
+      const agentPseudoConfig = { botName: '*', connection };
+      expect(await resolveAgentMdEntries(agentPseudoConfig)).to.deep.equal(allAgentMetadata64);
+    });
 
-  // Tests correct resolution when Bot API name does not match GenAiPlanner API name.
-  it('should return metadata for internal agent and directory', async () => {
-    const agentPseudoConfig = { botName: 'Copilot_for_Salesforce', directoryPaths: [sourceDir] };
-    const expectedAgentMdEntries = ['Bot:Copilot_for_Salesforce', 'GenAiPlanner:EmployeeCopilotPlanner'];
-    expect(await resolveAgentMdEntries(agentPseudoConfig)).to.deep.equal(expectedAgentMdEntries);
-  });
+    // Tests correct resolution when Bot API name does not match GenAiPlannerBundle API name.
+    it('should return metadata for internal agent and directory', async () => {
+      const agentPseudoConfig = { botName: 'Copilot_for_Salesforce', directoryPaths: [sourceDir64] };
+      const expectedAgentMdEntries = ['Bot:Copilot_for_Salesforce', 'GenAiPlannerBundle:EmployeeCopilotPlanner'];
+      expect(await resolveAgentMdEntries(agentPseudoConfig)).to.deep.equal(expectedAgentMdEntries);
+    });
 
-  it('should return metadata for agent (no plugins or functions) and directory', async () => {
-    const agentPseudoConfig = { botName: 'My_Macys', directoryPaths: [sourceDir] };
-    const expectedAgentMdEntries = ['Bot:My_Macys', 'GenAiPlanner:My_Macys'];
-    expect(await resolveAgentMdEntries(agentPseudoConfig)).to.deep.equal(expectedAgentMdEntries);
-  });
+    it('should return metadata for agent (no plugins or functions) and directory', async () => {
+      const agentPseudoConfig = { botName: 'My_Macys', directoryPaths: [sourceDir64] };
+      const expectedAgentMdEntries = ['Bot:My_Macys', 'GenAiPlannerBundle:My_Macys'];
+      expect(await resolveAgentMdEntries(agentPseudoConfig)).to.deep.equal(expectedAgentMdEntries);
+    });
 
-  it('should return metadata for agent (with plugins and functions) and directory', async () => {
-    const agentPseudoConfig = { botName: 'The_Campus_Assistant', directoryPaths: [sourceDir] };
-    const expectedAgentMdEntries = [
-      'Bot:The_Campus_Assistant',
-      'GenAiPlanner:The_Campus_Assistant',
-      'GenAiPlugin:p_16jQP0000000PG9_Climbing_Routes_Information',
-      'GenAiPlugin:p_16jQP0000000PG9_Gym_Hours_and_Schedule',
-      'GenAiPlugin:p_16jQP0000000PG9_Membership_Plans',
-      'GenAiFunction:CustomKnowledgeAction_1738277095539',
-    ];
-    expect(await resolveAgentMdEntries(agentPseudoConfig)).to.deep.equal(expectedAgentMdEntries);
+    it('should return metadata for agent (with plugins and functions) and directory', async () => {
+      const agentPseudoConfig = { botName: 'The_Campus_Assistant', directoryPaths: [sourceDir64] };
+      const expectedAgentMdEntries = [
+        'Bot:The_Campus_Assistant',
+        'GenAiPlannerBundle:The_Campus_Assistant',
+        'GenAiPlugin:p_16jQP0000000PG9_Climbing_Routes_Information',
+        'GenAiPlugin:p_16jQP0000000PG9_Gym_Hours_and_Schedule',
+        'GenAiPlugin:p_16jQP0000000PG9_Membership_Plans',
+        'GenAiFunction:CustomKnowledgeAction_1738277095539',
+      ];
+      expect(await resolveAgentMdEntries(agentPseudoConfig)).to.deep.equal(expectedAgentMdEntries);
+    });
   });
 });

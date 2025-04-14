@@ -1,3 +1,12 @@
+## [12.19.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.0...12.19.1) (2025-04-14)
+
+
+### Bug Fixes
+
+* support GenAiPlanner and GenAiPlannerBundle for agent pseudotype ([#1542](https://github.com/forcedotcom/source-deploy-retrieve/issues/1542)) ([5319627](https://github.com/forcedotcom/source-deploy-retrieve/commit/53196270d3a9e05be204b7c1b7c8d30a07a5fdc2))
+
+
+
 # [12.19.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.18.5...12.19.0) (2025-04-10)
 
 

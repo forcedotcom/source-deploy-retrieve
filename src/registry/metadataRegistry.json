@@ -1746,7 +1746,7 @@
       "suffix": "dataKitObjectTemplate"
     },
     "dataobjectbuildorgtemplate": {
-      "directoryName": "dataObjectBuilOrgTemplates",
+      "directoryName": "dataObjectBuildOrgTemplates",
       "id": "dataobjectbuildorgtemplate",
       "name": "DataObjectBuildOrgTemplate",
       "strictDirectoryName": false,

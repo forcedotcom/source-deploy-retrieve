@@ -6,6 +6,7 @@
  */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { expect } from 'chai';
 import {
   FORCE_APP,
   MDAPI_OUT,
@@ -13,7 +14,9 @@ import {
   fileSnap,
   mdapiToSource,
   sourceToMdapi,
+  dirEntsToPaths,
 } from '../../helper/conversions';
+import { ComponentSetBuilder, MetadataConverter, RegistryAccess } from '../../../../src';
 
 // we don't want failing tests outputting over each other
 /* eslint-disable no-await-in-loop */
@@ -29,6 +32,78 @@ describe('digitalExperienceBundle', () => {
     mdFiles = await sourceToMdapi(testDir);
   });
   it('verify source files', async () => {
+    for (const file of sourceFiles) {
+      await fileSnap(file, testDir);
+    }
+    await dirsAreIdentical(
+      path.join(testDir, FORCE_APP),
+      path.join(testDir, '__snapshots__', 'verify-source-files.expected', FORCE_APP)
+    );
+  });
+
+  it('verifies source files after two conversions', async () => {
+    // reads all files in a directory recursively
+    function getAllFiles(dirPath: string, fileList: string[] = []): string[] {
+      const files = fs.readdirSync(dirPath);
+
+      for (const file of files) {
+        const filePath = path.join(dirPath, file);
+        const stat = fs.statSync(filePath);
+
+        if (stat.isDirectory()) {
+          getAllFiles(filePath, fileList); // Recursive call for subdirectories
+        } else {
+          fileList.push(filePath);
+        }
+      }
+
+      return fileList;
+    }
+
+    // should contain correct file path, e.g. DEB/../tablet/tablet.json
+    const fileList = getAllFiles(path.join(testDir, FORCE_APP));
+
+    for (const file of sourceFiles) {
+      await fileSnap(file, testDir);
+    }
+    await dirsAreIdentical(
+      path.join(testDir, FORCE_APP),
+      path.join(testDir, '__snapshots__', 'verify-source-files.expected', FORCE_APP)
+    );
+
+    // build a new CS from the freshly-converted source-format metadata
+    const cs = await ComponentSetBuilder.build({
+      sourcepath: [path.join(testDir, 'originalMdapi')],
+      projectDir: testDir,
+    });
+    const registry = new RegistryAccess(undefined, testDir);
+    const converter = new MetadataConverter(registry);
+
+    // converts metadata format DEB into source-format, with a mergeWith option, merging into force-app
+    await converter.convert(
+      cs,
+      'source', // loads custom registry if there is one
+      {
+        type: 'merge',
+        mergeWith: (
+          await ComponentSetBuilder.build({
+            sourcepath: [path.join(testDir, 'force-app')],
+            projectDir: testDir,
+          })
+        ).getSourceComponents(),
+        defaultDirectory: path.join(testDir, 'force-app'),
+      }
+    );
+    const dirEnts = await fs.promises.readdir(path.join(testDir, FORCE_APP), {
+      recursive: true,
+      withFileTypes: true,
+    });
+
+    sourceFiles = dirEntsToPaths(dirEnts);
+
+    // this, currently, will have the incorrect file, DEB/.../tablet.json
+    const fileList2 = getAllFiles(path.join(testDir, FORCE_APP));
+    expect(fileList2).to.deep.equal(fileList);
     for (const file of sourceFiles) {
       await fileSnap(file, testDir);
     }

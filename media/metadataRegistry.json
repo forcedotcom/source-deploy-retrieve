@@ -511,6 +511,7 @@
     "wds": "wavedataset",
     "webStoreBundle": "webstorebundle",
     "webStoreTemplate": "webstoretemplate",
+    "workflowFlowAutomation": "workflowflowautomation",
     "weblink": "custompageweblink",
     "wlens": "wavelens",
     "workSkillRouting": "workskillrouting",
@@ -4543,6 +4544,13 @@
       "name": "WebStoreTemplate",
       "strictDirectoryName": false,
       "suffix": "webStoreTemplate"
+    },
+    "workflowflowautomation": {
+      "directoryName": "workflowFlowAutomations",
+      "id": "workflowflowautomation",
+      "name": "WorkflowFlowAutomation",
+      "strictDirectoryName": false,
+      "suffix": "workflowFlowAutomation"
     },
     "workflow": {
       "children": {

@@ -63,9 +63,6 @@ describe('digitalExperienceBundle', () => {
     // should contain correct file path, e.g. DEB/../tablet/tablet.json
     const fileList = getAllFiles(path.join(testDir, FORCE_APP));
 
-    for (const file of sourceFiles) {
-      await fileSnap(file, testDir);
-    }
     await dirsAreIdentical(
       path.join(testDir, FORCE_APP),
       path.join(testDir, '__snapshots__', 'verify-source-files.expected', FORCE_APP)
@@ -104,9 +101,7 @@ describe('digitalExperienceBundle', () => {
     // this, currently, will have the incorrect file, DEB/.../tablet.json
     const fileList2 = getAllFiles(path.join(testDir, FORCE_APP));
     expect(fileList2).to.deep.equal(fileList);
-    for (const file of sourceFiles) {
-      await fileSnap(file, testDir);
-    }
+
     await dirsAreIdentical(
       path.join(testDir, FORCE_APP),
       path.join(testDir, '__snapshots__', 'verify-source-files.expected', FORCE_APP)

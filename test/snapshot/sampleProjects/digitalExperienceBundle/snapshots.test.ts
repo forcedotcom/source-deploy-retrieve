@@ -14,7 +14,6 @@ import {
   fileSnap,
   mdapiToSource,
   sourceToMdapi,
-  dirEntsToPaths,
 } from '../../helper/conversions';
 import { ComponentSetBuilder, MetadataConverter, RegistryAccess } from '../../../../src';
 
@@ -91,12 +90,6 @@ describe('digitalExperienceBundle', () => {
         defaultDirectory: path.join(testDir, 'force-app'),
       }
     );
-    const dirEnts = await fs.promises.readdir(path.join(testDir, FORCE_APP), {
-      recursive: true,
-      withFileTypes: true,
-    });
-
-    sourceFiles = dirEntsToPaths(dirEnts);
 
     // this, currently, will have the incorrect file, DEB/.../tablet.json
     const fileList2 = getAllFiles(path.join(testDir, FORCE_APP));

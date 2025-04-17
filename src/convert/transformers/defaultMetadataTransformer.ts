@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, join } from 'node:path';
+import fs from 'node:fs';
+import { sep } from 'node:path';
 import { Messages } from '@salesforce/core/messages';
 import { Lifecycle } from '@salesforce/core/lifecycle';
 import { SourcePath } from '../../common/types';
@@ -75,7 +77,19 @@ const getContentSourceDestination = (
     if (component.content && component.tree.isDirectory(component.content)) {
       // DEs are always inside a dir.
       if (component.type.strategies?.adapter === 'digitalExperience') {
-        return join(mergeWith.content, basename(source));
+        const parts = source.split(sep);
+        const file = parts.pop() ?? '';
+        const dir = join(mergeWith.content, parts.pop() ?? '');
+        if (
+          source.endsWith('content.json') ||
+          source.endsWith('_meta.json') ||
+          !(fs.existsSync(dir) && fs.statSync(dir).isDirectory())
+        ) {
+          return join(mergeWith.content, basename(source));
+        } else {
+          // if a directory exists with the same name as source, merge into there
+          return join(dir, file);
+        }
       } else {
         const relative = trimUntil(source, basename(component.content));
         return join(dirname(mergeWith.content), relative);

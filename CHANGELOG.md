@@ -1,3 +1,12 @@
+## [12.19.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.2...12.19.3) (2025-04-17)
+
+
+### Bug Fixes
+
+* add support for WorkflowFlowAutomation ([#1547](https://github.com/forcedotcom/source-deploy-retrieve/issues/1547)) ([e79be42](https://github.com/forcedotcom/source-deploy-retrieve/commit/e79be4220358e97551f4b3c956dda6ddd4717dc1))
+
+
+
 ## [12.19.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.1...12.19.2) (2025-04-15)
 
 

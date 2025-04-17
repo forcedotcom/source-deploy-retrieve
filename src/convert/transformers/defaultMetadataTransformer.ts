@@ -6,6 +6,7 @@
  */
 import { basename, dirname, join } from 'node:path';
 import fs from 'node:fs';
+import { sep } from 'node:path';
 import { Messages } from '@salesforce/core/messages';
 import { Lifecycle } from '@salesforce/core/lifecycle';
 import { SourcePath } from '../../common/types';
@@ -76,8 +77,7 @@ const getContentSourceDestination = (
     if (component.content && component.tree.isDirectory(component.content)) {
       // DEs are always inside a dir.
       if (component.type.strategies?.adapter === 'digitalExperience') {
-        // unpackaged path from server, so split with '/'
-        const parts = source.split('/');
+        const parts = source.split(sep);
         const file = parts.pop() ?? '';
         const dir = join(mergeWith.content, parts.pop() ?? '');
         if (

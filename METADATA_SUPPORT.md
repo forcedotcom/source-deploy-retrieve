@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v63 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 343/357 supported metadata types.
+Currently, there are 638/666 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -298,31 +298,340 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExtlClntAppGlobalOauthSettings|✅||
 |ExtlClntAppMobileConfigurablePolicies|✅||
 |ExtlClntAppMobileSettings|✅||
+|ExtlClntAppNotificationSettings|✅||
 |ExtlClntAppOauthConfigurablePolicies|✅||
 |ExtlClntAppOauthSettings|✅||
 |ExtlClntAppPushConfigurablePolicies|✅||
 |ExtlClntAppPushSettings|✅||
 |ExtlClntAppSamlConfigurablePolicies|✅||
+|FeatureParameterBoolean|✅||
 |FeatureParameterDate|✅||
+|FeatureParameterInteger|✅||
 |FieldMappingConfig|❌|Not supported, but support could be added|
 |FieldRestrictionRule|✅||
+|FieldServiceMobileExtension|✅||
+|FieldServiceSettings|✅||
 |FieldSet|✅||
 |FieldSrcTrgtRelationship|✅||
+|FileUploadAndDownloadSecuritySettings|✅||
 |FilesConnectSettings|✅||
 |FlexiPage|✅||
 |Flow|✅||
+|FlowCategory|✅||
 |FlowDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |FlowSettings|✅||
+|FlowTest|✅||
 |ForecastingFilter|✅||
+|ForecastingFilterCondition|✅||
 |ForecastingGroup|✅||
 |ForecastingObjectListSettings|✅||
+|ForecastingSettings|✅||
+|ForecastingSourceDefinition|✅||
+|ForecastingType|✅||
 |ForecastingTypeSource|✅||
 |FormulaSettings|✅||
 |FuelType|✅||
+|FuelTypeSustnUom|✅||
+|FunctionReference|⚠️|Supports deploy/retrieve but not source tracking|
 |FundraisingConfig|✅||
 |GatewayProviderPaymentMethodType|✅||
 |GenAiFunction|✅||
 |GenAiPlanner|✅||
+|GenAiPlugin|✅||
+|GenAiPluginInstructionDef|❌|Not supported, but support could be added|
+|GenAiPromptTemplate|✅||
+|GenAiPromptTemplateActv|✅||
+|GlobalValueSet|✅||
+|GlobalValueSetTranslation|✅||
+|GoogleAppsSettings|✅||
+|Group|✅||
+|HerokuIntegrationSettings|✅||
+|HighVelocitySalesSettings|✅||
+|HomePageComponent|✅||
+|HomePageLayout|✅||
+|IPAddressRange|✅||
+|Icon|✅||
+|IdeasSettings|✅||
+|IdentityProviderSettings|✅||
+|IdentityVerificationProcDef|✅||
+|IframeWhiteListUrlSettings|✅||
+|InboundCertificate|✅||
+|InboundNetworkConnection|✅||
+|IncidentMgmtSettings|✅||
+|IncludeEstTaxInQuoteCPQSettings|✅||
+|IncludeEstTaxInQuoteSettings|✅||
+|Index|⚠️|Supports deploy/retrieve but not source tracking|
+|IndustriesAutomotiveSettings|✅||
+|IndustriesChannelPartnerInventorySettings|✅||
+|IndustriesContextSettings|✅||
+|IndustriesEinsteinFeatureSettings|✅||
+|IndustriesEventOrchSettings|✅||
+|IndustriesFieldServiceSettings|✅||
+|IndustriesGamificationSettings|✅||
+|IndustriesLoyaltySettings|✅||
+|IndustriesLsCommercialSettings|✅||
+|IndustriesManufacturingSettings|✅||
+|IndustriesPricingSettings|✅||
+|IndustriesRatingSettings|✅||
+|IndustriesSettings|✅||
+|IndustriesUnifiedPromotionsSettings|✅||
+|IndustriesUsageSettings|✅||
+|InsPlcyCoverageSpecConfig|❌|Not supported, but support could be added|
+|InsPlcyLineOfBusConfig|❌|Not supported, but support could be added|
+|InsPolicyLifecycleConfig|❌|Not supported, but support could be added|
+|InsPolicyManagementConfig|❌|Not supported, but support could be added|
+|InsRatePlanCmsnConfig|❌|Not supported, but support could be added|
+|InsRatePlanTypeConfig|❌|Not supported, but support could be added|
+|InstalledPackage|⚠️|Supports deploy/retrieve but not source tracking|
+|InsuranceBrokerageSettings|✅||
+|IntegrationProviderDef|✅||
+|InterestTaggingSettings|✅||
+|InternalDataConnector|✅||
+|InvLatePymntRiskCalcSettings|✅||
+|InventoryReplenishmentSettings|✅||
+|InventorySettings|✅||
+|InvocableActionSettings|✅||
+|IoTSettings|✅||
+|KeywordList|✅||
+|KnowledgeGenerationSettings|✅||
+|KnowledgeSettings|✅||
+|LaborCostOptimizationSettings|✅||
+|LanguageSettings|✅||
+|LargeQuotesandOrdersForRlmSettings|✅||
+|Layout|✅||
+|LeadConfigSettings|✅||
+|LeadConvertSettings|✅||
+|LearningAchievementConfig|✅||
+|LearningItemType|✅||
+|Letterhead|✅||
+|LicensingSettings|✅||
+|LifeSciConfigCategory|✅||
+|LifeSciConfigRecord|✅||
+|LightningBolt|✅||
+|LightningComponentBundle|✅||
+|LightningExperienceSettings|✅||
+|LightningExperienceTheme|✅||
+|LightningMessageChannel|✅||
+|LightningOnboardingConfig|✅||
+|LightningTypeBundle|⚠️|Supports deploy/retrieve but not source tracking|
+|ListView|✅||
+|LiveAgentSettings|✅||
+|LiveChatAgentConfig|✅||
+|LiveChatButton|✅||
+|LiveChatDeployment|✅||
+|LiveChatSensitiveDataRule|✅||
+|LiveMessageSettings|✅||
+|LocationUse|✅||
+|LoyaltyProgramSetup|⚠️|Supports deploy/retrieve but not source tracking|
+|MacroSettings|✅||
+|MailMergeSettings|✅||
+|ManagedContentType|⚠️|Supports deploy/retrieve but not source tracking|
+|ManagedEventSubscription|✅||
+|ManagedTopics|✅||
+|MapsAndLocationSettings|✅||
+|MarketSegmentDefinition|✅||
+|MarketingAppExtActivity|❌|Not supported, but support could be added|
+|MarketingAppExtension|✅||
+|MatchingRules|✅||
+|MediaAdSalesSettings|✅||
+|MeetingsSettings|✅||
+|MessagingChannel|⚠️|Supports deploy/retrieve but not source tracking|
+|MfgProgramTemplate|✅||
+|MfgServiceConsoleSettings|✅||
+|MilestoneType|✅||
+|MktCalcInsightObjectDef|✅||
+|MktDataConnection|✅||
+|MktDataConnectionParam|❌|Not supported, but support could be added|
+|MktDataConnectionSrcParam|✅||
+|MktDataTranObject|✅||
+|MlDomain|✅||
+|MobSecurityCertPinConfig|✅||
+|MobileApplicationDetail|✅||
+|MobileSecurityAssignment|✅||
+|MobileSecurityPolicy|✅||
+|MobileSettings|✅||
+|ModerationRule|✅||
+|MutingPermissionSet|✅||
+|MyDomainDiscoverableLogin|✅||
+|MyDomainSettings|✅||
+|NameSettings|✅||
+|NamedCredential|✅||
+|NavigationMenu|✅||
+|Network|✅||
+|NetworkBranding|✅||
+|NotificationTypeConfig|✅||
+|NotificationsSettings|✅||
+|OauthCustomScope|✅||
+|OauthOidcSettings|✅||
+|OauthTokenExchangeHandler|✅||
+|ObjectHierarchyRelationship|✅||
+|ObjectLinkingSettings|✅||
+|ObjectSourceTargetMap|✅||
+|OcrSampleDocument|✅||
+|OcrTemplate|✅||
+|OmniChannelPricingSettings|✅||
+|OmniChannelSettings|✅||
+|OmniDataTransform|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniExtTrackingDef|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniIntegrationProcedure|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniInteractionAccessConfig|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniInteractionConfig|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniScript|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniStudioSettings|✅||
+|OmniSupervisorConfig|✅||
+|OmniTrackingGroup|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniUiCard|⚠️|Supports deploy/retrieve but not source tracking|
+|OnlineSalesSettings|✅||
+|OpportunityScoreSettings|✅||
+|OpportunitySettings|✅||
+|OrderManagementSettings|✅||
+|OrderSettings|✅||
+|OrgSettings|✅||
+|OutboundNetworkConnection|✅||
+|PardotEinsteinSettings|✅||
+|PardotSettings|✅||
+|ParticipantRole|✅||
+|PartyDataModelSettings|✅||
+|PathAssistant|✅||
+|PathAssistantSettings|✅||
+|PaymentGatewayProvider|✅||
+|PaymentsManagementEnabledSettings|✅||
+|PaymentsSettings|✅||
+|PermissionSet|✅||
+|PermissionSetGroup|✅||
+|PermissionSetLicenseDefinition|✅||
+|PersonAccountOwnerPowerUser|✅||
+|PicklistSettings|✅||
+|PicklistValue|❌|Not supported, but support could be added|
+|PipelineInspMetricConfig|✅||
+|PlatformCachePartition|✅||
+|PlatformEventChannel|✅||
+|PlatformEventChannelMember|✅||
+|PlatformEventSettings|✅||
+|PlatformEventSubscriberConfig|✅||
+|PlatformSlackSettings|✅||
+|PortalDelegablePermissionSet|✅||
+|PortalsSettings|✅||
+|PostTemplate|✅||
+|PredictionBuilderSettings|✅||
+|PresenceDeclineReason|✅||
+|PresenceUserConfig|✅||
+|PricingActionParameters|✅||
+|PricingRecipe|✅||
+|PrivacySettings|✅||
+|ProcedureOutputResolution|❌|Not supported, but support could be added (but not for tracking)|
+|ProcessFlowMigration|✅||
+|ProductAttrDisplayConfig|✅||
+|ProductAttributeSet|✅||
+|ProductConfiguratorSettings|✅||
+|ProductDiscoverySettings|✅||
+|ProductSettings|✅||
+|ProductSpecificationRecType|✅||
+|ProductSpecificationType|✅||
+|Profile|✅||
+|ProfilePasswordPolicy|✅||
+|ProfileSessionSetting|✅||
+|Prompt|✅||
+|PublicKeyCertificate|⚠️|Supports deploy/retrieve but not source tracking|
+|PublicKeyCertificateSet|⚠️|Supports deploy/retrieve but not source tracking|
+|Queue|✅||
+|QueueRoutingConfig|✅||
+|QuickAction|✅||
+|QuickTextSettings|✅||
+|QuoteSettings|✅||
+|RealTimeEventSettings|✅||
+|RecAlrtDataSrcExpSetDef|✅||
+|RecommendationBuilderSettings|✅||
+|RecommendationStrategy|✅||
+|RecordActionDeployment|✅||
+|RecordAggregationDefinition|✅||
+|RecordAlertCategory|✅||
+|RecordAlertDataSource|✅||
+|RecordAlertTemplate|✅||
+|RecordPageSettings|✅||
+|RecordType|✅||
+|RedirectWhitelistUrl|✅||
+|ReferencedDashboard|✅||
+|ReferralMarketingSettings|✅||
+|RegisteredExternalService|✅||
+|RelatedRecordAccessDef|❌|Not supported, but support could be added|
+|RelatedRecordAssocCriteria|✅||
+|RelationshipGraphDefinition|✅||
+|RemoteSiteSetting|✅||
+|Report|✅||
+|ReportFolder|✅||
+|ReportType|✅||
+|RestrictionRule|✅||
+|RetailExecutionSettings|✅||
+|RetrievalSummaryDefinition|✅||
+|RevenueManagementSettings|✅||
+|Role|✅||
+|SalesAgreementSettings|✅||
+|SalesWorkQueueSettings|✅||
+|SamlSsoConfig|✅||
+|SandboxSettings|✅||
+|SceGlobalModelOptOutSettings|✅||
+|SchedulingObjective|✅||
+|SchedulingRule|✅||
+|SchemaSettings|✅||
+|ScoreCategory|✅||
+|SearchCustomization|⚠️|Supports deploy/retrieve but not source tracking|
+|SearchOrgWideObjectConfig|⚠️|Supports deploy/retrieve but not source tracking|
+|SearchSettings|✅||
+|SecuritySettings|✅||
+|ServiceAISetupDefinition|✅||
+|ServiceAISetupField|✅||
+|ServiceChannel|✅||
+|ServiceCloudVoiceSettings|✅||
+|ServicePresenceStatus|✅||
+|ServiceProcess|✅||
+|ServiceSetupAssistantSettings|✅||
+|SharingCriteriaRule|✅||
+|SharingGuestRule|✅||
+|SharingOwnerRule|✅||
+|SharingReason|✅||
+|SharingRules|⚠️|Supports deploy/retrieve but not source tracking|
+|SharingSet|✅||
+|SharingSettings|✅||
+|SharingTerritoryRule|✅||
+|SiteDotCom|✅||
+|SiteSettings|✅||
+|Skill|✅||
+|SkillType|✅||
+|SlackApp|✅||
+|SocialCustomerServiceSettings|✅||
+|SourceTrackingSettings|✅||
+|StageDefinition|✅||
+|StandardValue|❌|Not supported, but support could be added|
+|StandardValueSet|✅||
+|StandardValueSetTranslation|✅||
+|StaticResource|✅||
+|StnryAssetEnvSrcCnfg|✅||
+|StreamingAppDataConnector|✅||
+|SubscriptionManagementSettings|✅||
+|SurveySettings|✅||
+|SustainabilityUom|✅||
+|SustnUomConversion|✅||
+|SvcCatalogCategory|✅||
+|SvcCatalogFilterCriteria|✅||
+|SvcCatalogFulfillmentFlow|✅||
+|SvcCatalogItemDef|✅||
+|SynonymDictionary|✅||
+|SystemNotificationSettings|✅||
+|Territory|✅||
+|Territory2|✅||
+|Territory2Model|✅||
+|Territory2Rule|✅||
+|Territory2Settings|✅||
+|Territory2Type|✅||
+|TimeSheetTemplate|✅||
+|TimelineObjectDefinition|✅||
+|TopicsForObjects|✅||
+|TrailheadSettings|✅||
+|TransactionProcessingType|❌|Not supported, but support could be added (but not for tracking)|
+|TransactionSecurityPolicy|✅||
+|Translations|✅||
+|TrialOrgSettings|✅||
 |UIObjectRelationConfig|✅||
 |UiFormatSpecificationSet|✅||
 |UiPlugin|✅||
@@ -372,338 +681,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 ## Next Release (v64)
 
-v64 introduces the following new types.  Here's their current level of support
-
-|Metadata Type|Support|Notes|
-|:---|:---|:---|
-|AiEvaluationDefinition|✅||
-|AiPlannerVoiceDef|❌|Not supported, but support could be added (but not for tracking)|
-|ContentTypeBundle|✅||
-|DataConnector|❌|Not supported, but support could be added|
-|ExternalStoragePrvdConfig|❌|Not supported, but support could be added|
-|ExtlClntAppNotificationSettings|✅||
-|FeatureParameterBoolean|✅||
-|FeatureParameterInteger|✅||
-|FieldServiceMobileConfig|✅||
-|FieldServiceMobileExtension|✅||
-|FieldServiceSettings|✅||
-|FileUploadAndDownloadSecuritySettings|✅||
-|FlowCategory|✅||
-|FlowTest|✅||
-|ForecastingFilterCondition|✅||
-|ForecastingSettings|✅||
-|ForecastingSourceDefinition|✅||
-|ForecastingType|✅||
-|FuelTypeSustnUom|✅||
-|FunctionReference|⚠️|Supports deploy/retrieve but not source tracking|
-|GenAiPlannerBundle|✅||
-|GenAiPlugin|✅||
-|GenAiPromptTemplate|✅||
-|GenAiPromptTemplateActv|✅||
-|GlobalValueSet|✅||
-|GlobalValueSetTranslation|✅||
-|GoogleAppsSettings|✅||
-|Group|✅||
-|HerokuAppLinkSettings|✅||
-|HighVelocitySalesSettings|✅||
-|HomePageComponent|✅||
-|HomePageLayout|✅||
-|IPAddressRange|✅||
-|Icon|✅||
-|IdeasSettings|✅||
-|IdentityProviderSettings|✅||
-|IdentityVerificationProcDef|✅||
-|IframeWhiteListUrlSettings|✅||
-|InboundCertificate|✅||
-|InboundNetworkConnection|✅||
-|IncidentMgmtSettings|✅||
-|IncludeEstTaxInQuoteCPQSettings|✅||
-|IncludeEstTaxInQuoteSettings|✅||
-|Index|⚠️|Supports deploy/retrieve but not source tracking|
-|IndustriesAutomotiveSettings|✅||
-|IndustriesChannelPartnerInventorySettings|✅||
-|IndustriesContextSettings|✅||
-|IndustriesEinsteinFeatureSettings|✅||
-|IndustriesEventOrchSettings|✅||
-|IndustriesFieldServiceSettings|✅||
-|IndustriesGamificationSettings|✅||
-|IndustriesLoyaltySettings|✅||
-|IndustriesLsCommercialSettings|✅||
-|IndustriesManufacturingSettings|✅||
-|IndustriesPricingSettings|✅||
-|IndustriesRatingSettings|✅||
-|IndustriesSettings|✅||
-|IndustriesUnifiedInventorySettings|✅||
-|IndustriesUnifiedPromotionsSettings|✅||
-|IndustriesUsageSettings|✅||
-|InsPlcyCoverageSpecConfig|❌|Not supported, but support could be added|
-|InsPlcyLineOfBusConfig|❌|Not supported, but support could be added|
-|InsPolicyLifecycleConfig|❌|Not supported, but support could be added|
-|InsPolicyManagementConfig|❌|Not supported, but support could be added|
-|InsRatePlanCmsnConfig|❌|Not supported, but support could be added|
-|InsRatePlanTypeConfig|❌|Not supported, but support could be added|
-|InstalledPackage|⚠️|Supports deploy/retrieve but not source tracking|
-|InsuranceBrokerageSettings|✅||
-|IntegrationProviderDef|✅||
-|InterestTaggingSettings|✅||
-|InternalDataConnector|✅||
-|InvLatePymntRiskCalcSettings|✅||
-|InventoryReplenishmentSettings|✅||
-|InventorySettings|✅||
-|InvocableActionExtension|✅||
-|InvocableActionSettings|✅||
-|IoTSettings|✅||
-|KeywordList|✅||
-|KnowledgeGenerationSettings|✅||
-|KnowledgeSettings|✅||
-|LaborCostOptimizationSettings|✅||
-|LanguageSettings|✅||
-|LargeQuotesandOrdersForRlmSettings|✅||
-|Layout|✅||
-|LeadConfigSettings|✅||
-|LeadConvertSettings|✅||
-|LearningAchievementConfig|✅||
-|LearningItemType|✅||
-|Letterhead|✅||
-|LicensingSettings|✅||
-|LifeSciConfigCategory|✅||
-|LifeSciConfigRecord|✅||
-|LightningBolt|✅||
-|LightningComponentBundle|✅||
-|LightningExperienceSettings|✅||
-|LightningExperienceTheme|✅||
-|LightningMessageChannel|✅||
-|LightningOnboardingConfig|✅||
-|LightningTypeBundle|✅||
-|ListView|✅||
-|LiveAgentSettings|✅||
-|LiveChatAgentConfig|✅||
-|LiveChatButton|✅||
-|LiveChatDeployment|✅||
-|LiveChatSensitiveDataRule|✅||
-|LiveMessageSettings|✅||
-|LocationUse|✅||
-|LoyaltyProgramSetup|⚠️|Supports deploy/retrieve but not source tracking|
-|MacroSettings|✅||
-|MailMergeSettings|✅||
-|ManagedContentType|⚠️|Supports deploy/retrieve but not source tracking|
-|ManagedEventSubscription|✅||
-|ManagedTopics|✅||
-|MapsAndLocationSettings|✅||
-|MarketSegmentDefinition|✅||
-|MarketingAppExtActivity|❌|Not supported, but support could be added|
-|MarketingAppExtension|✅||
-|MatchingRules|✅||
-|MediaAdSalesSettings|✅||
-|MediaAgentSettings|✅||
-|MeetingsSettings|✅||
-|MessagingChannel|⚠️|Supports deploy/retrieve but not source tracking|
-|MfgProgramTemplate|✅||
-|MfgServiceConsoleSettings|✅||
-|MilestoneType|✅||
-|MktCalcInsightObjectDef|✅||
-|MktDataConnection|✅||
-|MktDataConnectionParam|❌|Not supported, but support could be added|
-|MktDataConnectionSrcParam|✅||
-|MktDataTranObject|✅||
-|MlDomain|✅||
-|MobSecurityCertPinConfig|✅||
-|MobileApplicationDetail|✅||
-|MobileSecurityAssignment|✅||
-|MobileSecurityPolicy|✅||
-|MobileSettings|✅||
-|ModerationRule|✅||
-|MutingPermissionSet|✅||
-|MyDomainDiscoverableLogin|✅||
-|MyDomainSettings|✅||
-|NameSettings|✅||
-|NamedCredential|✅||
-|NavigationMenu|✅||
-|Network|✅||
-|NetworkBranding|✅||
-|NotificationTypeConfig|✅||
-|NotificationsSettings|✅||
-|OauthCustomScope|✅||
-|OauthOidcSettings|✅||
-|OauthTokenExchangeHandler|✅||
-|ObjIntegProviderDefMapping|❌|Not supported, but support could be added|
-|ObjectHierarchyRelationship|✅||
-|ObjectLinkingSettings|✅||
-|ObjectSourceTargetMap|✅||
-|OcrSampleDocument|✅||
-|OcrTemplate|✅||
-|OmniChannelPricingSettings|✅||
-|OmniChannelSettings|✅||
-|OmniDataTransform|⚠️|Supports deploy/retrieve but not source tracking|
-|OmniExtTrackingDef|⚠️|Supports deploy/retrieve but not source tracking|
-|OmniIntegrationProcedure|⚠️|Supports deploy/retrieve but not source tracking|
-|OmniInteractionAccessConfig|⚠️|Supports deploy/retrieve but not source tracking|
-|OmniInteractionConfig|⚠️|Supports deploy/retrieve but not source tracking|
-|OmniScript|⚠️|Supports deploy/retrieve but not source tracking|
-|OmniStudioSettings|✅||
-|OmniSupervisorConfig|✅||
-|OmniTrackingGroup|⚠️|Supports deploy/retrieve but not source tracking|
-|OmniUiCard|⚠️|Supports deploy/retrieve but not source tracking|
-|OnlineSalesSettings|✅||
-|OpportunityScoreSettings|✅||
-|OpportunitySettings|✅||
-|OrderManagementSettings|✅||
-|OrderSettings|✅||
-|OrgSettings|✅||
-|OutboundNetworkConnection|✅||
-|PardotEinsteinSettings|✅||
-|PardotSettings|✅||
-|ParticipantRole|✅||
-|PartyDataModelSettings|✅||
-|PathAssistant|✅||
-|PathAssistantSettings|✅||
-|PaymentGatewayProvider|✅||
-|PaymentsManagementEnabledSettings|✅||
-|PaymentsSettings|✅||
-|PaymentsSharingSettings|✅||
-|PermissionSet|✅||
-|PermissionSetGroup|✅||
-|PermissionSetLicenseDefinition|✅||
-|PersonAccountOwnerPowerUser|✅||
-|PicklistSettings|✅||
-|PicklistValue|❌|Not supported, but support could be added|
-|PipelineInspMetricConfig|✅||
-|PlatformCachePartition|✅||
-|PlatformEventChannel|✅||
-|PlatformEventChannelMember|✅||
-|PlatformEventSettings|✅||
-|PlatformEventSubscriberConfig|✅||
-|PlatformSlackSettings|✅||
-|PortalDelegablePermissionSet|✅||
-|PortalsSettings|✅||
-|PostTemplate|✅||
-|PredictionBuilderSettings|✅||
-|PresenceDeclineReason|✅||
-|PresenceUserConfig|✅||
-|PricingActionParameters|✅||
-|PricingRecipe|✅||
-|PrivacySettings|✅||
-|ProcedureOutputResolution|❌|Not supported, but support could be added (but not for tracking)|
-|ProcessFlowMigration|✅||
-|ProductAttrDisplayConfig|✅||
-|ProductAttributeSet|✅||
-|ProductCatalogManagementSettings|✅||
-|ProductConfiguratorSettings|✅||
-|ProductDiscoverySettings|✅||
-|ProductSettings|✅||
-|ProductSpecificationRecType|✅||
-|ProductSpecificationType|✅||
-|Profile|✅||
-|ProfilePasswordPolicy|✅||
-|ProfileSessionSetting|✅||
-|Prompt|✅||
-|PublicKeyCertificate|⚠️|Supports deploy/retrieve but not source tracking|
-|PublicKeyCertificateSet|⚠️|Supports deploy/retrieve but not source tracking|
-|Queue|✅||
-|QueueRoutingConfig|✅||
-|QuickAction|✅||
-|QuickTextSettings|✅||
-|QuoteSettings|✅||
-|RealTimeEventSettings|✅||
-|RecAlrtDataSrcExpSetDef|✅||
-|RecommendationBuilderSettings|✅||
-|RecommendationStrategy|✅||
-|RecordActionDeployment|✅||
-|RecordAggregationDefinition|✅||
-|RecordAlertCategory|✅||
-|RecordAlertDataSource|✅||
-|RecordAlertTemplate|✅||
-|RecordPageSettings|✅||
-|RecordType|✅||
-|RedirectWhitelistUrl|✅||
-|ReferencedDashboard|✅||
-|ReferralMarketingSettings|✅||
-|RegisteredExternalService|✅||
-|RelatedRecordAccessDef|❌|Not supported, but support could be added|
-|RelatedRecordAssocCriteria|✅||
-|RelationshipGraphDefinition|✅||
-|ReleaseMgmtSettings|✅||
-|RemoteSiteSetting|✅||
-|Report|✅||
-|ReportFolder|✅||
-|ReportType|✅||
-|RestrictionRule|✅||
-|RetailExecutionSettings|✅||
-|RetrievalSummaryDefinition|✅||
-|RevenueManagementSettings|✅||
-|Role|✅||
-|SalesAgreementSettings|✅||
-|SalesDealAgentSettings|✅||
-|SalesWorkQueueSettings|✅||
-|SamlSsoConfig|✅||
-|SandboxSettings|✅||
-|SceGlobalModelOptOutSettings|✅||
-|SchedulingObjective|✅||
-|SchedulingRule|✅||
-|SchemaSettings|✅||
-|ScoreCategory|✅||
-|SearchCustomization|⚠️|Supports deploy/retrieve but not source tracking|
-|SearchOrgWideObjectConfig|⚠️|Supports deploy/retrieve but not source tracking|
-|SearchSettings|✅||
-|SecuritySettings|✅||
-|ServiceAISetupDefinition|✅||
-|ServiceAISetupField|✅||
-|ServiceChannel|✅||
-|ServiceCloudVoiceSettings|✅||
-|ServiceMgmtKnwlgArtclConfig|❌|Not supported, but support could be added|
-|ServiceMgmtKnwlgArtclConfigSettings|✅||
-|ServicePresenceStatus|✅||
-|ServiceProcess|✅||
-|ServiceSetupAssistantSettings|✅||
-|SharingCriteriaRule|✅||
-|SharingGuestRule|✅||
-|SharingOwnerRule|✅||
-|SharingReason|✅||
-|SharingRules|⚠️|Supports deploy/retrieve but not source tracking|
-|SharingSet|✅||
-|SharingSettings|✅||
-|SharingTerritoryRule|✅||
-|SiteDotCom|✅||
-|SiteSettings|✅||
-|Skill|✅||
-|SkillType|✅||
-|SlackApp|✅||
-|SocialCustomerServiceSettings|✅||
-|SourceTrackingSettings|✅||
-|StageAssignment|❌|Not supported, but support could be added|
-|StageDefinition|✅||
-|StandardValue|❌|Not supported, but support could be added|
-|StandardValueSet|✅||
-|StandardValueSetTranslation|✅||
-|StaticResource|✅||
-|StnryAssetEnvSrcCnfg|✅||
-|StreamingAppDataConnector|✅||
-|SubscriptionManagementSettings|✅||
-|SurveySettings|✅||
-|SustainabilityUom|✅||
-|SustnUomConversion|✅||
-|SvcCatalogCategory|✅||
-|SvcCatalogFilterCriteria|✅||
-|SvcCatalogFulfillmentFlow|✅||
-|SvcCatalogItemDef|✅||
-|SynonymDictionary|✅||
-|SystemNotificationSettings|✅||
-|Territory|✅||
-|Territory2|✅||
-|Territory2Model|✅||
-|Territory2Rule|✅||
-|Territory2Settings|✅||
-|Territory2Type|✅||
-|TimeSheetTemplate|✅||
-|TimelineObjectDefinition|✅||
-|TmfOutboundNotificationSettings|✅||
-|TopicsForObjects|✅||
-|TrailheadSettings|✅||
-|TransactionProcessingType|❌|Not supported, but support could be added (but not for tracking)|
-|TransactionSecurityPolicy|✅||
-|Translations|✅||
-|TrialOrgSettings|✅||
-|UiPreviewMessageTabDef|❌|Not supported, but support could be added|
+> **Note**
+> v64 coverage not available at this time
 
 ## Additional Types
 
@@ -739,6 +718,7 @@ v64 introduces the following new types.  Here's their current level of support
 - ExtlClntAppSampleSettings
 - Form
 - FormSection
+- GenAiPlannerBundle
 - GlobalPicklist
 - InsightType
 - IntegrationHubSettings
@@ -768,3 +748,7 @@ v64 introduces the following new types.  Here's their current level of support
 - VisualizationPlugin
 - WorkSkillRoutingAttribute
 - XOrgHub
+- AiEvaluationDefinition
+- ContentTypeBundle
+- InvocableActionExtension
+- FieldServiceMobileConfig

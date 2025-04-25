@@ -681,8 +681,31 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 ## Next Release (v64)
 
-> **Note**
-> v64 coverage not available at this time
+v64 introduces the following new types.  Here's their current level of support
+
+|Metadata Type|Support|Notes|
+|:---|:---|:---|
+|AiEvaluationDefinition|✅||
+|AiPlannerVoiceDef|❌|Not supported, but support could be added (but not for tracking)|
+|ContentTypeBundle|✅||
+|DataConnector|❌|Not supported, but support could be added|
+|ExternalStoragePrvdConfig|❌|Not supported, but support could be added|
+|FieldServiceMobileConfig|✅||
+|GenAiPlannerBundle|✅||
+|HerokuAppLinkSettings|✅||
+|IndustriesUnifiedInventorySettings|✅||
+|InvocableActionExtension|✅||
+|MediaAgentSettings|✅||
+|ObjIntegProviderDefMapping|❌|Not supported, but support could be added|
+|PaymentsSharingSettings|✅||
+|ProductCatalogManagementSettings|✅||
+|ReleaseMgmtSettings|✅||
+|SalesDealAgentSettings|✅||
+|ServiceMgmtKnwlgArtclConfig|❌|Not supported, but support could be added|
+|ServiceMgmtKnwlgArtclConfigSettings|✅||
+|StageAssignment|❌|Not supported, but support could be added|
+|TmfOutboundNotificationSettings|✅||
+|UiPreviewMessageTabDef|❌|Not supported, but support could be added|
 
 ## Additional Types
 
@@ -718,7 +741,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - ExtlClntAppSampleSettings
 - Form
 - FormSection
-- GenAiPlannerBundle
 - GlobalPicklist
 - InsightType
 - IntegrationHubSettings
@@ -748,7 +770,3 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - VisualizationPlugin
 - WorkSkillRoutingAttribute
 - XOrgHub
-- AiEvaluationDefinition
-- ContentTypeBundle
-- InvocableActionExtension
-- FieldServiceMobileConfig

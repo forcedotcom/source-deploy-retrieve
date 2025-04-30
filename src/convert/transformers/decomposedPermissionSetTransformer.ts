@@ -7,6 +7,7 @@
 
 import { join } from 'node:path';
 import { AnyJson, ensureString, JsonMap } from '@salesforce/ts-types';
+import { ensureArray } from '@salesforce/kit';
 import type { PermissionSet } from '@jsforce/jsforce-node/lib/api/metadata/schema';
 import { calculateRelativePath } from '../../utils/path';
 import { unwrapAndOmitNS } from '../../utils/decomposed';
@@ -95,6 +96,7 @@ export class DecomposedPermissionSetTransformer extends BaseMetadataTransformer 
       .filter(hasChildTypeId)
       .map(addChildType)
       .map((child) => toInfoContainer(mergeWith)(component)(child.childType)(child.tagValue as JsonMap))
+      .flat()
       .filter(forceIgnoreAllowsComponent(forceIgnore));
 
     const writeInfosForChildren = combineChildWriteInfos([
@@ -202,12 +204,10 @@ const toInfoContainer =
   (mergeWith: SourceComponent | undefined) =>
   (parent: SourceComponent) =>
   (childType: MetadataType) =>
-  (tagValue: JsonMap): InfoContainer => {
+  (tagValue: JsonMap): InfoContainer[] => {
     const tagEntry: JsonMap[] = Array.isArray(tagValue) ? tagValue : [tagValue];
-    const entryName = childType.directoryName
-      ? (tagEntry.at(0)?.[childType.uniqueIdElement!] as string).split('.')[0]
-      : parent.name;
-    return {
+
+    const buildInfoContainer = (entryName: string, value: JsonMap): InfoContainer => ({
       parentComponent: parent,
       entryName,
       childComponent: {
@@ -215,7 +215,30 @@ const toInfoContainer =
         type: childType,
         parent,
       },
-      value: tagValue,
+      value,
       mergeWith,
-    };
+    });
+
+    // ObjectSettings, ObjectPermission (object), FieldPermission (field),
+    // RecordTypeVisibility (recordType), TabSetting (tab)
+    if (childType.directoryName) {
+      const infoContainers = new Map<string, InfoContainer>();
+      tagEntry.map((entry) => {
+        let entryName = (entry[childType.uniqueIdElement!] as string).split('.')[0];
+        // If the object name starts with `standard-`, we need to remove the prefix
+        if (entryName.startsWith('standard-')) {
+          entryName = entryName.replace('standard-', '');
+        }
+        const infoContainer = infoContainers.get(entryName);
+        if (infoContainer) {
+          // Add to the value of the existing InfoContainer
+          // @ts-expect-error this is either JsonMap or JsonArray
+          infoContainer.value = ensureArray(infoContainer.value).concat(entry);
+        } else {
+          infoContainers.set(entryName, buildInfoContainer(entryName, entry));
+        }
+      });
+      return Array.from(infoContainers.values());
+    }
+    return [buildInfoContainer(parent.name, tagValue)];
   };

@@ -7,6 +7,7 @@
 import { join } from 'node:path';
 import { ensure, ensureString } from '@salesforce/ts-types';
 import type { PermissionSet } from '@jsforce/jsforce-node/lib/api/metadata/schema';
+import { ensureArray } from '@salesforce/kit';
 import { MetadataType } from '../../registry';
 import { XML_NS_KEY, XML_NS_URL } from '../../common/constants';
 import { JsToXml } from '../streams';
@@ -43,6 +44,25 @@ export class DecomposedPermissionSetFinalizer extends ConvertTransactionFinalize
 
     const agg: WriterFormat[] = [];
     this.transactionState.parentToChild.forEach((children, parent) => {
+      // iterate over children and build PermissionSet data structure
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const permset = new Map<string, any[]>();
+      for (const child of children) {
+        for (const [key, value] of Object.entries(child)) {
+          const existingEntry = permset.get(key);
+          if (existingEntry) {
+            if (Array.isArray(value)) {
+              permset.set(key, existingEntry.concat(value));
+            } else {
+              existingEntry.push(value);
+              permset.set(key, existingEntry);
+            }
+          } else {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            permset.set(key, ensureArray<any>(value));
+          }
+        }
+      }
       agg.push({
         component: {
           type: ensure(this.permissionSetType, 'DecomposedPermissionSetFinalizer should have set PermissionSetType'),
@@ -58,11 +78,7 @@ export class DecomposedPermissionSetFinalizer extends ConvertTransactionFinalize
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               PermissionSet: {
                 [XML_NS_KEY]: XML_NS_URL,
-                ...Object.assign(
-                  {},
-                  // sort the children by fullName
-                  ...Object.values(children.sort((a, b) => ((a.fullName ?? '') > (b.fullName ?? '') ? -1 : 1)))
-                ),
+                ...Object.fromEntries(permset),
               },
             }),
           },

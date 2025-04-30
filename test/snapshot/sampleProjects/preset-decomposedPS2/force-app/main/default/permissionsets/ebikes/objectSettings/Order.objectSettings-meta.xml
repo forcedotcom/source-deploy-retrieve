@@ -2,7 +2,12 @@
 <PermissionSet>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Account.Site</field>
+        <field>Order.ActivatedById</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Order.BillingAddress</field>
         <readable>true</readable>
     </fieldPermissions>
     <objectPermissions>
@@ -11,7 +16,7 @@
         <allowEdit>false</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>false</modifyAllRecords>
-        <object>Account</object>
+        <object>Order</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
 </PermissionSet>

@@ -27,15 +27,18 @@ describe('DecomposedPermissionSetTransformer', () => {
         const component = MD_FORMAT_PS;
         const xf = new DecomposedPermissionSetTransformer(regAcc);
         const result = await xf.toSourceFormat({ component });
-        expect(result).to.have.length(5);
+        expect(result).to.have.length(8);
         result.map((l) => {
           expect(l.output).to.include(join('main', 'default', 'permissionsets'));
         });
         expect(result[0].output).to.match(/myPS.classAccess-meta.xml$/);
         expect(result[1].output).to.match(/myPS.userPermission-meta.xml$/);
         expect(result[2].output).to.match(/objectSettings[\\/]Account.objectSettings-meta.xml$/);
-        expect(result[3].output).to.match(/objectSettings[\\/]Broker__c.objectSettings-meta.xml$/);
-        expect(result[4].output).to.match(/myPS.permissionset-meta.xml$/);
+        expect(result[3].output).to.match(/objectSettings[\\/]AppAnalyticsQueryRequest.objectSettings-meta.xml$/);
+        expect(result[4].output).to.match(/objectSettings[\\/]Asset.objectSettings-meta.xml$/);
+        expect(result[5].output).to.match(/objectSettings[\\/]AssetAction.objectSettings-meta.xml$/);
+        expect(result[6].output).to.match(/objectSettings[\\/]Broker__c.objectSettings-meta.xml$/);
+        expect(result[7].output).to.match(/myPS.permissionset-meta.xml$/);
       });
 
       it('will write a singular child type', async () => {
@@ -57,8 +60,8 @@ describe('DecomposedPermissionSetTransformer', () => {
           component,
           mergeSet: new ComponentSet([ONLY_PS_PARENT], regAcc),
         });
-        expect(result).to.have.length(5);
-        expect(result[4].output).to.equal(ONLY_PS_PARENT.xml!);
+        expect(result).to.have.length(8);
+        expect(result[7].output).to.equal(ONLY_PS_PARENT.xml!);
       });
     });
   });

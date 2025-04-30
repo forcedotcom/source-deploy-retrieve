@@ -101,6 +101,14 @@
         <object>Broker__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
+    <tabSettings>
+        <tab>standard-AssetAction</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>Broker__c</tab>
+        <visibility>Available</visibility>
+    </tabSettings>
     <fieldPermissions>
         <editable>true</editable>
         <field>Broker__c.Broker_Id__c</field>
@@ -131,14 +139,6 @@
         <field>Broker__c.Picture__c</field>
         <readable>true</readable>
     </fieldPermissions>
-    <tabSettings>
-        <tab>Broker__c</tab>
-        <visibility>Available</visibility>
-    </tabSettings>
-    <tabSettings>
-        <tab>standard-AssetAction</tab>
-        <visibility>Visible</visibility>
-    </tabSettings>
     <description>my permission set description</description>
     <hasActivationRequired>false</hasActivationRequired>
     <label>decomposed</label>

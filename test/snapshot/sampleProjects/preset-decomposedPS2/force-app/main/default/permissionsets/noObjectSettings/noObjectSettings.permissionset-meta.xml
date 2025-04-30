@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>my permission set description</description>
-    <hasActivationRequired>false</hasActivationRequired>
-    <label>decomposed</label>
-    <license>Analytics Cloud Integration User</license>
-</PermissionSet>

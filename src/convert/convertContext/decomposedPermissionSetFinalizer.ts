@@ -45,8 +45,7 @@ export class DecomposedPermissionSetFinalizer extends ConvertTransactionFinalize
     const agg: WriterFormat[] = [];
     this.transactionState.parentToChild.forEach((children, parent) => {
       // iterate over children and build PermissionSet data structure
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const permset = new Map<string, any[]>();
+      const permset = new Map<string, unknown[]>();
       for (const child of children) {
         for (const [key, value] of Object.entries(child)) {
           const existingEntry = permset.get(key);
@@ -58,8 +57,7 @@ export class DecomposedPermissionSetFinalizer extends ConvertTransactionFinalize
               permset.set(key, existingEntry);
             }
           } else {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            permset.set(key, ensureArray<any>(value));
+            permset.set(key, ensureArray<unknown>(value));
           }
         }
       }
@@ -75,7 +73,6 @@ export class DecomposedPermissionSetFinalizer extends ConvertTransactionFinalize
               `${parent}.permissionset`
             ),
             source: new JsToXml({
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               PermissionSet: {
                 [XML_NS_KEY]: XML_NS_URL,
                 ...Object.fromEntries(permset),

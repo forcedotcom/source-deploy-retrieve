@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
+        <members>MYCP</members>
+        <members>MYCP2</members>
+        <name>CustomPermission</name>
+    </types>
+    <types>
         <members>ebikes</members>
         <members>dreamhouse</members>
         <members>noObjectSettings</members>

@@ -78,8 +78,8 @@ describe('fully decomposed permission set via decomposePermissionSetBeta2', () =
 
   after(async () => {
     await Promise.all([
-      // fs.promises.rm(path.join(testDir, 'force-app'), { recursive: true, force: true }),
-      // fs.promises.rm(path.join(testDir, MDAPI_OUT), { recursive: true, force: true }),
+      fs.promises.rm(path.join(testDir, 'force-app'), { recursive: true, force: true }),
+      fs.promises.rm(path.join(testDir, MDAPI_OUT), { recursive: true, force: true }),
     ]);
   });
 });

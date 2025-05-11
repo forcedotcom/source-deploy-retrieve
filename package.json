@@ -4,7 +4,7 @@
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
   "author": "Salesforce",
-  "license": "BSD-3-Clause",
+  "license": "Apache-2.0",
   "homepage": "https://github.com/forcedotcom/source-deploy-retrieve#readme",
   "repository": "forcedotcom/source-deploy-retrieve",
   "bugs": {
@@ -44,7 +44,7 @@
   "devDependencies": {
     "@jsforce/jsforce-node": "^3.7.0",
     "@salesforce/cli-plugins-testkit": "^5.3.39",
-    "@salesforce/dev-scripts": "^10.2.12",
+    "@salesforce/dev-scripts": "^11.0.2",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/fast-levenshtein": "^0.0.4",
     "@types/graceful-fs": "^4.1.9",
@@ -67,6 +67,7 @@
     "compile": "wireit",
     "coverage": "nyc report --reporter=lcov",
     "docs": "sf-docs",
+    "fix-license": "eslint src test --fix --rule \"header/header: [2]\"",
     "format": "wireit",
     "link-check": "wireit",
     "lint": "wireit",

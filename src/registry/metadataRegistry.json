@@ -541,7 +541,9 @@
     "lifeSciConfigCategory": "lifesciconfigcategory",
     "lifeSciConfigRecord": "lifesciconfigrecord",
     "invocableactionextension": "invocableactionextension",
-    "fieldServiceMobileConfig": "fieldservicemobileconfig"
+    "fieldServiceMobileConfig": "fieldservicemobileconfig",
+    "dgtAssetMgmtProvider": "dgtassetmgmtprovider",
+    "dgtAssetMgmtPrvdLghtCpnt": "dgtassetmgmtprvdlghtcpnt"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4823,6 +4825,22 @@
       "name": "FieldServiceMobileConfig",
       "suffix": "fieldServiceMobileConfig",
       "directoryName": "fieldServiceMobileConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "dgtassetmgmtprovider": {
+      "id": "dgtassetmgmtprovider",
+      "name": "DgtAssetMgmtProvider",
+      "suffix": "dgtAssetMgmtProvider",
+      "directoryName": "dgtAssetMgmtProviders",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "dgtassetmgmtprvdlghtcpnt": {
+      "id": "dgtassetmgmtprvdlghtcpnt",
+      "name": "DgtAssetMgmtPrvdLghtCpnt",
+      "suffix": "dgtAssetMgmtPrvdLghtCpnt",
+      "directoryName": "dgtAssetMgmtPrvdLghtCpnts",
       "inFolder": false,
       "strictDirectoryName": false
     }

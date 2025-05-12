@@ -1,3 +1,12 @@
+## [12.19.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.5...12.19.6) (2025-05-12)
+
+
+### Bug Fixes
+
+* add DAM metadata types ([#1561](https://github.com/forcedotcom/source-deploy-retrieve/issues/1561)) ([015e5c3](https://github.com/forcedotcom/source-deploy-retrieve/commit/015e5c3e325f2cc70d5615c45d6daaf6f657a84d))
+
+
+
 ## [12.19.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.4...12.19.5) (2025-05-05)
 
 

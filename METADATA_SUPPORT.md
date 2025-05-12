@@ -770,3 +770,5 @@ v64 introduces the following new types.  Here's their current level of support
 - VisualizationPlugin
 - WorkSkillRoutingAttribute
 - XOrgHub
+- DgtAssetMgmtProvider
+- DgtAssetMgmtPrvdLghtCpnt

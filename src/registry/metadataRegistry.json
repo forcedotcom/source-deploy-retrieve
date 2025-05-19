@@ -3641,7 +3641,7 @@
       "suffix": "pricingActionParameters"
     },
     "pricingrecipe": {
-      "directoryName": "pricingRecipes",
+      "directoryName": "pricingRecipe",
       "id": "pricingrecipe",
       "name": "PricingRecipe",
       "strictDirectoryName": false,

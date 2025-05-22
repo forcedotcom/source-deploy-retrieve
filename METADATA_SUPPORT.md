@@ -688,6 +688,7 @@ v64 introduces the following new types.  Here's their current level of support
 |:---|:---|:---|
 |AiPlannerVoiceDef|❌|Not supported, but support could be added (but not for tracking)|
 |ContentTypeBundle|✅||
+|CustomObjectBinding|❌|Not supported, but support could be added|
 |DataConnector|❌|Not supported, but support could be added|
 |ExternalStoragePrvdConfig|❌|Not supported, but support could be added|
 |FieldServiceMobileConfig|✅||

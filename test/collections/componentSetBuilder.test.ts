@@ -685,6 +685,7 @@ describe('ComponentSetBuilder', () => {
       describe('Agent pseudo type', () => {
         const genAiPlannerId = '16jSB000000H3JFYA0';
         const genAiPlannerId15 = '16jSB000000H3JF';
+        const genAiPluginId = '179WJ0000004VI9YAM';
         const packageDir1 = path.resolve('force-app');
         const botComponent = {
           type: 'Bot',
@@ -740,10 +741,16 @@ describe('ComponentSetBuilder', () => {
 
         it('should create ComponentSet from org connection and Agent developer name', async () => {
           const botName = botComponent.fullName;
+          const plannerToPlugins = [{ Plugin: genAiPluginId }];
+          const pluginDeveloperNames = [{ DeveloperName: genAiPluginComponent.fullName }];
+
           const srq = `SELECT Id FROM GenAiPlannerDefinition WHERE DeveloperName = '${botName}'`;
-          const query = `SELECT DeveloperName FROM GenAiPluginDefinition WHERE DeveloperName LIKE 'p_${genAiPlannerId15}%'`;
+          const plannerToPluginsQuery = `SELECT Plugin FROM GenAiPlannerFunctionDef WHERE PlannerId = '${genAiPlannerId}'`;
+          const genAiPluginNamesQuery = `SELECT DeveloperName FROM GenAiPluginDefinition WHERE Id IN ('${genAiPluginId}')`;
+
           singleRecordQueryStub.withArgs(srq, { tooling: true }).resolves({ Id: genAiPlannerId });
-          queryStub.withArgs(query).resolves({ records: [{ DeveloperName: genAiPluginComponent.fullName }] });
+          queryStub.withArgs(plannerToPluginsQuery).resolves({ records: plannerToPlugins });
+          queryStub.withArgs(genAiPluginNamesQuery).resolves({ records: pluginDeveloperNames });
 
           const mdCompSet = new ComponentSet();
           mdCompSet.add(botComponent);
@@ -764,7 +771,7 @@ describe('ComponentSetBuilder', () => {
 
           const compSet = await ComponentSetBuilder.build(options);
           expect(singleRecordQueryStub.callCount, 'Expected singleRecordQuery stub to be called').to.equal(1);
-          expect(queryStub.callCount, 'Expected tooling query stub to be called').to.equal(1);
+          expect(queryStub.callCount, 'Expected tooling query stub to be called').to.equal(2);
           expect(fromConnectionStub.callCount).to.equal(1);
           const fromConnectionArgs = fromConnectionStub.firstCall.args[0];
           const expectedMdTypes = ['Bot', 'GenAiPlanner', 'GenAiPlugin'];

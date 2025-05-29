@@ -105,5 +105,105 @@ describe('agentResolver', () => {
       ];
       expect(await resolveAgentMdEntries(agentPseudoConfig)).to.deep.equal(expectedAgentMdEntries);
     });
+
+    describe('with a connection', () => {
+      const genAiPlannerId = '16jWJ000000275RYAQ';
+
+      const plannerIdQuery = "SELECT Id FROM GenAiPlannerDefinition WHERE DeveloperName = 'The_Campus_Assistant'";
+      const plannerToPluginsQuery = `SELECT Plugin FROM GenAiPlannerFunctionDef WHERE PlannerId = '${genAiPlannerId}'`;
+      let queryStub: sinon.SinonStub;
+      let singleRecordQueryStub: sinon.SinonStub;
+
+      beforeEach(() => {
+        connection.setApiVersion('64.0');
+        singleRecordQueryStub = $$.SANDBOX.stub(connection, 'singleRecordQuery');
+        singleRecordQueryStub.withArgs(plannerIdQuery, { tooling: true }).resolves({ Id: genAiPlannerId });
+        queryStub = $$.SANDBOX.stub(connection.tooling, 'query');
+      });
+
+      it('should return metadata for agent (with plugins) from the org', async () => {
+        const pluginIds = ['179WJ0000004VI9YAM', '179WJ0000004VIAYA2', '179WJ0000004VIBYA2', '179WJ0000004VICYA2'];
+        const plannerToPlugins = [
+          { Plugin: pluginIds[0] },
+          { Plugin: pluginIds[1] },
+          { Plugin: pluginIds[2] },
+          { Plugin: pluginIds[3] },
+        ];
+        const pluginDeveloperNames = [
+          { DeveloperName: 'p_16jQP0000000PG9_Climbing_Routes_Information' },
+          { DeveloperName: 'p_16jQP0000000PG9_Gym_Hours_and_Schedule' },
+          { DeveloperName: 'p_16jQP0000000PG9_Membership_Plans' },
+          { DeveloperName: 'Topic_Goal' },
+        ];
+        const genAiPluginNamesQuery = `SELECT DeveloperName FROM GenAiPluginDefinition WHERE Id IN ('${pluginIds.join(
+          "','"
+        )}')`;
+        queryStub.withArgs(plannerToPluginsQuery).resolves({ records: plannerToPlugins });
+        queryStub.withArgs(genAiPluginNamesQuery).resolves({ records: pluginDeveloperNames });
+
+        const agentPseudoConfig = { botName: 'The_Campus_Assistant', connection };
+        const result = await resolveAgentMdEntries(agentPseudoConfig);
+
+        // Should include Bot, Planner, and only the non-p_plannerId plugins
+        expect(result).to.deep.equal([
+          'Bot:The_Campus_Assistant',
+          'GenAiPlannerBundle:The_Campus_Assistant',
+          'GenAiPlugin:p_16jQP0000000PG9_Climbing_Routes_Information',
+          'GenAiPlugin:p_16jQP0000000PG9_Gym_Hours_and_Schedule',
+          'GenAiPlugin:p_16jQP0000000PG9_Membership_Plans',
+          'GenAiPlugin:Topic_Goal',
+        ]);
+      });
+
+      it('should handle the case where the planner has no plugins', async () => {
+        queryStub.withArgs(plannerToPluginsQuery).resolves({ records: [] });
+
+        const agentPseudoConfig = { botName: 'The_Campus_Assistant', connection };
+        const result = await resolveAgentMdEntries(agentPseudoConfig);
+
+        // Should include Bot, Planner, and only the non-p_plannerId plugins
+        expect(result).to.deep.equal(['Bot:The_Campus_Assistant', 'GenAiPlannerBundle:The_Campus_Assistant']);
+      });
+
+      it('should handle the case where the planner has global plugins only', async () => {
+        const pluginIds = ['someStandardPlugin'];
+        const plannerToPlugins = [{ Plugin: pluginIds[0] }];
+        const genAiPluginNamesQuery = `SELECT DeveloperName FROM GenAiPluginDefinition WHERE Id IN ('${pluginIds[0]}')`;
+        queryStub.withArgs(plannerToPluginsQuery).resolves({ records: plannerToPlugins });
+        queryStub.withArgs(genAiPluginNamesQuery).resolves({ records: [] });
+
+        const agentPseudoConfig = { botName: 'The_Campus_Assistant', connection };
+        const result = await resolveAgentMdEntries(agentPseudoConfig);
+
+        // Should include Bot, Planner, and only the non-p_plannerId plugins
+        expect(result).to.deep.equal(['Bot:The_Campus_Assistant', 'GenAiPlannerBundle:The_Campus_Assistant']);
+      });
+
+      it('should list customized plugins only', async () => {
+        // in this case, the planner has global plugins and customized plugins
+        const pluginIds = ['179WJ0000004VI9YAM', '179WJ0000004VIAYA2', 'someStandardPlugin'];
+        const plannerToPlugins = [{ Plugin: pluginIds[0] }, { Plugin: pluginIds[1] }, { Plugin: pluginIds[2] }];
+        const pluginDeveloperNames = [
+          { DeveloperName: 'p_16jQP0000000PG9_Climbing_Routes_Information' },
+          { DeveloperName: 'p_16jQP0000000PG9_Gym_Hours_and_Schedule' },
+        ];
+        const genAiPluginNamesQuery = `SELECT DeveloperName FROM GenAiPluginDefinition WHERE Id IN ('${pluginIds.join(
+          "','"
+        )}')`;
+        queryStub.withArgs(plannerToPluginsQuery).resolves({ records: plannerToPlugins });
+        queryStub.withArgs(genAiPluginNamesQuery).resolves({ records: pluginDeveloperNames });
+
+        const agentPseudoConfig = { botName: 'The_Campus_Assistant', connection };
+        const result = await resolveAgentMdEntries(agentPseudoConfig);
+
+        // Should include Bot, Planner, and only the non-p_plannerId plugins
+        expect(result).to.deep.equal([
+          'Bot:The_Campus_Assistant',
+          'GenAiPlannerBundle:The_Campus_Assistant',
+          'GenAiPlugin:p_16jQP0000000PG9_Climbing_Routes_Information',
+          'GenAiPlugin:p_16jQP0000000PG9_Gym_Hours_and_Schedule',
+        ]);
+      });
+    });
   });
 });

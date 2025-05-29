@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1748156096054,
+  "lastUpdate": 1748544388737,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -80017,6 +80017,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 6251,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "estebanromero84@outlook.com",
+            "name": "Esteban Romero",
+            "username": "EstebanRomero84"
+          },
+          "committer": {
+            "email": "estebanromero84@outlook.com",
+            "name": "Esteban Romero",
+            "username": "EstebanRomero84"
+          },
+          "distinct": true,
+          "id": "9f5b7f9f393c957dbf3dd6ef0cdff6359f789f22",
+          "message": "fix: update agentResolver to get all customized geAiPlugins from the org",
+          "timestamp": "2025-05-29T15:43:31-03:00",
+          "tree_id": "70acb20d590b15bea754c5911249de9131847c09",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/9f5b7f9f393c957dbf3dd6ef0cdff6359f789f22"
+        },
+        "date": 1748544380080,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 234,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2085,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 1898,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 2692,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 489,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 3707,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 3045,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 3535,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 843,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 6494,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 5234,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 6445,
             "unit": "ms"
           }
         ]

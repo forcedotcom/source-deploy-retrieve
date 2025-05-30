@@ -81,6 +81,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   // all components stored here, regardless of what manifest they belong to
   private components = new DecodeableMap<string, DecodeableMap<string, SourceComponent>>();
 
+  // whether this component set is being used for a deploy
+  // @ts-expect-error this is currently not used but could be used in the future
+  private forDeploy = false;
+  // whether this component set is being used for a retrieve
+  private forRetrieve = false;
+
   // internal component maps used by this.getObject() when building manifests.
   private destructiveComponents = {
     [DestructiveChangesType.PRE]: new DecodeableMap<string, DecodeableMap<string, SourceComponent>>(),
@@ -348,6 +354,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       throw new SfError(messages.getMessage('error_no_source_to_deploy'), 'ComponentSetError');
     }
 
+    this.forDeploy = true;
+
     if (
       typeof options.usernameOrConnection !== 'string' &&
       this.apiVersion &&
@@ -383,6 +391,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       registry: this.registry,
       apiVersion: this.apiVersion,
     });
+
+    this.forRetrieve = true;
 
     if (
       typeof options.usernameOrConnection !== 'string' &&
@@ -427,8 +437,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         .flatMap((c) => c.getChildren())
         .map((child) => addToTypeMap({ typeMap, type: child.type, fullName: child.fullName, destructiveType }));
 
-      // logic: if this is a decomposed type, skip its inclusion in the manifest if the parent is "empty"
+      // logic: if this is a decomposed type not being retrieved, skip its inclusion in the manifest if the parent is "empty"
       if (
+        !this.forRetrieve &&
         type.strategies?.transformer === 'decomposed' &&
         // exclude (ex: CustomObjectTranslation) where there are no addressable children
         Object.values(type.children?.types ?? {}).some((t) => t.unaddressableWithoutParent !== true) &&

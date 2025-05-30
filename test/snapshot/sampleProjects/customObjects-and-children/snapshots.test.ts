@@ -9,11 +9,14 @@ import * as path from 'node:path';
 import {
   FORCE_APP,
   MDAPI_OUT,
+  dirEntsToPaths,
   dirsAreIdentical,
   fileSnap,
   mdapiToSource,
   sourceToMdapi,
 } from '../../helper/conversions';
+import { MetadataConverter } from '../../../../src/convert/metadataConverter';
+import { ComponentSetBuilder } from '../../../../src/collections/componentSetBuilder';
 
 // we don't want failing tests outputting over each other
 /* eslint-disable no-await-in-loop */
@@ -47,5 +50,140 @@ describe('Custom objects and children', () => {
       fs.promises.rm(path.join(testDir, FORCE_APP), { recursive: true, force: true }),
       fs.promises.rm(path.join(testDir, MDAPI_OUT), { recursive: true, force: true }),
     ]);
+  });
+});
+
+/** Return only the files involved in the conversion */
+const getConvertedFilePaths = async (outputDir: string): Promise<string[]> =>
+  dirEntsToPaths(
+    await fs.promises.readdir(outputDir, {
+      recursive: true,
+      withFileTypes: true,
+    })
+  );
+
+describe('CustomField with empty CustomObject - retrieve', () => {
+  const testDir = path.join('test', 'snapshot', 'sampleProjects', 'customObjects-and-children');
+
+  // The directory of snapshots containing expected conversion results
+  const snapshotsDir = path.join(testDir, '__snapshots__');
+
+  // MDAPI format of the original source
+  const sourceDir = path.join(testDir, 'originalMdapi2');
+
+  // The directory where metadata is converted as part of retrieve testing
+  const retrieveOutput = path.join(testDir, 'retrieveOutput');
+
+  // This test verifies that 1 custom field with an empty parent
+  // does not omit the parent from the package manifest for a retrieve when
+  // converting from source to mdapi.
+  it('verify md files retrieve', async () => {
+    const cs = await ComponentSetBuilder.build({
+      metadata: {
+        metadataEntries: ['CustomObject:Broker__c'],
+        directoryPaths: [sourceDir],
+      },
+      projectDir: testDir,
+    });
+
+    const sourceOutputDir = path.join(retrieveOutput, 'source');
+    const mdOutputDir = path.join(retrieveOutput, 'mdapi');
+
+    await new MetadataConverter().convert(cs, 'source', {
+      type: 'directory',
+      outputDirectory: sourceOutputDir,
+      genUniqueDir: false,
+    });
+
+    const cs2 = await ComponentSetBuilder.build({
+      metadata: {
+        metadataEntries: ['CustomObject:Broker__c'],
+        directoryPaths: [sourceOutputDir],
+      },
+      projectDir: testDir,
+    });
+
+    // @ts-expect-error modifying private property
+    cs2.forRetrieve = true;
+
+    await new MetadataConverter().convert(cs2, 'metadata', {
+      type: 'directory',
+      outputDirectory: mdOutputDir,
+      genUniqueDir: false,
+    });
+
+    const convertedFiles = await getConvertedFilePaths(mdOutputDir);
+    for (const file of convertedFiles) {
+      await fileSnap(file, testDir);
+    }
+    const expectedOutputDir = path.join(snapshotsDir, 'verify-md-files-retrieve.expected', 'retrieveOutput', 'mdapi');
+    await dirsAreIdentical(expectedOutputDir, mdOutputDir);
+  });
+
+  after(async () => {
+    await Promise.all([fs.promises.rm(retrieveOutput, { recursive: true, force: true })]);
+  });
+});
+
+describe('CustomField with empty CustomObject - deploy', () => {
+  const testDir = path.join('test', 'snapshot', 'sampleProjects', 'customObjects-and-children');
+
+  // The directory of snapshots containing expected conversion results
+  const snapshotsDir = path.join(testDir, '__snapshots__');
+
+  // MDAPI format of the original source
+  const sourceDir = path.join(testDir, 'originalMdapi2');
+
+  // The directory where metadata is converted as part of deploy testing
+  const deployOutput = path.join(testDir, 'deployOutput');
+
+  // This test verifies that 1 custom field with an empty parent
+  // omits the parent from the package manifest for a deploy when
+  // converting from source to mdapi.
+  it('verify md files deploy', async () => {
+    const cs = await ComponentSetBuilder.build({
+      metadata: {
+        metadataEntries: ['CustomObject:Broker__c'],
+        directoryPaths: [sourceDir],
+      },
+      projectDir: testDir,
+    });
+
+    const sourceOutputDir = path.join(deployOutput, 'source');
+    const mdOutputDir = path.join(deployOutput, 'mdapi');
+
+    await new MetadataConverter().convert(cs, 'source', {
+      type: 'directory',
+      outputDirectory: sourceOutputDir,
+      genUniqueDir: false,
+    });
+
+    const cs2 = await ComponentSetBuilder.build({
+      metadata: {
+        metadataEntries: ['CustomObject:Broker__c'],
+        directoryPaths: [sourceOutputDir],
+      },
+      projectDir: testDir,
+    });
+
+    // @ts-expect-error modifying private property
+    cs2.forDeploy = true;
+
+    await new MetadataConverter().convert(cs2, 'metadata', {
+      type: 'directory',
+      outputDirectory: mdOutputDir,
+      genUniqueDir: false,
+    });
+
+    const convertedFiles = await getConvertedFilePaths(mdOutputDir);
+    for (const file of convertedFiles) {
+      await fileSnap(file, testDir);
+    }
+    const expectedOutputDir = path.join(snapshotsDir, 'verify-md-files-deploy.expected', 'deployOutput', 'mdapi');
+    await dirsAreIdentical(expectedOutputDir, mdOutputDir);
+  });
+
+  after(async () => {
+    await Promise.all([fs.promises.rm(deployOutput, { recursive: true, force: true })]);
   });
 });

@@ -980,7 +980,7 @@ describe('ComponentSet', () => {
       ]);
     });
 
-    it('omits empty parents from the package manifest', async () => {
+    it('omits empty parents from the package manifest when not a retrieve', async () => {
       const set = new ComponentSet([
         DECOMPOSED_CHILD_COMPONENT_1_EMPTY,
         DECOMPOSED_CHILD_COMPONENT_2_EMPTY,
@@ -992,6 +992,30 @@ describe('ComponentSet', () => {
         {
           name: DECOMPOSED_CHILD_COMPONENT_1_EMPTY.type.name,
           members: [DECOMPOSED_CHILD_COMPONENT_1_EMPTY.fullName],
+        },
+        {
+          name: DECOMPOSED_CHILD_COMPONENT_2_EMPTY.type.name,
+          members: [DECOMPOSED_CHILD_COMPONENT_2_EMPTY.fullName],
+        },
+      ]);
+    });
+
+    it('does not omit empty parents from the package manifest for retrieves', async () => {
+      const set = new ComponentSet([
+        DECOMPOSED_CHILD_COMPONENT_1_EMPTY,
+        DECOMPOSED_CHILD_COMPONENT_2_EMPTY,
+        DECOMPOSED_COMPONENT_EMPTY,
+      ]);
+      // @ts-expect-error modifying private property
+      set.forRetrieve = true;
+      expect((await set.getObject()).Package.types).to.deep.equal([
+        {
+          name: DECOMPOSED_CHILD_COMPONENT_1_EMPTY.type.name,
+          members: [DECOMPOSED_CHILD_COMPONENT_1_EMPTY.fullName],
+        },
+        {
+          name: DECOMPOSED_COMPONENT_EMPTY.type.name,
+          members: [DECOMPOSED_COMPONENT_EMPTY.fullName],
         },
         {
           name: DECOMPOSED_CHILD_COMPONENT_2_EMPTY.type.name,

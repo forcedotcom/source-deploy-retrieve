@@ -8,7 +8,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { XMLParser } from 'fast-xml-parser';
-import { Connection, Logger, SfError, trimTo15 } from '@salesforce/core';
+import { Connection, Logger, SfError, validateSalesforceId } from '@salesforce/core';
 import type { BotVersion, GenAiPlanner, GenAiPlannerFunctionDef, GenAiPlugin } from '@salesforce/types/metadata';
 import { ensureArray } from '@salesforce/kit';
 import { RegistryAccess } from '../../registry';
@@ -107,32 +107,37 @@ const resolveAgentFromConnection = async (connection: Connection, botName: strin
     if (plannerId) {
       const plannerType = Number(connection.getApiVersion()) > 63.0 ? 'GenAiPlannerBundle' : 'GenAiPlanner';
       mdEntries.push(`${plannerType}:${botName}`);
-      const plannerId15 = trimTo15(plannerId);
-      // Query for the GenAiPlugins associated with the 15 char GenAiPlannerId
-      const genAiPluginNames = (
-        await connection.tooling.query<{ DeveloperName: string }>(
-          `SELECT DeveloperName FROM GenAiPluginDefinition WHERE DeveloperName LIKE 'p_${plannerId15}%'`
+      // Query the junction table to get all GenAiPlugins associated with this GenAiPlannerId
+      const topicIdsByPlanner = (
+        await connection.tooling.query<{ Plugin: string }>(
+          `SELECT Plugin FROM GenAiPlannerFunctionDef WHERE PlannerId = '${plannerId}'`
         )
       ).records;
-      if (genAiPluginNames.length) {
-        genAiPluginNames.map((r) => mdEntries.push(`GenAiPlugin:${r.DeveloperName}`));
+      if (topicIdsByPlanner.length) {
+        // Query the GenAiPluginDefinition table to get the DeveloperName for each GenAiPluginId
+        const genAiPluginIds = `'${topicIdsByPlanner
+          .map((record) => record.Plugin)
+          .filter((pluginId) => validateSalesforceId(pluginId))
+          .join("','")}'`;
+        // This query returns customized plugins only
+        const genAiPluginNames = (
+          await connection.tooling.query<{ DeveloperName: string }>(
+            `SELECT DeveloperName FROM GenAiPluginDefinition WHERE Id IN (${genAiPluginIds})`
+          )
+        ).records;
+        if (genAiPluginNames.length) {
+          genAiPluginNames.map((r) => mdEntries.push(`GenAiPlugin:${r.DeveloperName}`));
+        } else {
+          getLogger().debug(
+            `No GenAiPlugin metadata matches for plannerId: ${plannerId}. Reading the ${plannerType} metadata for plugins...`
+          );
+          await getPluginNamesFromPlanner(connection, botName, mdEntries);
+        }
       } else {
         getLogger().debug(
-          `No GenAiPlugin metadata matches for plannerId: ${plannerId15}. Reading the ${plannerType} metadata for plugins...`
+          `No GenAiPlugin metadata matches for plannerId: ${plannerId}. Reading the ${plannerType} metadata for plugins...`
         );
-        // read the planner metadata from the org
-        // @ts-expect-error jsForce types don't know about GenAiPlanner yet
-        const genAiPlannerMd = await connection.metadata.read<GenAiPlanner>(plannerType, botName);
-        const genAiPlannerMdArr = ensureArray(genAiPlannerMd) as unknown as GenAiPlanner[];
-        if (genAiPlannerMdArr?.length && genAiPlannerMdArr[0]?.genAiPlugins.length) {
-          genAiPlannerMdArr[0].genAiPlugins.map((plugin) => {
-            if (plugin.genAiPluginName?.length) {
-              mdEntries.push(`GenAiPlugin:${plugin.genAiPluginName}`);
-            }
-          });
-        } else {
-          getLogger().debug(`No GenAiPlugin metadata found in planner file for API name: ${botName}`);
-        }
+        await getPluginNamesFromPlanner(connection, botName, mdEntries);
       }
     } else {
       getLogger().debug(`No GenAiPlanner metadata matches for Bot: ${botName}`);
@@ -289,4 +294,26 @@ const xmlToJson = <T>(path: string, parser: XMLParser): T => {
   const file = readFileSync(path, 'utf8');
   if (!file) throw new SfError(`No metadata file found at ${path}`);
   return parser.parse(file) as T;
+};
+
+// read the GenAiPlanner or GenAiPlannerBundle metadata from the org and add the GenAiPlugin names to the mdEntries array
+const getPluginNamesFromPlanner = async (
+  connection: Connection,
+  botName: string,
+  mdEntries: string[]
+): Promise<void> => {
+  const plannerType = Number(connection.getApiVersion()) > 63.0 ? 'GenAiPlannerBundle' : 'GenAiPlanner';
+  // @ts-expect-error jsForce types don't know about GenAiPlanner yet
+  const genAiPlannerMd = await connection.metadata.read<GenAiPlanner>(plannerType, botName);
+
+  const genAiPlannerMdArr = ensureArray(genAiPlannerMd) as unknown as GenAiPlanner[];
+  if (genAiPlannerMdArr?.length && genAiPlannerMdArr[0]?.genAiPlugins.length) {
+    genAiPlannerMdArr[0].genAiPlugins.map((plugin) => {
+      if (plugin.genAiPluginName?.length) {
+        mdEntries.push(`GenAiPlugin:${plugin.genAiPluginName}`);
+      }
+    });
+  } else {
+    getLogger().debug(`No GenAiPlugin metadata found in planner file for API name: ${botName}`);
+  }
 };

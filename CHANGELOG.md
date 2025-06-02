@@ -1,3 +1,12 @@
+## [12.19.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.7...12.19.8) (2025-06-02)
+
+
+### Bug Fixes
+
+* include parent in manifest when retrieving - W-18650723 ([#1568](https://github.com/forcedotcom/source-deploy-retrieve/issues/1568)) ([db8cb3e](https://github.com/forcedotcom/source-deploy-retrieve/commit/db8cb3e85c7a06b0d0ab5d54e05fdb900c907c75))
+
+
+
 ## [12.19.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.6...12.19.7) (2025-05-20)
 
 

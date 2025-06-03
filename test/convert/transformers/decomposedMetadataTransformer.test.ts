@@ -10,7 +10,7 @@ import { expect, assert } from 'chai';
 import { Messages } from '@salesforce/core';
 import { TestContext } from '@salesforce/core/testSetup';
 import { decomposed, matchingContentFile } from '../../mock';
-import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
+import { DecomposedMetadataTransformer, getKey } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import { baseName } from '../../../src/utils';
 import { JsToXml } from '../../../src/convert/streams';
 import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/type-constants/customObjectTranslationConstant';
@@ -28,7 +28,7 @@ describe('DecomposedMetadataTransformer', () => {
   const component = decomposed.DECOMPOSED_COMPONENT;
 
   describe('toMetadataFormat', () => {
-    it('should defer write operations and set context state when a child components are given', async () => {
+    it('should defer write operations and set context state when child components are given', async () => {
       const [child1, child2] = component.getChildren();
       const context = new ConvertContext();
       const transformer = new DecomposedMetadataTransformer(registryAccess, context);
@@ -36,7 +36,7 @@ describe('DecomposedMetadataTransformer', () => {
       expect(await transformer.toMetadataFormat(child1)).to.deep.equal([]);
       expect(await transformer.toMetadataFormat(child2)).to.deep.equal([]);
       expect(context.recomposition.transactionState.size).to.deep.equal(1);
-      expect(context.recomposition.transactionState.get(component.fullName)).to.deep.equal({
+      expect(context.recomposition.transactionState.get(getKey(component))).to.deep.equal({
         component,
         children: new ComponentSet([child1, child2], registryAccess),
       });
@@ -49,7 +49,7 @@ describe('DecomposedMetadataTransformer', () => {
       expect(await transformer.toMetadataFormat(component)).to.deep.equal([]);
       expect(context.recomposition.transactionState.size).to.equal(1);
 
-      expect(context.recomposition.transactionState.get(component.fullName)).to.deep.equal({
+      expect(context.recomposition.transactionState.get(getKey(component))).to.deep.equal({
         component,
         children: new ComponentSet(component.getChildren(), registryAccess),
       });
@@ -65,11 +65,11 @@ describe('DecomposedMetadataTransformer', () => {
       expect(await transformer.toMetadataFormat(component)).to.deep.equal([]);
       expect(context.recomposition.transactionState.size).to.deep.equal(1);
 
-      const stateValue = context.recomposition.transactionState.get(component.fullName);
+      const stateValue = context.recomposition.transactionState.get(getKey(component));
       assert(stateValue, 'expected stateValue to be defined');
       expect(stateValue.component).to.deep.equal(component);
       expect(stateValue.children?.size).to.deep.equal(2);
-      expect(context.recomposition.transactionState.get(component.fullName)).to.deep.equal({
+      expect(context.recomposition.transactionState.get(getKey(component))).to.deep.equal({
         component,
         children: new ComponentSet([child1, child2], registryAccess),
       });

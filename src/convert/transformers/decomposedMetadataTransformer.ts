@@ -34,16 +34,16 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     if (component.parent) {
-      const { fullName: parentName } = component.parent;
-      const stateForParent = this.context.recomposition.transactionState.get(parentName) ?? {
+      const key = getKey(component.parent);
+      const stateForParent = this.context.recomposition.transactionState.get(key) ?? {
         component: component.parent,
         children: new ComponentSet([], this.registry),
       };
       stateForParent.children?.add(component);
-      this.context.recomposition.transactionState.set(parentName, stateForParent);
+      this.context.recomposition.transactionState.set(key, stateForParent);
     } else {
-      const { fullName } = component;
-      const existing = this.context.recomposition.transactionState.get(fullName) ?? {
+      const key = getKey(component);
+      const existing = this.context.recomposition.transactionState.get(key) ?? {
         component,
         children: new ComponentSet([], this.registry),
       };
@@ -55,7 +55,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       (component.getChildren() ?? []).map((child) => {
         existing.children?.add(child);
       });
-      this.context.recomposition.transactionState.set(fullName, existing);
+      this.context.recomposition.transactionState.set(key, existing);
     }
     // noop since the finalizer will push the writes to the component writer
     return [];
@@ -245,7 +245,7 @@ export const setDecomposedState =
     });
   };
 
-const getKey = (component: MetadataComponent): string => `${component.type.name}#${component.fullName}`;
+export const getKey = (component: MetadataComponent): string => `${component.type.name}#${component.fullName}`;
 
 /** for a component, parse the xml and create an json object with contents, child typeId, etc */
 const getComposedMetadataEntries = async (component: SourceComponent): Promise<ComposedMetadata[]> =>

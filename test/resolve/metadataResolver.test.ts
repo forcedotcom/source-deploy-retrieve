@@ -44,6 +44,11 @@ import {
   MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
   MIXED_CONTENT_DIRECTORY_XML_PATHS,
 } from '../mock/type-constants/staticresourceConstant';
+import {
+  SOURCE_FORMAT_PS,
+  regAcc as regAccPermissionSet,
+} from '../mock/type-constants/decomposedPermissionSetConstant';
+// import { THREE_CUSTOM_LABELS_CMP, regAcc as regAccCustomLabels } from '../mock/type-constants/decomposedCustomLabelsConstant';
 import { META_XML_SUFFIX } from '../../src/common';
 import { DE_METAFILE } from '../mock/type-constants/digitalExperienceBundleConstants';
 import { RegistryTestUtil } from './registryTestUtil';
@@ -94,6 +99,7 @@ describe('MetadataResolver', () => {
       expect(resolver.getComponentsFromPath(CONTENT_PATHS[0])).to.deep.equal([COMPONENTS[0]]);
     });
   });
+
   describe('getComponentsFromPath', () => {
     afterEach(() => testUtil.restore());
 
@@ -145,6 +151,25 @@ describe('MetadataResolver', () => {
           },
         ]);
         expect(access.getComponentsFromPath(path)).to.deep.equal([matchingContentFile.COMPONENT]);
+      });
+
+      it('Should resolve decomposed permission set file to PermissionSet type', () => {
+        const resolver = new MetadataResolver(regAccPermissionSet, SOURCE_FORMAT_PS.tree);
+        const objectSettingsPath = join(
+          'main',
+          'default',
+          'permissionsets',
+          'myPS',
+          'objectSettings',
+          'Account.objectSettings-meta.xml'
+        );
+        const classAccessPath = join('main', 'default', 'permissionsets', 'myPS', 'myPS.classAccess-meta.xml');
+        const components = resolver.getComponentsFromPath(objectSettingsPath);
+        const components2 = resolver.getComponentsFromPath(classAccessPath);
+        expect(components).to.have.lengthOf(1);
+        expect(components[0].type.name).to.equal('PermissionSet');
+        expect(components2).to.have.lengthOf(1);
+        expect(components2[0].type.name).to.equal('PermissionSet');
       });
 
       it('Should determine type for metadata file with known suffix and strictDirectoryName', () => {

@@ -10,7 +10,9 @@ import { SourceComponent, VirtualTreeContainer, presetMap, RegistryAccess } from
 import { getEffectiveRegistry } from '../../../src/registry/variants';
 
 // Constants for a matching content file type
-const regAcc = new RegistryAccess(getEffectiveRegistry({ presets: [presetMap.get('decomposeCustomLabelsBeta2')!] }));
+export const regAcc = new RegistryAccess(
+  getEffectiveRegistry({ presets: [presetMap.get('decomposeCustomLabelsBeta2')!] })
+);
 
 const customLabelsType = regAcc.getTypeByName('CustomLabels');
 const customLabelType = regAcc.getTypeByName('CustomLabel');

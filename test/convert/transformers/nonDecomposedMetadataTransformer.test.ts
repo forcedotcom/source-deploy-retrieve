@@ -11,7 +11,7 @@ import { nonDecomposed } from '../../mock';
 import { NonDecomposedMetadataTransformer } from '../../../src/convert/transformers/nonDecomposedMetadataTransformer';
 import { ComponentSet, registry, RegistryAccess, SourceComponent } from '../../../src';
 import { ConvertContext } from '../../../src/convert/convertContext/convertContext';
-import { getKey } from '../../../src/convert/transformers/decomposedMetadataTransformer';
+import { simpleKey } from '../../../src/collections/componentSet';
 
 describe('NonDecomposedMetadataTransformer', () => {
   const $$ = new TestContext();
@@ -29,7 +29,7 @@ describe('NonDecomposedMetadataTransformer', () => {
       expect(await transformer.toMetadataFormat(child2)).to.deep.equal([]);
 
       expect(context.recomposition.transactionState.size).to.equal(1);
-      expect(context.recomposition.transactionState.get(getKey(component))).to.deep.equal({
+      expect(context.recomposition.transactionState.get(simpleKey(component))).to.deep.equal({
         component,
         children: new ComponentSet([child1, child2]),
       });

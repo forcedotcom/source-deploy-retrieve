@@ -20,7 +20,7 @@ import { JsToXml } from '../streams';
 import type { ToSourceFormatInput, WriteInfo, XmlObj } from '../types';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../common/constants';
 import type { SourcePath } from '../../common/types';
-import { ComponentSet } from '../../collections/componentSet';
+import { ComponentSet, simpleKey } from '../../collections/componentSet';
 import type { DecompositionState, DecompositionStateValue } from '../convertContext/decompositionFinalizer';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import type { ComposedMetadata, ComposedMetadataWithChildType, InfoContainer } from './types';
@@ -34,7 +34,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     if (component.parent) {
-      const key = getKey(component.parent);
+      const key = simpleKey(component.parent);
       const stateForParent = this.context.recomposition.transactionState.get(key) ?? {
         component: component.parent,
         children: new ComponentSet([], this.registry),
@@ -42,7 +42,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       stateForParent.children?.add(component);
       this.context.recomposition.transactionState.set(key, stateForParent);
     } else {
-      const key = getKey(component);
+      const key = simpleKey(component);
       const existing = this.context.recomposition.transactionState.get(key) ?? {
         component,
         children: new ComponentSet([], this.registry),
@@ -237,15 +237,13 @@ export const getWriteInfosWithoutMerge =
 export const setDecomposedState =
   (state: DecompositionState) =>
   (forComponent: MetadataComponent, props: Partial<Omit<DecompositionStateValue, 'origin'>>): void => {
-    const key = getKey(forComponent);
+    const key = simpleKey(forComponent);
     state.set(key, {
       // origin gets set the first time
       ...(state.get(key) ?? { origin: forComponent.parent ?? forComponent }),
       ...(props ?? {}),
     });
   };
-
-export const getKey = (component: MetadataComponent): string => `${component.type.name}#${component.fullName}`;
 
 /** for a component, parse the xml and create an json object with contents, child typeId, etc */
 const getComposedMetadataEntries = async (component: SourceComponent): Promise<ComposedMetadata[]> =>

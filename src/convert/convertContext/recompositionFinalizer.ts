@@ -10,7 +10,7 @@ import { Messages } from '@salesforce/core';
 import { extractUniqueElementValue, getXmlElement, unwrapAndOmitNS } from '../../utils/decomposed';
 import { MetadataComponent } from '../../resolve/types';
 import { XML_NS_KEY, XML_NS_URL } from '../../common/constants';
-import { ComponentSet } from '../../collections/componentSet';
+import { ComponentSet, SimpleKeyString } from '../../collections/componentSet';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { JsToXml } from '../streams';
 import { WriterFormat } from '../types';
@@ -41,7 +41,7 @@ type XmlCache = Map<string, JsonMap>;
  *
  */
 export class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionState> {
-  public transactionState: RecompositionState = new Map<string, RecompositionStateValue>();
+  public transactionState: RecompositionState = new Map<SimpleKeyString, RecompositionStateValue>();
   private xmlCache: XmlCache = new Map();
 
   public async finalize(): Promise<WriterFormat[]> {

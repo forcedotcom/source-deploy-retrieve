@@ -48,6 +48,8 @@ export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
 
 const KEY_DELIMITER = '#';
 
+export type SimpleKeyString = `${string}#${string}`;
+
 /**
  * A collection containing no duplicate metadata members (`fullName` and `type` pairs). `ComponentSets`
  * are a convenient way of constructing a unique collection of components to perform operations such as
@@ -750,7 +752,7 @@ const sourceKey = (component: SourceComponent): string => {
   return `${type.name}${fullName}${xml ?? ''}${content ?? ''}`;
 };
 
-const simpleKey = (component: ComponentLike): string => {
+export const simpleKey = (component: ComponentLike): SimpleKeyString => {
   const typeName = typeof component.type === 'string' ? component.type.toLowerCase().trim() : component.type.id;
   return `${typeName}${KEY_DELIMITER}${component.fullName}`;
 };

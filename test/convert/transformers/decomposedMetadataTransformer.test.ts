@@ -17,6 +17,7 @@ import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/type-constants/custom
 import { ComponentSet, ForceIgnore, registry, RegistryAccess, SourceComponent } from '../../../src';
 import { XML_NS_KEY, XML_NS_URL } from '../../../src/common';
 import { ConvertContext } from '../../../src/convert/convertContext/convertContext';
+import { simpleKey } from '../../../src/collections/componentSet';
 
 const registryAccess = new RegistryAccess();
 
@@ -28,7 +29,7 @@ describe('DecomposedMetadataTransformer', () => {
   const component = decomposed.DECOMPOSED_COMPONENT;
 
   describe('toMetadataFormat', () => {
-    it('should defer write operations and set context state when a child components are given', async () => {
+    it('should defer write operations and set context state when child components are given', async () => {
       const [child1, child2] = component.getChildren();
       const context = new ConvertContext();
       const transformer = new DecomposedMetadataTransformer(registryAccess, context);
@@ -36,7 +37,7 @@ describe('DecomposedMetadataTransformer', () => {
       expect(await transformer.toMetadataFormat(child1)).to.deep.equal([]);
       expect(await transformer.toMetadataFormat(child2)).to.deep.equal([]);
       expect(context.recomposition.transactionState.size).to.deep.equal(1);
-      expect(context.recomposition.transactionState.get(component.fullName)).to.deep.equal({
+      expect(context.recomposition.transactionState.get(simpleKey(component))).to.deep.equal({
         component,
         children: new ComponentSet([child1, child2], registryAccess),
       });
@@ -49,7 +50,7 @@ describe('DecomposedMetadataTransformer', () => {
       expect(await transformer.toMetadataFormat(component)).to.deep.equal([]);
       expect(context.recomposition.transactionState.size).to.equal(1);
 
-      expect(context.recomposition.transactionState.get(component.fullName)).to.deep.equal({
+      expect(context.recomposition.transactionState.get(simpleKey(component))).to.deep.equal({
         component,
         children: new ComponentSet(component.getChildren(), registryAccess),
       });
@@ -65,11 +66,11 @@ describe('DecomposedMetadataTransformer', () => {
       expect(await transformer.toMetadataFormat(component)).to.deep.equal([]);
       expect(context.recomposition.transactionState.size).to.deep.equal(1);
 
-      const stateValue = context.recomposition.transactionState.get(component.fullName);
+      const stateValue = context.recomposition.transactionState.get(simpleKey(component));
       assert(stateValue, 'expected stateValue to be defined');
       expect(stateValue.component).to.deep.equal(component);
       expect(stateValue.children?.size).to.deep.equal(2);
-      expect(context.recomposition.transactionState.get(component.fullName)).to.deep.equal({
+      expect(context.recomposition.transactionState.get(simpleKey(component))).to.deep.equal({
         component,
         children: new ComponentSet([child1, child2], registryAccess),
       });
@@ -592,9 +593,7 @@ describe('DecomposedMetadataTransformer', () => {
 
         const result = await transformer.toSourceFormat({ component, mergeWith: componentToMerge });
         expect(result).to.be.empty;
-        expect(
-          context.decomposition.transactionState.get(`${mergeComponentChild.type.name}#${mergeComponentChild.fullName}`)
-        ).to.deep.equal({
+        expect(context.decomposition.transactionState.get(simpleKey(mergeComponentChild))).to.deep.equal({
           origin: component,
           writeInfo: {
             source: new JsToXml({
@@ -635,7 +634,7 @@ describe('DecomposedMetadataTransformer', () => {
 
         const result = await transformer.toSourceFormat({ component, mergeWith });
         expect(result).to.be.empty;
-        expect(context.decomposition.transactionState.get(`${type.name}#${fullName}`)).to.deep.equal({
+        expect(context.decomposition.transactionState.get(simpleKey(component))).to.deep.equal({
           origin: component,
           writeInfo: {
             source: new JsToXml({

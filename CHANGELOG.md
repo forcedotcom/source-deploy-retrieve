@@ -1,3 +1,12 @@
+## [12.19.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.8...12.19.9) (2025-06-05)
+
+
+### Bug Fixes
+
+* change map to use name#type for key  @W-18476014@ ([#1571](https://github.com/forcedotcom/source-deploy-retrieve/issues/1571)) ([eda47ea](https://github.com/forcedotcom/source-deploy-retrieve/commit/eda47ea00933fc659d0f220211998488341fa394))
+
+
+
 ## [12.19.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.7...12.19.8) (2025-06-02)
 
 

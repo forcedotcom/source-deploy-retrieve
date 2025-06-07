@@ -1,10 +1,10 @@
 # Supported CLI Metadata Types
 
-This list compares metadata types found in Salesforce v63 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
+This list compares metadata types found in Salesforce v64 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 639/667 supported metadata types.
+Currently, there are 650/684 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -45,7 +45,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AgentforceForDevelopersSettings|✅||
 |Ai4mSettings|✅||
 |AiEvaluationDefinition|✅||
-|AiPluginUtteranceDef|❌|Not supported, but support could be added|
+|AiPlannerVoiceDef|❌|Not supported, but support could be added (but not for tracking)|
 |AnalyticSnapshot|✅||
 |AnalyticsDashboard|✅||
 |AnalyticsSettings|✅||
@@ -149,6 +149,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ConnectedAppSettings|✅||
 |ContentAsset|✅||
 |ContentSettings|✅||
+|ContentTypeBundle|✅||
 |ContextDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |ContextUseCaseMapping|✅||
 |ContractSettings|✅||
@@ -174,6 +175,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CustomMetadata|✅||
 |CustomNotificationType|✅||
 |CustomObject|✅||
+|CustomObjectBinding|❌|Not supported, but support could be added|
 |CustomObjectTranslation|✅||
 |CustomPageWebLink|✅||
 |CustomPermission|✅||
@@ -186,6 +188,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DashboardFolder|✅||
 |DataCalcInsightTemplate|✅||
 |DataCategoryGroup|✅||
+|DataConnector|❌|Not supported, but support could be added|
 |DataConnectorIngestApi|✅||
 |DataConnectorS3|✅||
 |DataDotComSettings|✅||
@@ -295,6 +298,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExternalDataTranObject|✅||
 |ExternalDocStorageConfig|✅||
 |ExternalServiceRegistration|✅||
+|ExternalStoragePrvdConfig|❌|Not supported, but support could be added|
 |ExtlClntAppConfigurablePolicies|✅||
 |ExtlClntAppGlobalOauthSettings|✅||
 |ExtlClntAppMobileConfigurablePolicies|✅||
@@ -310,6 +314,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |FeatureParameterInteger|✅||
 |FieldMappingConfig|❌|Not supported, but support could be added|
 |FieldRestrictionRule|✅||
+|FieldServiceMobileConfig|✅||
 |FieldServiceMobileExtension|✅||
 |FieldServiceSettings|✅||
 |FieldSet|✅||
@@ -337,16 +342,15 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |FundraisingConfig|✅||
 |GatewayProviderPaymentMethodType|✅||
 |GenAiFunction|✅||
-|GenAiPlanner|✅||
+|GenAiPlannerBundle|✅||
 |GenAiPlugin|✅||
-|GenAiPluginInstructionDef|❌|Not supported, but support could be added|
 |GenAiPromptTemplate|✅||
 |GenAiPromptTemplateActv|✅||
 |GlobalValueSet|✅||
 |GlobalValueSetTranslation|✅||
 |GoogleAppsSettings|✅||
 |Group|✅||
-|HerokuIntegrationSettings|✅||
+|HerokuAppLinkSettings|✅||
 |HighVelocitySalesSettings|✅||
 |HomePageComponent|✅||
 |HomePageLayout|✅||
@@ -375,6 +379,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |IndustriesPricingSettings|✅||
 |IndustriesRatingSettings|✅||
 |IndustriesSettings|✅||
+|IndustriesUnifiedInventorySettings|✅||
 |IndustriesUnifiedPromotionsSettings|✅||
 |IndustriesUsageSettings|✅||
 |InsPlcyCoverageSpecConfig|❌|Not supported, but support could be added|
@@ -391,6 +396,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |InvLatePymntRiskCalcSettings|✅||
 |InventoryReplenishmentSettings|✅||
 |InventorySettings|✅||
+|InvocableActionExtension|✅||
 |InvocableActionSettings|✅||
 |IoTSettings|✅||
 |KeywordList|✅||
@@ -414,7 +420,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |LightningExperienceTheme|✅||
 |LightningMessageChannel|✅||
 |LightningOnboardingConfig|✅||
-|LightningTypeBundle|⚠️|Supports deploy/retrieve but not source tracking|
+|LightningTypeBundle|✅||
 |ListView|✅||
 |LiveAgentSettings|✅||
 |LiveChatAgentConfig|✅||
@@ -435,6 +441,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |MarketingAppExtension|✅||
 |MatchingRules|✅||
 |MediaAdSalesSettings|✅||
+|MediaAgentSettings|✅||
 |MeetingsSettings|✅||
 |MessagingChannel|⚠️|Supports deploy/retrieve but not source tracking|
 |MfgProgramTemplate|✅||
@@ -465,6 +472,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |OauthCustomScope|✅||
 |OauthOidcSettings|✅||
 |OauthTokenExchangeHandler|✅||
+|ObjIntegProviderDefMapping|❌|Not supported, but support could be added|
 |ObjectHierarchyRelationship|✅||
 |ObjectLinkingSettings|✅||
 |ObjectSourceTargetMap|✅||
@@ -498,6 +506,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PaymentGatewayProvider|✅||
 |PaymentsManagementEnabledSettings|✅||
 |PaymentsSettings|✅||
+|PaymentsSharingSettings|✅||
 |PermissionSet|✅||
 |PermissionSetGroup|✅||
 |PermissionSetLicenseDefinition|✅||
@@ -524,6 +533,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ProcessFlowMigration|✅||
 |ProductAttrDisplayConfig|✅||
 |ProductAttributeSet|✅||
+|ProductCatalogManagementSettings|✅||
 |ProductConfiguratorSettings|✅||
 |ProductDiscoverySettings|✅||
 |ProductSettings|✅||
@@ -558,6 +568,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |RelatedRecordAccessDef|❌|Not supported, but support could be added|
 |RelatedRecordAssocCriteria|✅||
 |RelationshipGraphDefinition|✅||
+|ReleaseMgmtSettings|✅||
 |RemoteSiteSetting|✅||
 |Report|✅||
 |ReportFolder|✅||
@@ -568,6 +579,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |RevenueManagementSettings|✅||
 |Role|✅||
 |SalesAgreementSettings|✅||
+|SalesDealAgentSettings|✅||
 |SalesWorkQueueSettings|✅||
 |SamlSsoConfig|✅||
 |SandboxSettings|✅||
@@ -584,6 +596,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ServiceAISetupField|✅||
 |ServiceChannel|✅||
 |ServiceCloudVoiceSettings|✅||
+|ServiceMgmtKnwlgArtclConfig|❌|Not supported, but support could be added|
+|ServiceMgmtKnwlgArtclConfigSettings|✅||
 |ServicePresenceStatus|✅||
 |ServiceProcess|✅||
 |ServiceSetupAssistantSettings|✅||
@@ -602,6 +616,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SlackApp|✅||
 |SocialCustomerServiceSettings|✅||
 |SourceTrackingSettings|✅||
+|StageAssignment|❌|Not supported, but support could be added|
 |StageDefinition|✅||
 |StandardValue|❌|Not supported, but support could be added|
 |StandardValueSet|✅||
@@ -627,6 +642,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |Territory2Type|✅||
 |TimeSheetTemplate|✅||
 |TimelineObjectDefinition|✅||
+|TmfOutboundNotificationSettings|✅||
 |TopicsForObjects|✅||
 |TrailheadSettings|✅||
 |TransactionProcessingType|❌|Not supported, but support could be added (but not for tracking)|
@@ -636,6 +652,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |UIObjectRelationConfig|✅||
 |UiFormatSpecificationSet|✅||
 |UiPlugin|✅||
+|UiPreviewMessageTabDef|❌|Not supported, but support could be added|
 |UserAccessPolicy|✅||
 |UserAuthCertificate|✅||
 |UserCriteria|✅||
@@ -680,33 +697,22 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 
 
-## Next Release (v64)
+## Next Release (v65)
 
-v64 introduces the following new types.  Here's their current level of support
+v65 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
-|AiPlannerVoiceDef|❌|Not supported, but support could be added (but not for tracking)|
-|ContentTypeBundle|✅||
-|CustomObjectBinding|❌|Not supported, but support could be added|
-|DataConnector|❌|Not supported, but support could be added|
-|ExternalStoragePrvdConfig|❌|Not supported, but support could be added|
-|FieldServiceMobileConfig|✅||
-|GenAiPlannerBundle|✅||
-|HerokuAppLinkSettings|✅||
-|IndustriesUnifiedInventorySettings|✅||
-|InvocableActionExtension|✅||
-|MediaAgentSettings|✅||
-|ObjIntegProviderDefMapping|❌|Not supported, but support could be added|
-|PaymentsSharingSettings|✅||
-|ProductCatalogManagementSettings|✅||
-|ReleaseMgmtSettings|✅||
-|SalesDealAgentSettings|✅||
-|ServiceMgmtKnwlgArtclConfig|❌|Not supported, but support could be added|
-|ServiceMgmtKnwlgArtclConfigSettings|✅||
-|StageAssignment|❌|Not supported, but support could be added|
-|TmfOutboundNotificationSettings|✅||
-|UiPreviewMessageTabDef|❌|Not supported, but support could be added|
+|ApiProtectionPolicy|❌|Not supported, but support could be added|
+|ApiProtectionRule|❌|Not supported, but support could be added|
+|CommsUpsellSettings|✅||
+|ExtlClntAppCanvasStngs|❌|Not supported, but support could be added|
+|IndustriesConnectedServiceSettings|✅||
+|LightningOutApp|❌|Not supported, but support could be added|
+|PrmCoreSettings|✅||
+|ReferralMarketingConfig|❌|Not supported, but support could be added|
+|ServiceAIRecommendationsSettings|✅||
+|ServiceItsmIntelligenceUddSettings|✅||
 
 ## Additional Types
 
@@ -742,6 +748,7 @@ v64 introduces the following new types.  Here's their current level of support
 - ExtlClntAppSampleSettings
 - Form
 - FormSection
+- GenAiPlanner
 - GlobalPicklist
 - InsightType
 - IntegrationHubSettings

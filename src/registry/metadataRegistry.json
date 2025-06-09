@@ -543,7 +543,8 @@
     "invocableactionextension": "invocableactionextension",
     "fieldServiceMobileConfig": "fieldservicemobileconfig",
     "dgtAssetMgmtProvider": "dgtassetmgmtprovider",
-    "dgtAssetMgmtPrvdLghtCpnt": "dgtassetmgmtprvdlghtcpnt"
+    "dgtAssetMgmtPrvdLghtCpnt": "dgtassetmgmtprvdlghtcpnt",
+    "ecaCanvas": "extlclntappcanvasstngs"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4841,6 +4842,14 @@
       "name": "DgtAssetMgmtPrvdLghtCpnt",
       "suffix": "dgtAssetMgmtPrvdLghtCpnt",
       "directoryName": "dgtAssetMgmtPrvdLghtCpnts",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntappcanvasstngs": {
+      "id": "extlclntappcanvasstngs",
+      "name": "ExtlClntAppCanvasStngs",
+      "suffix": "ecaCanvas",
+      "directoryName": "extlClntAppCanvasStngs",
       "inFolder": false,
       "strictDirectoryName": false
     }

@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1749483047952,
+  "lastUpdate": 1749577629475,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -81023,6 +81023,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 7688,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hungrycheet4h@gmail.com",
+            "name": "schakravarthula0",
+            "username": "schakravarthula0"
+          },
+          "committer": {
+            "email": "hungrycheet4h@gmail.com",
+            "name": "schakravarthula0",
+            "username": "schakravarthula0"
+          },
+          "distinct": true,
+          "id": "8270690077b0ee66218fb7c58c72f10406e401b0",
+          "message": "feat: add new ExtlClntAppCanvasStngs to metadata registry",
+          "timestamp": "2025-06-10T00:40:01+05:30",
+          "tree_id": "6417e339ae1ec7144b51ca533eec3b7a4c5ab2d1",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/8270690077b0ee66218fb7c58c72f10406e401b0"
+        },
+        "date": 1749577621638,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 234,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2281,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 1950,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 3217,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 475,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 4560,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 3021,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 4291,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 837,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 7885,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 5296,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 7719,
             "unit": "ms"
           }
         ]

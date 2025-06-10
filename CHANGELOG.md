@@ -1,3 +1,12 @@
+## [12.19.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.9...12.19.10) (2025-06-10)
+
+
+### Bug Fixes
+
+* Add ExtlClntAppCanvasStngs to metadata registry - W-18734168 ([#1575](https://github.com/forcedotcom/source-deploy-retrieve/issues/1575)) ([7daea8a](https://github.com/forcedotcom/source-deploy-retrieve/commit/7daea8acb9bc166a1fd62055142b54596b3df800))
+
+
+
 ## [12.19.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.8...12.19.9) (2025-06-05)
 
 

@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1749483307383,
+  "lastUpdate": 1749577953461,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -75751,6 +75751,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 16150,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hungrycheet4h@gmail.com",
+            "name": "schakravarthula0",
+            "username": "schakravarthula0"
+          },
+          "committer": {
+            "email": "hungrycheet4h@gmail.com",
+            "name": "schakravarthula0",
+            "username": "schakravarthula0"
+          },
+          "distinct": true,
+          "id": "8270690077b0ee66218fb7c58c72f10406e401b0",
+          "message": "feat: add new ExtlClntAppCanvasStngs to metadata registry",
+          "timestamp": "2025-06-10T00:40:01+05:30",
+          "tree_id": "6417e339ae1ec7144b51ca533eec3b7a4c5ab2d1",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/8270690077b0ee66218fb7c58c72f10406e401b0"
+        },
+        "date": 1749577935986,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 747,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4414,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3347,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 6878,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1436,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 9744,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 4771,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 8604,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 2353,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 15280,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 8865,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 15850,
             "unit": "ms"
           }
         ]

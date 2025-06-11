@@ -705,6 +705,7 @@ v65 introduces the following new types.  Here's their current level of support
 |:---|:---|:---|
 |ApiProtectionPolicy|❌|Not supported, but support could be added|
 |ApiProtectionRule|❌|Not supported, but support could be added|
+|ClaimCoverageProdtProcDef|❌|Not supported, but support could be added|
 |CommsUpsellSettings|✅||
 |ExtlClntAppCanvasStngs|✅||
 |IndustriesConnectedServiceSettings|✅||

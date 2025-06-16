@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as path from 'node:path';
+import { pipeline as nodePipeline, Readable } from 'node:stream';
+import { promisify } from 'node:util';
 import { assert, expect, config } from 'chai';
 import * as Sinon from 'sinon';
 import { Lifecycle } from '@salesforce/core';
@@ -18,6 +20,7 @@ import {
 } from '../../src/convert/replacements';
 import { matchingContentFile } from '../mock';
 import * as replacementsForMock from '../../src/convert/replacements';
+const pipeline = promisify(nodePipeline);
 
 config.truncateThreshold = 0;
 
@@ -377,9 +380,10 @@ describe('executes replacements on a string', () => {
   describe('warning when no replacement happened', () => {
     let warnSpy: Sinon.SinonSpy;
     let emitSpy: Sinon.SinonSpy;
+    const { ReplacementStream } = require('../../src/convert/replacements');
+    const matchedFilename = 'foo';
 
     beforeEach(() => {
-      // everything is an emit.  Warn calls emit, too.
       warnSpy = Sinon.spy(Lifecycle.getInstance(), 'emitWarning');
       emitSpy = Sinon.spy(Lifecycle.getInstance(), 'emit');
     });
@@ -387,31 +391,54 @@ describe('executes replacements on a string', () => {
       warnSpy.restore();
       emitSpy.restore();
     });
-    it('emits warning only when no change', async () => {
-      // Warnings are now emitted in the stream, not in replacementIterations
+
+    it('does not emit warning in replacementIterations (only in stream)', async () => {
       const result = await replacementIterations('ThisIsATest', [
         { toReplace: stringToRegex('Nope'), replaceWith: 'Nah', singleFile: true, matchedFilename },
       ]);
       expect(result.output).to.equal('ThisIsATest');
-      // No warning should be emitted here
       expect(warnSpy.callCount).to.equal(0);
       expect(emitSpy.callCount).to.equal(0);
     });
-    it('no warning when string is replaced', async () => {
-      const result = await replacementIterations('ThisIsATest', [
+
+    it('ReplacementStream emits warning only when no change in any chunk', async () => {
+      const stream = new ReplacementStream([
+        { toReplace: stringToRegex('Nope'), replaceWith: 'Nah', singleFile: true, matchedFilename },
+      ]);
+      await pipeline(Readable.from(['ThisIsATest']), stream);
+      expect(warnSpy.callCount).to.equal(1);
+    });
+
+    it('ReplacementStream does not emit warning when string is replaced in any chunk', async () => {
+      const stream = new ReplacementStream([
         { toReplace: stringToRegex('Test'), replaceWith: 'SpyTest', singleFile: true, matchedFilename },
       ]);
-      expect(result.output).to.equal('ThisIsASpyTest');
+      await pipeline(Readable.from(['ThisIsATest']), stream);
       expect(warnSpy.callCount).to.equal(0);
-      expect(emitSpy.callCount).to.equal(1);
     });
-    it('no warning when no replacement but not a single file (ex: glob)', async () => {
-      const result = await replacementIterations('ThisIsATest', [
+
+    it('ReplacementStream does not emit warning for non-singleFile replacements', async () => {
+      const stream = new ReplacementStream([
         { toReplace: stringToRegex('Nope'), replaceWith: 'Nah', singleFile: false, matchedFilename },
       ]);
-      expect(result.output).to.equal('ThisIsATest');
+      await pipeline(Readable.from(['ThisIsATest']), stream);
       expect(warnSpy.callCount).to.equal(0);
-      expect(emitSpy.callCount).to.equal(0);
+    });
+
+    it('ReplacementStream emits warning only once for multiple chunks with no match', async () => {
+      const stream = new ReplacementStream([
+        { toReplace: stringToRegex('Nope'), replaceWith: 'Nah', singleFile: true, matchedFilename },
+      ]);
+      await pipeline(Readable.from(['ThisIsA', 'Test']), stream);
+      expect(warnSpy.callCount).to.equal(1);
+    });
+
+    it('ReplacementStream does not emit warning if match is found in any chunk', async () => {
+      const stream = new ReplacementStream([
+        { toReplace: stringToRegex('Test'), replaceWith: 'SpyTest', singleFile: true, matchedFilename },
+      ]);
+      await pipeline(Readable.from(['ThisIsA', 'Test']), stream);
+      expect(warnSpy.callCount).to.equal(0);
     });
   });
 });

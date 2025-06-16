@@ -42,7 +42,7 @@ export const getReplacementStreamForReadable = (
  * A stream for replacing the contents of a single SourceComponent.
  * Tracks which replacements were found across all chunks and emits warnings only at the end.
  */
-class ReplacementStream extends Transform {
+export class ReplacementStream extends Transform {
   private readonly foundReplacements = new Set<string>();
   private readonly allReplacements: MarkedReplacement[];
   private readonly lifecycleInstance = Lifecycle.getInstance();

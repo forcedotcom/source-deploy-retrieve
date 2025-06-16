@@ -316,48 +316,60 @@ describe('executes replacements on a string', () => {
   describe('string', () => {
     it('basic replacement', async () => {
       expect(
-        await replacementIterations('ThisIsATest', [
-          { matchedFilename, toReplace: stringToRegex('This'), replaceWith: 'That', singleFile: true },
-        ])
+        (
+          await replacementIterations('ThisIsATest', [
+            { matchedFilename, toReplace: stringToRegex('This'), replaceWith: 'That', singleFile: true },
+          ])
+        ).output
       ).to.equal('ThatIsATest');
     });
     it('same replacement occuring multiple times', async () => {
       expect(
-        await replacementIterations('ThisIsATestWithThisAndThis', [
-          { matchedFilename, toReplace: stringToRegex('This'), replaceWith: 'That', singleFile: true },
-        ])
+        (
+          await replacementIterations('ThisIsATestWithThisAndThis', [
+            { matchedFilename, toReplace: stringToRegex('This'), replaceWith: 'That', singleFile: true },
+          ])
+        ).output
       ).to.equal('ThatIsATestWithThatAndThat');
     });
     it('multiple replacements', async () => {
       expect(
-        await replacementIterations('ThisIsATestWithThisAndThis', [
-          { matchedFilename, toReplace: stringToRegex('This'), replaceWith: 'That' },
-          { matchedFilename, toReplace: stringToRegex('ATest'), replaceWith: 'AnAwesomeTest' },
-        ])
+        (
+          await replacementIterations('ThisIsATestWithThisAndThis', [
+            { matchedFilename, toReplace: stringToRegex('This'), replaceWith: 'That' },
+            { matchedFilename, toReplace: stringToRegex('ATest'), replaceWith: 'AnAwesomeTest' },
+          ])
+        ).output
       ).to.equal('ThatIsAnAwesomeTestWithThatAndThat');
     });
   });
   describe('regex', () => {
     it('basic replacement', async () => {
       expect(
-        await replacementIterations('ThisIsATest', [
-          { toReplace: /Is/g, replaceWith: 'IsNot', singleFile: true, matchedFilename },
-        ])
+        (
+          await replacementIterations('ThisIsATest', [
+            { toReplace: /Is/g, replaceWith: 'IsNot', singleFile: true, matchedFilename },
+          ])
+        ).output
       ).to.equal('ThisIsNotATest');
     });
     it('same replacement occuring multiple times', async () => {
       expect(
-        await replacementIterations('ThisIsATestWithThisAndThis', [
-          { toReplace: /s/g, replaceWith: 'S', singleFile: true, matchedFilename },
-        ])
+        (
+          await replacementIterations('ThisIsATestWithThisAndThis', [
+            { toReplace: /s/g, replaceWith: 'S', singleFile: true, matchedFilename },
+          ])
+        ).output
       ).to.equal('ThiSISATeStWithThiSAndThiS');
     });
     it('multiple replacements', async () => {
       expect(
-        await replacementIterations('This Is A Test With This And This', [
-          { toReplace: /^T.{2}s/, replaceWith: 'That', singleFile: false, matchedFilename },
-          { toReplace: /T.{2}s$/, replaceWith: 'Stuff', singleFile: false, matchedFilename },
-        ])
+        (
+          await replacementIterations('This Is A Test With This And This', [
+            { toReplace: /^T.{2}s/, replaceWith: 'That', singleFile: false, matchedFilename },
+            { toReplace: /T.{2}s$/, replaceWith: 'Stuff', singleFile: false, matchedFilename },
+          ])
+        ).output
       ).to.equal('That Is A Test With This And Stuff');
     });
   });
@@ -376,24 +388,28 @@ describe('executes replacements on a string', () => {
       emitSpy.restore();
     });
     it('emits warning only when no change', async () => {
-      await replacementIterations('ThisIsATest', [
+      // Warnings are now emitted in the stream, not in replacementIterations
+      const result = await replacementIterations('ThisIsATest', [
         { toReplace: stringToRegex('Nope'), replaceWith: 'Nah', singleFile: true, matchedFilename },
       ]);
-      expect(warnSpy.callCount).to.equal(1);
-      expect(emitSpy.callCount).to.equal(1);
+      expect(result.output).to.equal('ThisIsATest');
+      // No warning should be emitted here
+      expect(warnSpy.callCount).to.equal(0);
+      expect(emitSpy.callCount).to.equal(0);
     });
     it('no warning when string is replaced', async () => {
-      await replacementIterations('ThisIsATest', [
+      const result = await replacementIterations('ThisIsATest', [
         { toReplace: stringToRegex('Test'), replaceWith: 'SpyTest', singleFile: true, matchedFilename },
       ]);
+      expect(result.output).to.equal('ThisIsASpyTest');
       expect(warnSpy.callCount).to.equal(0);
-      // because it emits the replacement event
       expect(emitSpy.callCount).to.equal(1);
     });
     it('no warning when no replacement but not a single file (ex: glob)', async () => {
-      await replacementIterations('ThisIsATest', [
+      const result = await replacementIterations('ThisIsATest', [
         { toReplace: stringToRegex('Nope'), replaceWith: 'Nah', singleFile: false, matchedFilename },
       ]);
+      expect(result.output).to.equal('ThisIsATest');
       expect(warnSpy.callCount).to.equal(0);
       expect(emitSpy.callCount).to.equal(0);
     });

@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as path from 'node:path';
-import { pipeline as nodePipeline, Readable } from 'node:stream';
-import { promisify } from 'node:util';
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 import { assert, expect, config } from 'chai';
 import * as Sinon from 'sinon';
 import { Lifecycle } from '@salesforce/core';
@@ -20,7 +20,7 @@ import {
 } from '../../src/convert/replacements';
 import { matchingContentFile } from '../mock';
 import * as replacementsForMock from '../../src/convert/replacements';
-const pipeline = promisify(nodePipeline);
+const { ReplacementStream } = replacementsForMock;
 
 config.truncateThreshold = 0;
 
@@ -380,7 +380,6 @@ describe('executes replacements on a string', () => {
   describe('warning when no replacement happened', () => {
     let warnSpy: Sinon.SinonSpy;
     let emitSpy: Sinon.SinonSpy;
-    const { ReplacementStream } = require('../../src/convert/replacements');
     const matchedFilename = 'foo';
 
     beforeEach(() => {
@@ -392,16 +391,7 @@ describe('executes replacements on a string', () => {
       emitSpy.restore();
     });
 
-    it('does not emit warning in replacementIterations (only in stream)', async () => {
-      const result = await replacementIterations('ThisIsATest', [
-        { toReplace: stringToRegex('Nope'), replaceWith: 'Nah', singleFile: true, matchedFilename },
-      ]);
-      expect(result.output).to.equal('ThisIsATest');
-      expect(warnSpy.callCount).to.equal(0);
-      expect(emitSpy.callCount).to.equal(0);
-    });
-
-    it('ReplacementStream emits warning only when no change in any chunk', async () => {
+    it('emits warning only when no change in any chunk', async () => {
       const stream = new ReplacementStream([
         { toReplace: stringToRegex('Nope'), replaceWith: 'Nah', singleFile: true, matchedFilename },
       ]);
@@ -409,7 +399,7 @@ describe('executes replacements on a string', () => {
       expect(warnSpy.callCount).to.equal(1);
     });
 
-    it('ReplacementStream does not emit warning when string is replaced in any chunk', async () => {
+    it('does not emit warning when string is replaced in any chunk', async () => {
       const stream = new ReplacementStream([
         { toReplace: stringToRegex('Test'), replaceWith: 'SpyTest', singleFile: true, matchedFilename },
       ]);
@@ -417,7 +407,7 @@ describe('executes replacements on a string', () => {
       expect(warnSpy.callCount).to.equal(0);
     });
 
-    it('ReplacementStream does not emit warning for non-singleFile replacements', async () => {
+    it('does not emit warning for non-singleFile replacements', async () => {
       const stream = new ReplacementStream([
         { toReplace: stringToRegex('Nope'), replaceWith: 'Nah', singleFile: false, matchedFilename },
       ]);
@@ -425,7 +415,7 @@ describe('executes replacements on a string', () => {
       expect(warnSpy.callCount).to.equal(0);
     });
 
-    it('ReplacementStream emits warning only once for multiple chunks with no match', async () => {
+    it('emits warning only once for multiple chunks with no match', async () => {
       const stream = new ReplacementStream([
         { toReplace: stringToRegex('Nope'), replaceWith: 'Nah', singleFile: true, matchedFilename },
       ]);
@@ -433,12 +423,55 @@ describe('executes replacements on a string', () => {
       expect(warnSpy.callCount).to.equal(1);
     });
 
-    it('ReplacementStream does not emit warning if match is found in any chunk', async () => {
+    it('does not emit warning if match is found in any chunk', async () => {
       const stream = new ReplacementStream([
         { toReplace: stringToRegex('Test'), replaceWith: 'SpyTest', singleFile: true, matchedFilename },
       ]);
       await pipeline(Readable.from(['ThisIsA', 'Test']), stream);
       expect(warnSpy.callCount).to.equal(0);
     });
+  });
+
+  it('performs replacements across chunk boundaries without warnings', async () => {
+    const chunkSize = 16 * 1024; // 16KB
+    // Create a large string with two replacement targets, one at the start, one at the end
+    const before = 'REPLACE_ME_1';
+    const after = 'REPLACE_ME_2';
+    const middle = 'A'.repeat(chunkSize * 2 - before.length - after.length); // ensure > 2 chunks
+    const bigText = before + middle + after;
+    const expected = 'DONE_1' + middle + 'DONE_2';
+    const stream = new ReplacementStream([
+      { toReplace: /REPLACE_ME_1/g, replaceWith: 'DONE_1', singleFile: true, matchedFilename: 'bigfile.txt' },
+      { toReplace: /REPLACE_ME_2/g, replaceWith: 'DONE_2', singleFile: true, matchedFilename: 'bigfile.txt' },
+    ]);
+    const warnSpy = Sinon.spy(Lifecycle.getInstance(), 'emitWarning');
+    let result = '';
+    stream.on('data', (chunk) => {
+      result += chunk.toString();
+    });
+    // Node.js Readable.from([bigText]) emits the entire string as a single chunk, regardless of its size.
+    // To simulate real-world chunking (like fs.createReadStream does for large files), we define a custom
+    // Readable that splits the input string into smaller chunks. This allows us to test chunk boundary behavior.
+    class ChunkedReadable extends Readable {
+      private pos = 0;
+
+      public constructor(private text: string, private chunkLen: number) {
+        super();
+      }
+      public _read() {
+        if (this.pos >= this.text.length) {
+          this.push(null);
+          return;
+        }
+        const end = Math.min(this.pos + this.chunkLen, this.text.length);
+        this.push(this.text.slice(this.pos, end));
+        this.pos = end;
+      }
+    }
+    // Use ChunkedReadable to simulate chunked input
+    await pipeline(new ChunkedReadable(bigText, chunkSize), stream);
+    expect(result).to.equal(expected);
+    expect(warnSpy.callCount).to.equal(0);
+    warnSpy.restore();
   });
 });

@@ -1,3 +1,11 @@
+## [12.19.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.10...12.19.11) (2025-06-16)
+
+
+### Bug Fixes
+
+* Add DataConnector to metadata registry - W-18734168 ([b3df800]([https://github.com/forcedotcom/source-deploy-retrieve/commit/7daea8acb9bc166a1fd62055142b54596b3df800]))
+
+
 ## [12.19.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.9...12.19.10) (2025-06-10)
 
 

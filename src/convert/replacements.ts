@@ -40,11 +40,16 @@ export const getReplacementStreamForReadable = (
 
 /**
  * A stream for replacing the contents of a single SourceComponent.
- *
+ * Tracks which replacements were found across all chunks and emits warnings only at the end.
  */
 class ReplacementStream extends Transform {
+  private readonly foundReplacements = new Set<string>();
+  private readonly allReplacements: MarkedReplacement[];
+  private readonly lifecycleInstance = Lifecycle.getInstance();
+
   public constructor(private readonly replacements: MarkedReplacement[]) {
     super({ objectMode: true });
+    this.allReplacements = replacements;
   }
 
   public async _transform(
@@ -53,42 +58,56 @@ class ReplacementStream extends Transform {
     callback: (error?: Error, data?: Buffer) => void
   ): Promise<void> {
     let error: Error | undefined;
-    // read and do the various replacements
-    callback(error, Buffer.from(await replacementIterations(chunk.toString(), this.replacements)));
+    const { output, found } = await replacementIterations(chunk.toString(), this.replacements);
+    for (const foundKey of found) {
+      this.foundReplacements.add(foundKey);
+    }
+    callback(error, Buffer.from(output));
+  }
+
+  public async _flush(callback: (error?: Error) => void): Promise<void> {
+    // At the end of the stream, emit warnings for replacements not found
+    for (const replacement of this.allReplacements) {
+      const key = replacement.toReplace.toString();
+      if (replacement.singleFile && !this.foundReplacements.has(key)) {
+        // eslint-disable-next-line no-await-in-loop
+        await this.lifecycleInstance.emitWarning(
+          `Your sfdx-project.json specifies that ${key} should be replaced in ${replacement.matchedFilename}, but it was not found.`
+        );
+      }
+    }
+    callback();
   }
 }
 
 /**
  * perform an array of replacements on a string
- * emits warnings when an expected replacement target isn't found
+ * returns both the replaced string and a Set of found replacements
  */
-export const replacementIterations = async (input: string, replacements: MarkedReplacement[]): Promise<string> => {
+export const replacementIterations = async (
+  input: string,
+  replacements: MarkedReplacement[]
+): Promise<{ output: string; found: Set<string> }> => {
   const lifecycleInstance = Lifecycle.getInstance();
   let output = input;
+  const found = new Set<string>();
   for (const replacement of replacements) {
-    // TODO: node 16+ has String.replaceAll for non-regex scenarios
     const regex =
       typeof replacement.toReplace === 'string' ? new RegExp(replacement.toReplace, 'g') : replacement.toReplace;
     const replaced = output.replace(regex, replacement.replaceWith ?? '');
 
     if (replaced !== output) {
       output = replaced;
+      found.add(replacement.toReplace.toString());
       // eslint-disable-next-line no-await-in-loop
       await lifecycleInstance.emit('replacement', {
         filename: replacement.matchedFilename,
         replaced: replacement.toReplace.toString(),
       } as ReplacementEvent);
-    } else if (replacement.singleFile) {
-      // replacements need to be done sequentially
-      // eslint-disable-next-line no-await-in-loop
-      await lifecycleInstance.emitWarning(
-        `Your sfdx-project.json specifies that ${replacement.toReplace.toString()} should be replaced in ${
-          replacement.matchedFilename
-        }, but it was not found.`
-      );
     }
+    // No warning here; warnings are handled in ReplacementStream._flush
   }
-  return output;
+  return { output, found };
 };
 
 /**

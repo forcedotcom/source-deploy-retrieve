@@ -1,9 +1,10 @@
-## [12.19.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.10...12.19.11) (2025-06-16)
+# [12.20.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.10...12.20.0) (2025-06-17)
 
 
-### Bug Fixes
+### Features
 
-* Add DataConnector to metadata registry - W-18734168 ([6b3df80]([https://github.com/forcedotcom/source-deploy-retrieve/commit/7daea8acb9bc166a1fd62055142b54596b3df800]))
+* add data connector to metadata registry - W-18773468 ([#1578](https://github.com/forcedotcom/source-deploy-retrieve/issues/1578)) ([4fc8ff0](https://github.com/forcedotcom/source-deploy-retrieve/commit/4fc8ff026190aabe55e911cf0c2eb07bde87dc96))
+
 
 
 ## [12.19.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.9...12.19.10) (2025-06-10)

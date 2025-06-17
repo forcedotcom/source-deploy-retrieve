@@ -1288,6 +1288,14 @@
     "metaFile": false,
     "hasChildren": false
   },
+  "DataConnector": {
+    "name": "DataConnector",
+    "directoryName": "dataconnectors",
+    "suffix": "dataconnector",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": true
+  },
   "DataCategoryGroup": {
     "name": "DataCategoryGroup",
     "directoryName": "datacategorygroups",

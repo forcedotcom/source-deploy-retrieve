@@ -197,7 +197,7 @@
     "dashboard": "dashboard",
     "dashboardFolder": "dashboardfolder",
     "dataCalcInsightTemplate": "datacalcinsighttemplate",
-    "dataConnector": "dataconnector",
+    "dataconnector": "dataconnector",
     "dataConnectorIngestApi": "dataconnectoringestapi",
     "dataKitObjectDependency": "datakitobjectdependency",
     "dataKitObjectTemplate": "datakitobjecttemplate",

@@ -197,6 +197,7 @@
     "dashboard": "dashboard",
     "dashboardFolder": "dashboardfolder",
     "dataCalcInsightTemplate": "datacalcinsighttemplate",
+    "dataconnector": "dataconnector",
     "dataConnectorIngestApi": "dataconnectoringestapi",
     "dataKitObjectDependency": "datakitobjectdependency",
     "dataKitObjectTemplate": "datakitobjecttemplate",
@@ -1719,6 +1720,14 @@
       "name": "DataCategoryGroup",
       "strictDirectoryName": false,
       "suffix": "datacategorygroup"
+    },
+    "dataconnector": {
+      "directoryName": "dataconnectors",
+      "id": "dataconnector",
+      "inFolder": false,
+      "name": "DataConnector",
+      "strictDirectoryName": false,
+      "suffix": "dataconnector"
     },
     "dataconnectoringestapi": {
       "directoryName": "dataConnectorIngestApis",

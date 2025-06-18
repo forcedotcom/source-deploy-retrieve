@@ -708,6 +708,7 @@ v65 introduces the following new types.  Here's their current level of support
 |ClaimCoverageProdtProcDef|❌|Not supported, but support could be added|
 |CommsUpsellSettings|✅||
 |ExtlClntAppCanvasStngs|✅||
+|GenOpPlanEligibilityConfig|❌|Not supported, but support could be added|
 |IndustriesConnectedServiceSettings|✅||
 |LightningOutApp|❌|Not supported, but support could be added|
 |PrmCoreSettings|✅||

@@ -198,7 +198,7 @@ export class SourceComponent implements MetadataComponent {
 
       const replacements = this.replacements?.[xml] ?? this.parent?.replacements?.[xml];
       return this.parseAndValidateXML<T>(
-        replacements ? await replacementIterations(contents, replacements) : contents,
+        replacements ? (await replacementIterations(contents, replacements)).output : contents,
         xml
       );
     }

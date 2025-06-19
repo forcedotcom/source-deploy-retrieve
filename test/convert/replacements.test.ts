@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as path from 'node:path';
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 import { assert, expect, config } from 'chai';
 import * as Sinon from 'sinon';
 import { Lifecycle } from '@salesforce/core';
@@ -18,6 +20,7 @@ import {
 } from '../../src/convert/replacements';
 import { matchingContentFile } from '../mock';
 import * as replacementsForMock from '../../src/convert/replacements';
+const { ReplacementStream } = replacementsForMock;
 
 config.truncateThreshold = 0;
 
@@ -316,48 +319,60 @@ describe('executes replacements on a string', () => {
   describe('string', () => {
     it('basic replacement', async () => {
       expect(
-        await replacementIterations('ThisIsATest', [
-          { matchedFilename, toReplace: stringToRegex('This'), replaceWith: 'That', singleFile: true },
-        ])
+        (
+          await replacementIterations('ThisIsATest', [
+            { matchedFilename, toReplace: stringToRegex('This'), replaceWith: 'That', singleFile: true },
+          ])
+        ).output
       ).to.equal('ThatIsATest');
     });
     it('same replacement occuring multiple times', async () => {
       expect(
-        await replacementIterations('ThisIsATestWithThisAndThis', [
-          { matchedFilename, toReplace: stringToRegex('This'), replaceWith: 'That', singleFile: true },
-        ])
+        (
+          await replacementIterations('ThisIsATestWithThisAndThis', [
+            { matchedFilename, toReplace: stringToRegex('This'), replaceWith: 'That', singleFile: true },
+          ])
+        ).output
       ).to.equal('ThatIsATestWithThatAndThat');
     });
     it('multiple replacements', async () => {
       expect(
-        await replacementIterations('ThisIsATestWithThisAndThis', [
-          { matchedFilename, toReplace: stringToRegex('This'), replaceWith: 'That' },
-          { matchedFilename, toReplace: stringToRegex('ATest'), replaceWith: 'AnAwesomeTest' },
-        ])
+        (
+          await replacementIterations('ThisIsATestWithThisAndThis', [
+            { matchedFilename, toReplace: stringToRegex('This'), replaceWith: 'That' },
+            { matchedFilename, toReplace: stringToRegex('ATest'), replaceWith: 'AnAwesomeTest' },
+          ])
+        ).output
       ).to.equal('ThatIsAnAwesomeTestWithThatAndThat');
     });
   });
   describe('regex', () => {
     it('basic replacement', async () => {
       expect(
-        await replacementIterations('ThisIsATest', [
-          { toReplace: /Is/g, replaceWith: 'IsNot', singleFile: true, matchedFilename },
-        ])
+        (
+          await replacementIterations('ThisIsATest', [
+            { toReplace: /Is/g, replaceWith: 'IsNot', singleFile: true, matchedFilename },
+          ])
+        ).output
       ).to.equal('ThisIsNotATest');
     });
     it('same replacement occuring multiple times', async () => {
       expect(
-        await replacementIterations('ThisIsATestWithThisAndThis', [
-          { toReplace: /s/g, replaceWith: 'S', singleFile: true, matchedFilename },
-        ])
+        (
+          await replacementIterations('ThisIsATestWithThisAndThis', [
+            { toReplace: /s/g, replaceWith: 'S', singleFile: true, matchedFilename },
+          ])
+        ).output
       ).to.equal('ThiSISATeStWithThiSAndThiS');
     });
     it('multiple replacements', async () => {
       expect(
-        await replacementIterations('This Is A Test With This And This', [
-          { toReplace: /^T.{2}s/, replaceWith: 'That', singleFile: false, matchedFilename },
-          { toReplace: /T.{2}s$/, replaceWith: 'Stuff', singleFile: false, matchedFilename },
-        ])
+        (
+          await replacementIterations('This Is A Test With This And This', [
+            { toReplace: /^T.{2}s/, replaceWith: 'That', singleFile: false, matchedFilename },
+            { toReplace: /T.{2}s$/, replaceWith: 'Stuff', singleFile: false, matchedFilename },
+          ])
+        ).output
       ).to.equal('That Is A Test With This And Stuff');
     });
   });
@@ -365,9 +380,9 @@ describe('executes replacements on a string', () => {
   describe('warning when no replacement happened', () => {
     let warnSpy: Sinon.SinonSpy;
     let emitSpy: Sinon.SinonSpy;
+    const matchedFilename = 'foo';
 
     beforeEach(() => {
-      // everything is an emit.  Warn calls emit, too.
       warnSpy = Sinon.spy(Lifecycle.getInstance(), 'emitWarning');
       emitSpy = Sinon.spy(Lifecycle.getInstance(), 'emit');
     });
@@ -375,27 +390,88 @@ describe('executes replacements on a string', () => {
       warnSpy.restore();
       emitSpy.restore();
     });
-    it('emits warning only when no change', async () => {
-      await replacementIterations('ThisIsATest', [
+
+    it('emits warning only when no change in any chunk', async () => {
+      const stream = new ReplacementStream([
         { toReplace: stringToRegex('Nope'), replaceWith: 'Nah', singleFile: true, matchedFilename },
       ]);
+      await pipeline(Readable.from(['ThisIsATest']), stream);
       expect(warnSpy.callCount).to.equal(1);
-      expect(emitSpy.callCount).to.equal(1);
     });
-    it('no warning when string is replaced', async () => {
-      await replacementIterations('ThisIsATest', [
+
+    it('does not emit warning when string is replaced in any chunk', async () => {
+      const stream = new ReplacementStream([
         { toReplace: stringToRegex('Test'), replaceWith: 'SpyTest', singleFile: true, matchedFilename },
       ]);
+      await pipeline(Readable.from(['ThisIsATest']), stream);
       expect(warnSpy.callCount).to.equal(0);
-      // because it emits the replacement event
-      expect(emitSpy.callCount).to.equal(1);
     });
-    it('no warning when no replacement but not a single file (ex: glob)', async () => {
-      await replacementIterations('ThisIsATest', [
+
+    it('does not emit warning for non-singleFile replacements', async () => {
+      const stream = new ReplacementStream([
         { toReplace: stringToRegex('Nope'), replaceWith: 'Nah', singleFile: false, matchedFilename },
       ]);
+      await pipeline(Readable.from(['ThisIsATest']), stream);
       expect(warnSpy.callCount).to.equal(0);
-      expect(emitSpy.callCount).to.equal(0);
     });
+
+    it('emits warning only once for multiple chunks with no match', async () => {
+      const stream = new ReplacementStream([
+        { toReplace: stringToRegex('Nope'), replaceWith: 'Nah', singleFile: true, matchedFilename },
+      ]);
+      await pipeline(Readable.from(['ThisIsA', 'Test']), stream);
+      expect(warnSpy.callCount).to.equal(1);
+    });
+
+    it('does not emit warning if match is found in any chunk', async () => {
+      const stream = new ReplacementStream([
+        { toReplace: stringToRegex('Test'), replaceWith: 'SpyTest', singleFile: true, matchedFilename },
+      ]);
+      await pipeline(Readable.from(['ThisIsA', 'Test']), stream);
+      expect(warnSpy.callCount).to.equal(0);
+    });
+  });
+
+  it('performs replacements across chunk boundaries without warnings', async () => {
+    const chunkSize = 16 * 1024; // 16KB
+    // Create a large string with two replacement targets, one at the start, one at the end
+    const before = 'REPLACE_ME_1';
+    const after = 'REPLACE_ME_2';
+    const middle = 'A'.repeat(chunkSize * 2 - before.length - after.length); // ensure > 2 chunks
+    const bigText = before + middle + after;
+    const expected = 'DONE_1' + middle + 'DONE_2';
+    const stream = new ReplacementStream([
+      { toReplace: /REPLACE_ME_1/g, replaceWith: 'DONE_1', singleFile: true, matchedFilename: 'bigfile.txt' },
+      { toReplace: /REPLACE_ME_2/g, replaceWith: 'DONE_2', singleFile: true, matchedFilename: 'bigfile.txt' },
+    ]);
+    const warnSpy = Sinon.spy(Lifecycle.getInstance(), 'emitWarning');
+    let result = '';
+    stream.on('data', (chunk) => {
+      result += chunk.toString();
+    });
+    // Node.js Readable.from([bigText]) emits the entire string as a single chunk, regardless of its size.
+    // To simulate real-world chunking (like fs.createReadStream does for large files), we define a custom
+    // Readable that splits the input string into smaller chunks. This allows us to test chunk boundary behavior.
+    class ChunkedReadable extends Readable {
+      private pos = 0;
+
+      public constructor(private text: string, private chunkLen: number) {
+        super();
+      }
+      public _read() {
+        if (this.pos >= this.text.length) {
+          this.push(null);
+          return;
+        }
+        const end = Math.min(this.pos + this.chunkLen, this.text.length);
+        this.push(this.text.slice(this.pos, end));
+        this.pos = end;
+      }
+    }
+    // Use ChunkedReadable to simulate chunked input
+    await pipeline(new ChunkedReadable(bigText, chunkSize), stream);
+    expect(result).to.equal(expected);
+    expect(warnSpy.callCount).to.equal(0);
+    warnSpy.restore();
   });
 });

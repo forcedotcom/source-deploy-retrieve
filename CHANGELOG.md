@@ -1,3 +1,12 @@
+## [12.20.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.20.0...12.20.1) (2025-06-19)
+
+
+### Bug Fixes
+
+* track string replacements W-18794860 ([#1577](https://github.com/forcedotcom/source-deploy-retrieve/issues/1577)) ([7a65b44](https://github.com/forcedotcom/source-deploy-retrieve/commit/7a65b4497637b0e9b3ebfae9aa50f894bb21a4e7))
+
+
+
 # [12.20.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.19.10...12.20.0) (2025-06-17)
 
 

@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1750176534111,
+  "lastUpdate": 1750435097308,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -76423,6 +76423,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 16447,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "48102088+itsganeshbabu@users.noreply.github.com",
+            "name": "itsganeshbabu",
+            "username": "itsganeshbabu"
+          },
+          "committer": {
+            "email": "48102088+itsganeshbabu@users.noreply.github.com",
+            "name": "itsganeshbabu",
+            "username": "itsganeshbabu"
+          },
+          "distinct": true,
+          "id": "b684e89bf34870e8a7b9402c49f237b52176eb69",
+          "message": "feat : Adding ObjIntegProviderDefMapping to metadataRegistry",
+          "timestamp": "2025-06-20T10:06:06Z",
+          "tree_id": "ca4fa6c45f119e58f0d5772737be88e83f95f563",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/b684e89bf34870e8a7b9402c49f237b52176eb69"
+        },
+        "date": 1750435082629,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 626,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4026,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 2977,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 6066,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1320,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 8792,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 4839,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 8660,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 2369,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 15360,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 8931,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 15759,
             "unit": "ms"
           }
         ]

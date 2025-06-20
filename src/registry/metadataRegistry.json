@@ -379,6 +379,7 @@
     "oauthtokenexchangehandler": "oauthtokenexchangehandler",
     "object": "customobject",
     "objectSourceTargetMap": "objectsourcetargetmap",
+    "objIntegProviderDefMapping": "objintegproviderdefmapping",
     "objectTranslation": "customobjecttranslation",
     "ocrSampleDocument": "ocrsampledocument",
     "ocrTemplate": "ocrtemplate",
@@ -3398,6 +3399,13 @@
       "name": "ObjectSourceTargetMap",
       "strictDirectoryName": false,
       "suffix": "objectSourceTargetMap"
+    },
+    "objintegproviderdefmapping": {
+      "directoryName": "objIntegProviderDefMappings",
+      "id": "objintegproviderdefmapping",
+      "name": "ObjIntegProviderDefMapping",
+      "strictDirectoryName": false,
+      "suffix": "objIntegProviderDefMapping"
     },
     "ocrsampledocument": {
       "directoryName": "ocrSampleDocuments",

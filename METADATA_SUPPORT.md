@@ -472,7 +472,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |OauthCustomScope|✅||
 |OauthOidcSettings|✅||
 |OauthTokenExchangeHandler|✅||
-|ObjIntegProviderDefMapping|❌|Not supported, but support could be added|
+|ObjIntegProviderDefMapping|✅||
 |ObjectHierarchyRelationship|✅||
 |ObjectLinkingSettings|✅||
 |ObjectSourceTargetMap|✅||

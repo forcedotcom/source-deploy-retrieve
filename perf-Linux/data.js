@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1750176298667,
+  "lastUpdate": 1750434842439,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -81695,6 +81695,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 7752,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "48102088+itsganeshbabu@users.noreply.github.com",
+            "name": "itsganeshbabu",
+            "username": "itsganeshbabu"
+          },
+          "committer": {
+            "email": "48102088+itsganeshbabu@users.noreply.github.com",
+            "name": "itsganeshbabu",
+            "username": "itsganeshbabu"
+          },
+          "distinct": true,
+          "id": "b684e89bf34870e8a7b9402c49f237b52176eb69",
+          "message": "feat : Adding ObjIntegProviderDefMapping to metadataRegistry",
+          "timestamp": "2025-06-20T10:06:06Z",
+          "tree_id": "ca4fa6c45f119e58f0d5772737be88e83f95f563",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/b684e89bf34870e8a7b9402c49f237b52176eb69"
+        },
+        "date": 1750434834726,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 231,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2220,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 1825,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 3135,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 491,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 4532,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 2990,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 4229,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 826,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 7605,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 5122,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 7519,
             "unit": "ms"
           }
         ]

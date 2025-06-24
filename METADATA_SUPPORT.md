@@ -709,6 +709,8 @@ v65 introduces the following new types.  Here's their current level of support
 |ApiProtectionRule|❌|Not supported, but support could be added|
 |ClaimCoverageProdtProcDef|❌|Not supported, but support could be added|
 |CommsUpsellSettings|✅||
+|CommunicationChannelLine|❌|Not supported, but support could be added|
+|ContextMappingConfig|❌|Not supported, but support could be added|
 |ExtlClntAppCanvasStngs|✅||
 |GenOpPlanEligibilityConfig|❌|Not supported, but support could be added|
 |IndustriesConnectedServiceSettings|✅||

@@ -1,3 +1,12 @@
+# [12.21.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.20.1...12.21.0) (2025-06-30)
+
+
+### Features
+
+* add ApiNamedQuery to metadataRegistry ([#1580](https://github.com/forcedotcom/source-deploy-retrieve/issues/1580)) ([f9de27e](https://github.com/forcedotcom/source-deploy-retrieve/commit/f9de27e0143dd3c740441d20ce69c4ee6ce22ce9))
+
+
+
 ## [12.20.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.20.0...12.20.1) (2025-06-19)
 
 

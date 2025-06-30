@@ -546,7 +546,8 @@
     "fieldServiceMobileConfig": "fieldservicemobileconfig",
     "dgtAssetMgmtProvider": "dgtassetmgmtprovider",
     "dgtAssetMgmtPrvdLghtCpnt": "dgtassetmgmtprvdlghtcpnt",
-    "ecaCanvas": "extlclntappcanvasstngs"
+    "ecaCanvas": "extlclntappcanvasstngs",
+    "apiNamedQuery": "apinamedquery"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4867,6 +4868,14 @@
       "name": "ExtlClntAppCanvasStngs",
       "suffix": "ecaCanvas",
       "directoryName": "extlClntAppCanvasStngs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "apinamedquery": {
+      "id": "apinamedquery",
+      "name": "ApiNamedQuery",
+      "suffix": "apiNamedQuery",
+      "directoryName": "apiNamedQueries",
       "inFolder": false,
       "strictDirectoryName": false
     }

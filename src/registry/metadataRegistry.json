@@ -547,7 +547,8 @@
     "dgtAssetMgmtProvider": "dgtassetmgmtprovider",
     "dgtAssetMgmtPrvdLghtCpnt": "dgtassetmgmtprvdlghtcpnt",
     "ecaCanvas": "extlclntappcanvasstngs",
-    "apiNamedQuery": "apinamedquery"
+    "apiNamedQuery": "apinamedquery",
+    "ExternalStoragePrvdConfigSet": "externalstorageprvdconfig"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4876,6 +4877,14 @@
       "name": "ApiNamedQuery",
       "suffix": "apiNamedQuery",
       "directoryName": "apiNamedQueries",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "externalstorageprvdconfig": {
+      "id": "externalstorageprvdconfig",
+      "name": "ExternalStoragePrvdConfig",
+      "suffix": "ExternalStoragePrvdConfigSet",
+      "directoryName": "ExternalStoragePrvdConfig",
       "inFolder": false,
       "strictDirectoryName": false
     }

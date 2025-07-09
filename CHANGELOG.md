@@ -1,3 +1,12 @@
+## [12.21.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.21.0...12.21.1) (2025-07-09)
+
+
+### Bug Fixes
+
+* add externalstorageprvdconfig to metadata registry ([#1581](https://github.com/forcedotcom/source-deploy-retrieve/issues/1581)) ([ab25cf1](https://github.com/forcedotcom/source-deploy-retrieve/commit/ab25cf14bab0de27ce9659438bd23e28b6b803a8))
+
+
+
 # [12.21.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.20.1...12.21.0) (2025-06-30)
 
 

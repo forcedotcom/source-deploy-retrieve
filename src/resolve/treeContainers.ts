@@ -199,7 +199,7 @@ export class ZipTreeContainer extends TreeContainer {
     if (fsPath === '.') {
       return fsPath;
     }
-    const posixPath = node_path_1.posix.normalize(fsPath.replace(/\\/g, '/'));
+    const posixPath = posix.normalize(fsPath.replace(/\\/g, '/'));
     return Object.prototype.hasOwnProperty.call(this.zip.files, posixPath) 
       ? posixPath 
       : undefined;

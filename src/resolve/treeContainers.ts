@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 /* eslint-disable class-methods-use-this */
-import { join, dirname, basename, normalize, sep, posix } from 'node:path';
+import { join, dirname, basename, sep, posix } from 'node:path';
 import { Readable } from 'node:stream';
 import { statSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
 import JSZip from 'jszip';

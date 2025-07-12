@@ -207,7 +207,7 @@ export class ZipTreeContainer extends TreeContainer {
     if (fsPath === '.') {
       return fsPath;
     }
-    return this.zipKeyMap.get(posix.normalize(fsPath.replace(/\\/g, '/')));
+    return this.zipKeyMap.get(posix.normalize(fsPath.replaceAll('\\', '/')));
   }
 
   private ensureDirectory(dirPath: string): boolean {

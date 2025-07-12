@@ -126,10 +126,18 @@ export class NodeFSTreeContainer extends TreeContainer {
  */
 export class ZipTreeContainer extends TreeContainer {
   private zip: JSZip;
+  private zipKeyMap: Map<string, string> = new Map<string, string>();
 
   private constructor(zip: JSZip) {
     super();
     this.zip = zip;
+    for (const key of Object.keys(this.zip.files)) {
+      if (key.endsWith('/')) {
+        this.zipKeyMap.set(key.slice(0, -1), key);
+      } else {
+        this.zipKeyMap.set(key, key);
+      }
+    }
   }
 
   public static async create(buffer: Buffer): Promise<ZipTreeContainer> {
@@ -191,7 +199,7 @@ export class ZipTreeContainer extends TreeContainer {
     throw new SfError(messages.getMessage('error_expected_file_path', [fsPath]), 'LibraryError');
   }
 
-  // Finds a matching entry in the zip.
+  // Finds a matching entry in the map of zip keys (that have trailing /'s removed).
   // Note that zip files always use forward slash separators, so the provided path
   // is converted to use posix forward slash separators before comparing.
   private match(fsPath: string): string | undefined {
@@ -199,10 +207,7 @@ export class ZipTreeContainer extends TreeContainer {
     if (fsPath === '.') {
       return fsPath;
     }
-    const posixPath = posix.normalize(fsPath.replace(/\\/g, '/'));
-    return Object.prototype.hasOwnProperty.call(this.zip.files, posixPath) 
-      ? posixPath 
-      : undefined;
+    return this.zipKeyMap.get(posix.normalize(fsPath.replace(/\\/g, '/')));
   }
 
   private ensureDirectory(dirPath: string): boolean {

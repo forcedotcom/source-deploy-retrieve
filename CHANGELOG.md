@@ -1,3 +1,12 @@
+## [12.21.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.21.1...12.21.2) (2025-07-14)
+
+
+### Bug Fixes
+
+* for W-19029417 - fix finalzing MDAPI state ([#1585](https://github.com/forcedotcom/source-deploy-retrieve/issues/1585)) ([66d6cf0](https://github.com/forcedotcom/source-deploy-retrieve/commit/66d6cf0ec2b9243d2be55acdac68e84198fc48b3))
+
+
+
 ## [12.21.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.21.0...12.21.1) (2025-07-09)
 
 

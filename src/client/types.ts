@@ -86,6 +86,7 @@ export enum RequestStatus {
   Failed = 'Failed',
   Canceling = 'Canceling',
   Canceled = 'Canceled',
+  Finalizing = 'Finalizing',
 }
 
 export type MetadataRequestStatus = {

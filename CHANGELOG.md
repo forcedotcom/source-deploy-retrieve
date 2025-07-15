@@ -1,3 +1,12 @@
+## [12.21.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.21.2...12.21.3) (2025-07-15)
+
+
+### Bug Fixes
+
+* **deps:** bump braces from 3.0.2 to 3.0.3 ([#1587](https://github.com/forcedotcom/source-deploy-retrieve/issues/1587)) ([3b5cf33](https://github.com/forcedotcom/source-deploy-retrieve/commit/3b5cf3303400259b494fcf45294d3921eb678761))
+
+
+
 ## [12.21.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.21.1...12.21.2) (2025-07-14)
 
 

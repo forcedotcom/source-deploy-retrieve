@@ -20,11 +20,11 @@
     "matchingrule": "matchingrules",
     "mktdatatranfield": "mktdatatranobject",
     "recordtype": "customobject",
-    "sharingcriteriarule": "sharingrules",
-    "sharingguestrule": "sharingrules",
-    "sharingownerrule": "sharingrules",
+    "sharingcriteriarule": "sharingrule",
+    "sharingguestrule": "sharingrule",
+    "sharingownerrule": "sharingrule",
     "sharingreason": "customobject",
-    "sharingterritoryrule": "sharingrules",
+    "sharingterritoryrule": "sharingrule",
     "validationrule": "customobject",
     "weblink": "customobject",
     "workflowalert": "workflow",
@@ -460,7 +460,7 @@
     "sharingCriteriaRule": "sharingcriteriarule",
     "sharingGuestRule": "sharingguestrule",
     "sharingOwnerRule": "sharingownerrule",
-    "sharingRules": "sharingrules",
+    "sharingRule": "sharingrule",
     "sharingSet": "sharingset",
     "sharingTerritoryRule": "sharingterritoryrule",
     "site": "sitedotcom",
@@ -4052,13 +4052,13 @@
       "strictDirectoryName": false,
       "suffix": "settings"
     },
-    "sharingrules": {
+    "sharingrule": {
       "children": {
         "directories": {
-          "sharingCriteriaRules": "sharingRules",
-          "sharingGuestRules": "sharingRules",
-          "sharingOwnerRules": "sharingRules",
-          "sharingTerritoryRules": "sharingRules"
+          "sharingCriteriaRules": "sharingRule",
+          "sharingGuestRules": "sharingRule",
+          "sharingOwnerRules": "sharingRule",
+          "sharingTerritoryRules": "sharingRule"
         },
         "suffixes": {
           "sharingCriteriaRule": "sharingcriteriarule",
@@ -4068,7 +4068,7 @@
         },
         "types": {
           "sharingcriteriarule": {
-            "directoryName": "sharingRules",
+            "directoryName": "sharingRule",
             "id": "sharingcriteriarule",
             "name": "SharingCriteriaRule",
             "suffix": "sharingCriteriaRule",
@@ -4076,7 +4076,7 @@
             "xmlElementName": "sharingCriteriaRules"
           },
           "sharingguestrule": {
-            "directoryName": "sharingRules",
+            "directoryName": "sharingRule",
             "id": "sharingguestrule",
             "name": "SharingGuestRule",
             "suffix": "sharingGuestRule",
@@ -4084,7 +4084,7 @@
             "xmlElementName": "sharingGuestRules"
           },
           "sharingownerrule": {
-            "directoryName": "sharingRules",
+            "directoryName": "sharingRule",
             "id": "sharingownerrule",
             "name": "SharingOwnerRule",
             "suffix": "sharingOwnerRule",
@@ -4092,7 +4092,7 @@
             "xmlElementName": "sharingOwnerRules"
           },
           "sharingterritoryrule": {
-            "directoryName": "sharingRules",
+            "directoryName": "sharingRule",
             "id": "sharingterritoryrule",
             "name": "SharingTerritoryRule",
             "suffix": "sharingTerritoryRule",
@@ -4101,12 +4101,12 @@
           }
         }
       },
-      "directoryName": "sharingRules",
-      "id": "sharingrules",
+      "directoryName": "sharingRule",
+      "id": "sharingrule",
       "inFolder": false,
-      "name": "SharingRules",
+      "name": "SharingRule",
       "strictDirectoryName": false,
-      "suffix": "sharingRules",
+      "suffix": "sharingRule",
       "supportsWildcardAndName": true
     },
     "sharingset": {

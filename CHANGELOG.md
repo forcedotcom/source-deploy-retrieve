@@ -1,3 +1,12 @@
+## [12.21.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.21.3...12.21.4) (2025-07-15)
+
+
+### Bug Fixes
+
+* **deps:** bump tough-cookie from 4.1.2 to 5.1.2 ([#1586](https://github.com/forcedotcom/source-deploy-retrieve/issues/1586)) ([d603807](https://github.com/forcedotcom/source-deploy-retrieve/commit/d603807273b466b90f24da8e8eb33ca3c34c18c2))
+
+
+
 ## [12.21.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.21.2...12.21.3) (2025-07-15)
 
 

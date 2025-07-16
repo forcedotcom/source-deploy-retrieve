@@ -549,7 +549,7 @@
     "ecaCanvas": "extlclntappcanvasstngs",
     "apiNamedQuery": "apinamedquery",
     "ExternalStoragePrvdConfigSet": "externalstorageprvdconfig",
-    "ruleLibraryDefinition": "rulelibrarydefinition"
+    "ruleLibraryDefinition":  "rulelibrarydefinition"
   },
   "types": {
     "accesscontrolpolicy": {

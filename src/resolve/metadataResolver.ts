@@ -88,6 +88,11 @@ export class MetadataResolver {
 
       if (this.tree.isDirectory(fsPath)) {
         if (resolveDirectoryAsComponent(this.registry)(this.tree)(fsPath)) {
+          // Filter out empty directories to prevent deployment issues
+          if (this.tree.readDirectory(fsPath).length === 0) {
+            continue;
+          }
+
           const component = this.resolveComponent(fsPath, true);
           if (component && (!inclusiveFilter || inclusiveFilter.has(component))) {
             components.push(component);

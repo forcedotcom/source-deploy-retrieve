@@ -979,5 +979,47 @@ describe('MetadataResolver', () => {
         expect(result).to.deep.equal([]);
       });
     });
+
+    it('should filter out empty directories when resolving components', () => {
+      const resolver = testUtil.createMetadataResolver([
+        {
+          dirPath: 'lwc',
+          children: ['myComponent', 'emptyComponent'],
+        },
+        {
+          dirPath: 'lwc/myComponent',
+          children: ['myComponent.js', 'myComponent.js-meta.xml'],
+        },
+        {
+          dirPath: 'lwc/emptyComponent',
+          children: [], // Empty directory
+        },
+      ]);
+
+      const expectedComponent = new SourceComponent({
+        name: 'myComponent',
+        type: registry.types.lightningcomponentbundle,
+        content: 'lwc/myComponent',
+        xml: 'lwc/myComponent/myComponent.js-meta.xml',
+      });
+
+      testUtil.stubAdapters([
+        {
+          type: registry.types.lightningcomponentbundle,
+          componentMappings: [
+            {
+              path: 'lwc/myComponent',
+              component: expectedComponent,
+            },
+          ],
+        },
+      ]);
+
+      const components = resolver.getComponentsFromPath('lwc');
+
+      // Should only return the non-empty component
+      expect(components).to.have.length(1);
+      expect(components[0].name).to.equal('myComponent');
+    });
   });
 });

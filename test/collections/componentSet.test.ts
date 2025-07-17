@@ -220,7 +220,7 @@ describe('ComponentSet', () => {
 
         let preAndPostRetrieveEventCount = 0;
         lifecycleEmitStub.args.forEach((event) => {
-          if (event[0] === ('scopedPreRetrieve' || 'scopedPostRetrieve')) {
+          if (event[0] === 'scopedPreRetrieve' || event[0] === 'scopedPostRetrieve') {
             preAndPostRetrieveEventCount = preAndPostRetrieveEventCount + 1;
           }
         });

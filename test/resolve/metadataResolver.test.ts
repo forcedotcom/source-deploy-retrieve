@@ -983,39 +983,32 @@ describe('MetadataResolver', () => {
     it('should filter out empty directories when resolving components', () => {
       const resolver = testUtil.createMetadataResolver([
         {
-          dirPath: 'lwc',
+          dirPath: bundle.TYPE_DIRECTORY,
           children: ['myComponent', 'emptyComponent'],
         },
         {
-          dirPath: 'lwc/myComponent',
-          children: ['myComponent.js', 'myComponent.js-meta.xml'],
+          dirPath: bundle.CONTENT_PATH,
+          children: [bundle.XML_NAME, ...bundle.COMPONENTS],
         },
         {
-          dirPath: 'lwc/emptyComponent',
+          dirPath: join(bundle.TYPE_DIRECTORY, 'emptyComponent'),
           children: [], // Empty directory
         },
       ]);
 
-      const expectedComponent = new SourceComponent({
-        name: 'myComponent',
-        type: registry.types.lightningcomponentbundle,
-        content: 'lwc/myComponent',
-        xml: 'lwc/myComponent/myComponent.js-meta.xml',
-      });
-
       testUtil.stubAdapters([
         {
-          type: registry.types.lightningcomponentbundle,
+          type: registry.types.auradefinitionbundle,
           componentMappings: [
             {
-              path: 'lwc/myComponent',
-              component: expectedComponent,
+              path: bundle.CONTENT_PATH,
+              component: bundle.COMPONENT,
             },
           ],
         },
       ]);
 
-      const components = resolver.getComponentsFromPath('lwc');
+      const components = resolver.getComponentsFromPath(bundle.TYPE_DIRECTORY);
 
       // Should only return the non-empty component
       expect(components).to.have.length(1);

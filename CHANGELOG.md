@@ -1,3 +1,12 @@
+## [12.21.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.21.4...12.21.5) (2025-07-18)
+
+
+### Bug Fixes
+
+* W-18991079 - filter out empty dirs when resolving components from path ([#1589](https://github.com/forcedotcom/source-deploy-retrieve/issues/1589)) ([25899bd](https://github.com/forcedotcom/source-deploy-retrieve/commit/25899bde11907509393030892ab83e68e38f18ca))
+
+
+
 ## [12.21.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.21.3...12.21.4) (2025-07-15)
 
 

@@ -979,5 +979,40 @@ describe('MetadataResolver', () => {
         expect(result).to.deep.equal([]);
       });
     });
+
+    it('should filter out empty directories when resolving components', () => {
+      const resolver = testUtil.createMetadataResolver([
+        {
+          dirPath: bundle.TYPE_DIRECTORY,
+          children: ['myComponent', 'emptyComponent'],
+        },
+        {
+          dirPath: bundle.CONTENT_PATH,
+          children: [bundle.XML_NAME, ...bundle.COMPONENTS],
+        },
+        {
+          dirPath: join(bundle.TYPE_DIRECTORY, 'emptyComponent'),
+          children: [], // Empty directory
+        },
+      ]);
+
+      testUtil.stubAdapters([
+        {
+          type: registry.types.auradefinitionbundle,
+          componentMappings: [
+            {
+              path: bundle.CONTENT_PATH,
+              component: bundle.COMPONENT,
+            },
+          ],
+        },
+      ]);
+
+      const components = resolver.getComponentsFromPath(bundle.TYPE_DIRECTORY);
+
+      // Should only return the non-empty component
+      expect(components).to.have.length(1);
+      expect(components[0].name).to.equal('myComponent');
+    });
   });
 });

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 /* eslint-disable class-methods-use-this */
-import { join, dirname, basename, normalize, sep } from 'node:path';
+import { join, dirname, basename, sep, posix } from 'node:path';
 import { Readable } from 'node:stream';
 import { statSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
 import JSZip from 'jszip';
@@ -126,10 +126,18 @@ export class NodeFSTreeContainer extends TreeContainer {
  */
 export class ZipTreeContainer extends TreeContainer {
   private zip: JSZip;
+  private zipKeyMap: Map<string, string> = new Map<string, string>();
 
   private constructor(zip: JSZip) {
     super();
     this.zip = zip;
+    for (const key of Object.keys(this.zip.files)) {
+      if (key.endsWith('/')) {
+        this.zipKeyMap.set(key.slice(0, -1), key);
+      } else {
+        this.zipKeyMap.set(key, key);
+      }
+    }
   }
 
   public static async create(buffer: Buffer): Promise<ZipTreeContainer> {
@@ -191,23 +199,15 @@ export class ZipTreeContainer extends TreeContainer {
     throw new SfError(messages.getMessage('error_expected_file_path', [fsPath]), 'LibraryError');
   }
 
-  // Finds a matching entry in the zip by first comparing basenames, then dirnames.
-  // Note that zip files always use forward slash separators, so paths within the
-  // zip files are normalized for the OS file system before comparing.
+  // Finds a matching entry in the map of zip keys (that have trailing /'s removed).
+  // Note that zip files always use forward slash separators, so the provided path
+  // is converted to use posix forward slash separators before comparing.
   private match(fsPath: string): string | undefined {
     // "dot" has a special meaning as a directory name and always matches. Just return it.
     if (fsPath === '.') {
       return fsPath;
     }
-
-    const fsPathBasename = basename(fsPath);
-    const fsPathDirname = dirname(fsPath);
-    return Object.keys(this.zip.files).find((filePath) => {
-      const normFilePath = normalize(filePath);
-      if (basename(normFilePath) === fsPathBasename) {
-        return dirname(normFilePath) === fsPathDirname;
-      }
-    });
+    return this.zipKeyMap.get(posix.normalize(fsPath.replaceAll('\\', '/')));
   }
 
   private ensureDirectory(dirPath: string): boolean {

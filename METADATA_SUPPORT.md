@@ -117,6 +117,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CareSystemFieldMapping|✅||
 |CaseSettings|✅||
 |CaseSubjectParticle|✅||
+|CatalogedApi|✅||
+|CatalogedApiVersion|✅||
+|CatalogedApiArtfctVerInfo|✅||
 |Certificate|✅||
 |ChannelLayout|✅||
 |ChannelObjectLinkingRule|✅||

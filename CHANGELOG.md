@@ -1,3 +1,12 @@
+## [12.21.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.21.5...12.21.6) (2025-07-22)
+
+
+### Bug Fixes
+
+* **deps:** bump form-data from 4.0.0 to 4.0.4 ([#1592](https://github.com/forcedotcom/source-deploy-retrieve/issues/1592)) ([461fcbf](https://github.com/forcedotcom/source-deploy-retrieve/commit/461fcbf63baf6c01b705da4bf8ef4fa98b4bd646))
+
+
+
 ## [12.21.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.21.4...12.21.5) (2025-07-18)
 
 

@@ -246,7 +246,9 @@ export abstract class MetadataTransfer<
         mdapiStatus = await this.checkStatus();
         completed = mdapiStatus?.done;
         if (!completed) {
+          this.logger.debug('emitting update event');
           this.event.emit('update', mdapiStatus);
+          this.logger.debug('emited update event successfully');
         }
       } catch (e) {
         this.logger.error(e);

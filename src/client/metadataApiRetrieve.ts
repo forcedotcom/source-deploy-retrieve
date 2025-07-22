@@ -141,10 +141,17 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       throw new SfError(messages.getMessage('error_no_job_id', ['retrieve']), 'MissingJobIdError');
     }
 
+    this.logger.debug('getting connection instance');
     const connection = await this.getConnection();
 
     // Cast RetrieveResult returned by jsForce to MetadataApiRetrieveStatus
+    this.logger.debug('calling metadata.checkRetrieveStatus');
     const status = (await connection.metadata.checkRetrieveStatus(this.id)) as MetadataApiRetrieveStatus;
+    this.logger.debug('successfully called metadata.checkRetrieveStatus');
+
+    this.logger.debug(`status.status: ${status.status}`);
+    this.logger.debug(`status.done: ${status.done}`);
+    this.logger.debug(`status.success: ${status.success}`);
 
     return {
       ...status,
@@ -245,7 +252,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       apiVersion: this.components?.sourceApiVersion ?? (await connection.retrieveMaxApiVersion()),
       ...(manifestData ? { unpackaged: manifestData } : {}),
       ...(this.options.singlePackage ? { singlePackage: this.options.singlePackage } : {}),
-      ...(this.options.rootTypesWithDependencies ? { rootTypesWithDependencies: this.options.rootTypesWithDependencies } : {}),
+      ...(this.options.rootTypesWithDependencies
+        ? { rootTypesWithDependencies: this.options.rootTypesWithDependencies }
+        : {}),
       // if we're retrieving with packageNames add it
       // otherwise don't - it causes errors if undefined or an empty array
       ...(packageNames.length ? { packageNames } : {}),

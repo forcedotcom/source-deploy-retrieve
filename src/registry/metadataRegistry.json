@@ -164,6 +164,9 @@
     "careProviderSearchConfig": "careprovidersearchconfig",
     "careRequestConfiguration": "carerequestconfiguration",
     "careSystemFieldMapping": "caresystemfieldmapping",
+    "catalogedApi": "catalogedapi",
+    "catalogedApiVersion": "catalogedapiversion",
+    "catalogedApiArtfctVerInfo": "catalogedapiartfctverinfo",
     "catalogFilterCondition": "svccatalogfiltercondition",
     "catalogFilterCriteria": "svccatalogfiltercriteria",
     "catalogItem": "svccatalogitemdef",
@@ -4885,6 +4888,30 @@
       "name": "ExternalStoragePrvdConfig",
       "suffix": "ExternalStoragePrvdConfigSet",
       "directoryName": "ExternalStoragePrvdConfig",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "catalogedapi": {
+      "id": "catalogedapi",
+      "name": "CatalogedApi",
+      "suffix": "catalogedApi",
+      "directoryName": "catalogedApis",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "catalogedapiversion": {
+      "id": "catalogedapiversion",
+      "name": "CatalogedApiVersion",
+      "suffix": "catalogedApiVersion",
+      "directoryName": "catalogedApiVersions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "catalogedapiartfctverinfo": {
+      "id": "catalogedapiartfctverinfo",
+      "name": "CatalogedApiArtfctVerInfo",
+      "suffix": "catalogedApiArtfctVerInfo",
+      "directoryName": "catalogedApiArtfctsVerInfo",
       "inFolder": false,
       "strictDirectoryName": false
     }

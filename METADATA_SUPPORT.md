@@ -117,9 +117,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CareSystemFieldMapping|✅||
 |CaseSettings|✅||
 |CaseSubjectParticle|✅||
-|CatalogedApi|✅||
-|CatalogedApiVersion|✅||
-|CatalogedApiArtfctVerInfo|✅||
 |Certificate|✅||
 |ChannelLayout|✅||
 |ChannelObjectLinkingRule|✅||
@@ -721,6 +718,7 @@ v65 introduces the following new types.  Here's their current level of support
 |ContextMappingConfig|❌|Not supported, but support could be added|
 |ExtlClntAppCanvasStngs|✅||
 |GenOpPlanEligibilityConfig|❌|Not supported, but support could be added|
+|GenOpPlanSimRecRetriever|❌|Not supported, but support could be added|
 |IndustriesConnectedServiceSettings|✅||
 |LightningOutApp|❌|Not supported, but support could be added|
 |PrmCoreSettings|✅||
@@ -795,3 +793,6 @@ v65 introduces the following new types.  Here's their current level of support
 - XOrgHub
 - DgtAssetMgmtProvider
 - DgtAssetMgmtPrvdLghtCpnt
+- CatalogedApi
+- CatalogedApiVersion
+- CatalogedApiArtfctVerInfo

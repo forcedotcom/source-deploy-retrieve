@@ -1,3 +1,12 @@
+# [12.22.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.21.6...12.22.0) (2025-07-25)
+
+
+### Features
+
+* add `RuleLibraryDefinition` metadata type ([#1588](https://github.com/forcedotcom/source-deploy-retrieve/issues/1588)) ([d63a408](https://github.com/forcedotcom/source-deploy-retrieve/commit/d63a40880715c29af0cb8290a4d559c0a17d1a49))
+
+
+
 ## [12.21.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.21.5...12.21.6) (2025-07-22)
 
 

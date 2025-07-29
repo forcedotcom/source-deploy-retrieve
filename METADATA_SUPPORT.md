@@ -725,6 +725,7 @@ v65 introduces the following new types.  Here's their current level of support
 |SecurityHubSettings|✅||
 |SequenceServiceSettings|✅||
 |ServiceItsmIntelligenceUddSettings|✅||
+|ServiceScheduleConfig|❌|Not supported, but support could be added|
 |StaticDynamicValMapping|❌|Not supported, but support could be added|
 |VoiceEngagementMediaFile|❌|Not supported, but support could be added|
 |VoiceEngagementMediaUsage|❌|Not supported, but support could be added|

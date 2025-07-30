@@ -1,3 +1,12 @@
+## [12.22.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.0...12.22.1) (2025-07-30)
+
+
+### Bug Fixes
+
+* add new deploy status W-19159018 ([#1595](https://github.com/forcedotcom/source-deploy-retrieve/issues/1595)) ([44eb14e](https://github.com/forcedotcom/source-deploy-retrieve/commit/44eb14e5dae0af310405e7c27166a583509f5da4))
+
+
+
 # [12.22.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.21.6...12.22.0) (2025-07-25)
 
 

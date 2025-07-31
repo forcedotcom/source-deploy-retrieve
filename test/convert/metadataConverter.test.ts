@@ -40,15 +40,16 @@ describe('MetadataConverter', () => {
   const testApiversion = '50.0';
 
   /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-  function validatePipelineArgs(pipelineArgs: any[], targetFormat = 'metadata'): void {
-    expect(pipelineArgs[2] instanceof streams.ComponentConverter).to.be.true;
-    expect(pipelineArgs[2].targetFormat).to.equal(targetFormat);
-    expect(pipelineArgs[3] instanceof streams.ComponentWriter).to.be.true;
+  function validatePipelineArgs(mockPipeline: any, targetFormat = 'metadata'): void {
+    expect(mockPipeline.firstCall.args[2] instanceof streams.ComponentConverter).to.be.true;
+    expect(mockPipeline.firstCall.args[2].targetFormat).to.equal(targetFormat);
+    expect(mockPipeline.firstCall.args[3] instanceof streams.ComponentWriter).to.be.true;
   }
 
   beforeEach(() => {
     ensureDirectoryStub = $$.SANDBOX.stub(fsUtil, 'ensureDirectoryExists');
-    pipelineStub = $$.SANDBOX.stub(streams, 'getPipeline').resolves();
+    const mockPipeline = $$.SANDBOX.stub().resolves();
+    pipelineStub = $$.SANDBOX.stub(streams, 'getPipeline').returns(mockPipeline);
     writeFileStub = $$.SANDBOX.stub(fs.promises, 'writeFile').resolves();
     $$.SANDBOX.stub(fs, 'createWriteStream');
     $$.SANDBOX.stub(coverage, 'getCurrentApiVersion').resolves(50);
@@ -58,23 +59,28 @@ describe('MetadataConverter', () => {
     const timestamp = 123_456;
     const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
     $$.SANDBOX.stub(Date, 'now').returns(timestamp);
+    const mockPipeline = $$.SANDBOX.stub().resolves();
+    pipelineStub.returns(mockPipeline);
 
     await converter.convert(components, 'metadata', {
       type: 'directory',
       outputDirectory,
     });
 
-    expect(pipelineStub.firstCall.args[3].rootDestination).to.equal(packagePath);
+    expect(mockPipeline.firstCall.args[3].rootDestination).to.equal(packagePath);
   });
 
   it('should convert to specified output dir', async () => {
+    const mockPipeline = $$.SANDBOX.stub().resolves();
+    pipelineStub.returns(mockPipeline);
+
     await converter.convert(components, 'metadata', {
       type: 'directory',
       outputDirectory,
       genUniqueDir: false,
     });
 
-    expect(pipelineStub.firstCall.args[3].rootDestination).to.equal(outputDirectory);
+    expect(mockPipeline.firstCall.args[3].rootDestination).to.equal(outputDirectory);
   });
 
   it('should throw ConversionError when an error occurs', async () => {
@@ -85,7 +91,8 @@ describe('MetadataConverter', () => {
       [],
       error
     );
-    pipelineStub.rejects(error);
+    const mockPipeline = $$.SANDBOX.stub().rejects(error);
+    pipelineStub.returns(mockPipeline);
 
     try {
       await converter.convert(components, 'metadata', {
@@ -113,29 +120,33 @@ describe('MetadataConverter', () => {
     });
 
     it('should create conversion pipeline with proper stream configuration', async () => {
+      const mockPipeline = $$.SANDBOX.stub().resolves();
+      pipelineStub.returns(mockPipeline);
+
       await converter.convert(components, 'metadata', {
         type: 'directory',
         outputDirectory,
         packageName,
       });
 
-      const pipelineArgs = pipelineStub.firstCall.args;
-      validatePipelineArgs(pipelineArgs);
-      expect(pipelineArgs[3] instanceof streams.StandardWriter).to.be.true;
-      expect(pipelineArgs[3].rootDestination).to.equal(packageOutput);
+      validatePipelineArgs(mockPipeline);
+      expect(mockPipeline.firstCall.args[3] instanceof streams.StandardWriter).to.be.true;
+      expect(mockPipeline.firstCall.args[3].rootDestination).to.equal(packageOutput);
     });
 
     it('should create conversion pipeline with normalized output directory', async () => {
+      const mockPipeline = $$.SANDBOX.stub().resolves();
+      pipelineStub.returns(mockPipeline);
+
       await converter.convert(components, 'metadata', {
         type: 'directory',
         outputDirectory: './',
         packageName,
       });
 
-      const pipelineArgs = pipelineStub.firstCall.args;
-      validatePipelineArgs(pipelineArgs);
-      expect(pipelineArgs[3] instanceof streams.StandardWriter).to.be.true;
-      expect(pipelineArgs[3].rootDestination).to.equal(packageName);
+      validatePipelineArgs(mockPipeline);
+      expect(mockPipeline.firstCall.args[3] instanceof streams.StandardWriter).to.be.true;
+      expect(mockPipeline.firstCall.args[3].rootDestination).to.equal(packageName);
     });
 
     it('should return packagePath in result', async () => {
@@ -439,19 +450,24 @@ describe('MetadataConverter', () => {
     });
 
     it('should create conversion pipeline with proper configuration', async () => {
+      const mockPipeline = $$.SANDBOX.stub().resolves();
+      pipelineStub.returns(mockPipeline);
+
       await converter.convert(components, 'source', {
         type: 'merge',
         defaultDirectory,
         mergeWith: COMPONENTS,
       });
 
-      const pipelineArgs = pipelineStub.firstCall.args;
-      validatePipelineArgs(pipelineArgs, 'source');
-      expect(pipelineArgs[2].mergeSet).to.deep.equal(new ComponentSet(COMPONENTS));
-      expect(pipelineArgs[3].rootDestination).to.equal(defaultDirectory);
+      validatePipelineArgs(mockPipeline, 'source');
+      expect(mockPipeline.firstCall.args[2].mergeSet).to.deep.equal(new ComponentSet(COMPONENTS));
+      expect(mockPipeline.firstCall.args[3].rootDestination).to.equal(defaultDirectory);
     });
 
     it('should create conversion pipeline with addressable components', async () => {
+      const mockPipeline = $$.SANDBOX.stub().resolves();
+      pipelineStub.returns(mockPipeline);
+
       components.push({
         type: registry.types.customobjecttranslation.children?.types.customfieldtranslation,
         name: 'myFieldTranslation',
@@ -464,15 +480,17 @@ describe('MetadataConverter', () => {
         mergeWith: COMPONENTS,
       });
 
-      const pipelineArgs = pipelineStub.firstCall.args;
-      validatePipelineArgs(pipelineArgs, 'source');
+      validatePipelineArgs(mockPipeline, 'source');
 
       // pop off the CFT that should be filtered off for the assertion
       components.pop();
-      expect(pipelineArgs[3].rootDestination).to.equal(defaultDirectory);
+      expect(mockPipeline.firstCall.args[3].rootDestination).to.equal(defaultDirectory);
     });
 
     it('should ensure the merge set contains child DE instead of parent DEB', async () => {
+      const mockPipeline = $$.SANDBOX.stub().resolves();
+      pipelineStub.returns(mockPipeline);
+
       assert(digitalExperienceBundle.DE_COMPONENT.parent?.xml);
 
       await converter.convert(new ComponentSet([digitalExperienceBundle.DE_COMPONENT]), 'source', {
@@ -481,12 +499,16 @@ describe('MetadataConverter', () => {
         mergeWith: [digitalExperienceBundle.DE_COMPONENT],
       });
 
-      const pipelineArgs = pipelineStub.firstCall.args;
-      validatePipelineArgs(pipelineArgs, 'source');
-      expect(pipelineArgs[2].mergeSet).to.deep.equal(new ComponentSet([digitalExperienceBundle.DE_COMPONENT]));
+      validatePipelineArgs(mockPipeline, 'source');
+      expect(mockPipeline.firstCall.args[2].mergeSet).to.deep.equal(
+        new ComponentSet([digitalExperienceBundle.DE_COMPONENT])
+      );
     });
 
     it('should ensure merge set contains parents of child components instead of the children themselves', async () => {
+      const mockPipeline = $$.SANDBOX.stub().resolves();
+      pipelineStub.returns(mockPipeline);
+
       assert(DECOMPOSED_CHILD_COMPONENT_1.parent?.xml);
       await converter.convert(components, 'source', {
         type: 'merge',
@@ -494,9 +516,10 @@ describe('MetadataConverter', () => {
         mergeWith: [DECOMPOSED_CHILD_COMPONENT_1, DECOMPOSED_CHILD_COMPONENT_2],
       });
 
-      const pipelineArgs = pipelineStub.firstCall.args;
-      validatePipelineArgs(pipelineArgs, 'source');
-      expect(pipelineArgs[2].mergeSet).to.deep.equal(new ComponentSet([DECOMPOSED_CHILD_COMPONENT_1.parent]));
+      validatePipelineArgs(mockPipeline, 'source');
+      expect(mockPipeline.firstCall.args[2].mergeSet).to.deep.equal(
+        new ComponentSet([DECOMPOSED_CHILD_COMPONENT_1.parent])
+      );
     });
   });
 });

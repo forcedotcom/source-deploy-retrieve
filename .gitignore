@@ -128,3 +128,5 @@ test_session*
 
 # --
 # put files here you don't want cleaned with sf-clean
+
+.sfdx

@@ -101,7 +101,7 @@ export abstract class MetadataTransfer<
     const normalizedOptions = normalizePollingInputs(frequencyOrOptions, timeout, sizeOfComponentSet(this.components));
     const pollingClient = await PollingClient.create({
       ...normalizedOptions,
-      poll: this.poll.bind(this),
+      poll: (...args) => this.poll(...args), // Arrow function defers binding until called
     });
 
     try {

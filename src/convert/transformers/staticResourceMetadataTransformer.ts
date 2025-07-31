@@ -17,7 +17,7 @@ import { ToSourceFormatInput, WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { SourcePath } from '../../common/types';
 import { ensureFileExists } from '../../utils/fileSystemHandler';
-import { pipeline } from '../streams';
+import { getPipeline } from '../streams';
 import { getReplacementStreamForReadable } from '../replacements';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
@@ -162,7 +162,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line class-methods-use-this
   private async pipeline(stream: Readable, destination: string): Promise<void> {
     ensureFileExists(destination);
-    await pipeline(stream, createWriteStream(destination));
+    await getPipeline()(stream, createWriteStream(destination));
   }
 
   /**

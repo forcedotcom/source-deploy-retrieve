@@ -48,7 +48,7 @@ describe('MetadataConverter', () => {
 
   beforeEach(() => {
     ensureDirectoryStub = $$.SANDBOX.stub(fsUtil, 'ensureDirectoryExists');
-    pipelineStub = $$.SANDBOX.stub(streams, 'pipeline').resolves();
+    pipelineStub = $$.SANDBOX.stub(streams, 'getPipeline').resolves();
     writeFileStub = $$.SANDBOX.stub(fs.promises, 'writeFile').resolves();
     $$.SANDBOX.stub(fs, 'createWriteStream');
     $$.SANDBOX.stub(coverage, 'getCurrentApiVersion').resolves(50);

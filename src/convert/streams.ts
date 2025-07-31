@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { isAbsolute, join } from 'node:path';
-import { pipeline as cbPipeline, Readable, Stream, Transform, Writable } from 'node:stream';
+import { pipeline as cbPipeline, Readable, Transform, Writable, Stream } from 'node:stream';
 import { promisify } from 'node:util';
 import { Messages, SfError } from '@salesforce/core';
 import JSZip from 'jszip';
@@ -28,7 +28,17 @@ import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
-export const pipeline = promisify(cbPipeline);
+export type PromisifiedPipeline = <T extends NodeJS.ReadableStream>(
+  source: T,
+  ...destinations: NodeJS.WritableStream[]
+) => Promise<void>;
+
+let promisifiedPipeline: PromisifiedPipeline | undefined; // store it so we don't have to promisify every time
+
+export const getPipeline = (): PromisifiedPipeline => {
+  promisifiedPipeline ??= promisify(cbPipeline);
+  return promisifiedPipeline;
+};
 
 export const stream2buffer = async (stream: Stream): Promise<Buffer> =>
   new Promise<Buffer>((resolve, reject) => {
@@ -177,7 +187,7 @@ export class StandardWriter extends ComponentWriter {
               }
 
               ensureFileExists(info.output);
-              return pipeline(info.source, createWriteStream(info.output));
+              return getPipeline()(info.source, createWriteStream(info.output));
             })
         );
 

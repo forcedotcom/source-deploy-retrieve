@@ -297,7 +297,8 @@ describe('Streams', () => {
       beforeEach(() => {
         writer = new streams.StandardWriter(rootDestination);
         ensureFile = env.stub(fsUtil, 'ensureFileExists');
-        pipelineStub = env.stub(streams, 'pipeline');
+        const mockPipeline = env.stub().resolves();
+        pipelineStub = env.stub(streams, 'getPipeline').returns(mockPipeline);
         env
           .stub(fs, 'createWriteStream')
           // @ts-ignore
@@ -306,7 +307,8 @@ describe('Streams', () => {
 
       it('should pass errors to _write callback', async () => {
         const whoops = new Error('whoops!');
-        pipelineStub.rejects(whoops);
+        const mockPipeline = env.stub().rejects(whoops);
+        pipelineStub.returns(mockPipeline);
 
         await writer._write(chunk, '', (err: Error | undefined) => {
           assert(err instanceof Error);
@@ -316,7 +318,8 @@ describe('Streams', () => {
       });
 
       it('should join root destination and relative WriteInfo outputs during copy', async () => {
-        pipelineStub.resolves();
+        const mockPipeline = env.stub().resolves();
+        pipelineStub.returns(mockPipeline);
         const root = join(rootDestination, COMPONENT.type.directoryName);
 
         await writer._write(chunk, '', (err: Error | undefined) => {
@@ -325,12 +328,13 @@ describe('Streams', () => {
           assert(COMPONENT.content);
           expect(ensureFile.firstCall.args[0]).to.equal(join(root, basename(COMPONENT.xml)));
           expect(ensureFile.secondCall.args[0]).to.equal(join(root, basename(COMPONENT.content)));
-          expect(pipelineStub.firstCall.args).to.deep.equal([chunk.writeInfos[0].source, fsWritableMock]);
+          expect(mockPipeline.firstCall.args).to.deep.equal([chunk.writeInfos[0].source, fsWritableMock]);
         });
       });
 
       it('should use full paths of WriteInfo output if they are absolute during copy', async () => {
-        pipelineStub.resolves();
+        const mockPipeline = env.stub().resolves();
+        pipelineStub.returns(mockPipeline);
         assert(component.xml);
         assert(component.content);
         const formatWithAbsoluteOutput: WriterFormat = {
@@ -351,7 +355,7 @@ describe('Streams', () => {
           expect(err).to.be.undefined;
           expect(ensureFile.firstCall.args).to.deep.equal([formatWithAbsoluteOutput.writeInfos[0].output]);
           expect(ensureFile.secondCall.args).to.deep.equal([formatWithAbsoluteOutput.writeInfos[1].output]);
-          expect(pipelineStub.firstCall.args).to.deep.equal([
+          expect(mockPipeline.firstCall.args).to.deep.equal([
             formatWithAbsoluteOutput.writeInfos[0].source,
             fsWritableMock,
           ]);
@@ -359,7 +363,8 @@ describe('Streams', () => {
       });
 
       it('should hoist copied filenames into `converted` during write', async () => {
-        pipelineStub.resolves();
+        const mockPipeline = env.stub().resolves();
+        pipelineStub.returns(mockPipeline);
 
         await writer._write(chunk, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
@@ -369,7 +374,8 @@ describe('Streams', () => {
       });
 
       it('should hoisted deleted filenames into `deleted` during write', async () => {
-        pipelineStub.resolves();
+        const mockPipeline = env.stub().resolves();
+        pipelineStub.returns(mockPipeline);
         const chunk: WriterFormat = {
           component,
           writeInfos: [
@@ -395,7 +401,8 @@ describe('Streams', () => {
       });
 
       it('should skip copying when there are no WriteInfos', async () => {
-        pipelineStub.resolves();
+        const mockPipeline = env.stub().resolves();
+        pipelineStub.returns(mockPipeline);
 
         const emptyChunk: WriterFormat = {
           component,
@@ -405,13 +412,14 @@ describe('Streams', () => {
         await writer._write(emptyChunk, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
           expect(ensureFile.notCalled).to.be.true;
-          expect(pipelineStub.notCalled).to.be.true;
+          expect(mockPipeline.notCalled).to.be.true;
           expect(resolverSpy.notCalled).to.be.true;
         });
       });
 
       it('should skip duplicate components in WriteInfos', async () => {
-        pipelineStub.resolves();
+        const mockPipeline = env.stub().resolves();
+        pipelineStub.returns(mockPipeline);
         const loggerStub = env.stub(Logger.prototype, 'debug');
         assert(COMPONENT.xml);
         assert(COMPONENT.content);
@@ -451,7 +459,7 @@ describe('Streams', () => {
         await writer._write(chunkWithDupe, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
           expect(ensureFile.calledOnce).to.be.true;
-          expect(pipelineStub.calledOnce).to.be.true;
+          expect(mockPipeline.calledOnce).to.be.true;
           expect(loggerStub.calledOnce).to.be.true;
           const fullDest = join(rootDestination, compWriteInfo.output);
           const expectedLogMsg = `Ignoring duplicate metadata for: ${fullDest}`;

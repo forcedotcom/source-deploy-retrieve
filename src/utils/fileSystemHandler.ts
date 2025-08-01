@@ -9,16 +9,8 @@ import * as path from 'node:path';
 import fs from 'graceful-fs';
 import { SourcePath } from '../common/types';
 
-export function ensureDirectoryExists(filePath: string): void {
-  if (fs.existsSync(filePath)) {
-    return;
-  }
-  ensureDirectoryExists(path.dirname(filePath));
-  fs.mkdirSync(filePath);
-}
-
 export function ensureFileExists(filePath: string): void {
-  ensureDirectoryExists(path.dirname(filePath));
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.closeSync(fs.openSync(filePath, 'w'));
 }
 
@@ -29,12 +21,14 @@ export function ensureFileExists(filePath: string): void {
  * @param fileName File name to search for
  */
 export function searchUp(start: SourcePath, fileName: string): string | undefined {
+  console.log('start', start);
+  console.log('fileName', fileName);
   const filePath = path.join(start, fileName);
   if (fs.existsSync(filePath)) {
     return filePath;
   }
   const parent = path.resolve(start, '..');
-  if (parent === start) {
+  if (parent === start || start.split(path.sep).length > 50) {
     return;
   }
   return searchUp(parent, fileName);

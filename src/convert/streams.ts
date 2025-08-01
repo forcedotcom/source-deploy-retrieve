@@ -309,8 +309,9 @@ const existsOrDoesntMatchIgnored =
   (writeInfo: WriteInfo): boolean => {
     const result = existsSync(writeInfo.output) || forceignore.accepts(writeInfo.output);
 
+    // Detect if file was ignored by .forceignore patterns
     if (!result) {
-      logger.debug(`File ${writeInfo.output} was ignored by .forceignore patterns`);
+      logger.debug(`File ${writeInfo.output} was ignored or not exists`);
     }
     return result;
   };

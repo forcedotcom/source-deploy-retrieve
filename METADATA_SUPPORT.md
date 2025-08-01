@@ -724,6 +724,7 @@ v65 introduces the following new types.  Here's their current level of support
 |SalesAccountAgentSettings|✅||
 |SecurityHubSettings|✅||
 |SequenceServiceSettings|✅||
+|ServiceCloudNotificationOrchestratorSettings|✅||
 |ServiceItsmIntelligenceUddSettings|✅||
 |ServiceScheduleConfig|❌|Not supported, but support could be added|
 |VoiceEngagementMediaFile|❌|Not supported, but support could be added|

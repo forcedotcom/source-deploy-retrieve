@@ -34,7 +34,6 @@
     "got": "^11.8.6",
     "graceful-fs": "^4.2.11",
     "ignore": "^5.3.2",
-    "isbinaryfile": "^5.0.2",
     "jszip": "^3.10.1",
     "mime": "2.6.0",
     "minimatch": "^9.0.5",

@@ -1,0 +1,10 @@
+---
+alwaysApply: true
+---
+After making changes, check your changes
+`yarn compile`
+`yarn lint` // linter can have warnings
+`yarn test:only` // unit tests
+`yarn test:snapshot` // snapshot tests, these take a bit longer
+
+You can run a single unit test like `yarn mocha test/convert/streams.ts`

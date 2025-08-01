@@ -11,9 +11,9 @@ import { Lifecycle, Messages, SfError, SfProject } from '@salesforce/core';
 import { minimatch } from 'minimatch';
 import { Env } from '@salesforce/kit';
 import { ensureString, isString } from '@salesforce/ts-types';
-import { isBinaryFileSync } from 'isbinaryfile';
 import { SourcePath } from '../common/types';
 import { SourceComponent } from '../resolve/sourceComponent';
+import { isBinaryFileSync } from './isBinaryFile';
 import { MarkedReplacement, ReplacementConfig, ReplacementEvent } from './types';
 
 Messages.importMessagesDirectory(__dirname);

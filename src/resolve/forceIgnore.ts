@@ -55,12 +55,8 @@ export class ForceIgnore {
    * @param seed Path to begin the `.forceignore` search from
    */
   public static findAndCreate(seed: SourcePath): ForceIgnore {
-    let potentialForceIgnorePath = '';
     const projectConfigPath = searchUp(seed, ForceIgnore.FILE_NAME);
-    if (projectConfigPath) {
-      potentialForceIgnorePath = join(dirname(projectConfigPath), ForceIgnore.FILE_NAME);
-    }
-    return new ForceIgnore(potentialForceIgnorePath);
+    return new ForceIgnore(projectConfigPath ? join(dirname(projectConfigPath), ForceIgnore.FILE_NAME) : '');
   }
 
   public denies(fsPath: SourcePath): boolean {

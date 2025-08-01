@@ -7,11 +7,10 @@
 import { Readable, PassThrough } from 'node:stream';
 import { dirname, join, normalize } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
-import { promises } from 'graceful-fs';
+import { promises, mkdirSync } from 'graceful-fs';
 import { isString } from '@salesforce/ts-types';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MetadataResolver } from '../resolve/metadataResolver';
-import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import { SourcePath } from '../common/types';
 import { ComponentSet } from '../collections/componentSet';
 import { DestructiveChangesType } from '../collections/types';
@@ -126,9 +125,9 @@ function getPackagePath(outputConfig: DirectoryConfig | ZipConfig): SourcePath |
 
     if (type === 'zip') {
       packagePath += '.zip';
-      ensureDirectoryExists(dirname(packagePath));
+      mkdirSync(dirname(packagePath), { recursive: true });
     } else {
-      ensureDirectoryExists(packagePath);
+      mkdirSync(packagePath, { recursive: true });
     }
   }
   return packagePath;

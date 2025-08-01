@@ -21,14 +21,12 @@ export function ensureFileExists(filePath: string): void {
  * @param fileName File name to search for
  */
 export function searchUp(start: SourcePath, fileName: string): string | undefined {
-  console.log('start', start);
-  console.log('fileName', fileName);
   const filePath = path.join(start, fileName);
   if (fs.existsSync(filePath)) {
     return filePath;
   }
   const parent = path.resolve(start, '..');
-  if (parent === start || start.split(path.sep).length > 50) {
+  if (parent === start || start.split(path.sep).length > 25) {
     return;
   }
   return searchUp(parent, fileName);

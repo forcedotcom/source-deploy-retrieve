@@ -13,7 +13,6 @@ import { assert, expect } from 'chai';
 import { TestContext } from '@salesforce/core/testSetup';
 import { xmlInFolder, digitalExperienceBundle } from '../mock';
 import * as streams from '../../src/convert/streams';
-import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { COMPONENTS } from '../mock/type-constants/documentFolderConstant';
 import { ComponentSet, DestructiveChangesType, MetadataConverter, registry, SourceComponent } from '../../src';
 import * as coverage from '../../src/registry/coverage';
@@ -28,7 +27,7 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 describe('MetadataConverter', () => {
   const $$ = new TestContext();
 
-  let ensureDirectoryStub: SinonStub;
+  let mkdirSyncStub: SinonStub;
   let pipelineStub: SinonStub;
   let writeFileStub: SinonStub;
 
@@ -47,7 +46,7 @@ describe('MetadataConverter', () => {
   }
 
   beforeEach(() => {
-    ensureDirectoryStub = $$.SANDBOX.stub(fsUtil, 'ensureDirectoryExists');
+    mkdirSyncStub = $$.SANDBOX.stub(fs, 'mkdirSync');
     const mockPipeline = $$.SANDBOX.stub().resolves();
     pipelineStub = $$.SANDBOX.stub(streams, 'getPipeline').returns(mockPipeline);
     writeFileStub = $$.SANDBOX.stub(fs.promises, 'writeFile').resolves();
@@ -115,8 +114,8 @@ describe('MetadataConverter', () => {
         packageName,
       });
 
-      expect(ensureDirectoryStub.calledBefore(pipelineStub)).to.be.true;
-      expect(ensureDirectoryStub.firstCall.args[0]).to.equal(packageOutput);
+      expect(mkdirSyncStub.calledBefore(pipelineStub)).to.be.true;
+      expect(mkdirSyncStub.firstCall.args[0]).to.equal(packageOutput);
     });
 
     it('should create conversion pipeline with proper stream configuration', async () => {
@@ -295,8 +294,8 @@ describe('MetadataConverter', () => {
         packageName,
       });
 
-      expect(ensureDirectoryStub.calledBefore(pipelineStub)).to.be.true;
-      expect(ensureDirectoryStub.firstCall.args[0]).to.equal(dirname(zipPath));
+      expect(mkdirSyncStub.calledBefore(pipelineStub)).to.be.true;
+      expect(mkdirSyncStub.firstCall.args[0]).to.equal(dirname(zipPath));
     });
 
     it('should convert to specified output dir', async () => {
@@ -309,7 +308,7 @@ describe('MetadataConverter', () => {
         genUniqueDir: false,
       });
 
-      expect(ensureDirectoryStub.calledBefore(pipelineStub)).to.be.true;
+      expect(mkdirSyncStub.calledBefore(pipelineStub)).to.be.true;
       expect(writeFileStub.firstCall.args[0]).to.equal(zipPath);
       expect(writeFileStub.firstCall.args[1]).to.deep.equal(testBuffer);
     });

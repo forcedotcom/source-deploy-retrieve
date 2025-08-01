@@ -148,7 +148,7 @@ export class StandardWriter extends ComponentWriter {
         await Promise.all(
           chunk.writeInfos
             .map(makeWriteInfoAbsolute(this.rootDestination))
-            .filter(existsOrDoesntMatchIgnored(this.forceignore)) // Skip files matched by default ignore
+            .filter(existsOrDoesntMatchIgnored(this.forceignore, this.logger)) // Skip files matched by default ignore
             .map((info) => {
               if (info.shouldDelete) {
                 this.deleted.push({
@@ -305,13 +305,12 @@ const makeWriteInfoAbsolute =
   });
 
 const existsOrDoesntMatchIgnored =
-  (forceignore: ForceIgnore, logger?: Logger) =>
+  (forceignore: ForceIgnore, logger: Logger) =>
   (writeInfo: WriteInfo): boolean => {
     const result = existsSync(writeInfo.output) || forceignore.accepts(writeInfo.output);
 
-    // For hidden path detection
-    if (writeInfo.output.includes('/.')) {
-      logger?.debug(`Found file in hidden directory: ${writeInfo.output}`);
+    if (!result) {
+      logger.debug(`File ${writeInfo.output} was ignored by .forceignore patterns`);
     }
     return result;
   };

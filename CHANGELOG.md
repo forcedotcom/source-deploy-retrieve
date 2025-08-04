@@ -1,3 +1,12 @@
+## [12.22.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.1...12.22.2) (2025-08-01)
+
+
+### Bug Fixes
+
+* add logs to detect forceignored files W-18715150 ([#1596](https://github.com/forcedotcom/source-deploy-retrieve/issues/1596)) ([3006ca0](https://github.com/forcedotcom/source-deploy-retrieve/commit/3006ca00584d2c6fa635536d15a329f0cbccbdcf))
+
+
+
 ## [12.22.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.0...12.22.1) (2025-07-30)
 
 

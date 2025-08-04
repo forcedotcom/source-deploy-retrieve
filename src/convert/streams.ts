@@ -141,13 +141,14 @@ export class StandardWriter extends ComponentWriter {
     if (chunk.writeInfos.length !== 0) {
       try {
         const toResolve = new Set<string>();
+
         // it is a reasonable expectation that when a conversion call exits, the files of
         // every component has been written to the destination. This await ensures the microtask
         // queue is empty when that call exits and overall less memory is consumed.
         await Promise.all(
           chunk.writeInfos
             .map(makeWriteInfoAbsolute(this.rootDestination))
-            .filter(existsOrDoesntMatchIgnored(this.forceignore))
+            .filter(existsOrDoesntMatchIgnored(this.forceignore, this.logger)) // Skip files matched by default ignore
             .map((info) => {
               if (info.shouldDelete) {
                 this.deleted.push({
@@ -304,6 +305,13 @@ const makeWriteInfoAbsolute =
   });
 
 const existsOrDoesntMatchIgnored =
-  (forceignore: ForceIgnore) =>
-  (writeInfo: WriteInfo): boolean =>
-    existsSync(writeInfo.output) || forceignore.accepts(writeInfo.output);
+  (forceignore: ForceIgnore, logger: Logger) =>
+  (writeInfo: WriteInfo): boolean => {
+    const result = existsSync(writeInfo.output) || forceignore.accepts(writeInfo.output);
+
+    // Detect if file was ignored by .forceignore patterns
+    if (!result) {
+      logger.debug(`File ${writeInfo.output} was ignored or not exists`);
+    }
+    return result;
+  };

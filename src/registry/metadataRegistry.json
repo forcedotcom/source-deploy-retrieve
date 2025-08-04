@@ -551,7 +551,8 @@
     "dgtAssetMgmtPrvdLghtCpnt": "dgtassetmgmtprvdlghtcpnt",
     "ecaCanvas": "extlclntappcanvasstngs",
     "apiNamedQuery": "apinamedquery",
-    "ExternalStoragePrvdConfigSet": "externalstorageprvdconfig"
+    "ExternalStoragePrvdConfigSet": "externalstorageprvdconfig",
+    "ruleLibraryDefinition": "rulelibrarydefinition"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4912,6 +4913,14 @@
       "name": "CatalogedApiArtfctVerInfo",
       "suffix": "catalogedApiArtfctVerInfo",
       "directoryName": "catalogedApiArtfctsVerInfo",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "rulelibrarydefinition": {
+      "id": "rulelibrarydefinition",
+      "name": "RuleLibraryDefinition",
+      "suffix": "ruleLibraryDefinition",
+      "directoryName": "ruleLibraryDefinition",
       "inFolder": false,
       "strictDirectoryName": false
     }

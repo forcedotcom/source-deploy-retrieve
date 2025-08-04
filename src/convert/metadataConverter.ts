@@ -7,16 +7,15 @@
 import { Readable, PassThrough } from 'node:stream';
 import { dirname, join, normalize } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
-import { promises } from 'graceful-fs';
+import { promises, mkdirSync } from 'graceful-fs';
 import { isString } from '@salesforce/ts-types';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MetadataResolver } from '../resolve/metadataResolver';
-import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import { SourcePath } from '../common/types';
 import { ComponentSet } from '../collections/componentSet';
 import { DestructiveChangesType } from '../collections/types';
 import { RegistryAccess } from '../registry/registryAccess';
-import { ComponentConverter, pipeline, StandardWriter, ZipWriter } from './streams';
+import { ComponentConverter, getPipeline, StandardWriter, ZipWriter } from './streams';
 import { ConvertOutputConfig, ConvertResult, DirectoryConfig, SfdxFileFormat, ZipConfig, MergeConfig } from './types';
 import { getReplacementMarkingStream } from './replacements';
 
@@ -58,7 +57,7 @@ export class MetadataConverter {
         tasks = [],
       } = await getConvertIngredients(output, cs, targetFormatIsSource, this.registry);
 
-      const conversionPipeline = pipeline(
+      const conversionPipeline = getPipeline()(
         Readable.from(components),
         !targetFormatIsSource && (process.env.SF_APPLY_REPLACEMENTS_ON_CONVERT === 'true' || output.type === 'zip')
           ? (await getReplacementMarkingStream(cs.projectDirectory)) ?? new PassThrough({ objectMode: true })
@@ -126,9 +125,9 @@ function getPackagePath(outputConfig: DirectoryConfig | ZipConfig): SourcePath |
 
     if (type === 'zip') {
       packagePath += '.zip';
-      ensureDirectoryExists(dirname(packagePath));
+      mkdirSync(dirname(packagePath), { recursive: true });
     } else {
-      ensureDirectoryExists(packagePath);
+      mkdirSync(packagePath, { recursive: true });
     }
   }
   return packagePath;

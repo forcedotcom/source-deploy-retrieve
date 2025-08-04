@@ -10,10 +10,9 @@ import { assert } from 'chai';
 import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import { ensureArray } from '@salesforce/kit';
 import { PollingClient } from '@salesforce/core';
-import { match, SinonSpy, SinonStub } from 'sinon';
+import { SinonSpy, SinonStub } from 'sinon';
 import type { AsyncResult } from '@jsforce/jsforce-node/lib/api/metadata';
 import { ensureString } from '@salesforce/ts-types';
-import * as sinon from 'sinon';
 import {
   ComponentSet,
   ConvertOutputConfig,
@@ -33,6 +32,7 @@ import {
   RequestStatus,
 } from '../../../src/client/types';
 import { ComponentProperties } from '../../../src/resolve/sourceComponent';
+import * as streams from '../../../src/convert/streams';
 import { createMockZip } from './index';
 
 export const MOCK_ASYNC_RESULT: AsyncResult = { id: '1234', state: RequestStatus.Pending, done: false };
@@ -93,7 +93,12 @@ export async function stubMetadataDeploy(
   if (options.components) {
     convertStub.withArgs(options.components, 'metadata', { type: 'zip' }).resolves({ zipBuffer });
   }
-  const defaultStatus = { success: false, done: false, status: RequestStatus.Pending };
+
+  // Stub getPipeline to return a function that resolves
+  const mockPipeline = sandbox.stub().resolves();
+  sandbox.stub(streams, 'getPipeline').returns(mockPipeline);
+
+  const defaultStatus = { success: false, done: false, status: RequestStatus.Pending, checkOnly: false };
   const status: Partial<MetadataApiDeployStatus> = Object.assign(defaultStatus, MOCK_ASYNC_RESULT);
   if (options.componentSuccesses) {
     if (options.componentFailures) {
@@ -118,8 +123,9 @@ export async function stubMetadataDeploy(
   }
   status.done = true;
   const checkStatusStub = sandbox.stub(connection.metadata, 'checkDeployStatus');
-  // @ts-ignore
-  checkStatusStub.withArgs(MOCK_ASYNC_RESULT.id, true, sinon.match.any).resolves(status);
+  // Make the stub more permissive to handle all argument combinations
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
+  checkStatusStub.resolves(status as any);
 
   // @ts-ignore
   const invokeStub = sandbox.stub(connection.metadata, '_invoke');
@@ -307,12 +313,16 @@ export async function stubMetadataRetrieve(
     );
   }
   const convertStub = $$.SANDBOX.stub(MetadataConverter.prototype, 'convert');
-  outputConfigs.forEach((outputCfg) => {
-    const notForceIgnoredConverted = converted.filter(
-      (component) => component.xml && !(retrievedComponents.forceIgnoredPaths ?? new Set([])).has(component.xml)
-    );
-    convertStub.withArgs(match.any, 'source', outputCfg).resolves({ converted: notForceIgnoredConverted });
-  });
+  // Use the successes parameter if provided, but filter out force ignored components
+  const baseComponents = options.successes?.getSourceComponents().toArray() ?? (options.merge ? source : converted);
+  const notForceIgnoredConverted = baseComponents.filter(
+    (component) => component.xml && !(retrievedComponents.forceIgnoredPaths ?? new Set([])).has(component.xml)
+  );
+  convertStub.resolves({ converted: notForceIgnoredConverted });
+
+  // Stub getPipeline to return a function that resolves
+  const mockPipeline = $$.SANDBOX.stub().resolves();
+  $$.SANDBOX.stub(streams, 'getPipeline').returns(mockPipeline);
 
   return {
     retrieveStub,

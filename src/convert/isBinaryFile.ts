@@ -7,7 +7,7 @@
 
 // simplified version of https://github.com/gjtorikian/isBinaryFile
 
-/** original copyright notice from https://github.com/gjtorikian/isBinaryFile/blob/main/LICENSE.txt 
+/** original copyright notice from https://github.com/gjtorikian/isBinaryFile/commit/123cce905590766d092c47e034163b03e47d5044#diff-d0ed4cc3fb70489fe51c7e0ac180cba2a7472124f9f9e9ae67b01a37fbd580b7
  Copyright (c) 2019 Garen J. Torikian
  
 MIT License

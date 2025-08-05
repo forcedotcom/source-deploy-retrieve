@@ -593,7 +593,7 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@jsforce/jsforce-node@^3.10.0", "@jsforce/jsforce-node@^3.7.0", "@jsforce/jsforce-node@^3.8.2":
+"@jsforce/jsforce-node@^3.10.0", "@jsforce/jsforce-node@^3.7.0":
   version "3.10.0"
   resolved "https://registry.yarnpkg.com/@jsforce/jsforce-node/-/jsforce-node-3.10.0.tgz#1bf75e9d322434f99fc38a3b60738205051144c5"
   integrity sha512-hNExEqzvJ/ixnsfZlrYh/FqEOYfn4vKmeBMqIdrEjeYciIsSaOeggghFl+1w0m2u7TNGr1+8jPUBvki3nebPSw==
@@ -651,7 +651,7 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.8.1"
 
-"@salesforce/core@^8.10.1", "@salesforce/core@^8.18.7", "@salesforce/core@^8.8.0":
+"@salesforce/core@^8.18.5", "@salesforce/core@^8.18.7", "@salesforce/core@^8.8.0":
   version "8.18.7"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-8.18.7.tgz#1eb16b69b3a2120f5e39917a9e78d0c32eaa0943"
   integrity sha512-TP0AwS52+4ijIqVkNrKesVtK/osGsW7KvHrUiPcARI73ZKnW5z/CCpGdDH8nwGHSxj9rYlWC//g3EkTZJkparw==
@@ -724,7 +724,7 @@
   resolved "https://registry.yarnpkg.com/@salesforce/prettier-config/-/prettier-config-0.0.3.tgz#ba648d4886bb38adabe073dbea0b3a91b3753bb0"
   integrity sha512-hYOhoPTCSYMDYn+U1rlEk16PoBeAJPkrdg4/UtAzupM1mRRJOwEPMG1d7U8DxJFKuXW3DMEYWr2MwAIBDaHmFg==
 
-"@salesforce/schemas@^1.9.0", "@salesforce/schemas@^1.9.1":
+"@salesforce/schemas@^1.9.1":
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/@salesforce/schemas/-/schemas-1.9.1.tgz#ea843c732068c4ac2dadbe1d22b44e714cfe661d"
   integrity sha512-9I8kZBYT7HFXsbz2ukkSyZDRPjSsfRyx3pKGCsjWe2av8wuNm6tYUnmuXzMH5JoVSu3MvtOeIlwp5fFURdsNjg==
@@ -2385,12 +2385,12 @@ eslint-plugin-jsdoc@^46.10.1:
     semver "^7.5.4"
     spdx-expression-parse "^4.0.0"
 
-eslint-plugin-sf-plugin@^1.20.22:
-  version "1.20.22"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-sf-plugin/-/eslint-plugin-sf-plugin-1.20.22.tgz#d6454d3f6496163b7ca4756fed045edee6666ce1"
-  integrity sha512-WSFeAT31guYZiu4UhxM/ye7lgfp+lEawE9AgFb85vkjqO6ma8x0yQLKx2CQtgsIM1t1RQrFUg11ODVLL1gh2eA==
+eslint-plugin-sf-plugin@^1.20.30:
+  version "1.20.30"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-sf-plugin/-/eslint-plugin-sf-plugin-1.20.30.tgz#34d83312ebbb4af2e0595cfc0e51bbe972449b56"
+  integrity sha512-fhOg19KHGfr8lnzSxTXaG16qeokdoVgxYtQAt+Uc4HBF8idoF2cTzsP70O2MI54CKxoo0U0DeqiEgxPkhsKQsg==
   dependencies:
-    "@salesforce/core" "^8.10.1"
+    "@salesforce/core" "^8.18.5"
     "@typescript-eslint/utils" "^7.18.0"
 
 eslint-plugin-unicorn@^50.0.1:
@@ -2731,7 +2731,7 @@ foreground-child@^3.1.0:
     cross-spawn "^7.0.0"
     signal-exit "^4.0.1"
 
-form-data@^4.0.0, form-data@^4.0.4:
+form-data@^4.0.4:
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-4.0.4.tgz#784cdcce0669a9d68e94d11ac4eea98088edd2c4"
   integrity sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==

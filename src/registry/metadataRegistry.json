@@ -166,7 +166,7 @@
     "careSystemFieldMapping": "caresystemfieldmapping",
     "catalogedApi": "catalogedapi",
     "catalogedApiVersion": "catalogedapiversion",
-    "catalogedApiArtfctVerInfo": "catalogedapiartfctverinfo",
+    "catalogedApiArtifactVersionInfo": "catalogedapiartifactversioninfo",
     "catalogFilterCondition": "svccatalogfiltercondition",
     "catalogFilterCriteria": "svccatalogfiltercriteria",
     "catalogItem": "svccatalogitemdef",
@@ -4908,11 +4908,11 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
-    "catalogedapiartfctverinfo": {
-      "id": "catalogedapiartfctverinfo",
-      "name": "CatalogedApiArtfctVerInfo",
-      "suffix": "catalogedApiArtfctVerInfo",
-      "directoryName": "catalogedApiArtfctsVerInfo",
+    "catalogedapiartifactversioninfo": {
+      "id": "catalogedapiartifactversioninfo",
+      "name": "CatalogedApiArtifactVersionInfo",
+      "suffix": "catalogedApiArtifactVersionInfo",
+      "directoryName": "catalogedApiArtifactsVersionInfo",
       "inFolder": false,
       "strictDirectoryName": false
     },

@@ -1,3 +1,12 @@
+## [12.22.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.3...12.22.4) (2025-08-13)
+
+
+### Bug Fixes
+
+* add support for UiPreviewMessageTabDef - W-19327351 ([#1603](https://github.com/forcedotcom/source-deploy-retrieve/issues/1603)) ([60bf412](https://github.com/forcedotcom/source-deploy-retrieve/commit/60bf412c984d06ce31d649f67e9caabbc5aa6ff0))
+
+
+
 ## [12.22.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.2...12.22.3) (2025-08-12)
 
 

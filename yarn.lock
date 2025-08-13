@@ -593,23 +593,7 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@jsforce/jsforce-node@^3.10.0", "@jsforce/jsforce-node@^3.7.0":
-  version "3.10.0"
-  resolved "https://registry.yarnpkg.com/@jsforce/jsforce-node/-/jsforce-node-3.10.0.tgz#1bf75e9d322434f99fc38a3b60738205051144c5"
-  integrity sha512-hNExEqzvJ/ixnsfZlrYh/FqEOYfn4vKmeBMqIdrEjeYciIsSaOeggghFl+1w0m2u7TNGr1+8jPUBvki3nebPSw==
-  dependencies:
-    "@sindresorhus/is" "^4"
-    base64url "^3.0.1"
-    csv-parse "^5.5.2"
-    csv-stringify "^6.4.4"
-    faye "^1.4.0"
-    form-data "^4.0.4"
-    https-proxy-agent "^5.0.0"
-    multistream "^3.1.0"
-    node-fetch "^2.6.1"
-    xml2js "^0.6.2"
-
-"@jsforce/jsforce-node@^3.10.1":
+"@jsforce/jsforce-node@^3.10.0", "@jsforce/jsforce-node@^3.10.1", "@jsforce/jsforce-node@^3.10.3":
   version "3.10.3"
   resolved "https://registry.yarnpkg.com/@jsforce/jsforce-node/-/jsforce-node-3.10.3.tgz#76ac09cfc9565ccc953928c86733c787e4908928"
   integrity sha512-Q6kgPNP/xiP8gzZLwquTLFKNUC9AbDIxrC9bhRsK1YgyDF4V64V/muxHVeCHR4rtXre658eLOgz6kRgoeBHTVg==

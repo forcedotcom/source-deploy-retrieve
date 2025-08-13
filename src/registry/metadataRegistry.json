@@ -497,6 +497,7 @@
     "type": "integrationhubsettingstype",
     "uiFormatSpecificationSet": "uiformatspecificationset",
     "uiObjectRelationConfig": "uiobjectrelationconfig",
+    "uiPreviewMessageTabDef": "uipreviewmessagetabdef",
     "uiplugin": "uiplugin",
     "uiview": "uiviewdefinition",
     "userAuthCertificate": "userauthcertificate",
@@ -4371,6 +4372,13 @@
       "inFolder": false,
       "name": "UIObjectRelationConfig",
       "suffix": "uiObjectRelationConfig"
+    },
+    "uipreviewmessagetabdef": {
+      "directoryName": "uiPreviewMessageTabDefs",
+      "id": "uipreviewmessagetabdef",
+      "inFolder": false,
+      "name": "UiPreviewMessageTabDef",
+      "suffix": "uiPreviewMessageTabDef"
     },
     "uiplugin": {
       "directoryName": "uiplugins",

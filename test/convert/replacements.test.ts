@@ -454,10 +454,15 @@ describe('executes replacements on a string', () => {
     // Readable that splits the input string into smaller chunks. This allows us to test chunk boundary behavior.
     class ChunkedReadable extends Readable {
       private pos = 0;
+      private text: string;
+      private chunkLen: number;
 
-      public constructor(private text: string, private chunkLen: number) {
+      public constructor(text: string, chunkLen: number) {
         super();
+        this.text = text;
+        this.chunkLen = chunkLen;
       }
+
       public _read() {
         if (this.pos >= this.text.length) {
           this.push(null);

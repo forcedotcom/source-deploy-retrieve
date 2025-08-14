@@ -714,6 +714,8 @@ v65 introduces the following new types.  Here's their current level of support
 |CommsUpsellSettings|✅||
 |CommunicationChannelLine|❌|Not supported, but support could be added|
 |ContextMappingConfig|❌|Not supported, but support could be added|
+|DgtAssetMgmtProvider|✅||
+|DgtAssetMgmtPrvdLghtCpnt|✅||
 |ExtlClntAppCanvasStngs|✅||
 |GenOpPlanEligibilityConfig|❌|Not supported, but support could be added|
 |IndustriesConnectedServiceSettings|✅||
@@ -794,8 +796,6 @@ v65 introduces the following new types.  Here's their current level of support
 - VisualizationPlugin
 - WorkSkillRoutingAttribute
 - XOrgHub
-- DgtAssetMgmtProvider
-- DgtAssetMgmtPrvdLghtCpnt
 - CatalogedApi
 - CatalogedApiVersion
 - CatalogedApiArtifactVersionInfo

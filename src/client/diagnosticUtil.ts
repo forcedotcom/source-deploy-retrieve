@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename } from 'node:path';
-import { SfError } from '@salesforce/core';
+import { SfError } from '@salesforce/core/sfError';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { registry } from '../registry/registry';
 import { ComponentDiagnostic, DeployMessage } from './types';

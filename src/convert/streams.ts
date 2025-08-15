@@ -7,12 +7,13 @@
 import { isAbsolute, join } from 'node:path';
 import { pipeline as cbPipeline, Readable, Transform, Writable, Stream } from 'node:stream';
 import { promisify } from 'node:util';
-import { Messages, SfError } from '@salesforce/core';
+import { Messages } from '@salesforce/core/messages';
+import { SfError } from '@salesforce/core/sfError';
 import JSZip from 'jszip';
 import { createWriteStream, existsSync, promises as fsPromises } from 'graceful-fs';
 import { JsonMap } from '@salesforce/ts-types';
 import { XMLBuilder } from 'fast-xml-parser';
-import { Logger } from '@salesforce/core';
+import { Logger } from '@salesforce/core/logger';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { SourcePath } from '../common/types';
 import { XML_COMMENT_PROP_NAME, XML_DECL } from '../common/constants';

@@ -9,7 +9,10 @@ import { format } from 'node:util';
 import { isString } from '@salesforce/ts-types';
 import JSZip from 'jszip';
 import fs from 'graceful-fs';
-import { Lifecycle, Messages, SfError, envVars } from '@salesforce/core';
+import { Lifecycle } from '@salesforce/core/lifecycle';
+import { Messages } from '@salesforce/core/messages';
+import { SfError } from '@salesforce/core/sfError';
+import { envVars } from '@salesforce/core/envVars';
 import { ensureArray } from '@salesforce/kit';
 import { RegistryAccess } from '../registry/registryAccess';
 import { ReplacementEvent } from '../convert/types';
@@ -152,7 +155,11 @@ export class MetadataApiDeploy extends MetadataTransfer<
     }
     const connection = await this.getConnection();
     // Recasting to use the project's version of the type
-    return connection.metadata.checkDeployStatus(this.id, true, this.isRestDeploy) as unknown as MetadataApiDeployStatus;
+    return connection.metadata.checkDeployStatus(
+      this.id,
+      true,
+      this.isRestDeploy
+    ) as unknown as MetadataApiDeployStatus;
   }
 
   /**

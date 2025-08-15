@@ -6,7 +6,7 @@
  */
 import { join } from 'node:path';
 import { JsonMap } from '@salesforce/ts-types';
-import { Messages } from '@salesforce/core';
+import { Messages } from '@salesforce/core/messages';
 import { extractUniqueElementValue, getXmlElement, unwrapAndOmitNS } from '../../utils/decomposed';
 import { MetadataComponent } from '../../resolve/types';
 import { XML_NS_KEY, XML_NS_URL } from '../../common/constants';

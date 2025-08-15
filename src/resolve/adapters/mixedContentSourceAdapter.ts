@@ -5,7 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { dirname, basename, sep, join } from 'node:path';
-import { Messages, SfError } from '@salesforce/core';
+import { Messages } from '@salesforce/core/messages';
+import { SfError } from '@salesforce/core/sfError';
 import { baseName } from '../../utils/path';
 import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';

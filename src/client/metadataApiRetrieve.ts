@@ -8,7 +8,9 @@ import { join, parse } from 'node:path';
 import fs from 'graceful-fs';
 import JSZip from 'jszip';
 import { asBoolean, isString } from '@salesforce/ts-types';
-import { Messages, SfError, Lifecycle } from '@salesforce/core';
+import { Messages } from '@salesforce/core/messages';
+import { SfError } from '@salesforce/core/sfError';
+import { Lifecycle } from '@salesforce/core/lifecycle';
 import { ensureArray } from '@salesforce/kit';
 import { ComponentSet } from '../collections/componentSet';
 import { MetadataTransfer } from './metadataTransfer';
@@ -209,7 +211,6 @@ export class MetadataApiRetrieve extends MetadataTransfer<
         orgId: this.orgId,
       } as ScopedPostRetrieve);
     }
-
     return retrieveResult;
   }
 
@@ -245,7 +246,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       apiVersion: this.components?.sourceApiVersion ?? (await connection.retrieveMaxApiVersion()),
       ...(manifestData ? { unpackaged: manifestData } : {}),
       ...(this.options.singlePackage ? { singlePackage: this.options.singlePackage } : {}),
-      ...(this.options.rootTypesWithDependencies ? { rootTypesWithDependencies: this.options.rootTypesWithDependencies } : {}),
+      ...(this.options.rootTypesWithDependencies
+        ? { rootTypesWithDependencies: this.options.rootTypesWithDependencies }
+        : {}),
       // if we're retrieving with packageNames add it
       // otherwise don't - it causes errors if undefined or an empty array
       ...(packageNames.length ? { packageNames } : {}),

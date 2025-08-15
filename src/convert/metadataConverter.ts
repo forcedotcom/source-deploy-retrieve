@@ -6,7 +6,8 @@
  */
 import { Readable, PassThrough } from 'node:stream';
 import { dirname, join, normalize } from 'node:path';
-import { Messages, SfError } from '@salesforce/core';
+import { Messages } from '@salesforce/core/messages';
+import { SfError } from '@salesforce/core/sfError';
 import { promises, mkdirSync } from 'graceful-fs';
 import { isString } from '@salesforce/ts-types';
 import { SourceComponent } from '../resolve/sourceComponent';

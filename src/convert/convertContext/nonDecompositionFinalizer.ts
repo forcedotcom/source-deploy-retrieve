@@ -6,7 +6,7 @@
  */
 import { join } from 'node:path';
 import { ensureString, getString, JsonMap } from '@salesforce/ts-types';
-import { SfProject } from '@salesforce/core';
+import { SfProject } from '@salesforce/core/project';
 import { getXmlElement } from '../../utils/decomposed';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../common/constants';
 import { ComponentSet } from '../../collections/componentSet';

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { dirname, join, sep } from 'node:path';
-import { Messages } from '@salesforce/core';
+import { Messages } from '@salesforce/core/messages';
 import { ensureString } from '@salesforce/ts-types';
 import { META_XML_SUFFIX } from '../../common/constants';
 import { SourcePath } from '../../common/types';

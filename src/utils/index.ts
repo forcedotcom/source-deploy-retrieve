@@ -14,4 +14,3 @@ export {
   parseNestedFullName,
   baseWithoutSuffixes,
 } from './path';
-export { deepFreeze } from './collections';

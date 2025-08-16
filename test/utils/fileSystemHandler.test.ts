@@ -8,7 +8,7 @@ import { join } from 'node:path';
 import { SinonStub, createSandbox } from 'sinon';
 import { expect, config } from 'chai';
 import fs from 'graceful-fs';
-import { ensureFileExists, searchUp } from '../../src/utils/fileSystemHandler';
+import { searchUp } from '../../src/utils/fileSystemHandler';
 
 const env = createSandbox();
 config.truncateThreshold = 0;

@@ -6,7 +6,7 @@
  */
 
 import type { CustomLabel } from '@jsforce/jsforce-node/lib/api/metadata';
-import { SfError } from '@salesforce/core';
+import { SfError } from '@salesforce/core/sfError';
 import { XMLParser } from 'fast-xml-parser';
 import { META_XML_SUFFIX, XML_COMMENT_PROP_NAME } from '../common/constants';
 

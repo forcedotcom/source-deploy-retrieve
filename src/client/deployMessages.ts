@@ -6,7 +6,7 @@
  */
 
 import { basename, dirname, extname, join, posix, sep } from 'node:path/posix';
-import { SfError } from '@salesforce/core';
+import { SfError } from '@salesforce/core/sfError';
 import { ensureArray } from '@salesforce/kit';
 import { ComponentLike, SourceComponent } from '../resolve';
 import { registry } from '../registry/registry';

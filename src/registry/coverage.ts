@@ -10,7 +10,7 @@ import { OptionsOfTextResponseBody } from 'got';
 import got from 'got';
 import { ProxyAgent } from 'proxy-agent';
 import { isString } from '@salesforce/ts-types';
-import { SfError } from '@salesforce/core';
+import { SfError } from '@salesforce/core/sfError';
 import { CoverageObject } from '../../src/registry/types';
 
 const getProxiedOptions = (url: string): OptionsOfTextResponseBody => ({

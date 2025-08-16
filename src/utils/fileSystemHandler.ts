@@ -9,10 +9,9 @@ import * as path from 'node:path';
 import fs from 'graceful-fs';
 import { SourcePath } from '../common/types';
 
-export function ensureFileExists(filePath: string): void {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.closeSync(fs.openSync(filePath, 'w'));
-}
+export const ensureFileExists = async (filePath: string): Promise<void> => {
+  await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+};
 
 /**
  * Traverse up a file path and search for the given file name.

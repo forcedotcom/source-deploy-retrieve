@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as path from 'node:path';
-import { Logger } from '@salesforce/core';
+import { Logger } from '@salesforce/core/logger';
 import { isString } from '@salesforce/ts-types';
 import fs from 'graceful-fs';
 import { ConvertOutputConfig } from '../convert/types';

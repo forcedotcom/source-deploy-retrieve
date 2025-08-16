@@ -9,7 +9,7 @@ import { dirname, join } from 'node:path';
 import fs from 'node:fs';
 import { AnyJson, JsonMap, ensureString, isJsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
-import { Messages } from '@salesforce/core';
+import { Messages } from '@salesforce/core/messages';
 import { calculateRelativePath } from '../../utils/path';
 import { ForceIgnore } from '../../resolve/forceIgnore';
 import { extractUniqueElementValue, objectHasSomeRealValues } from '../../utils/decomposed';

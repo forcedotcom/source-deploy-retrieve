@@ -7,7 +7,7 @@
 
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { ensureArray } from '@salesforce/kit';
-import { SfError } from '@salesforce/core';
+import { SfError } from '@salesforce/core/sfError';
 import { MetadataType } from '../registry/types';
 import { RegistryAccess } from '../registry/registryAccess';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';

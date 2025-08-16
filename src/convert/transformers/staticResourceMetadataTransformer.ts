@@ -163,7 +163,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
    */
   // eslint-disable-next-line class-methods-use-this
   private async pipeline(stream: Readable, destination: string): Promise<void> {
-    ensureFileExists(destination);
+    await ensureFileExists(destination);
     await getPipeline()(stream, createWriteStream(destination));
   }
 

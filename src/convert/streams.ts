@@ -160,7 +160,7 @@ export class StandardWriter extends ComponentWriter {
           chunk.writeInfos
             .map(makeWriteInfoAbsolute(this.rootDestination))
             .filter(existsOrDoesntMatchIgnored(this.forceignore, this.logger)) // Skip files matched by default ignore
-            .map((info) => {
+            .map(async (info) => {
               if (info.shouldDelete) {
                 this.deleted.push({
                   filePath: info.output,
@@ -188,7 +188,7 @@ export class StandardWriter extends ComponentWriter {
                 toResolve.add(info.output);
               }
 
-              ensureFileExists(info.output);
+              await ensureFileExists(info.output);
               return getPipeline()(info.source, createWriteStream(info.output));
             })
         );

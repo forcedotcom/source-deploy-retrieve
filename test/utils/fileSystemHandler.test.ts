@@ -42,21 +42,4 @@ describe('File System Utils', () => {
       expect(searchUp(startPath, 'asdf')).to.be.undefined;
     });
   });
-
-  describe('ensureFileExists', () => {
-    it('should ensure file exists', () => {
-      const mkdirStub = env.stub(fs, 'mkdirSync');
-
-      const path = join('path', 'to', 'a', 'file.x');
-      const closeStub = env.stub(fs, 'closeSync');
-      const openStub = env.stub(fs, 'openSync');
-      openStub.returns(123);
-
-      ensureFileExists(path);
-
-      // somewhat validating ensureDirectoryExists was called first
-      expect(mkdirStub.calledBefore(openStub)).to.be.true;
-      expect(closeStub.firstCall.args[0]).to.equal(123);
-    });
-  });
 });

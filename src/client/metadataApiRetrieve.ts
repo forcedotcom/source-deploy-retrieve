@@ -12,6 +12,7 @@ import { Messages } from '@salesforce/core/messages';
 import { SfError } from '@salesforce/core/sfError';
 import { Lifecycle } from '@salesforce/core/lifecycle';
 import { ensureArray } from '@salesforce/kit';
+import { RegistryAccess } from '../registry/registryAccess';
 import { ComponentSet } from '../collections/componentSet';
 import { MetadataTransfer } from './metadataTransfer';
 import {
@@ -48,9 +49,10 @@ export class RetrieveResult implements MetadataTransferResult {
     public readonly response: MetadataApiRetrieveStatus,
     public readonly components: ComponentSet,
     localComponents?: ComponentSet,
-    private partialDeleteFileResponses: FileResponse[] = []
+    private partialDeleteFileResponses: FileResponse[] = [],
+    registry?: RegistryAccess
   ) {
-    this.localComponents = new ComponentSet(localComponents?.getSourceComponents());
+    this.localComponents = new ComponentSet(localComponents?.getSourceComponents(), registry);
   }
 
   public getFileResponses(): FileResponse[] {
@@ -198,10 +200,15 @@ export class MetadataApiRetrieve extends MetadataTransfer<
         }));
       }
     }
-
     componentSet ??= new ComponentSet(undefined, this.options.registry);
 
-    const retrieveResult = new RetrieveResult(result, componentSet, this.components, partialDeleteFileResponses);
+    const retrieveResult = new RetrieveResult(
+      result,
+      componentSet,
+      this.components,
+      partialDeleteFileResponses,
+      this.options.registry
+    );
     if (!isMdapiRetrieve && !this.options.suppressEvents) {
       // This should only be done when retrieving source format since retrieving
       // mdapi format has no conversion or events/hooks

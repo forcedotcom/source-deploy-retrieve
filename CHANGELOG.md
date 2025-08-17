@@ -1,3 +1,12 @@
+## [12.22.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.5...12.22.6) (2025-08-17)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/types from 1.3.0 to 1.4.0 ([#1606](https://github.com/forcedotcom/source-deploy-retrieve/issues/1606)) ([243d156](https://github.com/forcedotcom/source-deploy-retrieve/commit/243d15686ca1e50cee685931795d6e424af29601))
+
+
+
 ## [12.22.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.4...12.22.5) (2025-08-14)
 
 

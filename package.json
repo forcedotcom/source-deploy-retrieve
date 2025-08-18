@@ -43,16 +43,16 @@
   "devDependencies": {
     "@jsforce/jsforce-node": "^3.10.3",
     "@salesforce/cli-plugins-testkit": "^5.3.39",
-    "@salesforce/dev-scripts": "^11.0.2",
+    "@salesforce/dev-scripts": "^11.0.3",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/fast-levenshtein": "^0.0.4",
     "@types/graceful-fs": "^4.1.9",
     "@types/mime": "2.0.3",
     "@types/minimatch": "^5.1.2",
-    "@types/node": "^20",
     "deep-equal-in-any-order": "^1.1.19",
     "esbuild": "^0.25.8",
     "eslint-plugin-sf-plugin": "^1.20.30",
+    "mocha": "^11.7.1",
     "mocha-junit-reporter": "^1.23.3",
     "mocha-snap": "^5.0.0",
     "ts-morph": "^24.0.0",
@@ -210,5 +210,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "resolutions": {
+    "@types/node": "18.19.123"
   }
 }

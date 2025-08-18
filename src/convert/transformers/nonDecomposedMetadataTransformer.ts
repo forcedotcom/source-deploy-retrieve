@@ -7,7 +7,7 @@
 
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
-import { Messages } from '@salesforce/core';
+import { Messages } from '@salesforce/core/messages';
 import { ToSourceFormatInput, WriteInfo } from '../types';
 import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 Messages.importMessagesDirectory(__dirname);

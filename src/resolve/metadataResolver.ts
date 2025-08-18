@@ -5,7 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, sep } from 'node:path';
-import { Lifecycle, Messages, SfError, Logger } from '@salesforce/core';
+import { Lifecycle } from '@salesforce/core/lifecycle';
+import { Messages } from '@salesforce/core/messages';
+import { SfError } from '@salesforce/core/sfError';
+import { Logger } from '@salesforce/core/logger';
 import { extName, fnJoin, parentName, parseMetadataXml } from '../utils/path';
 import { RegistryAccess } from '../registry/registryAccess';
 import { MetadataType } from '../registry/types';

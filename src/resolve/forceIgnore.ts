@@ -9,7 +9,7 @@ import { dirname, join, relative } from 'node:path';
 import * as os from 'node:os';
 import ignore, { Ignore } from 'ignore/index';
 import { readFileSync } from 'graceful-fs';
-import { Lifecycle } from '@salesforce/core';
+import { Lifecycle } from '@salesforce/core/lifecycle';
 import { SourcePath } from '../common/types';
 import { searchUp } from '../utils/fileSystemHandler';
 

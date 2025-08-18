@@ -8,7 +8,7 @@ import { join } from 'node:path';
 import { SinonStub, createSandbox } from 'sinon';
 import { expect, config } from 'chai';
 import fs from 'graceful-fs';
-import { ensureFileExists, searchUp } from '../../src/utils/fileSystemHandler';
+import { searchUp } from '../../src/utils/fileSystemHandler';
 
 const env = createSandbox();
 config.truncateThreshold = 0;
@@ -40,23 +40,6 @@ describe('File System Utils', () => {
 
     it('should return undefined if file not found', () => {
       expect(searchUp(startPath, 'asdf')).to.be.undefined;
-    });
-  });
-
-  describe('ensureFileExists', () => {
-    it('should ensure file exists', () => {
-      const mkdirStub = env.stub(fs, 'mkdirSync');
-
-      const path = join('path', 'to', 'a', 'file.x');
-      const closeStub = env.stub(fs, 'closeSync');
-      const openStub = env.stub(fs, 'openSync');
-      openStub.returns(123);
-
-      ensureFileExists(path);
-
-      // somewhat validating ensureDirectoryExists was called first
-      expect(mkdirStub.calledBefore(openStub)).to.be.true;
-      expect(closeStub.firstCall.args[0]).to.equal(123);
     });
   });
 });

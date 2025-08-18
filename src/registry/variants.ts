@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { Logger, SfProject, SfProjectJson, Lifecycle, SfError } from '@salesforce/core';
-import { deepFreeze } from '../utils/collections';
 import { MetadataRegistry } from './types';
 // The static import of json file should never be changed,
 // other read methods might make esbuild fail to bundle the json file
@@ -31,14 +30,12 @@ export type RegistryLoadInput =
   | ProjectVariants;
 
 /** combine the standard registration with any overrides specific in the sfdx-project.json */
-export const getEffectiveRegistry = (input?: RegistryLoadInput): MetadataRegistry =>
-  deepFreeze(
-    removeEmptyStrings(
-      firstLevelMerge(
-        registryData as MetadataRegistry,
-        mergeVariants(
-          input?.presets?.length ?? input?.registryCustomizations ? input : getProjectVariants(input?.projectDir)
-        )
+export const getEffectiveRegistry = (input?: RegistryLoadInput): Readonly<MetadataRegistry> =>
+  removeEmptyStrings(
+    firstLevelMerge(
+      registryData as MetadataRegistry,
+      mergeVariants(
+        input?.presets?.length ?? input?.registryCustomizations ? input : getProjectVariants(input?.projectDir)
       )
     )
   );

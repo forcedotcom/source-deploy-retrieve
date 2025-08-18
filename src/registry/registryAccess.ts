@@ -4,7 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Messages, SfError } from '@salesforce/core';
+import { Messages } from '@salesforce/core/messages';
+import { SfError } from '@salesforce/core/sfError';
 import { MetadataRegistry, MetadataType } from './types';
 import { getEffectiveRegistry } from './variants';
 import { getSuffixGuesses, getTypeSuggestions } from './levenshtein';

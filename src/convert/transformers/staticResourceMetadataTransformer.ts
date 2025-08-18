@@ -10,7 +10,9 @@ import JSZip from 'jszip';
 import { getExtension } from 'mime';
 import { JsonMap } from '@salesforce/ts-types';
 import { createWriteStream } from 'graceful-fs';
-import { Logger, Messages, SfError } from '@salesforce/core';
+import { Logger } from '@salesforce/core/logger';
+import { Messages } from '@salesforce/core/messages';
+import { SfError } from '@salesforce/core/sfError';
 import { isEmpty } from '@salesforce/kit';
 import { baseName } from '../../utils/path';
 import { ToSourceFormatInput, WriteInfo } from '../types';
@@ -161,7 +163,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
    */
   // eslint-disable-next-line class-methods-use-this
   private async pipeline(stream: Readable, destination: string): Promise<void> {
-    ensureFileExists(destination);
+    await ensureFileExists(destination);
     await getPipeline()(stream, createWriteStream(destination));
   }
 

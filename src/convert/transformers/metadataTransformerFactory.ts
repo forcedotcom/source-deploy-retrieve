@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Messages } from '@salesforce/core';
+import { Messages } from '@salesforce/core/messages';
 import { MetadataTransformer } from '../types';
 import { SourceComponent } from '../../resolve';
 import { ConvertContext } from '../convertContext/convertContext';

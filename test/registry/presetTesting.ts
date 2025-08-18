@@ -23,7 +23,7 @@ const registriesFromPresets = fs
   .filter((file) => !file.name.endsWith('CustomLabelsBeta.json'))
   .map((file) => ({
     name: file.name,
-    registry: JSON.parse(fs.readFileSync(path.join(file.path, file.name), 'utf-8')) as MetadataRegistry,
+    registry: JSON.parse(fs.readFileSync(path.join(file.parentPath, file.name), 'utf-8')) as MetadataRegistry,
   })) /*
   decomposedPermissionSetBeta2 has an invalid registry configured.
   this is because multiple children will map to the .objectSettings suffix, and currently, the registry only supports 1:1 suffix mapping

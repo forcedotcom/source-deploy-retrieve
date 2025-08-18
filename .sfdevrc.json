@@ -1,4 +1,5 @@
 {
+  "devDepOverrides": ["mocha"],
   "wireit": {
     "compile": {
       "clean": "if-file-deleted",

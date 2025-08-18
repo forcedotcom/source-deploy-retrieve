@@ -123,7 +123,7 @@ const resolveRelative = (parentDirs: string[]) => (subArray: string[], index: nu
 const getRelative = (parent: string) => (child: string) => path.relative(parent, child);
 
 const isFile = (file: fs.Dirent) => file.isFile();
-const getFullPath = (file: fs.Dirent) => path.join(file.path, file.name);
+const getFullPath = (file: fs.Dirent) => path.join(file.parentPath, file.name);
 
 /** dirEnts are sometimes folder, we don't want those.  And we need the full paths */
 export const dirEntsToPaths = (dirEnts: fs.Dirent[]): string[] => dirEnts.filter(isFile).map(getFullPath);

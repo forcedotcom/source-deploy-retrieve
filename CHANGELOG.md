@@ -1,3 +1,12 @@
+## [12.22.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.6...12.22.7) (2025-08-18)
+
+
+### Bug Fixes
+
+* replace deprecated node FS prop W-19160014 ([#1607](https://github.com/forcedotcom/source-deploy-retrieve/issues/1607)) ([25ad04e](https://github.com/forcedotcom/source-deploy-retrieve/commit/25ad04e01763a2b747efcfc19279b0951837ab22))
+
+
+
 ## [12.22.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.5...12.22.6) (2025-08-17)
 
 

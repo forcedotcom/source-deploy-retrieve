@@ -43,6 +43,10 @@ export type FromSourceOptions = {
    * File paths or directory paths of deleted components, i.e., destructive changes.
    */
   fsDeletePaths?: string[];
+  /**
+   * Whether to use filesystem-based ForceIgnore during component resolution.
+   */
+  useFsForceIgnore?: boolean;
 } & OptionalTreeRegistryOptions;
 
 export type FromManifestOptions = {

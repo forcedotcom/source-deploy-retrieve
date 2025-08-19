@@ -1475,4 +1475,105 @@ describe('ComponentSet', () => {
       ]);
     });
   });
+
+  describe('useFsForceIgnore option', () => {
+    it('should accept useFsForceIgnore option in fromSource without throwing errors', () => {
+      const registry = new RegistryAccess();
+      
+      // Test that the option is accepted without throwing compilation errors
+      expect(() => {
+        ComponentSet.fromSource({
+          fsPaths: ['nonexistent'],
+          registry,
+          useFsForceIgnore: false,
+        });
+      }).to.throw();
+      
+      expect(() => {
+        ComponentSet.fromSource({
+          fsPaths: ['nonexistent'],
+          registry,
+          useFsForceIgnore: true,
+        });
+      }).to.throw();
+    });
+
+    it('should pass useFsForceIgnore to MetadataResolver correctly', () => {
+      const registry = new RegistryAccess();
+      
+      let capturedUseFsForceIgnore: boolean | undefined;
+      
+      $$.SANDBOX.stub(MetadataResolver.prototype, 'getComponentsFromPath').callsFake(function(this: MetadataResolver) {
+        // Access the private useFsForceIgnore property through reflection
+        capturedUseFsForceIgnore = (this as any).useFsForceIgnore;
+        return [];
+      });
+      
+      // Test with useFsForceIgnore: false
+      ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry,
+        tree: manifestFiles.TREE,
+        useFsForceIgnore: false,
+      });
+      
+      expect(capturedUseFsForceIgnore).to.be.false;
+      
+      capturedUseFsForceIgnore = undefined;
+      
+      ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry,
+        tree: manifestFiles.TREE,
+        useFsForceIgnore: true,
+      });
+      
+      expect(capturedUseFsForceIgnore).to.be.true;
+    });
+
+    it('should preserve forceIgnoredPaths when useFsForceIgnore is false', () => {
+      const registry = new RegistryAccess();
+      
+      // Create a mock resolver that sets some ignored paths
+      const mockIgnoredPaths = new Set(['/test/ignored1', '/test/ignored2']);
+      const getComponentsStub = $$.SANDBOX.stub(MetadataResolver.prototype, 'getComponentsFromPath').returns([]);
+      
+      const originalFromSource = ComponentSet.fromSource;
+      $$.SANDBOX.stub(ComponentSet, 'fromSource').callsFake((options) => {
+        const result = originalFromSource.call(ComponentSet, options);
+        result.forceIgnoredPaths = mockIgnoredPaths;
+        return result;
+      });
+      
+      const componentSet = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry,
+        tree: manifestFiles.TREE,
+        useFsForceIgnore: false,
+      });
+      
+      expect(componentSet.forceIgnoredPaths).to.equal(mockIgnoredPaths);
+      expect(getComponentsStub.called).to.be.true;
+    });
+
+    it('should default useFsForceIgnore to true when not specified', () => {
+      const registry = new RegistryAccess();
+      
+      let capturedUseFsForceIgnore: boolean | undefined;
+      
+      $$.SANDBOX.stub(MetadataResolver.prototype, 'getComponentsFromPath').callsFake(function(this: MetadataResolver) {
+        // Access the private useFsForceIgnore property through reflection
+        capturedUseFsForceIgnore = (this as any).useFsForceIgnore;
+        return [];
+      });
+      
+      ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry,
+        tree: manifestFiles.TREE,
+        // useFsForceIgnore not specified, should default to true
+      });
+      expect(capturedUseFsForceIgnore).to.be.true;
+    });
+  });
 });

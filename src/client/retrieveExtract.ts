@@ -59,19 +59,39 @@ export const extract = async ({
       fsPaths: [pkg.zipTreeLocation],
       registry,
       tree,
+      useFsForceIgnore: false,
     })
       .getSourceComponents()
       .toArray();
-    if (merge) {
-      partialDeleteFileResponses.push(
-        ...handlePartialDeleteMerges({ retrievedComponents, tree, mainComponents, logger })
-      );
-    }
 
     // this is intentional sequential
     // eslint-disable-next-line no-await-in-loop
     const convertResult = await converter.convert(retrievedComponents, 'source', outputConfig);
-    components.push(...(convertResult?.converted ?? []));
+    
+    // now that the components are in source format we can apply ForceIgnore
+    const convertedComponents = convertResult?.converted ?? [];
+    const filteredComponents = convertedComponents.filter((component) => {
+      // Only apply ForceIgnore if component has an xml path
+      if (!component.xml) {
+        return true; // Include components without xml path
+      }
+      
+      const forceIgnore = component.getForceIgnore();
+      const shouldInclude = !forceIgnore.denies(component.xml);
+      if (!shouldInclude) {
+        logger.debug(`Component ${component.xml} excluded by .forceignore`);
+      }
+      return shouldInclude;
+    });
+    
+    components.push(...filteredComponents);
+
+    if (merge) {
+      partialDeleteFileResponses.push(
+        ...handlePartialDeleteMerges({ retrievedComponents: filteredComponents, tree, mainComponents, logger })
+      );
+    }
+
     // additional partialDelete logic for decomposed types are handled in the transformer
     partialDeleteFileResponses.push(...(convertResult?.deleted ?? []));
   }

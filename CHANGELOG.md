@@ -1,3 +1,12 @@
+## [12.22.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.8...12.22.9) (2025-08-21)
+
+
+### Bug Fixes
+
+* add support for FieldMappingConfig and fieldMappingConfigItem ([#1608](https://github.com/forcedotcom/source-deploy-retrieve/issues/1608)) ([083f4c2](https://github.com/forcedotcom/source-deploy-retrieve/commit/083f4c27f8499e1aeaf32a6284f91d193b660a47))
+
+
+
 ## [12.22.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.7...12.22.8) (2025-08-18)
 
 

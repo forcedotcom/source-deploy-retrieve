@@ -55,7 +55,6 @@
     "mocha": "^11.7.1",
     "mocha-junit-reporter": "^1.23.3",
     "mocha-snap": "^5.0.0",
-    "ts-morph": "^24.0.0",
     "ts-node": "^10.9.2",
     "ts-patch": "^3.3.0",
     "typescript": "^5.5.4"
@@ -141,6 +140,19 @@
       ],
       "output": []
     },
+    "test:bundle": {
+      "dependencies": [
+        "compile"
+      ],
+      "command": "node scripts/esbuild.config.mjs",
+      "files": [
+        "lib/src",
+        "scripts/esbuild.config.mjs"
+      ],
+      "output": [
+        "dist"
+      ]
+    },
     "test:compile": {
       "command": "tsc -p \"./test\" --pretty",
       "files": [
@@ -154,7 +166,8 @@
         "test:only",
         "test:compile",
         "test:registry-validation",
-        "test:snapshot"
+        "test:snapshot",
+        "test:bundle"
       ]
     },
     "test:registry-validation": {

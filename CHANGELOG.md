@@ -1,3 +1,12 @@
+## [12.22.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.9...12.22.10) (2025-08-26)
+
+
+### Bug Fixes
+
+* @W-19405722 - Cataloged Artifact Version directory ([#1614](https://github.com/forcedotcom/source-deploy-retrieve/issues/1614)) ([1ecacbf](https://github.com/forcedotcom/source-deploy-retrieve/commit/1ecacbf3e85921bb5ae4854ac4663277619ca433))
+
+
+
 ## [12.22.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.8...12.22.9) (2025-08-21)
 
 

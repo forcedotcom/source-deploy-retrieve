@@ -4949,7 +4949,7 @@
       "id": "catalogedapiartifactversioninfo",
       "name": "CatalogedApiArtifactVersionInfo",
       "suffix": "catalogedApiArtifactVersionInfo",
-      "directoryName": "catalogedApiArtifactsVersionInfo",
+      "directoryName": "catalogedApiArtifactVersionInfos",
       "inFolder": false,
       "strictDirectoryName": false
     },

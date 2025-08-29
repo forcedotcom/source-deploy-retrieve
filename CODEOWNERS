@@ -1,13 +1,6 @@
-# CODEOWNERS adds reviewers depending on the location of the change.
-# Each line is a file pattern followed by one or more owners.
-# Order is important; the last matching pattern takes the most
-# precedence. When someone opens a pull request that only
-# modifies JS files, only @js-owner and not the global
-# owner(s) will be requested for a review.
+# Technical writers will be added as reviewers on markdown changes.
+*.md @forcedotcom/cli-docs
 
-# These owners will be the default owners for everything in
-# the repo. Unless a later match takes precedence,
-# @forcedotcom/pdt will be requested for
-# review when someone opens a pull request.
-*       @forcedotcom/pdt @forcedotcom/platform-cli
-#ECCN:Open Source
+# Comment line immediately above ownership line is reserved for related other information. Please be careful while editing.
+#ECCN:Open Source 5D002
+#GUSINFO:Platform CLI,Platform CLI

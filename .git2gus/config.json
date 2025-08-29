@@ -1,5 +1,5 @@
 {
-  "productTag": "a1aB000000005G3IAI",
+  "productTag": "a1aB00000004Bx8IAE",
   "productTagLabels": {
     "area:codecompletion": "a1aB0000000JglYIAS",
     "area:debugger": "a1aB00000000v2YIAQ",
@@ -31,7 +31,7 @@
     "type:feedback": "",
     "type:duplicate": ""
   },
-  "defaultBuild": "offcore.tooling.48",
+  "defaultBuild": "offcore.tooling.58",
   "hideWorkItemUrl": "true",
   "statusWhenClosed": "CLOSED"
 }

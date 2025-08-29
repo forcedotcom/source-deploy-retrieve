@@ -43,7 +43,7 @@
   "devDependencies": {
     "@jsforce/jsforce-node": "^3.10.4",
     "@salesforce/cli-plugins-testkit": "^5.3.39",
-    "@salesforce/dev-scripts": "^11.0.3",
+    "@salesforce/dev-scripts": "^11.0.4",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/fast-levenshtein": "^0.0.4",
     "@types/graceful-fs": "^4.1.9",
@@ -166,8 +166,7 @@
         "test:only",
         "test:compile",
         "test:registry-validation",
-        "test:snapshot",
-        "test:bundle"
+        "test:snapshot"
       ]
     },
     "test:registry-validation": {

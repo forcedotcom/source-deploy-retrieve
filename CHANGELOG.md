@@ -1,3 +1,12 @@
+## [12.22.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.10...12.22.11) (2025-08-29)
+
+
+### Bug Fixes
+
+* oss compliance ([#1615](https://github.com/forcedotcom/source-deploy-retrieve/issues/1615)) ([1da5df0](https://github.com/forcedotcom/source-deploy-retrieve/commit/1da5df0e637f26e02e0195ac8b7243cfbdc72534))
+
+
+
 ## [12.22.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.9...12.22.10) (2025-08-26)
 
 

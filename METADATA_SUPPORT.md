@@ -710,6 +710,9 @@ v65 introduces the following new types.  Here's their current level of support
 |:---|:---|:---|
 |AnalyticsDatasetDefinition|❌|Not supported, but support could be added|
 |ApiNamedQuery|✅||
+|CatalogedApi|✅||
+|CatalogedApiArtifactVersionInfo|✅||
+|CatalogedApiVersion|✅||
 |ClaimCoverageProdtProcDef|❌|Not supported, but support could be added|
 |CommsUpsellSettings|✅||
 |CommunicationChannelLine|❌|Not supported, but support could be added|
@@ -799,7 +802,4 @@ v65 introduces the following new types.  Here's their current level of support
 - VisualizationPlugin
 - WorkSkillRoutingAttribute
 - XOrgHub
-- CatalogedApi
-- CatalogedApiVersion
-- CatalogedApiArtifactVersionInfo
 - RuleLibraryDefinition

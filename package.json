@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@salesforce/core": "^8.23.0",
-    "@salesforce/kit": "^3.2.3",
+    "@salesforce/kit": "^3.2.4",
     "@salesforce/ts-types": "^2.0.12",
     "@salesforce/types": "^1.4.0",
     "fast-levenshtein": "^3.0.0",

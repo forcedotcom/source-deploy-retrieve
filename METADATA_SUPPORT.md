@@ -719,6 +719,7 @@ v65 introduces the following new types.  Here's their current level of support
 |ContextMappingConfig|❌|Not supported, but support could be added|
 |DgtAssetMgmtProvider|✅||
 |DgtAssetMgmtPrvdLghtCpnt|✅||
+|DxGlobalTermsSettings|✅||
 |ExtlClntAppCanvasStngs|✅||
 |GenOpPlanEligibilityConfig|❌|Not supported, but support could be added|
 |IndustriesConnectedServiceSettings|✅||

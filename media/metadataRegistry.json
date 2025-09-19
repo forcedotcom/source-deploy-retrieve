@@ -494,6 +494,7 @@
     "timeSheetTemplate": "timesheettemplate",
     "timelineObjectDefinition": "timelineobjectdefinition",
     "topicsForObjects": "topicsforobjects",
+    "transactionProcessingType": "transactionprocessingtype",
     "transactionSecurityPolicy": "transactionsecuritypolicy",
     "translation": "translations",
     "trigger": "apextrigger",
@@ -4372,6 +4373,13 @@
       "name": "TopicsForObjects",
       "strictDirectoryName": false,
       "suffix": "topicsForObjects"
+    },
+    "transactionprocessingtype": {
+      "directoryName": "transactionProcessingTypes",
+      "id": "transactionprocessingtype",
+      "inFolder": false,
+      "name": "TransactionProcessingType",
+      "suffix": "transactionProcessingType"
     },
     "transactionsecuritypolicy": {
       "directoryName": "transactionSecurityPolicies",

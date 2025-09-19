@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1757769500384,
+  "lastUpdate": 1758290680243,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -81799,6 +81799,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 17729,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "d.trinh@salesforce.com",
+            "name": "Jessica Trinh",
+            "username": "dtrinh-sf"
+          },
+          "committer": {
+            "email": "d.trinh@salesforce.com",
+            "name": "Jessica Trinh",
+            "username": "dtrinh-sf"
+          },
+          "distinct": true,
+          "id": "cd9d31d6ccdfbbcdeeef84a958c87a6edd45261f",
+          "message": "add tpt to registry",
+          "timestamp": "2025-09-18T18:06:06-07:00",
+          "tree_id": "c39e5c1aeae62b860e488109f55667b4f08642d9",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/cd9d31d6ccdfbbcdeeef84a958c87a6edd45261f"
+        },
+        "date": 1758290658155,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 537,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4336,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3060,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 7316,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 915,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 9208,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 4667,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 9044,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1629,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 16495,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 8460,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 17632,
             "unit": "ms"
           }
         ]

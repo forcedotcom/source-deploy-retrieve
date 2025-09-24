@@ -557,7 +557,8 @@
     "ecaCanvas": "extlclntappcanvasstngs",
     "apiNamedQuery": "apinamedquery",
     "ExternalStoragePrvdConfigSet": "externalstorageprvdconfig",
-    "ruleLibraryDefinition": "rulelibrarydefinition"
+    "ruleLibraryDefinition": "rulelibrarydefinition",
+    "customFieldDisplay": "customfielddisplay"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4966,6 +4967,14 @@
       "name": "RuleLibraryDefinition",
       "suffix": "ruleLibraryDefinition",
       "directoryName": "ruleLibraryDefinition",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "customfielddisplay": {
+      "id": "customfielddisplay",
+      "name": "CustomFieldDisplay",
+      "suffix": "customFieldDisplay",
+      "directoryName": "customFieldDisplays",
       "inFolder": false,
       "strictDirectoryName": false
     }

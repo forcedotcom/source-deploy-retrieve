@@ -724,6 +724,7 @@ v65 introduces the following new types.  Here's their current level of support
 |GenOpPlanEligibilityConfig|❌|Not supported, but support could be added|
 |IndustriesConnectedServiceSettings|✅||
 |LightningOutApp|❌|Not supported, but support could be added|
+|McpServerDefinition|❌|Not supported, but support could be added|
 |PrmCoreSettings|✅||
 |ReferralMarketingConfig|❌|Not supported, but support could be added|
 |RpaRobotPoolMetadata|❌|Not supported, but support could be added|

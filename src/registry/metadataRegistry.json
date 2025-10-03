@@ -364,6 +364,7 @@
     "mktDataConnectionSrcParam": "mktdataconnectionsrcparam",
     "mktDataTranField": "mktdatatranfield",
     "mktDataTranObject": "mktdatatranobject",
+    "mcpServerDefinition": "mcpserverdefinition",
     "mlDataDefinition": "mldatadefinition",
     "mlDomain": "mldomain",
     "mlPrediction": "mlpredictiondefinition",
@@ -3269,6 +3270,14 @@
       "name": "MktDataTranObject",
       "strictDirectoryName": false,
       "suffix": "mktDataTranObject"
+    },
+    "mcpserverdefinition": {
+      "directoryName": "mcpServerDefinitions",
+      "id": "mcpserverdefinition",
+      "inFolder": false,
+      "name": "McpServerDefinition",
+      "strictDirectoryName": false,
+      "suffix": "mcpServerDefinition"
     },
     "mldatadefinition": {
       "directoryName": "mlDataDefinitions",

@@ -1,10 +1,10 @@
 # Supported CLI Metadata Types
 
-This list compares metadata types found in Salesforce v64 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
+This list compares metadata types found in Salesforce v65 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 658/689 supported metadata types.
+Currently, there are 673/718 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -44,10 +44,11 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AgentPlatformSettings|✅||
 |AgentforceForDevelopersSettings|✅||
 |Ai4mSettings|✅||
-|AiEvaluationDefinition|✅||
+|AiEvaluationDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |AiPlannerVoiceDef|❌|Not supported, but support could be added (but not for tracking)|
 |AnalyticSnapshot|✅||
 |AnalyticsDashboard|✅||
+|AnalyticsDatasetDefinition|❌|Not supported, but support could be added|
 |AnalyticsSettings|✅||
 |AnalyticsVisualization|✅||
 |AnalyticsWorkspace|✅||
@@ -59,6 +60,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ApexSettings|✅||
 |ApexTestSuite|✅||
 |ApexTrigger|✅||
+|ApiNamedQuery|✅||
 |AppAnalyticsSettings|✅||
 |AppExperienceSettings|✅||
 |AppFrameworkTemplateBundle|✅||
@@ -117,6 +119,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CareSystemFieldMapping|✅||
 |CaseSettings|✅||
 |CaseSubjectParticle|✅||
+|CatalogedApi|✅||
+|CatalogedApiArtifactVersionInfo|✅||
+|CatalogedApiVersion|✅||
 |Certificate|✅||
 |ChannelLayout|✅||
 |ChannelObjectLinkingRule|✅||
@@ -126,6 +131,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ChatterExtension|✅||
 |ChatterSettings|✅||
 |ChoiceList|⚠️|Supports deploy/retrieve but not source tracking|
+|ClaimCoverageProdtProcDef|❌|Not supported, but support could be added|
 |ClaimFinancialSettings|✅||
 |ClaimMgmtFoundationEnabledSettings|✅||
 |ClauseCatgConfiguration|✅||
@@ -138,6 +144,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CommerceSettings|✅||
 |CommissionStatementConfig|❌|Not supported, but support could be added|
 |CommsServiceConsoleSettings|✅||
+|CommsUpsellSettings|✅||
+|CommunicationChannelLine|❌|Not supported, but support could be added|
 |CommunicationChannelType|❌|Not supported, but support could be added|
 |CommunitiesSettings|✅||
 |Community|✅||
@@ -151,6 +159,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ContentSettings|✅||
 |ContentTypeBundle|✅||
 |ContextDefinition|⚠️|Supports deploy/retrieve but not source tracking|
+|ContextMappingConfig|❌|Not supported, but support could be added|
 |ContextUseCaseMapping|✅||
 |ContractSettings|✅||
 |ContractType|✅||
@@ -215,6 +224,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DelegateGroup|✅||
 |DeploymentSettings|✅||
 |DevHubSettings|✅||
+|DgtAssetMgmtProvider|✅||
+|DgtAssetMgmtPrvdLghtCpnt|✅||
 |DigitalExperience|✅||
 |DigitalExperienceBundle|✅||
 |DigitalExperienceConfig|✅||
@@ -234,6 +245,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DocumentTemplate|⚠️|Supports deploy/retrieve but not source tracking|
 |DocumentType|✅||
 |DuplicateRule|✅||
+|DxGlobalTermsSettings|✅||
 |DynamicFormsSettings|✅||
 |DynamicFulfillmentOrchestratorSettings|✅||
 |EACSettings|✅||
@@ -300,6 +312,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExternalDocStorageConfig|✅||
 |ExternalServiceRegistration|✅||
 |ExternalStoragePrvdConfig|✅||
+|ExtlClntAppCanvasStngs|✅||
 |ExtlClntAppConfigurablePolicies|✅||
 |ExtlClntAppGlobalOauthSettings|✅||
 |ExtlClntAppMobileConfigurablePolicies|✅||
@@ -347,6 +360,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |GenAiPlugin|✅||
 |GenAiPromptTemplate|✅||
 |GenAiPromptTemplateActv|✅||
+|GenOpPlanEligibilityConfig|❌|Not supported, but support could be added|
 |GlobalValueSet|✅||
 |GlobalValueSetTranslation|✅||
 |GoogleAppsSettings|✅||
@@ -369,6 +383,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |Index|⚠️|Supports deploy/retrieve but not source tracking|
 |IndustriesAutomotiveSettings|✅||
 |IndustriesChannelPartnerInventorySettings|✅||
+|IndustriesConnectedServiceSettings|✅||
 |IndustriesContextSettings|✅||
 |IndustriesEinsteinFeatureSettings|✅||
 |IndustriesEventOrchSettings|✅||
@@ -421,6 +436,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |LightningExperienceTheme|✅||
 |LightningMessageChannel|✅||
 |LightningOnboardingConfig|✅||
+|LightningOutApp|❌|Not supported, but support could be added|
 |LightningTypeBundle|✅||
 |ListView|✅||
 |LiveAgentSettings|✅||
@@ -441,6 +457,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |MarketingAppExtActivity|❌|Not supported, but support could be added|
 |MarketingAppExtension|✅||
 |MatchingRules|✅||
+|McpServerDefinition|❌|Not supported, but support could be added|
 |MediaAdSalesSettings|✅||
 |MediaAgentSettings|✅||
 |MeetingsSettings|✅||
@@ -532,6 +549,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PricingActionParameters|✅||
 |PricingRecipe|✅||
 |PrivacySettings|✅||
+|PrmCoreSettings|✅||
 |ProcedureOutputResolution|❌|Not supported, but support could be added (but not for tracking)|
 |ProcessFlowMigration|✅||
 |ProductAttrDisplayConfig|✅||
@@ -566,6 +584,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |RecordType|✅||
 |RedirectWhitelistUrl|✅||
 |ReferencedDashboard|✅||
+|ReferralMarketingConfig|❌|Not supported, but support could be added|
 |ReferralMarketingSettings|✅||
 |RegisteredExternalService|✅||
 |RelatedRecordAccessDef|❌|Not supported, but support could be added|
@@ -581,7 +600,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |RetrievalSummaryDefinition|✅||
 |RevenueManagementSettings|✅||
 |Role|✅||
-|STDMSettings|✅||
+|RpaRobotPoolMetadata|❌|Not supported, but support could be added|
+|SalesAccountAgentSettings|✅||
 |SalesAgreementSettings|✅||
 |SalesDealAgentSettings|✅||
 |SalesWorkQueueSettings|✅||
@@ -595,16 +615,21 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SearchCustomization|⚠️|Supports deploy/retrieve but not source tracking|
 |SearchOrgWideObjectConfig|⚠️|Supports deploy/retrieve but not source tracking|
 |SearchSettings|✅||
+|SecurityHubSettings|✅||
 |SecuritySettings|✅||
+|SequenceServiceSettings|✅||
 |ServiceAIRecommendationsSettings|✅||
 |ServiceAISetupDefinition|✅||
 |ServiceAISetupField|✅||
 |ServiceChannel|✅||
+|ServiceCloudNotificationOrchestratorSettings|✅||
 |ServiceCloudVoiceSettings|✅||
+|ServiceItsmIntelligenceUddSettings|✅||
 |ServiceMgmtKnwlgArtclConfig|❌|Not supported, but support could be added|
 |ServiceMgmtKnwlgArtclConfigSettings|✅||
 |ServicePresenceStatus|✅||
 |ServiceProcess|✅||
+|ServiceScheduleConfig|❌|Not supported, but support could be added|
 |ServiceSetupAssistantSettings|✅||
 |SharingCriteriaRule|✅||
 |SharingGuestRule|✅||
@@ -621,6 +646,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SlackApp|✅||
 |SocialCustomerServiceSettings|✅||
 |SourceTrackingSettings|✅||
+|SrvcMgmtObjCollabAppCnfg|❌|Not supported, but support could be added|
 |StageAssignment|❌|Not supported, but support could be added|
 |StageDefinition|✅||
 |StandardValue|❌|Not supported, but support could be added|
@@ -669,6 +695,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |VehicleAssetEmssnSrcCnfg|✅||
 |ViewDefinition|✅||
 |VirtualVisitConfig|✅||
+|VoiceEngagementMediaFile|❌|Not supported, but support could be added|
+|VoiceEngagementMediaUsage|❌|Not supported, but support could be added|
+|VoiceEngmtMediaFileAsgnt|❌|Not supported, but support could be added|
 |VoiceSettings|✅||
 |WarrantyLifecycleMgmtSettings|✅||
 |WaveAnalyticAssetCollection|✅||
@@ -702,42 +731,21 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 
 
-## Next Release (v65)
+## Next Release (v66)
 
-v65 introduces the following new types.  Here's their current level of support
+v66 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
-|AnalyticsDatasetDefinition|❌|Not supported, but support could be added|
-|ApiNamedQuery|✅||
-|CatalogedApi|✅||
-|CatalogedApiArtifactVersionInfo|✅||
-|CatalogedApiVersion|✅||
-|ClaimCoverageProdtProcDef|❌|Not supported, but support could be added|
-|CommsUpsellSettings|✅||
-|CommunicationChannelLine|❌|Not supported, but support could be added|
-|ContextMappingConfig|❌|Not supported, but support could be added|
-|DgtAssetMgmtProvider|✅||
-|DgtAssetMgmtPrvdLghtCpnt|✅||
-|DxGlobalTermsSettings|✅||
-|ExtlClntAppCanvasStngs|✅||
-|GenOpPlanEligibilityConfig|❌|Not supported, but support could be added|
-|IndustriesConnectedServiceSettings|✅||
-|LightningOutApp|❌|Not supported, but support could be added|
-|McpServerDefinition|❌|Not supported, but support could be added|
-|PrmCoreSettings|✅||
-|ReferralMarketingConfig|❌|Not supported, but support could be added|
-|RpaRobotPoolMetadata|❌|Not supported, but support could be added|
-|SalesAccountAgentSettings|✅||
-|SecurityHubSettings|✅||
-|SequenceServiceSettings|✅||
-|ServiceCloudNotificationOrchestratorSettings|✅||
-|ServiceItsmIntelligenceUddSettings|✅||
-|ServiceScheduleConfig|❌|Not supported, but support could be added|
-|SrvcMgmtObjCollabAppCnfg|❌|Not supported, but support could be added|
-|VoiceEngagementMediaFile|❌|Not supported, but support could be added|
-|VoiceEngagementMediaUsage|❌|Not supported, but support could be added|
-|VoiceEngmtMediaFileAsgnt|❌|Not supported, but support could be added|
+|AgentforceAccountManagementSettings|✅||
+|BotRecommendedUtteranceDef|❌|Not supported, but support could be added|
+|CourseWaitlistConfig|❌|Not supported, but support could be added|
+|PartyPrflDataObjVldDef|❌|Not supported, but support could be added|
+|RecordAlertCategoryTranslation|❌|Not supported, but support could be added|
+|RecordAlertTemplateTranslation|❌|Not supported, but support could be added|
+|RiskMgmtSettings|✅||
+|UnifiedSalesIntelligenceSettings|✅||
+|UnifiedSummaryConfiguration|❌|Not supported, but support could be added|
 
 ## Additional Types
 

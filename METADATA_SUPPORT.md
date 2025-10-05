@@ -740,6 +740,7 @@ v66 introduces the following new types.  Here's their current level of support
 |AgentforceAccountManagementSettings|✅||
 |BotRecommendedUtteranceDef|❌|Not supported, but support could be added|
 |CourseWaitlistConfig|❌|Not supported, but support could be added|
+|GiftEntryGridTemplate|❌|Not supported, but support could be added|
 |PartyPrflDataObjVldDef|❌|Not supported, but support could be added|
 |RecordAlertCategoryTranslation|❌|Not supported, but support could be added|
 |RecordAlertTemplateTranslation|❌|Not supported, but support could be added|

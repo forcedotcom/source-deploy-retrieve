@@ -557,7 +557,8 @@
     "ecaCanvas": "extlclntappcanvasstngs",
     "apiNamedQuery": "apinamedquery",
     "ExternalStoragePrvdConfigSet": "externalstorageprvdconfig",
-    "ruleLibraryDefinition": "rulelibrarydefinition"
+    "ruleLibraryDefinition": "rulelibrarydefinition",
+    "dataMapperDefinition": "datamapperdefinition"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4966,6 +4967,14 @@
       "name": "RuleLibraryDefinition",
       "suffix": "ruleLibraryDefinition",
       "directoryName": "ruleLibraryDefinition",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "datamapperdefinition": {
+      "id": "datamapperdefinition",
+      "name": "DataMapperDefinition",
+      "suffix": "dataMapperDefinition",
+      "directoryName": "dataMapperDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     }

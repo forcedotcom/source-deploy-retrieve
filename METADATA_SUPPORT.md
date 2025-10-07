@@ -742,6 +742,7 @@ v66 introduces the following new types.  Here's their current level of support
 |CourseWaitlistConfig|❌|Not supported, but support could be added|
 |GiftEntryGridTemplate|❌|Not supported, but support could be added|
 |PartyPrflDataObjVldDef|❌|Not supported, but support could be added|
+|ProcedurePlanDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |RecordAlertCategoryTranslation|❌|Not supported, but support could be added|
 |RecordAlertTemplateTranslation|❌|Not supported, but support could be added|
 |RiskMgmtSettings|✅||
@@ -814,3 +815,4 @@ v66 introduces the following new types.  Here's their current level of support
 - WorkSkillRoutingAttribute
 - XOrgHub
 - RuleLibraryDefinition
+- DataMapperDefinition

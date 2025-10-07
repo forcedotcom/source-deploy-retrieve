@@ -364,6 +364,7 @@
     "mktDataConnectionSrcParam": "mktdataconnectionsrcparam",
     "mktDataTranField": "mktdatatranfield",
     "mktDataTranObject": "mktdatatranobject",
+    "mcpServerDefinition": "mcpserverdefinition",
     "mlDataDefinition": "mldatadefinition",
     "mlDomain": "mldomain",
     "mlPrediction": "mlpredictiondefinition",
@@ -494,6 +495,7 @@
     "timeSheetTemplate": "timesheettemplate",
     "timelineObjectDefinition": "timelineobjectdefinition",
     "topicsForObjects": "topicsforobjects",
+    "transactionProcessingType": "transactionprocessingtype",
     "transactionSecurityPolicy": "transactionsecuritypolicy",
     "translation": "translations",
     "trigger": "apextrigger",
@@ -556,7 +558,8 @@
     "ecaCanvas": "extlclntappcanvasstngs",
     "apiNamedQuery": "apinamedquery",
     "ExternalStoragePrvdConfigSet": "externalstorageprvdconfig",
-    "ruleLibraryDefinition": "rulelibrarydefinition"
+    "ruleLibraryDefinition": "rulelibrarydefinition",
+    "dataMapperDefinition": "datamapperdefinition"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -3269,6 +3272,14 @@
       "strictDirectoryName": false,
       "suffix": "mktDataTranObject"
     },
+    "mcpserverdefinition": {
+      "directoryName": "mcpServerDefinitions",
+      "id": "mcpserverdefinition",
+      "inFolder": false,
+      "name": "McpServerDefinition",
+      "strictDirectoryName": false,
+      "suffix": "mcpServerDefinition"
+    },
     "mldatadefinition": {
       "directoryName": "mlDataDefinitions",
       "id": "mldatadefinition",
@@ -4373,6 +4384,13 @@
       "strictDirectoryName": false,
       "suffix": "topicsForObjects"
     },
+    "transactionprocessingtype": {
+      "directoryName": "transactionProcessingTypes",
+      "id": "transactionprocessingtype",
+      "inFolder": false,
+      "name": "TransactionProcessingType",
+      "suffix": "transactionProcessingType"
+    },
     "transactionsecuritypolicy": {
       "directoryName": "transactionSecurityPolicies",
       "id": "transactionsecuritypolicy",
@@ -4949,7 +4967,7 @@
       "id": "catalogedapiartifactversioninfo",
       "name": "CatalogedApiArtifactVersionInfo",
       "suffix": "catalogedApiArtifactVersionInfo",
-      "directoryName": "catalogedApiArtifactsVersionInfo",
+      "directoryName": "catalogedApiArtifactVersionInfos",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -4958,6 +4976,14 @@
       "name": "RuleLibraryDefinition",
       "suffix": "ruleLibraryDefinition",
       "directoryName": "ruleLibraryDefinition",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "datamapperdefinition": {
+      "id": "datamapperdefinition",
+      "name": "DataMapperDefinition",
+      "suffix": "dataMapperDefinition",
+      "directoryName": "dataMapperDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     }

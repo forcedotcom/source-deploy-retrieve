@@ -1,3 +1,61 @@
+# [12.23.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.14...12.23.0) (2025-10-07)
+
+
+### Features
+
+* add DataMapper to registry ([#1629](https://github.com/forcedotcom/source-deploy-retrieve/issues/1629)) ([ec6b48a](https://github.com/forcedotcom/source-deploy-retrieve/commit/ec6b48a62c4ec96bb49b66e926ec4b9db057f5a7))
+
+
+
+## [12.22.14](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.13...12.22.14) (2025-09-22)
+
+
+
+## [12.22.13](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.12...12.22.13) (2025-09-14)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 8.23.0 to 8.23.1 ([#1620](https://github.com/forcedotcom/source-deploy-retrieve/issues/1620)) ([6f7d573](https://github.com/forcedotcom/source-deploy-retrieve/commit/6f7d573e63aca119eaa2ad9f83dcf3561b9bd08b))
+
+
+
+## [12.22.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.11...12.22.12) (2025-09-07)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 8.19.1 to 8.23.0 ([#1618](https://github.com/forcedotcom/source-deploy-retrieve/issues/1618)) ([5efb861](https://github.com/forcedotcom/source-deploy-retrieve/commit/5efb861014a9533290c9c5deb3962d212c8794f6))
+
+
+
+## [12.22.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.10...12.22.11) (2025-08-29)
+
+
+### Bug Fixes
+
+* oss compliance ([#1615](https://github.com/forcedotcom/source-deploy-retrieve/issues/1615)) ([1da5df0](https://github.com/forcedotcom/source-deploy-retrieve/commit/1da5df0e637f26e02e0195ac8b7243cfbdc72534))
+
+
+
+## [12.22.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.9...12.22.10) (2025-08-26)
+
+
+### Bug Fixes
+
+* @W-19405722 - Cataloged Artifact Version directory ([#1614](https://github.com/forcedotcom/source-deploy-retrieve/issues/1614)) ([1ecacbf](https://github.com/forcedotcom/source-deploy-retrieve/commit/1ecacbf3e85921bb5ae4854ac4663277619ca433))
+
+
+
+## [12.22.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.8...12.22.9) (2025-08-21)
+
+
+### Bug Fixes
+
+* add support for FieldMappingConfig and fieldMappingConfigItem ([#1608](https://github.com/forcedotcom/source-deploy-retrieve/issues/1608)) ([083f4c2](https://github.com/forcedotcom/source-deploy-retrieve/commit/083f4c27f8499e1aeaf32a6284f91d193b660a47))
+
+
+
 ## [12.22.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.7...12.22.8) (2025-08-18)
 
 

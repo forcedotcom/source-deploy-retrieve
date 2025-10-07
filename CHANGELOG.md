@@ -1,3 +1,12 @@
+# [12.23.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.14...12.23.0) (2025-10-07)
+
+
+### Features
+
+* add DataMapper to registry ([#1629](https://github.com/forcedotcom/source-deploy-retrieve/issues/1629)) ([ec6b48a](https://github.com/forcedotcom/source-deploy-retrieve/commit/ec6b48a62c4ec96bb49b66e926ec4b9db057f5a7))
+
+
+
 ## [12.22.14](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.13...12.22.14) (2025-09-22)
 
 

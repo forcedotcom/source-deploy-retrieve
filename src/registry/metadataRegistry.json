@@ -559,7 +559,9 @@
     "apiNamedQuery": "apinamedquery",
     "ExternalStoragePrvdConfigSet": "externalstorageprvdconfig",
     "ruleLibraryDefinition": "rulelibrarydefinition",
-    "dataMapperDefinition": "datamapperdefinition"
+    "dataMapperDefinition": "datamapperdefinition",
+    "integrationProcdDefinition": "integrationprocddefinition",
+    "omniscriptDefinition": "omniscriptdefinition"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4984,6 +4986,22 @@
       "name": "DataMapperDefinition",
       "suffix": "dataMapperDefinition",
       "directoryName": "dataMapperDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "integrationprocddefinition": {
+      "id": "integrationprocddefinition",
+      "name": "IntegrationProcdDefinition",
+      "suffix": "integrationProcdDefinition",
+      "directoryName": "integrationProcdDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniscriptdefinition": {
+      "id": "omniscriptdefinition",
+      "name": "OmniscriptDefinition",
+      "suffix": "omniscriptDefinition",
+      "directoryName": "omniscriptDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     }

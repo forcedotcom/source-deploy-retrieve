@@ -559,7 +559,13 @@
     "apiNamedQuery": "apinamedquery",
     "ExternalStoragePrvdConfigSet": "externalstorageprvdconfig",
     "ruleLibraryDefinition": "rulelibrarydefinition",
-    "dataMapperDefinition": "datamapperdefinition"
+    "dataMapperDefinition": "datamapperdefinition",
+    "integrationProcdDefinition": "integrationprocddefinition",
+    "integrationProcdDefElmnt": "integrationprocddefelmnt",
+    "omniscriptDefinition": "omniscriptdefinition",
+    "omniscriptDefinitionElement": "omniscriptdefinitionelement",
+    "omniscriptDefExternalRef": "omniscriptdefexternalref",
+    "integProcdDefExtlRef": "integprocddefextlref"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4984,6 +4990,54 @@
       "name": "DataMapperDefinition",
       "suffix": "dataMapperDefinition",
       "directoryName": "dataMapperDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "integrationprocddefinition": {
+      "id": "integrationprocddefinition",
+      "name": "IntegrationProcdDefinition",
+      "suffix": "integrationProcdDefinition",
+      "directoryName": "integrationProcdDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "integrationprocddefelmnt": {
+      "id": "integrationprocddefelmnt",
+      "name": "IntegrationProcdDefElmnt",
+      "suffix": "integrationProcdDefElmnt",
+      "directoryName": "integrationProcdDefElmnts",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniscriptdefinition": {
+      "id": "omniscriptdefinition",
+      "name": "OmniscriptDefinition",
+      "suffix": "omniscriptDefinition",
+      "directoryName": "omniscriptDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniscriptdefinitionelement": {
+      "id": "omniscriptdefinitionelement",
+      "name": "OmniscriptDefinitionElement",
+      "suffix": "omniscriptDefinitionElement",
+      "directoryName": "omniscriptDefinitionElements",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniscriptdefexternalref": {
+      "id": "omniscriptdefexternalref",
+      "name": "OmniscriptDefExternalRef",
+      "suffix": "omniscriptDefExternalRef",
+      "directoryName": "omniscriptDefExternalRefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "integprocddefextlref": {
+      "id": "integprocddefextlref",
+      "name": "IntegProcdDefExtlRef",
+      "suffix": "integProcdDefExtlRef",
+      "directoryName": "integProcdDefExtlRefs",
       "inFolder": false,
       "strictDirectoryName": false
     }

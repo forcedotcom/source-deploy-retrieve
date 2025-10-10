@@ -1,3 +1,12 @@
+# [12.24.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.23.1...12.24.0) (2025-10-10)
+
+
+### Features
+
+* register IP entity [w-19860001] ([#1633](https://github.com/forcedotcom/source-deploy-retrieve/issues/1633)) ([06cf125](https://github.com/forcedotcom/source-deploy-retrieve/commit/06cf125e3e459c67d0a0dfe9508e19349aab15a9))
+
+
+
 ## [12.23.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.23.0...12.23.1) (2025-10-09)
 
 

@@ -559,7 +559,8 @@
     "apiNamedQuery": "apinamedquery",
     "ExternalStoragePrvdConfigSet": "externalstorageprvdconfig",
     "ruleLibraryDefinition": "rulelibrarydefinition",
-    "dataMapperDefinition": "datamapperdefinition"
+    "dataMapperDefinition": "datamapperdefinition",
+    "integrationProcdDefinition": "integrationprocddefinition"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4984,6 +4985,14 @@
       "name": "DataMapperDefinition",
       "suffix": "dataMapperDefinition",
       "directoryName": "dataMapperDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "integrationprocddefinition": {
+      "id": "integrationprocddefinition",
+      "name": "IntegrationProcdDefinition",
+      "suffix": "integrationProcdDefinition",
+      "directoryName": "integrationProcdDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     }

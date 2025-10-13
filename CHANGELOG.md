@@ -1,3 +1,21 @@
+# [12.24.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.23.1...12.24.0) (2025-10-10)
+
+
+### Features
+
+* register IP entity [w-19860001] ([#1633](https://github.com/forcedotcom/source-deploy-retrieve/issues/1633)) ([06cf125](https://github.com/forcedotcom/source-deploy-retrieve/commit/06cf125e3e459c67d0a0dfe9508e19349aab15a9))
+
+
+
+## [12.23.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.23.0...12.23.1) (2025-10-09)
+
+
+### Reverts
+
+* Revert "@w-19860001: Registering Omnistudio Entities (#1630)" (#1631) ([a21f0de](https://github.com/forcedotcom/source-deploy-retrieve/commit/a21f0de1cd76c6ba45f6cffbcd51f575fcf9a876)), closes [#1630](https://github.com/forcedotcom/source-deploy-retrieve/issues/1630) [#1631](https://github.com/forcedotcom/source-deploy-retrieve/issues/1631)
+
+
+
 # [12.23.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.22.14...12.23.0) (2025-10-07)
 
 

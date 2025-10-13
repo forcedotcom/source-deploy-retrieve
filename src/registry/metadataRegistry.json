@@ -313,6 +313,7 @@
     "genAiPromptTemplate": "genaiprompttemplate",
     "genAiPromptTemplateActivation": "genaiprompttemplateactv",
     "geodata": "eclairgeodata",
+    "giftEntryGridTemplate": "giftentrygridtemplate",
     "globalPicklist": "globalpicklist",
     "globalValueSet": "globalvalueset",
     "globalValueSetTranslation": "globalvaluesettranslation",
@@ -2813,6 +2814,14 @@
       "name": "GenAiPromptTemplateActv",
       "strictDirectoryName": false,
       "suffix": "genAiPromptTemplateActivation"
+    },
+    "giftentrygridtemplate": {
+      "directoryName": "giftEntryGridTemplates",
+      "id": "giftentrygridtemplate",
+      "inFolder": false,
+      "name": "GiftEntryGridTemplate",
+      "strictDirectoryName": false,
+      "suffix": "giftEntryGridTemplate"
     },
     "globalpicklist": {
       "directoryName": "globalPicklists",

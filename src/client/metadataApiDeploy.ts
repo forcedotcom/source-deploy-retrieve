@@ -120,7 +120,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
     this.isRestDeploy = !!options.apiOptions?.rest;
     this.registry = options.registry ?? new RegistryAccess();
     if (this.mdapiTempDir) {
-      this.mdapiTempDir = join(this.mdapiTempDir, `${new Date().toISOString()}_deploy`);
+      this.mdapiTempDir = join(this.mdapiTempDir, `${new Date().toISOString().replace(/[<>:"\\|?*]/g, '_')}_deploy`);
     }
   }
 

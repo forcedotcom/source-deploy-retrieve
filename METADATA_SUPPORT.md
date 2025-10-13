@@ -740,7 +740,7 @@ v66 introduces the following new types.  Here's their current level of support
 |AgentforceAccountManagementSettings|✅||
 |BotRecommendedUtteranceDef|❌|Not supported, but support could be added|
 |CourseWaitlistConfig|❌|Not supported, but support could be added|
-|GiftEntryGridTemplate|❌|Not supported, but support could be added|
+|GiftEntryGridTemplate|✅||
 |PartyPrflDataObjVldDef|❌|Not supported, but support could be added|
 |ProcedurePlanDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |RecordAlertCategoryTranslation|❌|Not supported, but support could be added|
@@ -749,6 +749,7 @@ v66 introduces the following new types.  Here's their current level of support
 |StockRotationSettings|✅||
 |UnifiedSalesIntelligenceSettings|✅||
 |UnifiedSummaryConfiguration|❌|Not supported, but support could be added|
+|UpsellCrossSellSettings|✅||
 
 ## Additional Types
 

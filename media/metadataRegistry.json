@@ -561,7 +561,8 @@
     "ExternalStoragePrvdConfigSet": "externalstorageprvdconfig",
     "ruleLibraryDefinition": "rulelibrarydefinition",
     "dataMapperDefinition": "datamapperdefinition",
-    "integrationProcdDefinition": "integrationprocddefinition"
+    "integrationProcdDefinition": "integrationprocddefinition",
+    "omniscriptDefinition": "omniscriptdefinition"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5002,6 +5003,14 @@
       "name": "IntegrationProcdDefinition",
       "suffix": "integrationProcdDefinition",
       "directoryName": "integrationProcdDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniscriptdefinition": {
+      "id": "omniscriptdefinition",
+      "name": "OmniscriptDefinition",
+      "suffix": "omniscriptDefinition",
+      "directoryName": "omniscriptDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     }

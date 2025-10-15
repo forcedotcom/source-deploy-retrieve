@@ -41,6 +41,7 @@
   "strictDirectoryNames": {
     "ActionableEventOrchDefSettings": "actionableeventorchdef",
     "ActionableEventTypeDefSettings": "actionableeventtypedef",
+    "aiAuthoringBundles": "aiauthoringbundle",
     "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
     "ObjectHierarchyRelationship": "objecthierarchyrelationship",
     "accessControlPolicies": "accesscontrolpolicy",
@@ -728,6 +729,16 @@
       "inFolder": false,
       "name": "AIAssistantTemplate",
       "suffix": "aiAssistantTemplate"
+    },
+    "aiauthoringbundle": {
+      "directoryName": "aiAuthoringBundles",
+      "id": "aiauthoringbundle",
+      "inFolder": false,
+      "name": "AiAuthoringBundle",
+      "strategies": {
+        "adapter": "bundle"
+      },
+      "strictDirectoryName": true
     },
     "aiscoringmodeldefinition": {
       "children": {

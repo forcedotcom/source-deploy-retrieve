@@ -42,6 +42,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AdvAcctForecastPeriodGroup|✅||
 |AffinityScoreDefinition|✅||
 |AgentPlatformSettings|✅||
+|AgentforceAccountManagementSettings|✅||
 |AgentforceForDevelopersSettings|✅||
 |Ai4mSettings|✅||
 |AiEvaluationDefinition|⚠️|Supports deploy/retrieve but not source tracking|
@@ -601,7 +602,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |RevenueManagementSettings|✅||
 |Role|✅||
 |RpaRobotPoolMetadata|❌|Not supported, but support could be added|
-|SalesAccountAgentSettings|✅||
 |SalesAgreementSettings|✅||
 |SalesDealAgentSettings|✅||
 |SalesWorkQueueSettings|✅||
@@ -737,8 +737,8 @@ v66 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
-|AgentforceAccountManagementSettings|✅||
 |BotRecommendedUtteranceDef|❌|Not supported, but support could be added|
+|ComputeExtension|❌|Not supported, but support could be added|
 |CourseWaitlistConfig|❌|Not supported, but support could be added|
 |GiftEntryGridTemplate|✅||
 |PartyPrflDataObjVldDef|❌|Not supported, but support could be added|
@@ -762,6 +762,7 @@ v66 introduces the following new types.  Here's their current level of support
 
 - AccessControlPolicy
 - AIAssistantTemplate
+- AiAuthoringBundle
 - AssignmentRule
 - AssistantRecommendationType
 - AutoResponseRule

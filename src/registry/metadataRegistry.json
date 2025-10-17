@@ -563,7 +563,8 @@
     "ruleLibraryDefinition": "rulelibrarydefinition",
     "dataMapperDefinition": "datamapperdefinition",
     "integrationProcdDefinition": "integrationprocddefinition",
-    "omniscriptDefinition": "omniscriptdefinition"
+    "omniscriptDefinition": "omniscriptdefinition",
+    "computeExtension": "computeextension"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5022,6 +5023,14 @@
       "name": "OmniscriptDefinition",
       "suffix": "omniscriptDefinition",
       "directoryName": "omniscriptDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "computeextension": {
+      "id": "computeextension",
+      "name": "ComputeExtension",
+      "suffix": "computeExtension",
+      "directoryName": "computeExtensions",
       "inFolder": false,
       "strictDirectoryName": false
     }

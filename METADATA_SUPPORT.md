@@ -737,9 +737,13 @@ v66 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
+|ApexLimitSettings|✅||
+|AppointmentBookingSettings|✅||
+|AutomatorConfigSettings|✅||
 |BotRecommendedUtteranceDef|❌|Not supported, but support could be added|
 |ComputeExtension|❌|Not supported, but support could be added|
 |CourseWaitlistConfig|❌|Not supported, but support could be added|
+|CriteriaSettings|✅||
 |GiftEntryGridTemplate|✅||
 |PartyPrflDataObjVldDef|❌|Not supported, but support could be added|
 |ProcedurePlanDefinition|❌|Not supported, but support could be added (but not for tracking)|

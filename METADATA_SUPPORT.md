@@ -741,7 +741,7 @@ v66 introduces the following new types.  Here's their current level of support
 |AppointmentBookingSettings|✅||
 |AutomatorConfigSettings|✅||
 |BotRecommendedUtteranceDef|❌|Not supported, but support could be added|
-|ComputeExtension|❌|Not supported, but support could be added|
+|ComputeExtension|✅||
 |CourseWaitlistConfig|❌|Not supported, but support could be added|
 |CriteriaSettings|✅||
 |GiftEntryGridTemplate|✅||

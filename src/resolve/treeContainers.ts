@@ -128,7 +128,7 @@ export class NodeFSTreeContainer extends TreeContainer {
     if (!this.exists(fsPath)) {
       throw new Error(`File not found: ${fsPath}`);
     }
-    return createReadStream(fsPath, getStreamOptions());
+    return createReadStream(fsPath);
   }
 }
 

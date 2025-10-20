@@ -25,7 +25,7 @@ import { SourcePath } from '../common/types';
 import { ComponentSet } from '../collections/componentSet';
 import { DestructiveChangesType } from '../collections/types';
 import { RegistryAccess } from '../registry/registryAccess';
-import { ComponentConverter, getPipeline, getStreamOptions, StandardWriter, ZipWriter } from './streams';
+import { ComponentConverter, getPipeline, StandardWriter, ZipWriter } from './streams';
 import { ConvertOutputConfig, ConvertResult, DirectoryConfig, SfdxFileFormat, ZipConfig, MergeConfig } from './types';
 import { getReplacementMarkingStream } from './replacements';
 
@@ -68,7 +68,7 @@ export class MetadataConverter {
       } = await getConvertIngredients(output, cs, targetFormatIsSource, this.registry);
 
       const conversionPipeline = getPipeline()(
-        Readable.from(components, getStreamOptions()),
+        Readable.from(components),
         !targetFormatIsSource && (process.env.SF_APPLY_REPLACEMENTS_ON_CONVERT === 'true' || output.type === 'zip')
           ? (await getReplacementMarkingStream(cs.projectDirectory)) ?? new PassThrough({ objectMode: true })
           : new PassThrough({ objectMode: true }),

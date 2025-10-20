@@ -70,7 +70,7 @@ export class ComponentConverter extends Transform {
     private mergeSet?: ComponentSet,
     private defaultDirectory?: string
   ) {
-    super({ objectMode: true, ...getStreamOptions() });
+    super({ objectMode: true });
     this.transformerFactory = new MetadataTransformerFactory(registry, this.context);
   }
 
@@ -135,7 +135,7 @@ export abstract class ComponentWriter extends Writable {
   protected logger: Logger;
 
   public constructor(rootDestination?: SourcePath) {
-    super({ objectMode: true, ...getStreamOptions() });
+    super({ objectMode: true });
     this.rootDestination = rootDestination;
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
@@ -194,7 +194,7 @@ export class StandardWriter extends ComponentWriter {
               }
 
               await ensureFileExists(info.output);
-              return getPipeline()(info.source, createWriteStream(info.output, getStreamOptions()));
+              return getPipeline()(info.source, createWriteStream(info.output));
             })
         );
 

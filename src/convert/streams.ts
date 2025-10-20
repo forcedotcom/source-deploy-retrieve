@@ -16,13 +16,12 @@
 import { isAbsolute, join } from 'node:path';
 import { pipeline as cbPipeline, Readable, Transform, Writable, Stream } from 'node:stream';
 import { promisify } from 'node:util';
-import { Messages } from '@salesforce/core/messages';
-import { SfError } from '@salesforce/core/sfError';
 import JSZip from 'jszip';
 import { createWriteStream, existsSync, promises as fsPromises } from 'graceful-fs';
 import { JsonMap } from '@salesforce/ts-types';
 import { XMLBuilder } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core/logger';
+import { Global } from '@salesforce/core';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { SourcePath } from '../common/types';
 import { XML_COMMENT_PROP_NAME, XML_DECL } from '../common/constants';
@@ -35,15 +34,17 @@ import { MetadataTransformerFactory } from './transformers/metadataTransformerFa
 import { ConvertContext } from './convertContext/convertContext';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 
-Messages.importMessagesDirectory(__dirname);
-const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
-
 export type PromisifiedPipeline = <T extends NodeJS.ReadableStream>(
   source: T,
   ...destinations: NodeJS.WritableStream[]
 ) => Promise<void>;
 
 let promisifiedPipeline: PromisifiedPipeline | undefined; // store it so we don't have to promisify every time
+
+// jszip does not behave well in web environments when retrieving multiple files.
+// it has a minified `browser` target which has a v3 ReadableStream, but the extensions are using polyfilles of v4.
+// Setting the highWaterMark to 1 seems to fix the issue.
+export const getStreamOptions = (): { highWaterMark?: number } => (Global.isWeb ? { highWaterMark: 1 } : {});
 
 export const getPipeline = (): PromisifiedPipeline => {
   promisifiedPipeline ??= promisify(cbPipeline);
@@ -69,7 +70,7 @@ export class ComponentConverter extends Transform {
     private mergeSet?: ComponentSet,
     private defaultDirectory?: string
   ) {
-    super({ objectMode: true });
+    super({ objectMode: true, ...getStreamOptions() });
     this.transformerFactory = new MetadataTransformerFactory(registry, this.context);
   }
 
@@ -87,25 +88,20 @@ export class ComponentConverter extends Transform {
         const converts: Array<Promise<WriteInfo[]>> = [];
         const transformer = this.transformerFactory.getTransformer(chunk);
         transformer.defaultDirectory = this.defaultDirectory;
-        const mergeWith = this.mergeSet?.getSourceComponents(chunk);
-        switch (this.targetFormat) {
-          case 'source':
-            if (mergeWith) {
-              for (const mergeComponent of mergeWith) {
-                converts.push(
-                  transformer.toSourceFormat({ component: chunk, mergeWith: mergeComponent, mergeSet: this.mergeSet })
-                );
-              }
+        if (this.targetFormat === 'source') {
+          const mergeWith = this.mergeSet?.getSourceComponents(chunk);
+          if (mergeWith) {
+            for (const mergeComponent of mergeWith) {
+              converts.push(
+                transformer.toSourceFormat({ component: chunk, mergeWith: mergeComponent, mergeSet: this.mergeSet })
+              );
             }
-            if (converts.length === 0) {
-              converts.push(transformer.toSourceFormat({ component: chunk, mergeSet: this.mergeSet }));
-            }
-            break;
-          case 'metadata':
-            converts.push(transformer.toMetadataFormat(chunk));
-            break;
-          default:
-            throw new SfError(messages.getMessage('error_convert_invalid_format', [this.targetFormat]), 'LibraryError');
+          }
+          if (converts.length === 0) {
+            converts.push(transformer.toSourceFormat({ component: chunk, mergeSet: this.mergeSet }));
+          }
+        } else if (this.targetFormat === 'metadata') {
+          converts.push(transformer.toMetadataFormat(chunk));
         }
         // could maybe improve all this with lazy async collections...
         (await Promise.all(converts)).forEach((infos) => writeInfos.push(...infos));
@@ -139,7 +135,7 @@ export abstract class ComponentWriter extends Writable {
   protected logger: Logger;
 
   public constructor(rootDestination?: SourcePath) {
-    super({ objectMode: true });
+    super({ objectMode: true, ...getStreamOptions() });
     this.rootDestination = rootDestination;
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
@@ -198,7 +194,7 @@ export class StandardWriter extends ComponentWriter {
               }
 
               await ensureFileExists(info.output);
-              return getPipeline()(info.source, createWriteStream(info.output));
+              return getPipeline()(info.source, createWriteStream(info.output, getStreamOptions()));
             })
         );
 

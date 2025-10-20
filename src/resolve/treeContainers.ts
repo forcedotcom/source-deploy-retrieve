@@ -23,6 +23,7 @@ import { SfError } from '@salesforce/core/sfError';
 import { isString } from '@salesforce/ts-types';
 import { baseName, parseMetadataXml } from '../utils/path';
 import type { SourcePath } from '../common/types';
+import { getStreamOptions } from '../convert/streams';
 import type { VirtualDirectory } from './types';
 
 Messages.importMessagesDirectory(__dirname);
@@ -127,7 +128,7 @@ export class NodeFSTreeContainer extends TreeContainer {
     if (!this.exists(fsPath)) {
       throw new Error(`File not found: ${fsPath}`);
     }
-    return createReadStream(fsPath);
+    return createReadStream(fsPath, getStreamOptions());
   }
 }
 
@@ -202,7 +203,7 @@ export class ZipTreeContainer extends TreeContainer {
     if (resolvedPath) {
       const jsZipObj = this.zip.file(resolvedPath);
       if (jsZipObj && !jsZipObj.dir) {
-        return new Readable().wrap(jsZipObj.nodeStream());
+        return new Readable(getStreamOptions()).wrap(jsZipObj.nodeStream());
       }
       throw new SfError(messages.getMessage('error_no_directory_stream', [this.constructor.name]), 'LibraryError');
     }

@@ -21,9 +21,9 @@ import JSZip from 'jszip';
 import { Messages } from '@salesforce/core/messages';
 import { SfError } from '@salesforce/core/sfError';
 import { isString } from '@salesforce/ts-types';
+import { Global } from '@salesforce/core/global';
 import { baseName, parseMetadataXml } from '../utils/path';
 import type { SourcePath } from '../common/types';
-import { getStreamOptions } from '../convert/streams';
 import type { VirtualDirectory } from './types';
 
 Messages.importMessagesDirectory(__dirname);
@@ -203,7 +203,10 @@ export class ZipTreeContainer extends TreeContainer {
     if (resolvedPath) {
       const jsZipObj = this.zip.file(resolvedPath);
       if (jsZipObj && !jsZipObj.dir) {
-        return new Readable(getStreamOptions()).wrap(jsZipObj.nodeStream());
+        // jszip does not behave well in web environments when retrieving multiple files.
+        // it has a minified `browser` target which has a v3 ReadableStream, but the extensions are using polyfilles of v4.
+        // Setting the highWaterMark to 1 seems to fix the issue.
+        return new Readable(Global.isWeb ? { highWaterMark: 1 } : {}).wrap(jsZipObj.nodeStream());
       }
       throw new SfError(messages.getMessage('error_no_directory_stream', [this.constructor.name]), 'LibraryError');
     }

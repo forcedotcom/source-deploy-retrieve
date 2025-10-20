@@ -21,7 +21,6 @@ import { createWriteStream, existsSync, promises as fsPromises } from 'graceful-
 import { JsonMap } from '@salesforce/ts-types';
 import { XMLBuilder } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core/logger';
-import { Global } from '@salesforce/core';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { SourcePath } from '../common/types';
 import { XML_COMMENT_PROP_NAME, XML_DECL } from '../common/constants';
@@ -40,11 +39,6 @@ export type PromisifiedPipeline = <T extends NodeJS.ReadableStream>(
 ) => Promise<void>;
 
 let promisifiedPipeline: PromisifiedPipeline | undefined; // store it so we don't have to promisify every time
-
-// jszip does not behave well in web environments when retrieving multiple files.
-// it has a minified `browser` target which has a v3 ReadableStream, but the extensions are using polyfilles of v4.
-// Setting the highWaterMark to 1 seems to fix the issue.
-export const getStreamOptions = (): { highWaterMark?: number } => (Global.isWeb ? { highWaterMark: 1 } : {});
 
 export const getPipeline = (): PromisifiedPipeline => {
   promisifiedPipeline ??= promisify(cbPipeline);

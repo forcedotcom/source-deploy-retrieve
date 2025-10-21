@@ -1,3 +1,12 @@
+## [12.24.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.24.1...12.24.2) (2025-10-21)
+
+
+### Bug Fixes
+
+* web-scale-bug W-19982293 ([#1641](https://github.com/forcedotcom/source-deploy-retrieve/issues/1641)) ([8843ed6](https://github.com/forcedotcom/source-deploy-retrieve/commit/8843ed69574bce15175d2c3ad90639cb7ccbcd7b))
+
+
+
 ## [12.24.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.24.0...12.24.1) (2025-10-20)
 
 

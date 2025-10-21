@@ -1,3 +1,12 @@
+## [12.24.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.24.2...12.24.3) (2025-10-21)
+
+
+### Bug Fixes
+
+* replace illegal chars in paths ([#1635](https://github.com/forcedotcom/source-deploy-retrieve/issues/1635)) ([2f3fb31](https://github.com/forcedotcom/source-deploy-retrieve/commit/2f3fb31f6e3089092fb561adee28f149a088e961))
+
+
+
 ## [12.24.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.24.1...12.24.2) (2025-10-21)
 
 

@@ -140,7 +140,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     super(options);
     this.options = Object.assign({}, MetadataApiRetrieve.DEFAULT_OPTIONS, options);
     if (this.mdapiTempDir) {
-      this.mdapiTempDir = join(this.mdapiTempDir, `${new Date().toISOString()}_retrieve`);
+      this.mdapiTempDir = join(this.mdapiTempDir, `${new Date().toISOString().replace(/[<>:"\\|?*]/g, '_')}_retrieve`);
     }
   }
 

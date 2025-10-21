@@ -17,7 +17,7 @@
 import { basename, join, sep } from 'node:path';
 import { Readable, Writable } from 'node:stream';
 import fs from 'graceful-fs';
-import { Logger, SfError, Messages } from '@salesforce/core';
+import { Logger } from '@salesforce/core/logger';
 import { expect, assert } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
 import JSZip from 'jszip';
@@ -33,9 +33,6 @@ import { BaseMetadataTransformer } from '../../src/convert/transformers/baseMeta
 
 const env = createSandbox();
 const registryAccess = new RegistryAccess();
-
-Messages.importMessagesDirectory(__dirname);
-const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 class TestTransformer extends BaseMetadataTransformer {
   // partial implementation only for tests
@@ -66,27 +63,6 @@ describe('Streams', () => {
 
     beforeEach(() => {
       env.stub(MetadataTransformerFactory.prototype, 'getTransformer').returns(transformer);
-    });
-
-    it('should throw error for unexpected conversion format', (done) => {
-      // @ts-ignore constructor argument invalid
-      const converter = new streams.ComponentConverter('badformat');
-      const expectedError = new SfError(
-        messages.getMessage('error_convert_invalid_format', ['badformat']),
-        'LibraryError'
-      );
-      // convert overrides node's Transform _transform method
-      // eslint-disable-next-line no-underscore-dangle
-      converter._transform(component, '', (err: Error | undefined) => {
-        try {
-          assert(err instanceof Error);
-          expect(err.message).to.equal(expectedError.message);
-          expect(err.name).to.equal(expectedError.name);
-          done();
-        } catch (e) {
-          done(e);
-        }
-      });
     });
 
     it('should transform to metadata format', (done) => {

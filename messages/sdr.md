@@ -2,10 +2,6 @@
 
 Metadata API request failed: %s
 
-# error_convert_invalid_format
-
-Invalid conversion format '%s'
-
 # error_could_not_infer_type
 
 %s: Could not infer a metadata type

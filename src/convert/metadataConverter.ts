@@ -19,7 +19,6 @@ import { Messages } from '@salesforce/core/messages';
 import { SfError } from '@salesforce/core/sfError';
 import { promises, mkdirSync } from 'graceful-fs';
 import { isString } from '@salesforce/ts-types';
-import { Global } from '@salesforce/core';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MetadataResolver } from '../resolve/metadataResolver';
 import { SourcePath } from '../common/types';
@@ -51,10 +50,6 @@ export class MetadataConverter {
     output: ConvertOutputConfig
   ): Promise<ConvertResult> {
     try {
-      // jszip does not behave well in web environments when retrieving multiple files.
-      // it has a minified `browser` target which has a v3 ReadableStream, but the extensions are using polyfilles of v4.
-      // Setting the highWaterMark to 1 seems to fix the issue.
-      const streamOptions = Global.isWeb ? { highWaterMark: 1 } : {};
       const cs = comps instanceof ComponentSet ? comps : new ComponentSet(comps, this.registry);
       const components = (
         (comps instanceof ComponentSet ? Array.from(comps.getSourceComponents()) : comps) as SourceComponent[]
@@ -73,10 +68,10 @@ export class MetadataConverter {
       } = await getConvertIngredients(output, cs, targetFormatIsSource, this.registry);
 
       const conversionPipeline = getPipeline()(
-        Readable.from(components, streamOptions),
+        Readable.from(components),
         !targetFormatIsSource && (process.env.SF_APPLY_REPLACEMENTS_ON_CONVERT === 'true' || output.type === 'zip')
           ? (await getReplacementMarkingStream(cs.projectDirectory)) ?? new PassThrough({ objectMode: true })
-          : new PassThrough({ objectMode: true, ...streamOptions }),
+          : new PassThrough({ objectMode: true }),
         new ComponentConverter(targetFormat, this.registry, mergeSet, defaultDirectory),
         writer
       );

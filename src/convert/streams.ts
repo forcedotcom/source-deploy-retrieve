@@ -16,8 +16,6 @@
 import { isAbsolute, join } from 'node:path';
 import { pipeline as cbPipeline, Readable, Transform, Writable, Stream } from 'node:stream';
 import { promisify } from 'node:util';
-import { Messages } from '@salesforce/core/messages';
-import { SfError } from '@salesforce/core/sfError';
 import JSZip from 'jszip';
 import { createWriteStream, existsSync, promises as fsPromises } from 'graceful-fs';
 import { JsonMap } from '@salesforce/ts-types';
@@ -34,9 +32,6 @@ import { ForceIgnore } from '../resolve';
 import { MetadataTransformerFactory } from './transformers/metadataTransformerFactory';
 import { ConvertContext } from './convertContext/convertContext';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
-
-Messages.importMessagesDirectory(__dirname);
-const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export type PromisifiedPipeline = <T extends NodeJS.ReadableStream>(
   source: T,
@@ -87,25 +82,20 @@ export class ComponentConverter extends Transform {
         const converts: Array<Promise<WriteInfo[]>> = [];
         const transformer = this.transformerFactory.getTransformer(chunk);
         transformer.defaultDirectory = this.defaultDirectory;
-        const mergeWith = this.mergeSet?.getSourceComponents(chunk);
-        switch (this.targetFormat) {
-          case 'source':
-            if (mergeWith) {
-              for (const mergeComponent of mergeWith) {
-                converts.push(
-                  transformer.toSourceFormat({ component: chunk, mergeWith: mergeComponent, mergeSet: this.mergeSet })
-                );
-              }
+        if (this.targetFormat === 'source') {
+          const mergeWith = this.mergeSet?.getSourceComponents(chunk);
+          if (mergeWith) {
+            for (const mergeComponent of mergeWith) {
+              converts.push(
+                transformer.toSourceFormat({ component: chunk, mergeWith: mergeComponent, mergeSet: this.mergeSet })
+              );
             }
-            if (converts.length === 0) {
-              converts.push(transformer.toSourceFormat({ component: chunk, mergeSet: this.mergeSet }));
-            }
-            break;
-          case 'metadata':
-            converts.push(transformer.toMetadataFormat(chunk));
-            break;
-          default:
-            throw new SfError(messages.getMessage('error_convert_invalid_format', [this.targetFormat]), 'LibraryError');
+          }
+          if (converts.length === 0) {
+            converts.push(transformer.toSourceFormat({ component: chunk, mergeSet: this.mergeSet }));
+          }
+        } else if (this.targetFormat === 'metadata') {
+          converts.push(transformer.toMetadataFormat(chunk));
         }
         // could maybe improve all this with lazy async collections...
         (await Promise.all(converts)).forEach((infos) => writeInfos.push(...infos));

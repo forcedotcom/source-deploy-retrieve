@@ -41,6 +41,7 @@
   "strictDirectoryNames": {
     "ActionableEventOrchDefSettings": "actionableeventorchdef",
     "ActionableEventTypeDefSettings": "actionableeventtypedef",
+    "aiAuthoringBundles": "aiauthoringbundle",
     "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
     "ObjectHierarchyRelationship": "objecthierarchyrelationship",
     "accessControlPolicies": "accesscontrolpolicy",
@@ -313,6 +314,7 @@
     "genAiPromptTemplate": "genaiprompttemplate",
     "genAiPromptTemplateActivation": "genaiprompttemplateactv",
     "geodata": "eclairgeodata",
+    "giftEntryGridTemplate": "giftentrygridtemplate",
     "globalPicklist": "globalpicklist",
     "globalValueSet": "globalvalueset",
     "globalValueSetTranslation": "globalvaluesettranslation",
@@ -560,7 +562,9 @@
     "ExternalStoragePrvdConfigSet": "externalstorageprvdconfig",
     "ruleLibraryDefinition": "rulelibrarydefinition",
     "dataMapperDefinition": "datamapperdefinition",
-    "integrationProcdDefinition": "integrationprocddefinition"
+    "integrationProcdDefinition": "integrationprocddefinition",
+    "omniscriptDefinition": "omniscriptdefinition",
+    "computeExtension": "computeextension"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -726,6 +730,16 @@
       "inFolder": false,
       "name": "AIAssistantTemplate",
       "suffix": "aiAssistantTemplate"
+    },
+    "aiauthoringbundle": {
+      "directoryName": "aiAuthoringBundles",
+      "id": "aiauthoringbundle",
+      "inFolder": false,
+      "name": "AiAuthoringBundle",
+      "strategies": {
+        "adapter": "bundle"
+      },
+      "strictDirectoryName": true
     },
     "aiscoringmodeldefinition": {
       "children": {
@@ -2813,6 +2827,14 @@
       "name": "GenAiPromptTemplateActv",
       "strictDirectoryName": false,
       "suffix": "genAiPromptTemplateActivation"
+    },
+    "giftentrygridtemplate": {
+      "directoryName": "giftEntryGridTemplates",
+      "id": "giftentrygridtemplate",
+      "inFolder": false,
+      "name": "GiftEntryGridTemplate",
+      "strictDirectoryName": false,
+      "suffix": "giftEntryGridTemplate"
     },
     "globalpicklist": {
       "directoryName": "globalPicklists",
@@ -4993,6 +5015,22 @@
       "name": "IntegrationProcdDefinition",
       "suffix": "integrationProcdDefinition",
       "directoryName": "integrationProcdDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniscriptdefinition": {
+      "id": "omniscriptdefinition",
+      "name": "OmniscriptDefinition",
+      "suffix": "omniscriptDefinition",
+      "directoryName": "omniscriptDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "computeextension": {
+      "id": "computeextension",
+      "name": "ComputeExtension",
+      "suffix": "computeExtension",
+      "directoryName": "computeExtensions",
       "inFolder": false,
       "strictDirectoryName": false
     }

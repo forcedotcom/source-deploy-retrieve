@@ -42,6 +42,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AdvAcctForecastPeriodGroup|✅||
 |AffinityScoreDefinition|✅||
 |AgentPlatformSettings|✅||
+|AgentforceAccountManagementSettings|✅||
 |AgentforceForDevelopersSettings|✅||
 |Ai4mSettings|✅||
 |AiEvaluationDefinition|⚠️|Supports deploy/retrieve but not source tracking|
@@ -601,7 +602,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |RevenueManagementSettings|✅||
 |Role|✅||
 |RpaRobotPoolMetadata|❌|Not supported, but support could be added|
-|SalesAccountAgentSettings|✅||
 |SalesAgreementSettings|✅||
 |SalesDealAgentSettings|✅||
 |SalesWorkQueueSettings|✅||
@@ -737,10 +737,14 @@ v66 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
-|AgentforceAccountManagementSettings|✅||
+|ApexLimitSettings|✅||
+|AppointmentBookingSettings|✅||
+|AutomatorConfigSettings|✅||
 |BotRecommendedUtteranceDef|❌|Not supported, but support could be added|
+|ComputeExtension|✅||
 |CourseWaitlistConfig|❌|Not supported, but support could be added|
-|GiftEntryGridTemplate|❌|Not supported, but support could be added|
+|CriteriaSettings|✅||
+|GiftEntryGridTemplate|✅||
 |PartyPrflDataObjVldDef|❌|Not supported, but support could be added|
 |ProcedurePlanDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |RecordAlertCategoryTranslation|❌|Not supported, but support could be added|
@@ -749,6 +753,7 @@ v66 introduces the following new types.  Here's their current level of support
 |StockRotationSettings|✅||
 |UnifiedSalesIntelligenceSettings|✅||
 |UnifiedSummaryConfiguration|❌|Not supported, but support could be added|
+|UpsellCrossSellSettings|✅||
 
 ## Additional Types
 
@@ -761,6 +766,7 @@ v66 introduces the following new types.  Here's their current level of support
 
 - AccessControlPolicy
 - AIAssistantTemplate
+- AiAuthoringBundle
 - AssignmentRule
 - AssistantRecommendationType
 - AutoResponseRule
@@ -818,3 +824,4 @@ v66 introduces the following new types.  Here's their current level of support
 - RuleLibraryDefinition
 - DataMapperDefinition
 - IntegrationProcdDefinition
+- OmniscriptDefinition

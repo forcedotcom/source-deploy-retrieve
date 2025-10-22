@@ -1,3 +1,12 @@
+# [12.25.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.24.3...12.25.0) (2025-10-22)
+
+
+### Features
+
+* add FlowValueMap type to metadata registry W-20006675 ([#1642](https://github.com/forcedotcom/source-deploy-retrieve/issues/1642)) ([ecb131d](https://github.com/forcedotcom/source-deploy-retrieve/commit/ecb131d1f78bf96fa9e74955c9a64b3c709ba43a))
+
+
+
 ## [12.24.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.24.2...12.24.3) (2025-10-21)
 
 

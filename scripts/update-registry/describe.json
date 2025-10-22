@@ -2324,6 +2324,14 @@
     "metaFile": false,
     "hasChildren": false
   },
+  "FlowValueMap": {
+    "name": "FlowValueMap",
+    "directoryName": "flowValueMaps",
+    "suffix": "flowvaluemap",
+    "inFolder": false,
+    "metaFile": false,
+    "hasChildren": false
+  },
   "ForecastingFilter": {
     "name": "ForecastingFilter",
     "directoryName": "forecastingFilters",

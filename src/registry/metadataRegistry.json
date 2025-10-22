@@ -295,6 +295,7 @@
     "flowCategory": "flowcategory",
     "flowDefinition": "flowdefinition",
     "flowtest": "flowtest",
+    "flowvaluemap": "flowvaluemap",
     "forecastingFilter": "forecastingfilter",
     "forecastingFilterCondition": "forecastingfiltercondition",
     "forecastingGroup": "forecastinggroup",
@@ -2670,6 +2671,14 @@
       "name": "FlowTest",
       "strictDirectoryName": false,
       "suffix": "flowtest"
+    },
+    "flowvaluemap": {
+      "directoryName": "flowValueMaps",
+      "id": "flowvaluemap",
+      "inFolder": false,
+      "name": "FlowValueMap",
+      "strictDirectoryName": false,
+      "suffix": "flowvaluemap"
     },
     "forecastingfilter": {
       "directoryName": "forecastingFilters",

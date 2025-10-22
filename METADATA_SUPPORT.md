@@ -744,12 +744,17 @@ v66 introduces the following new types.  Here's their current level of support
 |ComputeExtension|✅||
 |CourseWaitlistConfig|❌|Not supported, but support could be added|
 |CriteriaSettings|✅||
+|EmergencySettings|✅||
+|GeneralConfigSettings|✅||
 |GiftEntryGridTemplate|✅||
+|OnboardingDataObjGrp|❌|Not supported, but support could be added|
+|OptimizationSettings|✅||
 |PartyPrflDataObjVldDef|❌|Not supported, but support could be added|
 |ProcedurePlanDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |RecordAlertCategoryTranslation|❌|Not supported, but support could be added|
 |RecordAlertTemplateTranslation|❌|Not supported, but support could be added|
 |RiskMgmtSettings|✅||
+|SchedulingRecipeSettings|✅||
 |StockRotationSettings|✅||
 |UnifiedSalesIntelligenceSettings|✅||
 |UnifiedSummaryConfiguration|❌|Not supported, but support could be added|
@@ -789,6 +794,7 @@ v66 introduces the following new types.  Here's their current level of support
 - ExtlClntAppSampleConfigurablePolicies
 - ExtlClntAppSampleSettings
 - FieldMappingConfigItem
+- FlowValueMap
 - Form
 - FormSection
 - GenAiPlanner

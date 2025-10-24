@@ -755,7 +755,6 @@ v66 introduces the following new types.  Here's their current level of support
 |RiskMgmtSettings|✅||
 |SchedulingRecipeSettings|✅||
 |StockRotationSettings|✅||
-|UnifiedSalesIntelligenceSettings|✅||
 |UnifiedSummaryConfiguration|❌|Not supported, but support could be added|
 |UpsellCrossSellSettings|✅||
 

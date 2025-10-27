@@ -748,6 +748,7 @@ v66 introduces the following new types.  Here's their current level of support
 |EmergencySettings|✅||
 |GeneralConfigSettings|✅||
 |GiftEntryGridTemplate|✅||
+|IndustriesMfgSampleManagementSettings|✅||
 |OnboardingDataObjGrp|❌|Not supported, but support could be added|
 |OptimizationSettings|✅||
 |PartyPrflDataObjVldDef|❌|Not supported, but support could be added|

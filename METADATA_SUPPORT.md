@@ -750,6 +750,8 @@ v66 introduces the following new types.  Here's their current level of support
 |GiftEntryGridTemplate|✅||
 |IndustriesConstraintsSettings|✅||
 |IndustriesMfgSampleManagementSettings|✅||
+|MapReportSettings|✅||
+|ObjectMappingSettings|✅||
 |OnboardingDataObjGrp|❌|Not supported, but support could be added|
 |OptimizationSettings|✅||
 |PartyPrflDataObjVldDef|❌|Not supported, but support could be added|
@@ -758,7 +760,6 @@ v66 introduces the following new types.  Here's their current level of support
 |SchedulingRecipeSettings|✅||
 |StockRotationSettings|✅||
 |UnifiedSummaryConfiguration|❌|Not supported, but support could be added|
-|UpsellCrossSellSettings|✅||
 
 ## Additional Types
 

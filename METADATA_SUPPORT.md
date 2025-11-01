@@ -740,7 +740,6 @@ v66 introduces the following new types.  Here's their current level of support
 |ApexLimitSettings|✅||
 |AppointmentBookingSettings|✅||
 |AutomatorConfigSettings|✅||
-|BotRecommendedUtteranceDef|❌|Not supported, but support could be added|
 |ComputeExtension|✅||
 |CourseWaitlistConfig|❌|Not supported, but support could be added|
 |CriteriaSettings|✅||
@@ -760,6 +759,7 @@ v66 introduces the following new types.  Here's their current level of support
 |SchedulingRecipeSettings|✅||
 |StockRotationSettings|✅||
 |UnifiedSummaryConfiguration|❌|Not supported, but support could be added|
+|WelcomeRecommendation|❌|Not supported, but support could be added|
 
 ## Additional Types
 

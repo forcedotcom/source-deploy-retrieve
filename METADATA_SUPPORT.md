@@ -745,6 +745,7 @@ v66 introduces the following new types.  Here's their current level of support
 |CriteriaSettings|✅||
 |DocumentExtractionDef|❌|Not supported, but support could be added|
 |EmergencySettings|✅||
+|GRCIntelligenceUddSettings|✅||
 |GeneralConfigSettings|✅||
 |GiftEntryGridTemplate|✅||
 |IndustriesConstraintsSettings|✅||

@@ -1324,13 +1324,11 @@ describe('MetadataApiDeploy', () => {
           },
         ]
       );
+    const aabComponent = createAABComponent();
+    const components = new ComponentSet([aabComponent]);
 
     it('should throw error with correct data when compilation fails', async () => {
-      const aabComponent = createAABComponent();
-      const components = new ComponentSet([aabComponent]);
-
-      // Stub retrieveMaxApiVersion on prototype before getting connection
-      $$.SANDBOX.stub(Connection.prototype, 'retrieveMaxApiVersion').resolves('60.0');
+      $$.SANDBOX.stub(Connection.prototype, 'retrieveMaxApiVersion').resolves('65.0');
       const connection = await testOrg.getConnection();
 
       const readFileStub = $$.SANDBOX.stub(fs.promises, 'readFile').resolves(agentContent);

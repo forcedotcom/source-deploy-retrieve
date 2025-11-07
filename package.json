@@ -29,6 +29,7 @@
     "@salesforce/kit": "^3.2.4",
     "@salesforce/ts-types": "^2.0.12",
     "@salesforce/types": "^1.5.0",
+    "@types/semver": "^7.7.1",
     "fast-levenshtein": "^3.0.0",
     "fast-xml-parser": "^4.5.3",
     "got": "^11.8.6",
@@ -38,6 +39,7 @@
     "mime": "2.6.0",
     "minimatch": "^9.0.5",
     "proxy-agent": "^6.4.0",
+    "semver": "^7.7.3",
     "yaml": "^2.8.1"
   },
   "devDependencies": {

@@ -206,13 +206,12 @@ export class MetadataApiDeploy extends MetadataTransfer<
     }
     if (this.options.components) {
       // we must ensure AiAuthoringBundles compile before deployment
+      // Use optimized getter method instead of filtering all components
+      const aabComponents = this.options.components.getAiAuthoringBundles().toArray();
 
-      await Promise.all(
-        this.options.components
-          .getSourceComponents()
-          .filter((element) => element.type.id === 'aiauthoringbundle')
-          .toArray()
-          .map(async (aab) => {
+      if (aabComponents.length > 0) {
+        await Promise.all(
+          aabComponents.map(async (aab) => {
             // aab.content points to a directory, we need to find the .agent file and read it
             if (!aab.content) {
               throw new SfError(
@@ -301,7 +300,8 @@ export class MetadataApiDeploy extends MetadataTransfer<
               });
             }
           })
-      );
+        );
+      }
     }
     // only do event hooks if source, (NOT a metadata format) deploy
     if (this.options.components) {

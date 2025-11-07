@@ -1,3 +1,12 @@
+# [12.26.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.25.0...12.26.0) (2025-11-07)
+
+
+### Features
+
+* add AccountPlanObjMeasCalcDef to metadata registry W-19623920 ([#1643](https://github.com/forcedotcom/source-deploy-retrieve/issues/1643)) ([f4e1d77](https://github.com/forcedotcom/source-deploy-retrieve/commit/f4e1d7777db91e9825da7c03355063e6cb98c8a9))
+
+
+
 # [12.25.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.24.3...12.25.0) (2025-10-22)
 
 

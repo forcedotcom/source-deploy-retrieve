@@ -98,6 +98,7 @@
     "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration",
     "SearchableObjDataSyncInfoSetting": "searchableobjdatasyncinfo",
     "accountForecastSetting": "accountforecastsettings",
+    "accountPlanObjMeasCalcDef": "accountplanobjmeascalcdef",
     "accountRelationshipShareRule": "accountrelationshipsharerule",
     "accountingFieldMapping": "accountingfieldmapping",
     "accountingModelConfig": "accountingmodelconfig",
@@ -601,6 +602,14 @@
       "name": "AccountingModelConfig",
       "strictDirectoryName": false,
       "suffix": "accountingModelConfig"
+    },
+    "accountplanobjmeascalcdef": {
+      "directoryName": "accountPlanObjMeasCalcDefs",
+      "id": "accountplanobjmeascalcdef",
+      "inFolder": false,
+      "name": "AccountPlanObjMeasCalcDef",
+      "strictDirectoryName": false,
+      "suffix": "accountPlanObjMeasCalcDef"
     },
     "accountrelationshipsharerule": {
       "directoryName": "accountRelationshipShareRules",

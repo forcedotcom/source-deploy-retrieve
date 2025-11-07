@@ -272,6 +272,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
               }>;
             }>({
               method: 'POST',
+              // this will need to be api.salesforce once changes are in prod
               url: 'https://test.api.salesforce.com/einstein/ai-agent/v1.1/authoring/scripts',
               headers: {
                 'x-client-name': 'afdx',

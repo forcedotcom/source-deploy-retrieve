@@ -744,10 +744,13 @@ v66 introduces the following new types.  Here's their current level of support
 |ComputeExtension|✅||
 |CourseWaitlistConfig|❌|Not supported, but support could be added|
 |CriteriaSettings|✅||
+|DictionariesSettings|✅||
 |DocumentExtractionDef|❌|Not supported, but support could be added|
 |DripFeedConfigSettings|✅||
 |DynamicGanttSettings|✅||
 |EmergencySettings|✅||
+|ExtlClntAppAttestSettings|✅||
+|GENComputingSummaryDEF|❌|Not supported, but support could be added|
 |GRCIntelligenceUddSettings|✅||
 |GeneralConfigSettings|✅||
 |GeocodeSettings|✅||
@@ -763,10 +766,14 @@ v66 introduces the following new types.  Here's their current level of support
 |OptimizationSettings|✅||
 |PartyPrflDataObjVldDef|❌|Not supported, but support could be added|
 |ProcedurePlanDefinition|❌|Not supported, but support could be added (but not for tracking)|
+|ProviderSampleLimitTemplate|❌|Not supported, but support could be added|
 |RiskMgmtSettings|✅||
 |SchedulingRecipeSettings|✅||
+|ServiceLegalStatusesSettings|✅||
+|SoFieldMappingSettings|✅||
 |StockRotationSettings|✅||
-|UnifiedSummaryConfiguration|❌|Not supported, but support could be added|
+|SynchronizeSettings|✅||
+|TriggerConfigurationsSettings|✅||
 
 ## Additional Types
 

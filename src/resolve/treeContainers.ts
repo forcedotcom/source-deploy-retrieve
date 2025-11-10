@@ -36,6 +36,12 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
  * Extend this base class to implement a custom container.
  */
 export abstract class TreeContainer {
+  protected cwd: string;
+
+  /** specify a cwd to use instead of the real cwd.  Useful for tests and web environments where process.cwd is undefined */
+  public constructor(cwd: string = process.cwd()) {
+    this.cwd = cwd;
+  }
   /**
    * Searches for a metadata component file in a container directory.
    *
@@ -104,31 +110,31 @@ export abstract class TreeContainer {
 export class NodeFSTreeContainer extends TreeContainer {
   public isDirectory(fsPath: SourcePath): boolean {
     // use stat instead of lstat to follow symlinks
-    return statSync(fsPath).isDirectory();
+    return statSync(join(this.cwd, fsPath)).isDirectory();
   }
 
   public exists(fsPath: SourcePath): boolean {
-    return existsSync(fsPath);
+    return existsSync(join(this.cwd, fsPath));
   }
 
   public readDirectory(fsPath: SourcePath): string[] {
-    return readdirSync(fsPath);
+    return readdirSync(join(this.cwd, fsPath));
   }
 
   public readFile(fsPath: SourcePath): Promise<Buffer> {
     // significant enough performance increase using sync instead of fs.promise version
-    return Promise.resolve(readFileSync(fsPath));
+    return Promise.resolve(readFileSync(join(this.cwd, fsPath)));
   }
 
   public readFileSync(fsPath: SourcePath): Buffer {
-    return readFileSync(fsPath);
+    return readFileSync(join(this.cwd, fsPath));
   }
 
   public stream(fsPath: SourcePath): Readable {
     if (!this.exists(fsPath)) {
       throw new Error(`File not found: ${fsPath}`);
     }
-    return createReadStream(fsPath);
+    return createReadStream(join(this.cwd, fsPath));
   }
 }
 

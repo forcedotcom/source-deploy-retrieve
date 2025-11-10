@@ -197,13 +197,24 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     if (component) {
       return component;
     }
-    const bundleName = this.getBundleName(trigger);
+
     const pathParts = trigger.split(sep);
-    const bundleDir = pathParts.slice(0, getDigitalExperiencesIndex(trigger) + 3).join(sep);
+    const digitalExperiencesIndex = pathParts.indexOf('digitalExperiences');
+
+    // Extract bundle name: web_app/WebApp3
+    const baseType = pathParts[digitalExperiencesIndex + 1];
+    const spaceApiName = pathParts[digitalExperiencesIndex + 2];
+    const bundleName = `${baseType}/${spaceApiName}`;
+
+    // Extract bundle directory: /path/to/digitalExperiences/web_app/WebApp3
+    const bundleDir = pathParts.slice(0, digitalExperiencesIndex + 3).join(sep);
+
+    // Get the DigitalExperienceBundle type
     const parentType = this.isBundleType() ? this.type : this.registry.getParentType(this.type.id);
     if (!parentType) {
       throw messages.createError('error_failed_convert', [bundleName]);
     }
+
     return new SourceComponent(
       {
         name: bundleName,

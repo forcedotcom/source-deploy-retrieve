@@ -32,6 +32,20 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 /**
+ * Checks if the given path is a web_app bundle directory.
+ * web_app bundles don't have metadata XML files and are identified by directory structure.
+ */
+const isWebAppBundlePath = (path: string): boolean => {
+  const pathParts = path.split(sep);
+  const digitalExperiencesIndex = pathParts.indexOf('digitalExperiences');
+  return (
+    digitalExperiencesIndex > -1 &&
+    pathParts.length > digitalExperiencesIndex + 2 &&
+    pathParts[digitalExperiencesIndex + 1] === 'web_app'
+  );
+};
+
+/**
  * Resolver for metadata type and component objects.
  *
  * @internal
@@ -224,6 +238,10 @@ const resolveDirectoryAsComponent =
   (registry: RegistryAccess) =>
   (tree: TreeContainer) =>
   (dirPath: string): boolean => {
+    if (isWebAppBundlePath(dirPath)) {
+      return true;
+    }
+
     const type = resolveType(registry)(tree)(dirPath);
     if (type) {
       const { directoryName, inFolder } = type;
@@ -335,6 +353,10 @@ const resolveType =
   (registry: RegistryAccess) =>
   (tree: TreeContainer) =>
   (fsPath: string): MetadataType | undefined => {
+    if (isWebAppBundlePath(fsPath)) {
+      return registry.getTypeByName('DigitalExperienceBundle');
+    }
+
     // attempt 1 - check if the file is part of a component that requires a strict type folder
     let resolvedType = resolveTypeFromStrictFolder(registry)(fsPath);
 

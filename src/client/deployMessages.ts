@@ -87,6 +87,30 @@ export const createResponses = (component: SourceComponent, responseMessages: De
     if (state === ComponentStatus.Failed) {
       return [{ ...base, state, ...parseDeployDiagnostic(component, message) } satisfies FileResponseFailure];
     } else {
+      const isWebAppBundle = component.type.name === 'DigitalExperienceBundle' && 
+                             component.fullName.startsWith('web_app/') &&
+                             component.content;
+      
+      if (isWebAppBundle) {
+        const walkedPaths = component.walkContent();
+        const bundleResponse: FileResponseSuccess = {
+          fullName: component.fullName,
+          type: component.type.name,
+          state,
+          filePath: component.content!,
+        };
+        const fileResponses: FileResponseSuccess[] = walkedPaths.map((filePath) => {
+          const relPath = filePath.replace(component.content! + '/', '');
+          return {
+            fullName: `${component.fullName}/${relPath}`,
+            type: 'DigitalExperience',
+            state,
+            filePath,
+          };
+        });
+        return [bundleResponse, ...fileResponses];
+      }
+      
       return [
         ...(shouldWalkContent(component)
           ? component.walkContent().map((filePath): FileResponseSuccess => ({ ...base, state, filePath }))

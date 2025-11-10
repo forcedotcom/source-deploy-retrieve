@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1762794127377,
+  "lastUpdate": 1762808791052,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -88919,6 +88919,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 10296,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "jfeingold35@gmail.com",
+            "name": "Joshua Feingold",
+            "username": "jfeingold35"
+          },
+          "committer": {
+            "email": "jfeingold35@gmail.com",
+            "name": "Joshua Feingold",
+            "username": "jfeingold35"
+          },
+          "distinct": true,
+          "id": "adb39cb1c76ef80512f6cf2994b4d8911c21835c",
+          "message": "feat: feedback on RunRelevantTests implementation @W-20152151@",
+          "timestamp": "2025-11-10T15:04:11-06:00",
+          "tree_id": "e33cf2a6130dc9c77abbffdf534f461f333c40d9",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/adb39cb1c76ef80512f6cf2994b4d8911c21835c"
+        },
+        "date": 1762808782449,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 229,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2068,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2446,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 2977,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 413,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 5356,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7166,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 5257,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 754,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 9182,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 13297,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 9814,
             "unit": "ms"
           }
         ]

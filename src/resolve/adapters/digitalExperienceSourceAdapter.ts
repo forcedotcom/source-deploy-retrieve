@@ -191,13 +191,6 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
         path: xml.path,
       };
     }
-    if (xml && isWebAppBaseType(path)) {
-      return {
-        fullName: this.getBundleName(path),
-        suffix: xml.suffix,
-        path: xml.path,
-      };
-    }
   }
 
   private populateWebAppBundle(trigger: string, component?: SourceComponent): SourceComponent {

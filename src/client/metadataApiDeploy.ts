@@ -210,7 +210,38 @@ export class MetadataApiDeploy extends MetadataTransfer<
       const aabComponents = this.options.components.getAiAuthoringBundles().toArray();
 
       if (aabComponents.length > 0) {
-        await Promise.all(
+        // we need to use a namedJWT connection for this request
+        const { accessToken, instanceUrl } = connection.getConnectionOptions();
+        if (!instanceUrl) {
+          throw SfError.create({
+            name: 'ApiAccessError',
+            message: 'Missing Instance URL for org connection',
+          });
+        }
+        if (!accessToken) {
+          throw SfError.create({
+            name: 'ApiAccessError',
+            message: 'Missing Access Token for org connection',
+          });
+        }
+        const url = `${instanceUrl}/agentforce/bootstrap/nameduser`;
+        // For the namdeduser endpoint request to work we need to delete the access token
+        delete connection.accessToken;
+        const response = await connection.request<{
+          access_token: string;
+        }>(
+          {
+            method: 'GET',
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              Cookie: `sid=${accessToken}`,
+            },
+          },
+          { retry: { maxRetries: 3 } }
+        );
+        connection.accessToken = response.access_token;
+        const results = await Promise.all(
           aabComponents.map(async (aab) => {
             // aab.content points to a directory, we need to find the .agent file and read it
             if (!aab.content) {
@@ -229,38 +260,6 @@ export class MetadataApiDeploy extends MetadataTransfer<
 
             const agentContent = await fs.promises.readFile(contentPath, 'utf-8');
 
-            // we need to use a namedJWT connection for this request
-            const { accessToken, instanceUrl } = connection.getConnectionOptions();
-            if (!instanceUrl) {
-              throw SfError.create({
-                name: 'ApiAccessError',
-                message: 'Missing Instance URL for org connection',
-              });
-            }
-            if (!accessToken) {
-              throw SfError.create({
-                name: 'ApiAccessError',
-                message: 'Missing Access Token for org connection',
-              });
-            }
-            const url = `${instanceUrl}/agentforce/bootstrap/nameduser`;
-            // For the namdeduser endpoint request to work we need to delete the access token
-            delete connection.accessToken;
-            const response = await connection.request<{
-              access_token: string;
-            }>(
-              {
-                method: 'GET',
-                url,
-                headers: {
-                  'Content-Type': 'application/json',
-                  Cookie: `sid=${accessToken}`,
-                },
-              },
-              { retry: { maxRetries: 3 } }
-            );
-            connection.accessToken = response.access_token;
-
             // to avoid circular dependencies between libraries, just call the compile endpoint here
             const result = await connection.request<{
               // minimal typings here, more is returned, just using what we need
@@ -270,6 +269,8 @@ export class MetadataApiDeploy extends MetadataTransfer<
                 lineStart: number;
                 colStart: number;
               }>;
+              // name added here for post-processing convenience
+              name: string;
             }>({
               method: 'POST',
               // this will need to be api.salesforce once changes are in prod
@@ -289,19 +290,23 @@ export class MetadataApiDeploy extends MetadataTransfer<
                 afScriptVersion: '1.0.1',
               }),
             });
-
-            if (result.status === 'failure') {
-              throw SfError.create({
-                message: `${EOL}${
-                  result.errors
-                    .map((e) => `${aab.name}.agent: ${e.description} ${e.lineStart}:${e.colStart}`)
-                    .join(EOL) ?? ''
-                }`,
-                name: 'AgentCompilationError',
-              });
-            }
+            result.name = aab.name;
+            return result;
           })
         );
+
+        const errors = results
+          .filter((result) => result.status === 'failure')
+          .map((result) =>
+            result.errors.map((r) => `${result.name}.agent: ${r.description} ${r.lineStart}:${r.colStart}`).join(EOL)
+          );
+
+        if (errors.length > 0) {
+          throw SfError.create({
+            message: `${EOL}${errors.join(EOL)}`,
+            name: 'AgentCompilationError',
+          });
+        }
       }
     }
     // only do event hooks if source, (NOT a metadata format) deploy

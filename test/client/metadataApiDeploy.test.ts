@@ -1514,8 +1514,8 @@ describe('MetadataApiDeploy', () => {
 
       // Should read both agent files
       expect(readFileStub.callCount).to.equal(2);
-      // Should call compile endpoint twice (once per AAB) and nameduser twice
-      expect(namedUserCallCount).to.equal(2);
+      // Should call compile endpoint twice (once per AAB) and nameduser once
+      expect(namedUserCallCount).to.equal(1);
       expect(compileCallCount).to.equal(2);
     });
   });

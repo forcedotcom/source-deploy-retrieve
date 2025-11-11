@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1762887635401,
+  "lastUpdate": 1762888164574,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -83815,6 +83815,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 19345,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pyelchuri@salesforce.com",
+            "name": "pyelchuri",
+            "username": "pyelchurisf"
+          },
+          "committer": {
+            "email": "pyelchuri@salesforce.com",
+            "name": "pyelchuri",
+            "username": "pyelchurisf"
+          },
+          "distinct": true,
+          "id": "fbbf61519cd105374e2874ab49232bd8041e13f8",
+          "message": "refactor: optimize populateWebAppBundle logic\n\n- Reduced path splitting from 3 times to 1 time\n- Removed unused pathParts variable\n- Improved code clarity with inline comments",
+          "timestamp": "2025-11-10T16:59:15+05:30",
+          "tree_id": "01fe51137520cc3d99162ec7cb5805ceb51717c9",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/fbbf61519cd105374e2874ab49232bd8041e13f8"
+        },
+        "date": 1762888150224,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 594,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4211,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 4195,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 7625,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 934,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 11341,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 11255,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 11755,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1811,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 21172,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 20378,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 21136,
             "unit": "ms"
           }
         ]

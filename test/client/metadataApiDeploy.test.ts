@@ -1257,19 +1257,22 @@ describe('MetadataApiDeploy', () => {
     });
 
     it('should disallow "RunRelevantTests" for API versions <66.0', () => {
+      const testCases = ['8.0', '10.0', '60.0', '65.0'];
       const constructorError = {
         name: 'InvalidTestLevelSelection',
         message: messages.getMessage('error_invalid_test_level', ['RunRelevantTests', '66.0']),
       };
       try {
-        new MetadataApiDeploy({
-          usernameOrConnection: 'testing',
-          apiOptions: {
-            testLevel: 'RunRelevantTests',
-          },
-          apiVersion: '8.0', // Tricksy case here: 8.0 is alphabetically after "66.0" but semantically after it.
+        testCases.forEach((v) => {
+          new MetadataApiDeploy({
+            usernameOrConnection: 'testing',
+            apiOptions: {
+              testLevel: 'RunRelevantTests',
+            },
+            apiVersion: v,
+          });
+          assert.fail(`Should have thrown an error for API version ${v}`);
         });
-        assert.fail('Should have thrown an error');
       } catch (e) {
         assert(e instanceof Error);
         expect(e.name).to.equal(constructorError.name);

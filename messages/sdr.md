@@ -22,6 +22,10 @@ Could not find parent type for %s (%s)
 
 Component conversion failed: %s
 
+# error_invalid_test_level
+
+TestLevel cannot be '%s' unless API version is %s or later
+
 # error_merge_metadata_target_unsupported
 
 Merge convert for metadata target format currently unsupported

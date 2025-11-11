@@ -116,6 +116,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
   public constructor(options: MetadataApiDeployOptions) {
     super(options);
     options.apiOptions = { ...MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions, ...options.apiOptions };
+    validateOptions(options);
     this.options = Object.assign({}, options);
     this.isRestDeploy = !!options.apiOptions?.rest;
     this.registry = options.registry ?? new RegistryAccess();
@@ -524,6 +525,17 @@ const buildFileResponsesFromComponentSet =
     }
     return fileResponses;
   };
+
+const validateOptions = (options: MetadataApiDeployOptions): void => {
+  const runningRelevantTestsOnly = options.apiOptions?.testLevel === 'RunRelevantTests';
+  const beforeApiV66 = options.apiVersion && Number(options.apiVersion) < 66.0;
+  if (runningRelevantTestsOnly && beforeApiV66) {
+    throw new SfError(
+      messages.getMessage('error_invalid_test_level', ['RunRelevantTests', '66.0']),
+      'InvalidTestLevelSelection'
+    );
+  }
+};
 /**
  * register a listener to `scopedPreDeploy`
  */

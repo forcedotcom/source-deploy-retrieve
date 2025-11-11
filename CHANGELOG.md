@@ -1,3 +1,12 @@
+## [12.27.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.27.0...12.27.1) (2025-11-11)
+
+
+### Bug Fixes
+
+* add support for `LightningOutApp` metadata ([#1648](https://github.com/forcedotcom/source-deploy-retrieve/issues/1648)) ([bdc1fb0](https://github.com/forcedotcom/source-deploy-retrieve/commit/bdc1fb057c5ce5a325c296fb4a0999e3ced26b55))
+
+
+
 # [12.27.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.26.1...12.27.0) (2025-11-11)
 
 

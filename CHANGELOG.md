@@ -1,3 +1,12 @@
+## [12.26.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.26.0...12.26.1) (2025-11-11)
+
+
+### Bug Fixes
+
+* web support without cwd W-20175875 ([#1647](https://github.com/forcedotcom/source-deploy-retrieve/issues/1647)) ([6dd7c70](https://github.com/forcedotcom/source-deploy-retrieve/commit/6dd7c708defdd064ac34ba77d154cc91ab2cee2b))
+
+
+
 # [12.26.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.25.0...12.26.0) (2025-11-07)
 
 

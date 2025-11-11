@@ -1,3 +1,12 @@
+# [12.27.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.26.1...12.27.0) (2025-11-11)
+
+
+### Features
+
+* added RunRelevantTests test-level @W-20152151@ ([#1644](https://github.com/forcedotcom/source-deploy-retrieve/issues/1644)) ([96a176f](https://github.com/forcedotcom/source-deploy-retrieve/commit/96a176f7bc28d3671a9f50a89079373ffe1fcea9))
+
+
+
 ## [12.26.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.26.0...12.26.1) (2025-11-11)
 
 

@@ -566,7 +566,8 @@
     "dataMapperDefinition": "datamapperdefinition",
     "integrationProcdDefinition": "integrationprocddefinition",
     "omniscriptDefinition": "omniscriptdefinition",
-    "computeExtension": "computeextension"
+    "computeExtension": "computeextension",
+    "dataObjectSearchIndexConf": "dataobjectsearchindexconf"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5049,6 +5050,14 @@
       "name": "ComputeExtension",
       "suffix": "computeExtension",
       "directoryName": "computeExtensions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "dataobjectsearchindexconf": {
+      "id": "dataobjectsearchindexconf",
+      "name": "DataObjectSearchIndexConf",
+      "suffix": "dataObjectSearchIndexConf",
+      "directoryName": "dataObjectSearchIndexConfs",
       "inFolder": false,
       "strictDirectoryName": false
     }

@@ -79,22 +79,31 @@ const shouldWalkContent = (component: SourceComponent): boolean =>
       (t) => t.unaddressableWithoutParent === true || t.isAddressable === false
     ));
 
-export const createResponses = (component: SourceComponent, responseMessages: DeployMessage[]): FileResponse[] =>
-  responseMessages.flatMap((message): FileResponse[] => {
-    const state = getState(message);
-    const base = { fullName: component.fullName, type: component.type.name } as const;
+export const createResponses =
+  (projectPath?: string) =>
+  (component: SourceComponent, responseMessages: DeployMessage[]): FileResponse[] =>
+    responseMessages.flatMap((message): FileResponse[] => {
+      const state = getState(message);
+      const base = { fullName: component.fullName, type: component.type.name } as const;
 
-    if (state === ComponentStatus.Failed) {
-      return [{ ...base, state, ...parseDeployDiagnostic(component, message) } satisfies FileResponseFailure];
-    } else {
-      return [
-        ...(shouldWalkContent(component)
-          ? component.walkContent().map((filePath): FileResponseSuccess => ({ ...base, state, filePath }))
-          : []),
-        ...(component.xml ? [{ ...base, state, filePath: component.xml } satisfies FileResponseSuccess] : []),
-      ];
-    }
-  });
+      if (state === ComponentStatus.Failed) {
+        return [{ ...base, state, ...parseDeployDiagnostic(component, message) } satisfies FileResponseFailure];
+      } else {
+        return [
+          ...(shouldWalkContent(component)
+            ? component.walkContent().map(
+                (filePath): FileResponseSuccess => ({
+                  ...base,
+                  state,
+                  // deployResults will produce filePaths relative to cwd, which might not be set in all environments
+                  filePath: process.cwd() === projectPath ? filePath : join(projectPath ?? '', filePath),
+                })
+              )
+            : []),
+          ...(component.xml ? [{ ...base, state, filePath: component.xml } satisfies FileResponseSuccess] : []),
+        ];
+      }
+    });
 /**
  * Groups messages from the deploy result by component fullName and type
  */

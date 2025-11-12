@@ -567,7 +567,8 @@
     "integrationProcdDefinition": "integrationprocddefinition",
     "omniscriptDefinition": "omniscriptdefinition",
     "computeExtension": "computeextension",
-    "dataObjectSearchIndexConf": "dataobjectsearchindexconf"
+    "dataObjectSearchIndexConf": "dataobjectsearchindexconf",
+    "lightningOutApp": "lightningoutapp"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5058,6 +5059,14 @@
       "name": "DataObjectSearchIndexConf",
       "suffix": "dataObjectSearchIndexConf",
       "directoryName": "dataObjectSearchIndexConfs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "lightningoutapp": {
+      "id": "lightningoutapp",
+      "name": "LightningOutApp",
+      "suffix": "lightningOutApp",
+      "directoryName": "lightningOutApp",
       "inFolder": false,
       "strictDirectoryName": false
     }

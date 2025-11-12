@@ -201,10 +201,10 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     const pathParts = trigger.split(sep);
     const digitalExperiencesIndex = pathParts.indexOf('digitalExperiences');
 
-    // Extract bundle name: web_app/WebApp3
+    // Extract bundle name: web_app/WebApp3 (always use posix separator for metadata names)
     const baseType = pathParts[digitalExperiencesIndex + 1];
     const spaceApiName = pathParts[digitalExperiencesIndex + 2];
-    const bundleName = `${baseType}/${spaceApiName}`;
+    const bundleName = [baseType, spaceApiName].join('/');
 
     // Extract bundle directory: /path/to/digitalExperiences/web_app/WebApp3
     const bundleDir = pathParts.slice(0, digitalExperiencesIndex + 3).join(sep);
@@ -232,10 +232,10 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
       const digitalExperiencesIndex = getDigitalExperiencesIndex(contentPath);
       const baseType = pathParts[digitalExperiencesIndex + 1];
       const spaceApiName = pathParts[digitalExperiencesIndex + 2];
-      return `${baseType}/${spaceApiName}`;
+      return [baseType, spaceApiName].join('/');
     }
     const bundlePath = this.getBundleMetadataXmlPath(contentPath);
-    return `${parentName(dirname(bundlePath))}/${parentName(bundlePath)}`;
+    return [parentName(dirname(bundlePath)), parentName(bundlePath)].join('/');
   }
 
   private getBundleMetadataXmlPath(path: string): string {
@@ -275,15 +275,10 @@ const contentParts = digitalExperienceStructure.split(sep);
  * web_app base type has a simpler structure without ContentType folders.
  * Structure: digitalExperiences/web_app/spaceApiName/...files...
  */
-const isWebAppBaseType = (path: string): boolean => {
+export const isWebAppBaseType = (path: string): boolean => {
   const pathParts = path.split(sep);
   const digitalExperiencesIndex = pathParts.indexOf('digitalExperiences');
-  // Check if the base type (folder after digitalExperiences) is WEB_APP_BASE_TYPE
-  return (
-    digitalExperiencesIndex > -1 &&
-    pathParts.length > digitalExperiencesIndex + 1 &&
-    pathParts[digitalExperiencesIndex + 1] === WEB_APP_BASE_TYPE
-  );
+  return pathParts[digitalExperiencesIndex + 1] === WEB_APP_BASE_TYPE;
 };
 
 /**

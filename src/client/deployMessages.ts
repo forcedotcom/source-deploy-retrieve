@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { basename, dirname, extname, join, posix, sep } from 'node:path/posix';
+import { basename, dirname, extname, join, posix, relative, sep } from 'node:path/posix';
 import { SfError } from '@salesforce/core/sfError';
 import { ensureArray } from '@salesforce/kit';
 import { ComponentLike, SourceComponent } from '../resolve';
@@ -87,10 +87,11 @@ export const createResponses = (component: SourceComponent, responseMessages: De
     if (state === ComponentStatus.Failed) {
       return [{ ...base, state, ...parseDeployDiagnostic(component, message) } satisfies FileResponseFailure];
     } else {
-      const isWebAppBundle = component.type.name === 'DigitalExperienceBundle' && 
-                             component.fullName.startsWith('web_app/') &&
-                             component.content;
-      
+      const isWebAppBundle =
+        component.type.name === 'DigitalExperienceBundle' &&
+        component.fullName.startsWith('web_app/') &&
+        component.content;
+
       if (isWebAppBundle) {
         const walkedPaths = component.walkContent();
         const bundleResponse: FileResponseSuccess = {
@@ -100,9 +101,9 @@ export const createResponses = (component: SourceComponent, responseMessages: De
           filePath: component.content!,
         };
         const fileResponses: FileResponseSuccess[] = walkedPaths.map((filePath) => {
-          const relPath = filePath.replace(component.content! + '/', '');
+          const relPath = relative(component.content!, filePath);
           return {
-            fullName: `${component.fullName}/${relPath}`,
+            fullName: join(component.fullName, relPath).split(sep).join(posix.sep),
             type: 'DigitalExperience',
             state,
             filePath,
@@ -110,7 +111,7 @@ export const createResponses = (component: SourceComponent, responseMessages: De
         });
         return [bundleResponse, ...fileResponses];
       }
-      
+
       return [
         ...(shouldWalkContent(component)
           ? component.walkContent().map((filePath): FileResponseSuccess => ({ ...base, state, filePath }))

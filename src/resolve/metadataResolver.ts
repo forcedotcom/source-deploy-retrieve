@@ -27,23 +27,10 @@ import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
+import { isWebAppBaseType } from './adapters/digitalExperienceSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
-
-/**
- * Checks if the given path is a web_app bundle directory.
- * web_app bundles don't have metadata XML files and are identified by directory structure.
- */
-const isWebAppBundlePath = (path: string): boolean => {
-  const pathParts = path.split(sep);
-  const digitalExperiencesIndex = pathParts.indexOf('digitalExperiences');
-  return (
-    digitalExperiencesIndex > -1 &&
-    pathParts.length > digitalExperiencesIndex + 2 &&
-    pathParts[digitalExperiencesIndex + 1] === 'web_app'
-  );
-};
 
 /**
  * Resolver for metadata type and component objects.
@@ -238,7 +225,7 @@ const resolveDirectoryAsComponent =
   (registry: RegistryAccess) =>
   (tree: TreeContainer) =>
   (dirPath: string): boolean => {
-    if (isWebAppBundlePath(dirPath)) {
+    if (isWebAppBaseType(dirPath)) {
       return true;
     }
 
@@ -353,7 +340,7 @@ const resolveType =
   (registry: RegistryAccess) =>
   (tree: TreeContainer) =>
   (fsPath: string): MetadataType | undefined => {
-    if (isWebAppBundlePath(fsPath)) {
+    if (isWebAppBaseType(fsPath)) {
       return registry.getTypeByName('DigitalExperienceBundle');
     }
 

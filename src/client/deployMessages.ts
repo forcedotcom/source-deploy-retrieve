@@ -89,21 +89,26 @@ export const createResponses =
       if (state === ComponentStatus.Failed) {
         return [{ ...base, state, ...parseDeployDiagnostic(component, message) } satisfies FileResponseFailure];
       } else {
-        return [
-          ...(shouldWalkContent(component)
-            ? component.walkContent().map(
-                (filePath): FileResponseSuccess => ({
-                  ...base,
-                  state,
-                  // deployResults will produce filePaths relative to cwd, which might not be set in all environments
-                  filePath: process.cwd() === projectPath ? filePath : join(projectPath ?? '', filePath),
-                })
-              )
-            : []),
-          ...(component.xml ? [{ ...base, state, filePath: component.xml } satisfies FileResponseSuccess] : []),
-        ];
+        return (
+          [
+            ...(shouldWalkContent(component)
+              ? component.walkContent().map((filePath): FileResponseSuccess => ({ ...base, state, filePath }))
+              : []),
+            ...(component.xml ? [{ ...base, state, filePath: component.xml } satisfies FileResponseSuccess] : []),
+          ]
+            // deployResults will produce filePaths relative to cwd, which might not be set in all environments
+            // if our CS had a projectDir set, we'll make the results relative to that path
+            .map((response) => ({
+              ...response,
+              filePath:
+                projectPath && process.cwd() === projectPath
+                  ? response.filePath
+                  : join(projectPath ?? '', response.filePath),
+            }))
+        );
       }
     });
+
 /**
  * Groups messages from the deploy result by component fullName and type
  */

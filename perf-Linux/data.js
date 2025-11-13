@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1763053699526,
+  "lastUpdate": 1763056215692,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -89675,6 +89675,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 9802,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pyelchuri@salesforce.com",
+            "name": "pyelchuri",
+            "username": "pyelchurisf"
+          },
+          "committer": {
+            "email": "pyelchuri@salesforce.com",
+            "name": "pyelchuri",
+            "username": "pyelchurisf"
+          },
+          "distinct": true,
+          "id": "393506c59149a3619b758adfc24227ba041c06cd",
+          "message": "fix: add web_app file responses for retrieve operations\n\n- Retrieve now reports individual files for web_app bundles\n- Fixes 'Nothing retrieved' warning when retrieving web_app bundles\n- Matches the deploy behavior for consistent file response reporting",
+          "timestamp": "2025-11-13T23:11:31+05:30",
+          "tree_id": "bd4c561dd7354aa1580ac7975f89bb0b7272565a",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/393506c59149a3619b758adfc24227ba041c06cd"
+        },
+        "date": 1763056206671,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 235,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2149,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2477,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 2981,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 438,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 5532,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7309,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 5490,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 800,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 10060,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 14107,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 10167,
             "unit": "ms"
           }
         ]

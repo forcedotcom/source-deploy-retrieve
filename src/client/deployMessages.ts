@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { basename, dirname, extname, join, posix, relative, sep } from 'node:path/posix';
+import { basename, dirname, extname, join, posix, sep } from 'node:path';
 import { SfError } from '@salesforce/core/sfError';
 import { ensureArray } from '@salesforce/kit';
 import { ComponentLike, SourceComponent } from '../resolve';
@@ -101,9 +101,12 @@ export const createResponses = (component: SourceComponent, responseMessages: De
           filePath: component.content!,
         };
         const fileResponses: FileResponseSuccess[] = walkedPaths.map((filePath) => {
-          const relPath = relative(component.content!, filePath);
+          // Normalize paths to ensure relative() works correctly on Windows
+          const normalizedContent = component.content!.split(sep).join(posix.sep);
+          const normalizedFilePath = filePath.split(sep).join(posix.sep);
+          const relPath = posix.relative(normalizedContent, normalizedFilePath);
           return {
-            fullName: join(component.fullName, relPath).split(sep).join(posix.sep),
+            fullName: posix.join(component.fullName, relPath),
             type: 'DigitalExperience',
             state,
             filePath,

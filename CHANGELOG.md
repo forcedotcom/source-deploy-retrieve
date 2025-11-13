@@ -1,3 +1,12 @@
+# [12.28.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.27.2...12.28.0) (2025-11-13)
+
+
+### Features
+
+* Support web app bundle @W-20091482 ([#1646](https://github.com/forcedotcom/source-deploy-retrieve/issues/1646)) ([d1ec3da](https://github.com/forcedotcom/source-deploy-retrieve/commit/d1ec3dacc686f55764cee510aeeff382f31b0eaf))
+
+
+
 ## [12.27.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.27.1...12.27.2) (2025-11-12)
 
 

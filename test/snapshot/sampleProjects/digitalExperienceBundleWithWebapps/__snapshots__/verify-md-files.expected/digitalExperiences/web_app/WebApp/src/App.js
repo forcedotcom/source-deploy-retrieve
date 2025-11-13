@@ -6,9 +6,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>Welcome to WebApp2</h1>
-        <p>
-          This is a dummy React application.
-        </p>
+        <p>This is a dummy React application.</p>
         <div className="card">
           <h2>Getting Started</h2>
           <p>

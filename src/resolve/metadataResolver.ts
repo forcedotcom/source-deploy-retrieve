@@ -225,8 +225,13 @@ const resolveDirectoryAsComponent =
   (registry: RegistryAccess) =>
   (tree: TreeContainer) =>
   (dirPath: string): boolean => {
+    // For web_app bundles, only the bundle directory itself should be resolved as a component
+    // (e.g., digitalExperiences/web_app/WebApp), not subdirectories like src/, public/, etc.
     if (isWebAppBaseType(dirPath)) {
-      return true;
+      const pathParts = dirPath.split(sep);
+      const digitalExperiencesIndex = pathParts.indexOf('digitalExperiences');
+      // The bundle directory is exactly 3 levels deep: digitalExperiences/web_app/bundleName
+      return digitalExperiencesIndex !== -1 && pathParts.length === digitalExperiencesIndex + 3;
     }
 
     const type = resolveType(registry)(tree)(dirPath);

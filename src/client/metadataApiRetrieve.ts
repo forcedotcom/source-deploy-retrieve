@@ -101,14 +101,25 @@ export class RetrieveResult implements MetadataTransferResult {
 
     // construct successes
     for (const retrievedComponent of this.components.getSourceComponents()) {
-      const { fullName, type, xml } = retrievedComponent;
+      const { fullName, type, xml, content } = retrievedComponent;
       const baseResponse = {
         fullName,
         type: type.name,
         state: this.localComponents.has(retrievedComponent) ? ComponentStatus.Changed : ComponentStatus.Created,
       } as const;
 
-      if (!type.children || Object.values(type.children.types).some((t) => t.unaddressableWithoutParent)) {
+      // Special handling for web_app bundles - they need to walk content and report individual files
+      const isWebAppBundle = type.name === 'DigitalExperienceBundle' && fullName.startsWith('web_app/') && content;
+
+      if (isWebAppBundle) {
+        const walkedPaths = retrievedComponent.walkContent();
+        // Add the bundle directory itself
+        this.fileResponses.push({ ...baseResponse, filePath: content } satisfies FileResponseSuccess);
+        // Add each file with its specific path
+        for (const filePath of walkedPaths) {
+          this.fileResponses.push({ ...baseResponse, filePath } satisfies FileResponseSuccess);
+        }
+      } else if (!type.children || Object.values(type.children.types).some((t) => t.unaddressableWithoutParent)) {
         for (const filePath of retrievedComponent.walkContent()) {
           this.fileResponses.push({ ...baseResponse, filePath } satisfies FileResponseSuccess);
         }

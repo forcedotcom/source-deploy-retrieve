@@ -750,6 +750,7 @@ v66 introduces the following new types.  Here's their current level of support
 |DynamicGanttSettings|✅||
 |EmergencySettings|✅||
 |ExtlClntAppAttestSettings|✅||
+|ExtlClntAppCanvasSettings|✅||
 |GRCIntelligenceUddSettings|✅||
 |GenComputingSummaryDef|❌|Not supported, but support could be added|
 |GeneralConfigSettings|✅||
@@ -759,6 +760,7 @@ v66 introduces the following new types.  Here's their current level of support
 |IndustriesEnergyUtilitiesMultiSiteSettings|✅||
 |IndustriesMfgSampleManagementSettings|✅||
 |InventoryAllocationSettings|✅||
+|ItGrcSettings|✅||
 |LogicSettings|✅||
 |MapReportSettings|✅||
 |ObjectMappingSettings|✅||

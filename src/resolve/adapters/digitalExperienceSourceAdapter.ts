@@ -125,7 +125,8 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
       return path;
     }
     if (isWebAppBaseType(path)) {
-      return path;
+      // For web_app, trim to the bundle directory: digitalExperiences/web_app/WebApp
+      return getWebAppBundleDir(path);
     }
     const pathToContent = dirname(path);
     const parts = pathToContent.split(sep);
@@ -207,7 +208,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     const bundleName = [baseType, spaceApiName].join('/');
 
     // Extract bundle directory: /path/to/digitalExperiences/web_app/WebApp3
-    const bundleDir = pathParts.slice(0, digitalExperiencesIndex + 3).join(sep);
+    const bundleDir = getWebAppBundleDir(trigger);
 
     // Get the DigitalExperienceBundle type
     const parentType = this.isBundleType() ? this.type : this.registry.getParentType(this.type.id);
@@ -288,4 +289,19 @@ export const isWebAppBaseType = (path: string): boolean => {
 const getDigitalExperiencesIndex = (path: string): number => {
   const pathParts = path.split(sep);
   return pathParts.indexOf('digitalExperiences');
+};
+
+/**
+ * Gets the web_app bundle directory path.
+ * For a path like: /path/to/digitalExperiences/web_app/WebApp/src/App.js
+ * Returns: /path/to/digitalExperiences/web_app/WebApp
+ */
+const getWebAppBundleDir = (path: string): string => {
+  const pathParts = path.split(sep);
+  const digitalExperiencesIndex = pathParts.indexOf('digitalExperiences');
+  if (digitalExperiencesIndex > -1 && pathParts.length > digitalExperiencesIndex + 3) {
+    // Return up to digitalExperiences/web_app/spaceApiName
+    return pathParts.slice(0, digitalExperiencesIndex + 3).join(sep);
+  }
+  return path;
 };

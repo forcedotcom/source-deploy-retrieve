@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1763053994763,
+  "lastUpdate": 1763056531571,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -84319,6 +84319,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 21706,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pyelchuri@salesforce.com",
+            "name": "pyelchuri",
+            "username": "pyelchurisf"
+          },
+          "committer": {
+            "email": "pyelchuri@salesforce.com",
+            "name": "pyelchuri",
+            "username": "pyelchurisf"
+          },
+          "distinct": true,
+          "id": "393506c59149a3619b758adfc24227ba041c06cd",
+          "message": "fix: add web_app file responses for retrieve operations\n\n- Retrieve now reports individual files for web_app bundles\n- Fixes 'Nothing retrieved' warning when retrieving web_app bundles\n- Matches the deploy behavior for consistent file response reporting",
+          "timestamp": "2025-11-13T23:11:31+05:30",
+          "tree_id": "bd4c561dd7354aa1580ac7975f89bb0b7272565a",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/393506c59149a3619b758adfc24227ba041c06cd"
+        },
+        "date": 1763056517320,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 644,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4026,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3909,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 7132,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 884,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 10920,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10104,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 10552,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1631,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 19780,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 18944,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 19893,
             "unit": "ms"
           }
         ]

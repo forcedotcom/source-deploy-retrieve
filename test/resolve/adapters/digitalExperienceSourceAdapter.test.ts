@@ -192,4 +192,26 @@ describe('DigitalExperienceSourceAdapter', () => {
       });
     });
   });
+
+  describe('DigitalExperienceSourceAdapter for web_app base type', () => {
+    const WEBAPP_BUNDLE_PATH = join(BASE_PATH, 'web_app', 'zenith');
+    const WEBAPP_CSS_FILE = join(WEBAPP_BUNDLE_PATH, 'css', 'home.css');
+
+    const webappTree = VirtualTreeContainer.fromFilePaths([WEBAPP_CSS_FILE]);
+
+    const webappBundleAdapter = new DigitalExperienceSourceAdapter(
+      registry.types.digitalexperiencebundle,
+      registryAccess,
+      forceIgnore,
+      webappTree
+    );
+
+    it('should return a SourceComponent for web_app bundle directory (no meta.xml required)', () => {
+      const component = webappBundleAdapter.getComponent(WEBAPP_BUNDLE_PATH);
+      expect(component).to.not.be.undefined;
+      expect(component?.type.name).to.equal('DigitalExperienceBundle');
+      expect(component?.fullName).to.equal('web_app/zenith');
+      expect(component?.content).to.equal(WEBAPP_BUNDLE_PATH);
+    });
+  });
 });

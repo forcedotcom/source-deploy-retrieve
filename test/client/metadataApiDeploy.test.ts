@@ -1307,6 +1307,30 @@ describe('MetadataApiDeploy', () => {
       expect(mdOpts.zipPath).to.equal('foo/myZip.zip');
     });
 
+    it('should disallow "RunRelevantTests" for API versions <66.0', () => {
+      const testCases = ['8.0', '10.0', '60.0', '65.0'];
+      const constructorError = {
+        name: 'InvalidTestLevelSelection',
+        message: messages.getMessage('error_invalid_test_level', ['RunRelevantTests', '66.0']),
+      };
+      try {
+        testCases.forEach((v) => {
+          new MetadataApiDeploy({
+            usernameOrConnection: 'testing',
+            apiOptions: {
+              testLevel: 'RunRelevantTests',
+            },
+            apiVersion: v,
+          });
+          assert.fail(`Should have thrown an error for API version ${v}`);
+        });
+      } catch (e) {
+        assert(e instanceof Error);
+        expect(e.name).to.equal(constructorError.name);
+        expect(e.message).to.equal(constructorError.message);
+      }
+    });
+
     it('should allow mdapi path', () => {
       const mdApiDeploy = new MetadataApiDeploy({
         usernameOrConnection: 'testing',

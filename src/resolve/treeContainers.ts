@@ -36,6 +36,12 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
  * Extend this base class to implement a custom container.
  */
 export abstract class TreeContainer {
+  protected cwd?: string;
+
+  /** specify a cwd to use instead of the real cwd.  Useful for tests and web environments where process.cwd is undefined */
+  public constructor(cwd?: string) {
+    this.cwd = cwd;
+  }
   /**
    * Searches for a metadata component file in a container directory.
    *
@@ -46,14 +52,20 @@ export abstract class TreeContainer {
    */
   public find(fileType: 'content' | 'metadataXml', name: string, directory: string): string | undefined {
     const fileName = this.readDirectory(directory).find((entry) => {
-      const parsed = parseMetadataXml(join(directory, entry));
+      const parsed = parseMetadataXml(this.getUpdatedFsPath(join(directory, entry)));
       const metaXmlCondition = fileType === 'metadataXml' ? !!parsed : !parsed;
       return baseName(entry) === name && metaXmlCondition;
     });
     if (fileName) {
-      return join(directory, fileName);
+      return this.getUpdatedFsPath(join(directory, fileName));
     }
   }
+
+  /** if the container has cwd set, apply it to the path */
+  protected getUpdatedFsPath(fsPath: SourcePath): string {
+    return this.cwd ? join(this.cwd, fsPath) : fsPath;
+  }
+
   /**
    * Whether or not a file path exists in the container.
    *
@@ -104,31 +116,31 @@ export abstract class TreeContainer {
 export class NodeFSTreeContainer extends TreeContainer {
   public isDirectory(fsPath: SourcePath): boolean {
     // use stat instead of lstat to follow symlinks
-    return statSync(fsPath).isDirectory();
+    return statSync(this.getUpdatedFsPath(fsPath)).isDirectory();
   }
 
   public exists(fsPath: SourcePath): boolean {
-    return existsSync(fsPath);
+    return existsSync(this.getUpdatedFsPath(fsPath));
   }
 
   public readDirectory(fsPath: SourcePath): string[] {
-    return readdirSync(fsPath);
+    return readdirSync(this.getUpdatedFsPath(fsPath));
   }
 
   public readFile(fsPath: SourcePath): Promise<Buffer> {
     // significant enough performance increase using sync instead of fs.promise version
-    return Promise.resolve(readFileSync(fsPath));
+    return Promise.resolve(readFileSync(this.getUpdatedFsPath(fsPath)));
   }
 
   public readFileSync(fsPath: SourcePath): Buffer {
-    return readFileSync(fsPath);
+    return readFileSync(this.getUpdatedFsPath(fsPath));
   }
 
   public stream(fsPath: SourcePath): Readable {
     if (!this.exists(fsPath)) {
       throw new Error(`File not found: ${fsPath}`);
     }
-    return createReadStream(fsPath);
+    return createReadStream(this.getUpdatedFsPath(fsPath));
   }
 }
 

@@ -1,3 +1,39 @@
+## [12.27.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.27.1...12.27.2) (2025-11-12)
+
+
+### Bug Fixes
+
+* add support for `DataObjectSearchIndexConf` metadata ([#1649](https://github.com/forcedotcom/source-deploy-retrieve/issues/1649)) ([46a3b00](https://github.com/forcedotcom/source-deploy-retrieve/commit/46a3b00b45c833728ebba6d734e975fd73f610c1))
+
+
+
+## [12.27.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.27.0...12.27.1) (2025-11-11)
+
+
+### Bug Fixes
+
+* add support for `LightningOutApp` metadata ([#1648](https://github.com/forcedotcom/source-deploy-retrieve/issues/1648)) ([bdc1fb0](https://github.com/forcedotcom/source-deploy-retrieve/commit/bdc1fb057c5ce5a325c296fb4a0999e3ced26b55))
+
+
+
+# [12.27.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.26.1...12.27.0) (2025-11-11)
+
+
+### Features
+
+* added RunRelevantTests test-level @W-20152151@ ([#1644](https://github.com/forcedotcom/source-deploy-retrieve/issues/1644)) ([96a176f](https://github.com/forcedotcom/source-deploy-retrieve/commit/96a176f7bc28d3671a9f50a89079373ffe1fcea9))
+
+
+
+## [12.26.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.26.0...12.26.1) (2025-11-11)
+
+
+### Bug Fixes
+
+* web support without cwd W-20175875 ([#1647](https://github.com/forcedotcom/source-deploy-retrieve/issues/1647)) ([6dd7c70](https://github.com/forcedotcom/source-deploy-retrieve/commit/6dd7c708defdd064ac34ba77d154cc91ab2cee2b))
+
+
+
 # [12.26.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.25.0...12.26.0) (2025-11-07)
 
 

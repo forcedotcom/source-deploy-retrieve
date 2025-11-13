@@ -364,7 +364,7 @@ export type MetadataApiDeployOptions = {
   runAllTests?: boolean;
   runTests?: string[];
   singlePackage?: boolean;
-  testLevel?: 'NoTestRun' | 'RunSpecifiedTests' | 'RunLocalTests' | 'RunAllTestsInOrg';
+  testLevel?: 'NoTestRun' | 'RunSpecifiedTests' | 'RunLocalTests' | 'RunAllTestsInOrg' | 'RunRelevantTests';
   /**
    * Set to true to use the REST API for deploying.
    */

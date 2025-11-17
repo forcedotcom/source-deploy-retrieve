@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v65 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 674/719 supported metadata types.
+Currently, there are 678/719 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -18,7 +18,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AIUsecaseDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |AccountForecastSettings|✅||
 |AccountIntelligenceSettings|✅||
-|AccountPlanObjMeasCalcDef|❌|Not supported, but support could be added|
+|AccountPlanObjMeasCalcDef|✅||
 |AccountPlanSettings|✅||
 |AccountRelationshipShareRule|✅||
 |AccountSettings|✅||
@@ -45,6 +45,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AgentforceAccountManagementSettings|✅||
 |AgentforceForDevelopersSettings|✅||
 |Ai4mSettings|✅||
+|AiAuthoringBundle|✅||
 |AiEvaluationDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |AiPlannerVoiceDef|❌|Not supported, but support could be added (but not for tracking)|
 |AnalyticSnapshot|✅||
@@ -207,7 +208,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DataKitObjectDependency|✅||
 |DataKitObjectTemplate|✅||
 |DataObjectBuildOrgTemplate|✅||
-|DataObjectSearchIndexConf|❌|Not supported, but support could be added (but not for tracking)|
+|DataObjectSearchIndexConf|⚠️|Supports deploy/retrieve but not source tracking|
 |DataPackageKitDefinition|✅||
 |DataPackageKitObject|✅||
 |DataSource|✅||
@@ -437,7 +438,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |LightningExperienceTheme|✅||
 |LightningMessageChannel|✅||
 |LightningOnboardingConfig|✅||
-|LightningOutApp|❌|Not supported, but support could be added|
+|LightningOutApp|✅||
 |LightningTypeBundle|✅||
 |ListView|✅||
 |LiveAgentSettings|✅||
@@ -715,7 +716,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |WebStoreBundle|✅||
 |WebStoreTemplate|✅||
 |WebToXSettings|✅||
-|WelcomeRecommendation|❌|Not supported, but support could be added|
 |WorkDotComSettings|✅||
 |WorkSkillRouting|✅||
 |Workflow|✅||
@@ -744,27 +744,39 @@ v66 introduces the following new types.  Here's their current level of support
 |ComputeExtension|✅||
 |CourseWaitlistConfig|❌|Not supported, but support could be added|
 |CriteriaSettings|✅||
+|DictionariesSettings|✅||
 |DocumentExtractionDef|❌|Not supported, but support could be added|
 |DripFeedConfigSettings|✅||
 |DynamicGanttSettings|✅||
 |EmergencySettings|✅||
+|ExtlClntAppAttestSettings|✅||
+|ExtlClntAppCanvasSettings|✅||
 |GRCIntelligenceUddSettings|✅||
+|GenComputingSummaryDef|❌|Not supported, but support could be added|
 |GeneralConfigSettings|✅||
+|GeocodeSettings|✅||
 |GiftEntryGridTemplate|✅||
 |IndustriesConstraintsSettings|✅||
 |IndustriesEnergyUtilitiesMultiSiteSettings|✅||
 |IndustriesMfgSampleManagementSettings|✅||
 |InventoryAllocationSettings|✅||
+|ItGrcSettings|✅||
+|LogicSettings|✅||
 |MapReportSettings|✅||
 |ObjectMappingSettings|✅||
 |OnboardingDataObjGrp|❌|Not supported, but support could be added|
 |OptimizationSettings|✅||
 |PartyPrflDataObjVldDef|❌|Not supported, but support could be added|
 |ProcedurePlanDefinition|❌|Not supported, but support could be added (but not for tracking)|
+|ProviderSampleLimitTemplate|❌|Not supported, but support could be added|
 |RiskMgmtSettings|✅||
 |SchedulingRecipeSettings|✅||
+|ServiceLegalStatusesSettings|✅||
+|SoFieldMappingSettings|✅||
 |StockRotationSettings|✅||
-|UnifiedSummaryConfiguration|❌|Not supported, but support could be added|
+|SynchronizeSettings|✅||
+|TriggerConfigurationsSettings|✅||
+|UnifiedSalesIntelligenceSettings|✅||
 
 ## Additional Types
 
@@ -777,7 +789,6 @@ v66 introduces the following new types.  Here's their current level of support
 
 - AccessControlPolicy
 - AIAssistantTemplate
-- AiAuthoringBundle
 - AssignmentRule
 - AssistantRecommendationType
 - AutoResponseRule

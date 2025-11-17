@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { basename, dirname, extname, join, posix, sep } from 'node:path/posix';
+import { basename, dirname, extname, join, posix, sep } from 'node:path';
 import { SfError } from '@salesforce/core/sfError';
 import { ensureArray } from '@salesforce/kit';
 import { ComponentLike, SourceComponent } from '../resolve';
@@ -87,6 +87,34 @@ export const createResponses = (component: SourceComponent, responseMessages: De
     if (state === ComponentStatus.Failed) {
       return [{ ...base, state, ...parseDeployDiagnostic(component, message) } satisfies FileResponseFailure];
     } else {
+      const isWebAppBundle =
+        component.type.name === 'DigitalExperienceBundle' &&
+        component.fullName.startsWith('web_app/') &&
+        component.content;
+
+      if (isWebAppBundle) {
+        const walkedPaths = component.walkContent();
+        const bundleResponse: FileResponseSuccess = {
+          fullName: component.fullName,
+          type: component.type.name,
+          state,
+          filePath: component.content!,
+        };
+        const fileResponses: FileResponseSuccess[] = walkedPaths.map((filePath) => {
+          // Normalize paths to ensure relative() works correctly on Windows
+          const normalizedContent = component.content!.split(sep).join(posix.sep);
+          const normalizedFilePath = filePath.split(sep).join(posix.sep);
+          const relPath = posix.relative(normalizedContent, normalizedFilePath);
+          return {
+            fullName: posix.join(component.fullName, relPath),
+            type: 'DigitalExperience',
+            state,
+            filePath,
+          };
+        });
+        return [bundleResponse, ...fileResponses];
+      }
+
       return [
         ...(shouldWalkContent(component)
           ? component.walkContent().map((filePath): FileResponseSuccess => ({ ...base, state, filePath }))

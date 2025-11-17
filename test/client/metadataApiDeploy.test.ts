@@ -1218,6 +1218,57 @@ describe('MetadataApiDeploy', () => {
         expect(responses).to.deep.equal(expected);
       });
 
+      it('should return FileResponses for web_app DigitalExperienceBundle with child files', () => {
+        const bundlePath = join('path', 'to', 'digitalExperiences', 'web_app', 'zenith');
+        const props = {
+          name: 'web_app/zenith',
+          type: registry.types.digitalexperiencebundle,
+          content: bundlePath,
+        };
+        const component = SourceComponent.createVirtualComponent(props, [
+          {
+            dirPath: bundlePath,
+            children: ['index.html', 'app.js', 'style.css'],
+          },
+        ]);
+        const deployedSet = new ComponentSet([component]);
+        const { fullName, type } = component;
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentSuccesses: {
+              changed: 'false',
+              created: 'true',
+              deleted: 'false',
+              success: 'true',
+              fullName,
+              componentType: type.name,
+            } as DeployMessage,
+          },
+        };
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+        const responses = result.getFileResponses();
+
+        // Should have 1 bundle response + 3 file responses
+        expect(responses).to.have.lengthOf(4);
+
+        // First response should be the bundle
+        expect(responses[0]).to.deep.include({
+          fullName: 'web_app/zenith',
+          type: 'DigitalExperienceBundle',
+          state: ComponentStatus.Created,
+          filePath: bundlePath,
+        });
+
+        // Remaining responses should be DigitalExperience child files
+        const childResponses = responses.slice(1);
+        childResponses.forEach((response) => {
+          expect(response.type).to.equal('DigitalExperience');
+          expect(response.fullName).to.match(/^web_app\/zenith\//);
+          expect(response.state).to.equal(ComponentStatus.Created);
+        });
+      });
+
       it('should cache fileResponses', () => {
         const component = COMPONENT;
         const deployedSet = new ComponentSet([component]);
@@ -1254,6 +1305,30 @@ describe('MetadataApiDeploy', () => {
       // @ts-ignore testing private property
       const mdOpts = mdApiDeploy.options;
       expect(mdOpts.zipPath).to.equal('foo/myZip.zip');
+    });
+
+    it('should disallow "RunRelevantTests" for API versions <66.0', () => {
+      const testCases = ['8.0', '10.0', '60.0', '65.0'];
+      const constructorError = {
+        name: 'InvalidTestLevelSelection',
+        message: messages.getMessage('error_invalid_test_level', ['RunRelevantTests', '66.0']),
+      };
+      try {
+        testCases.forEach((v) => {
+          new MetadataApiDeploy({
+            usernameOrConnection: 'testing',
+            apiOptions: {
+              testLevel: 'RunRelevantTests',
+            },
+            apiVersion: v,
+          });
+          assert.fail(`Should have thrown an error for API version ${v}`);
+        });
+      } catch (e) {
+        assert(e instanceof Error);
+        expect(e.name).to.equal(constructorError.name);
+        expect(e.message).to.equal(constructorError.message);
+      }
     });
 
     it('should allow mdapi path', () => {

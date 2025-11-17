@@ -98,6 +98,7 @@
     "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration",
     "SearchableObjDataSyncInfoSetting": "searchableobjdatasyncinfo",
     "accountForecastSetting": "accountforecastsettings",
+    "accountPlanObjMeasCalcDef": "accountplanobjmeascalcdef",
     "accountRelationshipShareRule": "accountrelationshipsharerule",
     "accountingFieldMapping": "accountingfieldmapping",
     "accountingModelConfig": "accountingmodelconfig",
@@ -565,7 +566,9 @@
     "dataMapperDefinition": "datamapperdefinition",
     "integrationProcdDefinition": "integrationprocddefinition",
     "omniscriptDefinition": "omniscriptdefinition",
-    "computeExtension": "computeextension"
+    "computeExtension": "computeextension",
+    "dataObjectSearchIndexConf": "dataobjectsearchindexconf",
+    "lightningOutApp": "lightningoutapp"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -601,6 +604,14 @@
       "name": "AccountingModelConfig",
       "strictDirectoryName": false,
       "suffix": "accountingModelConfig"
+    },
+    "accountplanobjmeascalcdef": {
+      "directoryName": "accountPlanObjMeasCalcDefs",
+      "id": "accountplanobjmeascalcdef",
+      "inFolder": false,
+      "name": "AccountPlanObjMeasCalcDef",
+      "strictDirectoryName": false,
+      "suffix": "accountPlanObjMeasCalcDef"
     },
     "accountrelationshipsharerule": {
       "directoryName": "accountRelationshipShareRules",
@@ -5040,6 +5051,22 @@
       "name": "ComputeExtension",
       "suffix": "computeExtension",
       "directoryName": "computeExtensions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "dataobjectsearchindexconf": {
+      "id": "dataobjectsearchindexconf",
+      "name": "DataObjectSearchIndexConf",
+      "suffix": "dataObjectSearchIndexConf",
+      "directoryName": "dataObjectSearchIndexConfs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "lightningoutapp": {
+      "id": "lightningoutapp",
+      "name": "LightningOutApp",
+      "suffix": "lightningOutApp",
+      "directoryName": "lightningOutApp",
       "inFolder": false,
       "strictDirectoryName": false
     }

@@ -307,6 +307,11 @@ export class MetadataApiDeploy extends MetadataTransfer<
             message: `${EOL}${errors.join(EOL)}`,
             name: 'AgentCompilationError',
           });
+        } else {
+          // everything successfully compiled
+          // stop using named user jwt access token
+          delete connection.accessToken;
+          await connection.refreshAuth();
         }
       }
     }

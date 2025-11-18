@@ -764,9 +764,9 @@ v66 introduces the following new types.  Here's their current level of support
 |LogicSettings|✅||
 |MapReportSettings|✅||
 |ObjectMappingSettings|✅||
-|OnboardingDataObjGrp|❌|Not supported, but support could be added|
+|OnboardingDataObjGrp|❌|Not supported, but support could be added (but not for tracking)|
 |OptimizationSettings|✅||
-|PartyPrflDataObjVldDef|❌|Not supported, but support could be added|
+|PartyPrflDataObjVldDef|❌|Not supported, but support could be added (but not for tracking)|
 |ProcedurePlanDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |ProviderSampleLimitTemplate|❌|Not supported, but support could be added|
 |RiskMgmtSettings|✅||
@@ -775,6 +775,7 @@ v66 introduces the following new types.  Here's their current level of support
 |SoFieldMappingSettings|✅||
 |StockRotationSettings|✅||
 |SynchronizeSettings|✅||
+|TmshtLaborCostOptimAiSettings|✅||
 |TriggerConfigurationsSettings|✅||
 |UnifiedSalesIntelligenceSettings|✅||
 

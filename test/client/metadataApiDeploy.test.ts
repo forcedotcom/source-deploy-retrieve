@@ -1293,6 +1293,44 @@ describe('MetadataApiDeploy', () => {
         result.getFileResponses();
         expect(spy.callCount).to.equal(1);
       });
+
+      it('should prepend projectDirectory to filePaths when projectDirectory differs from cwd', () => {
+        const component = matchingContentFile.COMPONENT;
+        const projectDir = join('my', 'project', 'dir');
+        const deployedSet = new ComponentSet([component]);
+        deployedSet.projectDirectory = projectDir;
+        const { fullName, type, content, xml } = component;
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentSuccesses: {
+              changed: 'true',
+              created: 'false',
+              deleted: 'false',
+              fullName,
+              componentType: type.name,
+            } as DeployMessage,
+          },
+        };
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+        const responses = result.getFileResponses();
+        const expected: FileResponse[] = [
+          {
+            fullName,
+            type: type.name,
+            state: ComponentStatus.Changed,
+            filePath: join(projectDir, ensureString(content)),
+          },
+          {
+            fullName,
+            type: type.name,
+            state: ComponentStatus.Changed,
+            filePath: join(projectDir, ensureString(xml)),
+          },
+        ];
+
+        expect(responses).to.deep.equal(expected);
+      });
     });
   });
 

@@ -47,6 +47,8 @@ export type ComponentProperties = {
   parentType?: MetadataType;
 };
 
+export type SourceComponentWithContent = SourceComponent & { content: string };
+
 /**
  * Representation of a MetadataComponent in a file tree.
  */

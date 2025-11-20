@@ -509,11 +509,14 @@ const buildFileResponsesFromComponentSet =
 
     const fileResponses = (cs.getSourceComponents().toArray() ?? [])
       .flatMap((deployedComponent) =>
-        createResponses(deployedComponent, responseMessages.get(toKey(deployedComponent)) ?? []).concat(
+        createResponses(cs.projectDirectory)(
+          deployedComponent,
+          responseMessages.get(toKey(deployedComponent)) ?? []
+        ).concat(
           deployedComponent.type.children
             ? deployedComponent.getChildren().flatMap((child) => {
                 const childMessages = responseMessages.get(toKey(child));
-                return childMessages ? createResponses(child, childMessages) : [];
+                return childMessages ? createResponses(cs.projectDirectory)(child, childMessages) : [];
               })
             : []
         )

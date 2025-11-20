@@ -21,7 +21,7 @@ import { ConvertOutputConfig } from '../convert/types';
 import { MetadataConverter } from '../convert/metadataConverter';
 import { ComponentSet } from '../collections/componentSet';
 import { ZipTreeContainer } from '../resolve/treeContainers';
-import { SourceComponent } from '../resolve/sourceComponent';
+import { SourceComponent, SourceComponentWithContent } from '../resolve/sourceComponent';
 import { fnJoin } from '../utils/path';
 import { ComponentStatus, FileResponse, FileResponseSuccess, PackageOption, PackageOptions } from './types';
 import { MetadataApiRetrieveOptions } from './types';
@@ -147,12 +147,12 @@ const handlePartialDeleteMerges = ({
         });
 };
 
-const supportsPartialDeleteAndHasContent = (comp: SourceComponent): comp is SourceComponent & { content: string } =>
+const supportsPartialDeleteAndHasContent = (comp: SourceComponent): comp is SourceComponentWithContent =>
   supportsPartialDelete(comp) && typeof comp.content === 'string' && fs.statSync(comp.content).isDirectory();
 
 const supportsPartialDeleteAndHasZipContent =
   (tree: ZipTreeContainer) =>
-  (comp: SourceComponent): comp is SourceComponent & { content: string } =>
+  (comp: SourceComponent): comp is SourceComponentWithContent =>
     supportsPartialDelete(comp) && typeof comp.content === 'string' && tree.isDirectory(comp.content);
 
 const supportsPartialDeleteAndIsInMap =

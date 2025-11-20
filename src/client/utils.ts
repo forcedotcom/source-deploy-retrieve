@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { SourceComponent } from '../resolve/sourceComponent';
+import { SourceComponent, SourceComponentWithContent } from '../resolve/sourceComponent';
 
-export const isWebAppBundle = (component: SourceComponent): component is SourceComponent & { content: string } =>
+export const isWebAppBundle = (component: SourceComponent): component is SourceComponentWithContent =>
   component.type.name === 'DigitalExperienceBundle' &&
   component.fullName.startsWith('web_app/') &&
   typeof component.content === 'string';

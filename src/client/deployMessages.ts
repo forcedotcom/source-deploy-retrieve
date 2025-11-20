@@ -152,6 +152,8 @@ export const getDeployMessages = (result: MetadataApiDeployStatus): Map<string, 
     if (!messageMap.has(key)) {
       messageMap.set(key, []);
     }
+    messageMap.get(key)?.push(sanitized);
+    failedComponentKeys.add(key);
   }
 
   for (const success of successMessages) {

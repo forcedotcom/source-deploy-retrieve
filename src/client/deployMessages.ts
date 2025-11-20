@@ -128,7 +128,8 @@ const getWebAppBundleContentFullName =
     // Normalize paths to ensure relative() works correctly on Windows
     const normalizedContent = component.content.split(sep).join(posix.sep);
     const normalizedFilePath = filePath.split(sep).join(posix.sep);
-    return posix.relative(normalizedContent, normalizedFilePath);
+    const relPath = posix.relative(normalizedContent, normalizedFilePath);
+    return posix.join(component.fullName, relPath);
   };
 
 /**

@@ -266,6 +266,22 @@ describe('MetadataResolver', () => {
         expect(mdResolver.getComponentsFromPath(path)).to.deep.equal([expectedComponent]);
       });
 
+      it('Should determine type for web_app DigitalExperienceBundle (no meta.xml required)', () => {
+        const bundlePath = join('unpackaged', 'digitalExperiences', 'web_app', 'zenith');
+        const filePath = join(bundlePath, 'index.html');
+        const treeContainer = VirtualTreeContainer.fromFilePaths([filePath]);
+        const mdResolver = new MetadataResolver(undefined, treeContainer);
+        const expectedComponent = new SourceComponent(
+          {
+            name: 'web_app/zenith',
+            type: registry.types.digitalexperiencebundle,
+            content: bundlePath,
+          },
+          treeContainer
+        );
+        expect(mdResolver.getComponentsFromPath(bundlePath)).to.deep.equal([expectedComponent]);
+      });
+
       it('Should determine type for path of mixed content type', () => {
         const path = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[1];
         const access = testUtil.createMetadataResolver([

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { basename, dirname, extname, join, posix, sep } from 'node:path/posix';
+import { basename, dirname, extname, join, posix, sep } from 'node:path';
 import { SfError } from '@salesforce/core/sfError';
 import { ensureArray } from '@salesforce/kit';
 import { ComponentLike, SourceComponent } from '../resolve';
@@ -29,6 +29,7 @@ import {
   MetadataApiDeployStatus,
 } from './types';
 import { parseDeployDiagnostic } from './diagnosticUtil';
+import { isWebAppBundle } from './utils';
 
 type DeployMessageWithComponentType = DeployMessage & { componentType: string };
 /**
@@ -88,27 +89,49 @@ export const createResponses =
 
       if (state === ComponentStatus.Failed) {
         return [{ ...base, state, ...parseDeployDiagnostic(component, message) } satisfies FileResponseFailure];
-      } else {
-        return (
-          [
-            ...(shouldWalkContent(component)
-              ? component.walkContent().map((filePath): FileResponseSuccess => ({ ...base, state, filePath }))
-              : []),
-            ...(component.xml ? [{ ...base, state, filePath: component.xml } satisfies FileResponseSuccess] : []),
-          ]
-            // deployResults will produce filePaths relative to cwd, which might not be set in all environments
-            // if our CS had a projectDir set, we'll make the results relative to that path
-            .map((response) => ({
-              ...response,
-              filePath:
-                projectPath && process.cwd() === projectPath
-                  ? response.filePath
-                  : join(projectPath ?? '', response.filePath),
-            }))
-        );
       }
-    });
 
+      if (isWebAppBundle(component)) {
+        const walkedPaths = component.walkContent();
+        const bundleResponse: FileResponseSuccess = {
+          fullName: component.fullName,
+          type: component.type.name,
+          state,
+          filePath: component.content,
+        };
+        const fileResponses: FileResponseSuccess[] = walkedPaths.map((filePath) => {
+          // Normalize paths to ensure relative() works correctly on Windows
+          const normalizedContent = component.content.split(sep).join(posix.sep);
+          const normalizedFilePath = filePath.split(sep).join(posix.sep);
+          const relPath = posix.relative(normalizedContent, normalizedFilePath);
+          return {
+            fullName: posix.join(component.fullName, relPath),
+            type: 'DigitalExperience',
+            state,
+            filePath,
+          };
+        });
+        return [bundleResponse, ...fileResponses];
+      }
+
+      return (
+        [
+          ...(shouldWalkContent(component)
+            ? component.walkContent().map((filePath): FileResponseSuccess => ({ ...base, state, filePath }))
+            : []),
+          ...(component.xml ? [{ ...base, state, filePath: component.xml } satisfies FileResponseSuccess] : []),
+        ]
+          // deployResults will produce filePaths relative to cwd, which might not be set in all environments
+          // if our CS had a projectDir set, we'll make the results relative to that path
+          .map((response) => ({
+            ...response,
+            filePath:
+              projectPath && process.cwd() === projectPath
+                ? response.filePath
+                : join(projectPath ?? '', response.filePath),
+          }))
+      );
+    });
 /**
  * Groups messages from the deploy result by component fullName and type
  */

@@ -117,8 +117,10 @@ export const createResponses =
         ...response,
         filePath:
           // deployResults will produce filePaths relative to cwd, which might not be set in all environments
-          // if our CS had a projectDir set, we'll make the results relative to that path
-          projectPath && process.cwd() === projectPath ? response.filePath : join(projectPath ?? '', response.filePath),
+          // if our CS had a projectDir set, we'll make the results relative to that path unless it already is
+          projectPath && process.cwd() !== projectPath && !response.filePath.startsWith(projectPath)
+            ? join(projectPath, response.filePath)
+            : response.filePath,
       })) satisfies FileResponseSuccess[];
     });
 

@@ -141,6 +141,34 @@ describe('Tree Containers', () => {
       env.stub(fs, 'existsSync').returns(true);
       expect(tree.stream(path)).to.deep.equal(readable);
     });
+
+    describe('with projectPath/cwd', () => {
+      let projectPath: string;
+      // mocking fs will defeat the goal of these tests, so we'll use the real one and clean it up
+      before(async () => {
+        projectPath = join('path', 'to', 'project');
+        await fs.promises.mkdir(projectPath, { recursive: true });
+        await fs.promises.writeFile(join(projectPath, 'test.txt'), 'test');
+      });
+
+      after(async () => {
+        await fs.promises.rm(projectPath, { recursive: true });
+      });
+
+      it('should return the path as is if it is already relative to the project path', () => {
+        const tree = new NodeFSTreeContainer(projectPath);
+        const path = join(projectPath, 'test.txt');
+        expect(tree.exists(path)).to.be.true;
+        expect(tree.readDirectory(projectPath)).to.deep.equal(['test.txt']);
+      });
+
+      it('should add the project path to the path if it is not already relative to the project path', () => {
+        const tree = new NodeFSTreeContainer(projectPath);
+        const path = 'test.txt';
+        expect(tree.exists(path)).to.be.true;
+        expect(tree.readDirectory(projectPath)).to.deep.equal(['test.txt']);
+      });
+    });
   });
 
   describe('ZipTreeContainer', () => {

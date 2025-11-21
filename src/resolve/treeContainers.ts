@@ -63,7 +63,7 @@ export abstract class TreeContainer {
 
   /** if the container has cwd set, apply it to the path */
   protected getUpdatedFsPath(fsPath: SourcePath): string {
-    return this.cwd ? join(this.cwd, fsPath) : fsPath;
+    return this.cwd && !fsPath.startsWith(this.cwd) ? join(this.cwd, fsPath) : fsPath;
   }
 
   /**

@@ -1,11 +1,8 @@
 # [12.29.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.28.0...12.29.0) (2025-11-20)
 
-
 ### Features
 
-* web compatibility W-20175875 ([#1650](https://github.com/forcedotcom/source-deploy-retrieve/issues/1650)) ([f350cd6](https://github.com/forcedotcom/source-deploy-retrieve/commit/f350cd6e719e0aa8c05335e34fd642a0226e6cd9))
-
-
+- web compatibility W-20175875 ([#1650](https://github.com/forcedotcom/source-deploy-retrieve/issues/1650)) ([f350cd6](https://github.com/forcedotcom/source-deploy-retrieve/commit/f350cd6e719e0aa8c05335e34fd642a0226e6cd9))
 
 # [12.28.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.27.2...12.28.0) (2025-11-13)
 

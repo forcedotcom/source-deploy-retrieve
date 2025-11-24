@@ -1,3 +1,12 @@
+# [12.30.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.29.1...12.30.0) (2025-11-24)
+
+
+### Features
+
+* renaming ExtlClntAppCanvasStngs to ExtlClntAppCanvasSettings ([#1652](https://github.com/forcedotcom/source-deploy-retrieve/issues/1652)) ([f5a3672](https://github.com/forcedotcom/source-deploy-retrieve/commit/f5a367219fbd0bf75b14bd7918dd6ed9ee921773))
+
+
+
 ## [12.29.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.29.0...12.29.1) (2025-11-21)
 
 

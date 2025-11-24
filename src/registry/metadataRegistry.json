@@ -559,7 +559,7 @@
     "fieldServiceMobileConfig": "fieldservicemobileconfig",
     "dgtAssetMgmtProvider": "dgtassetmgmtprovider",
     "dgtAssetMgmtPrvdLghtCpnt": "dgtassetmgmtprvdlghtcpnt",
-    "ecaCanvas": "extlclntappcanvasstngs",
+    "ecaCanvas": "extlclntappcanvassettings",
     "apiNamedQuery": "apinamedquery",
     "ExternalStoragePrvdConfigSet": "externalstorageprvdconfig",
     "ruleLibraryDefinition": "rulelibrarydefinition",
@@ -4966,14 +4966,6 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
-    "extlclntappcanvasstngs": {
-      "id": "extlclntappcanvasstngs",
-      "name": "ExtlClntAppCanvasStngs",
-      "suffix": "ecaCanvas",
-      "directoryName": "extlClntAppCanvasStngs",
-      "inFolder": false,
-      "strictDirectoryName": false
-    },
     "apinamedquery": {
       "id": "apinamedquery",
       "name": "ApiNamedQuery",
@@ -5067,6 +5059,14 @@
       "name": "LightningOutApp",
       "suffix": "lightningOutApp",
       "directoryName": "lightningOutApp",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntappcanvassettings": {
+      "id": "extlclntappcanvassettings",
+      "name": "ExtlClntAppCanvasSettings",
+      "suffix": "ecaCanvas",
+      "directoryName": "extlClntAppCanvasSettings",
       "inFolder": false,
       "strictDirectoryName": false
     }

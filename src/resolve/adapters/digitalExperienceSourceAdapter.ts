@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { dirname, join, sep } from 'node:path';
+import { createHash } from 'node:crypto';
+import { basename, dirname, extname, join, posix, sep } from 'node:path';
 import { Messages } from '@salesforce/core/messages';
 import { ensureString } from '@salesforce/ts-types';
 import { META_XML_SUFFIX } from '../../common/constants';
@@ -86,6 +87,7 @@ const WEB_APP_BASE_TYPE = 'web_app';
  */
 export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
   public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent | undefined {
+    // Handle web_app bundle directory
     if (this.isBundleType() && isWebAppBaseType(path) && this.tree.isDirectory(path)) {
       const pathParts = path.split(sep);
       const bundleNameIndex = getDigitalExperiencesIndex(path) + 2;
@@ -93,6 +95,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
         return this.populate(path, undefined);
       }
     }
+    
     return super.getComponent(path, isResolvingSource);
   }
 
@@ -146,7 +149,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     return pathToContent;
   }
 
-  protected populate(trigger: string, component?: SourceComponent): SourceComponent {
+  protected populate(trigger: string, component?: SourceComponent): SourceComponent | undefined {
     if (this.isBundleType() && component) {
       // for top level types we don't need to resolve parent
       return component;
@@ -304,4 +307,51 @@ const getWebAppBundleDir = (path: string): string => {
     return pathParts.slice(0, digitalExperiencesIndex + 3).join(sep);
   }
   return path;
+};
+
+/**
+ * Determines the content type for web_app bundle files based on file extension and name.
+ * Matches server-side FileType classification logic.
+ */
+const getContentTypeFromExtension = (filePath: string): string => {
+  const ext = extname(filePath).toLowerCase();
+  const fileName = basename(filePath).toLowerCase();
+  
+  // Image types: BMP, GIF, PNG, JPG, JPEG
+  const imageExtensions = ['.bmp', '.gif', '.png', '.jpg', '.jpeg'];
+  if (imageExtensions.includes(ext)) {
+    return 'sfdc_cms__image';
+  }
+  
+  // Special case: webapp.json is a manifest file
+  if (ext === '.json' && fileName === 'webapp.json') {
+    return 'sfdc_cms__webApplicationManifest';
+  }
+  
+  return 'sfdc_cms__webApplicationAsset';
+};
+
+/**
+ * Computes the hashed fullName for a web_app bundle file.
+ * Format: baseType/spaceApiName.contentType/mHash
+ * 
+ * @param filePath - Full file system path to the file
+ * @param bundleDir - Bundle directory path
+ * @returns Hashed fullName matching server-side naming convention
+ */
+export const computeWebAppHashedName = (filePath: string, bundleDir: string): string => {
+  const pathParts = filePath.split(sep);
+  const bundleParts = bundleDir.split(sep);
+  const digitalExperiencesIndex = bundleParts.indexOf('digitalExperiences');
+  
+  const baseType = bundleParts[digitalExperiencesIndex + 1];
+  const spaceApiName = bundleParts[digitalExperiencesIndex + 2];
+  const baseTypeIndex = digitalExperiencesIndex + 1;
+  
+  // Build full path with forward slashes for cross-platform consistency
+  const fullPath = pathParts.slice(baseTypeIndex).join(posix.sep);
+  const hash = createHash('sha256').update(fullPath, 'utf8').digest('hex').substring(0, 39);
+  const contentType = getContentTypeFromExtension(filePath);
+  
+  return `${baseType}${posix.sep}${spaceApiName}.${contentType}${posix.sep}m${hash}`;
 };

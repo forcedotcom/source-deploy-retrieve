@@ -23,6 +23,7 @@ import { Lifecycle } from '@salesforce/core/lifecycle';
 import { ensureArray } from '@salesforce/kit';
 import { RegistryAccess } from '../registry/registryAccess';
 import { ComponentSet } from '../collections/componentSet';
+import { computeWebAppHashedName } from '../resolve/adapters/digitalExperienceSourceAdapter';
 import { MetadataTransfer } from './metadataTransfer';
 import {
   AsyncResult,
@@ -102,21 +103,24 @@ export class RetrieveResult implements MetadataTransferResult {
 
     // construct successes
     for (const retrievedComponent of this.components.getSourceComponents()) {
-      const { fullName, type, xml } = retrievedComponent;
+      const { fullName, type, xml, content } = retrievedComponent;
       const baseResponse = {
         fullName,
         type: type.name,
         state: this.localComponents.has(retrievedComponent) ? ComponentStatus.Changed : ComponentStatus.Created,
       } as const;
 
-      // Special handling for web_app bundles - they need to walk content and report individual files
       if (isWebAppBundle(retrievedComponent)) {
-        // Add the bundle directory itself
-        this.fileResponses.push(
-          ...[retrievedComponent.content, ...retrievedComponent.walkContent()].map(
-            (filePath) => ({ ...baseResponse, filePath } satisfies FileResponseSuccess)
-          )
-        );
+        this.fileResponses.push({ ...baseResponse, filePath: content! } satisfies FileResponseSuccess);
+        for (const filePath of retrievedComponent.walkContent()) {
+          const hashedFullName = computeWebAppHashedName(filePath, content!);
+          this.fileResponses.push({
+            fullName: hashedFullName,
+            type: 'DigitalExperience',
+            state: this.localComponents.has(retrievedComponent) ? ComponentStatus.Changed : ComponentStatus.Created,
+            filePath,
+          } satisfies FileResponseSuccess);
+        }
       } else if (!type.children || Object.values(type.children.types).some((t) => t.unaddressableWithoutParent)) {
         this.fileResponses.push(
           ...retrievedComponent

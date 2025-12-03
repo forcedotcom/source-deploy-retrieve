@@ -149,7 +149,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     return pathToContent;
   }
 
-  protected populate(trigger: string, component?: SourceComponent): SourceComponent | undefined {
+  protected populate(trigger: string, component?: SourceComponent): SourceComponent {
     if (this.isBundleType() && component) {
       // for top level types we don't need to resolve parent
       return component;
@@ -348,7 +348,7 @@ export const computeWebAppHashedName = (filePath: string, bundleDir: string): st
   const spaceApiName = bundleParts[digitalExperiencesIndex + 2];
   const baseTypeIndex = digitalExperiencesIndex + 1;
   
-  // Build full path with forward slashes for cross-platform consistency
+  // Use forward slashes for hash computation to match server-side convention (required even on Windows)
   const fullPath = pathParts.slice(baseTypeIndex).join(posix.sep);
   const hash = createHash('sha256').update(fullPath, 'utf8').digest('hex').substring(0, 39);
   const contentType = getContentTypeFromExtension(filePath);

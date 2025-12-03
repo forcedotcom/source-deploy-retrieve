@@ -770,6 +770,7 @@ v66 introduces the following new types.  Here's their current level of support
 |OnboardingDataObjectGroup|❌|Not supported, but support could be added (but not for tracking)|
 |OptimizationSettings|✅||
 |PartyProfileDataObjectValidityDefinition|❌|Not supported, but support could be added (but not for tracking)|
+|PaynowStarterUpgradeEnabledSettings|✅||
 |ProcedurePlanDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |ProviderSampleLimitTemplate|❌|Not supported, but support could be added|
 |PurchaseOrderMgmtSettings|✅||

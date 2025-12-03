@@ -1260,11 +1260,12 @@ describe('MetadataApiDeploy', () => {
           filePath: bundlePath,
         });
 
-        // Remaining responses should be DigitalExperience child files
+        // Remaining responses should be DigitalExperience child files with hashed names
         const childResponses = responses.slice(1);
         childResponses.forEach((response) => {
           expect(response.type).to.equal('DigitalExperience');
-          expect(response.fullName).to.match(/^web_app\/zenith\//);
+          // Hash format: web_app/zenith.<contentType>/m<hash>
+          expect(response.fullName).to.match(/^web_app\/zenith\.sfdc_cms__webApplicationAsset\/m[a-f0-9]{39}$/);
           expect(response.state).to.equal(ComponentStatus.Created);
         });
       });

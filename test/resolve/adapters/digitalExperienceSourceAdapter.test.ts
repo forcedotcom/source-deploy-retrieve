@@ -290,12 +290,15 @@ describe('DigitalExperienceSourceAdapter', () => {
       expect(computeWebAppHashedName(manifestFile, bundleDir)).to.include('sfdc_cms__webApplicationAsset');
     });
 
-    it('should use correct content type for manifest.json', () => {
+    it('should use correct content type for json files (only webapp.json is manifest)', () => {
       const manifestFile = join('path', 'to', 'digitalExperiences', 'web_app', 'dist2', 'manifest.json');
+      const webappJsonFile = join('path', 'to', 'digitalExperiences', 'web_app', 'dist2', 'webapp.json');
       const otherJsonFile = join('path', 'to', 'digitalExperiences', 'web_app', 'dist2', 'config.json');
       const bundleDir = join('path', 'to', 'digitalExperiences', 'web_app', 'dist2');
 
-      expect(computeWebAppHashedName(manifestFile, bundleDir)).to.include('sfdc_cms__webApplicationManifest');
+      // Only webapp.json is treated as manifest, manifest.json is a regular asset
+      expect(computeWebAppHashedName(webappJsonFile, bundleDir)).to.include('sfdc_cms__webApplicationManifest');
+      expect(computeWebAppHashedName(manifestFile, bundleDir)).to.include('sfdc_cms__webApplicationAsset');
       expect(computeWebAppHashedName(otherJsonFile, bundleDir)).to.include('sfdc_cms__webApplicationAsset');
     });
   });
@@ -307,40 +310,29 @@ describe('DigitalExperienceSourceAdapter', () => {
 
     const webappTree = VirtualTreeContainer.fromFilePaths([WEBAPP_ICON_FILE, WEBAPP_404_FILE]);
 
-    assert(registry.types.digitalexperiencebundle.children?.types.digitalexperience);
-    const webappChildAdapter = new DigitalExperienceSourceAdapter(
-      registry.types.digitalexperiencebundle.children.types.digitalexperience,
+    // Use the bundle type adapter since web_app files are resolved as part of the bundle
+    const webappBundleAdapter = new DigitalExperienceSourceAdapter(
+      registry.types.digitalexperiencebundle,
       registryAccess,
       forceIgnore,
       webappTree
     );
 
-    it('should create child component with hashed name for nested file', () => {
-      const component = webappChildAdapter.getComponent(WEBAPP_ICON_FILE);
+    it('should resolve nested file to bundle component', () => {
+      // For web_app bundles, getComponent returns the bundle for individual files
+      // The hashed child names are computed during deploy/retrieve FileResponse generation
+      const component = webappBundleAdapter.getComponent(WEBAPP_ICON_FILE);
       expect(component).to.not.be.undefined;
-      expect(component?.type.name).to.equal('DigitalExperience');
-
-      // Verify hashed name format - hash is computed from FULL path 'web_app/dist2/assets/icon.png'
-      const expectedHash = createHash('sha256').update('web_app/dist2/assets/icon.png', 'utf8').digest('hex').substring(0, 39);
-      expect(component?.fullName).to.equal(`web_app/dist2.sfdc_cms__image/m${expectedHash}`);
-
-      // Verify parent
-      expect(component?.parent?.type.name).to.equal('DigitalExperienceBundle');
-      expect(component?.parent?.fullName).to.equal('web_app/dist2');
+      expect(component?.type.name).to.equal('DigitalExperienceBundle');
+      expect(component?.fullName).to.equal('web_app/dist2');
     });
 
-    it('should create child component with hashed name for root file', () => {
-      const component = webappChildAdapter.getComponent(WEBAPP_404_FILE);
+    it('should resolve root file to bundle component', () => {
+      // For web_app bundles, getComponent returns the bundle for individual files
+      const component = webappBundleAdapter.getComponent(WEBAPP_404_FILE);
       expect(component).to.not.be.undefined;
-      expect(component?.type.name).to.equal('DigitalExperience');
-
-      // Verify hashed name format - hash is computed from FULL path 'web_app/dist2/404.html'
-      const expectedHash = createHash('sha256').update('web_app/dist2/404.html', 'utf8').digest('hex').substring(0, 39);
-      expect(component?.fullName).to.equal(`web_app/dist2.sfdc_cms__webApplicationAsset/m${expectedHash}`);
-
-      // Verify parent
-      expect(component?.parent?.type.name).to.equal('DigitalExperienceBundle');
-      expect(component?.parent?.fullName).to.equal('web_app/dist2');
+      expect(component?.type.name).to.equal('DigitalExperienceBundle');
+      expect(component?.fullName).to.equal('web_app/dist2');
     });
   });
 });

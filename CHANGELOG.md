@@ -1,3 +1,12 @@
+## [12.30.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.30.0...12.30.1) (2025-12-05)
+
+
+### Bug Fixes
+
+* **deps:** bump jws from 3.2.2 to 3.2.3 ([#1654](https://github.com/forcedotcom/source-deploy-retrieve/issues/1654)) ([eb1f904](https://github.com/forcedotcom/source-deploy-retrieve/commit/eb1f90427e4c61845fc9464fafeaeb8a8dd20313))
+
+
+
 # [12.30.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.29.1...12.30.0) (2025-11-24)
 
 

@@ -1,3 +1,12 @@
+## [12.30.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.30.1...12.30.2) (2025-12-05)
+
+
+### Bug Fixes
+
+* forceIgnore issues debug logs when files are ignored @W-19470890@ ([#1656](https://github.com/forcedotcom/source-deploy-retrieve/issues/1656)) ([74774dc](https://github.com/forcedotcom/source-deploy-retrieve/commit/74774dc39dbcc668494633923fcb3f51deae5409))
+
+
+
 ## [12.30.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.30.0...12.30.1) (2025-12-05)
 
 

@@ -19,6 +19,7 @@ import * as os from 'node:os';
 import ignore, { Ignore } from 'ignore/index';
 import { readFileSync } from 'graceful-fs';
 import { Lifecycle } from '@salesforce/core/lifecycle';
+import { Logger } from '@salesforce/core/logger';
 import { SourcePath } from '../common/types';
 import { searchUp } from '../utils/fileSystemHandler';
 
@@ -71,7 +72,13 @@ export class ForceIgnore {
   public denies(fsPath: SourcePath): boolean {
     if (!this.parser || !this.forceIgnoreDirectory) return false;
     try {
-      return this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));
+      const res = this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));
+      if (res) {
+        Logger.childFromRoot('forceIgnore.denies').debug(
+          `Ignoring file '${fsPath}' because it matched .forceignore patterns.`
+        );
+      }
+      return res;
     } catch (e) {
       return false;
     }

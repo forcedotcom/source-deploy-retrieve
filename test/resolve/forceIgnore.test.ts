@@ -16,9 +16,10 @@
 import { join } from 'node:path';
 import * as os from 'node:os';
 import { expect } from 'chai';
-import { createSandbox } from 'sinon';
+import Sinon, { createSandbox } from 'sinon';
 import fs from 'graceful-fs';
 import { Lifecycle } from '@salesforce/core';
+import { Logger } from '@salesforce/core/logger';
 import { ForceIgnore } from '../../src/resolve/forceIgnore';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 
@@ -29,7 +30,10 @@ describe('ForceIgnore', () => {
   const testPath = join('some', 'path', '__tests__', 'myTest.x');
   const testPattern = '**/__tests__/**';
 
-  afterEach(() => env.restore());
+  afterEach(() => {
+    env.restore();
+    Sinon.restore();
+  });
 
   it('Should default to not ignoring a file if forceignore is not loaded', () => {
     const path = join('some', 'path');
@@ -40,9 +44,12 @@ describe('ForceIgnore', () => {
 
   it('Should ignore files with a given pattern', () => {
     env.stub(fs, 'readFileSync').returns(testPattern);
+    const debugSpy = Sinon.spy(Logger.prototype, 'debug');
     const forceIgnore = new ForceIgnore(forceIgnorePath);
     expect(forceIgnore.accepts(testPath)).to.be.false;
     expect(forceIgnore.denies(testPath)).to.be.true;
+    expect(debugSpy.calledOnce).to.be.true;
+    expect(debugSpy.getCall(0).args[0]).to.match(/Ignoring file .+ because it matched .forceignore patterns./g);
   });
 
   it('windows separators no longer have any effect', () => {

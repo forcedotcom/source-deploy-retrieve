@@ -15,6 +15,7 @@
  */
 import { join, relative, resolve as pathResolve, sep } from 'node:path';
 import { format } from 'node:util';
+import { EOL } from 'node:os';
 import { isString } from '@salesforce/ts-types';
 import JSZip from 'jszip';
 import fs from 'graceful-fs';
@@ -23,10 +24,10 @@ import { Messages } from '@salesforce/core/messages';
 import { SfError } from '@salesforce/core/sfError';
 import { envVars } from '@salesforce/core/envVars';
 import { ensureArray } from '@salesforce/kit';
-import { RegistryAccess } from '../registry/registryAccess';
+import { RegistryAccess } from '../registry';
 import { ReplacementEvent } from '../convert/types';
-import { MetadataConverter } from '../convert/metadataConverter';
-import { ComponentSet } from '../collections/componentSet';
+import { MetadataConverter } from '../convert';
+import { ComponentSet } from '../collections';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
   AsyncResult,
@@ -204,7 +205,116 @@ export class MetadataApiDeploy extends MetadataTransfer<
       // this is used as the version in the manifest (package.xml).
       this.components.sourceApiVersion ??= apiVersion;
     }
+    if (this.options.components) {
+      // we must ensure AiAuthoringBundles compile before deployment
+      // Use optimized getter method instead of filtering all components
+      const aabComponents = this.options.components.getAiAuthoringBundles().toArray();
 
+      if (aabComponents.length > 0) {
+        // we need to use a namedJWT connection for this request
+        const { accessToken, instanceUrl } = connection.getConnectionOptions();
+        if (!instanceUrl) {
+          throw SfError.create({
+            name: 'ApiAccessError',
+            message: 'Missing Instance URL for org connection',
+          });
+        }
+        if (!accessToken) {
+          throw SfError.create({
+            name: 'ApiAccessError',
+            message: 'Missing Access Token for org connection',
+          });
+        }
+        const url = `${instanceUrl}/agentforce/bootstrap/nameduser`;
+        // For the namdeduser endpoint request to work we need to delete the access token
+        delete connection.accessToken;
+        const response = await connection.request<{
+          access_token: string;
+        }>(
+          {
+            method: 'GET',
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              Cookie: `sid=${accessToken}`,
+            },
+          },
+          { retry: { maxRetries: 3 } }
+        );
+        connection.accessToken = response.access_token;
+        const results = await Promise.all(
+          aabComponents.map(async (aab) => {
+            // aab.content points to a directory, we need to find the .agent file and read it
+            if (!aab.content) {
+              throw new SfError(
+                messages.getMessage('error_expected_source_files', [aab.fullName, 'aiauthoringbundle']),
+                'ExpectedSourceFilesError'
+              );
+            }
+
+            const contentPath = aab.tree.find('content', aab.name, aab.content);
+
+            if (!contentPath) {
+              // if this didn't exist, they'll have deploy issues anyways, but we can check here for type reasons
+              throw new SfError(`No .agent file found in directory: ${aab.content}`, 'MissingAgentFileError');
+            }
+
+            const agentContent = await fs.promises.readFile(contentPath, 'utf-8');
+
+            // to avoid circular dependencies between libraries, just call the compile endpoint here
+            const result = await connection.request<{
+              // minimal typings here, more is returned, just using what we need
+              status: 'failure' | 'success';
+              errors: Array<{
+                description: string;
+                lineStart: number;
+                colStart: number;
+              }>;
+              // name added here for post-processing convenience
+              name: string;
+            }>({
+              method: 'POST',
+              // this will need to be api.salesforce once changes are in prod
+              url: 'https://test.api.salesforce.com/einstein/ai-agent/v1.1/authoring/scripts',
+              headers: {
+                'x-client-name': 'afdx',
+                'content-type': 'application/json',
+              },
+              body: JSON.stringify({
+                assets: [
+                  {
+                    type: 'AFScript',
+                    name: 'AFScript',
+                    content: agentContent,
+                  },
+                ],
+                afScriptVersion: '1.0.1',
+              }),
+            });
+            result.name = aab.name;
+            return result;
+          })
+        );
+
+        const errors = results
+          .filter((result) => result.status === 'failure')
+          .map((result) =>
+            result.errors.map((r) => `${result.name}.agent: ${r.description} ${r.lineStart}:${r.colStart}`).join(EOL)
+          );
+
+        if (errors.length > 0) {
+          throw SfError.create({
+            message: `${EOL}${errors.join(EOL)}`,
+            name: 'AgentCompilationError',
+          });
+        } else {
+          // everything successfully compiled
+          // stop using named user jwt access token
+          delete connection.accessToken;
+          await connection.refreshAuth();
+        }
+      }
+    }
     // only do event hooks if source, (NOT a metadata format) deploy
     if (this.options.components) {
       await LifecycleInstance.emit('scopedPreDeploy', {

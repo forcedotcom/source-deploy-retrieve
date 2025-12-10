@@ -569,7 +569,9 @@
     "computeExtension": "computeextension",
     "dataObjectSearchIndexConf": "dataobjectsearchindexconf",
     "lightningOutApp": "lightningoutapp",
-    "stageAssignment": "stageassignment"
+    "stageAssignment": "stageassignment",
+    "onboardingDataObjectGroup": "onboardingdataobjectgroup",
+    "partyProfileDataObjectValidityDefinition": "partyprofiledataobjectvaliditydefinition"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5076,6 +5078,22 @@
       "name": "StageAssignment",
       "suffix": "stageAssignment",
       "directoryName": "stageAssignments",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "onboardingdataobjectgroup": {
+      "id": "onboardingdataobjectgroup",
+      "name": "OnboardingDataObjectGroup",
+      "suffix": "onboardingDataObjectGroup",
+      "directoryName": "onboardingDataObjectGroups",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "partyprofiledataobjectvaliditydefinition": {
+      "id": "partyprofiledataobjectvaliditydefinition",
+      "name": "PartyProfileDataObjectValidityDefinition",
+      "suffix": "partyProfileDataObjectValidityDefinition",
+      "directoryName": "partyProfileDataObjectValidityDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     }

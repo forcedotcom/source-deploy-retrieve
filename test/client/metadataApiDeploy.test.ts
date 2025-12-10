@@ -17,10 +17,11 @@ import { basename, join, sep } from 'node:path';
 import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import chai, { assert, expect } from 'chai';
 import { AnyJson, ensureString, getString } from '@salesforce/ts-types';
-import { envVars, Lifecycle, Messages, PollingClient, StatusResult } from '@salesforce/core';
+import { Connection, envVars, Lifecycle, Messages, PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
 import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import * as sinon from 'sinon';
+import fs from 'graceful-fs';
 import {
   ComponentSet,
   ComponentStatus,
@@ -70,14 +71,13 @@ describe('MetadataApiDeploy', () => {
 
   describe('Lifecycle', () => {
     describe('start', () => {
-      it('should not convert zip, but read from fs');
-      it('should not mdapiDir, but generate zip buffer from it');
-
       it('should convert to metadata format and create zip', async () => {
         const components = new ComponentSet([matchingContentFile.COMPONENT]);
         const { operation, convertStub } = await stubMetadataDeploy($$, testOrg, {
           components,
         });
+
+        expect(components.getAiAuthoringBundles().toArray()).to.be.empty;
 
         await operation.start();
 
@@ -1408,6 +1408,228 @@ describe('MetadataApiDeploy', () => {
       expect(mdOpts.apiOptions).to.have.property('ignoreWarnings', false);
       expect(mdOpts.apiOptions).to.have.property('checkOnly', false);
       expect(mdOpts.apiOptions).to.have.property('singlePackage', true);
+    });
+  });
+
+  describe('AiAuthoringBundle compilation', () => {
+    const aabType = registry.types.aiauthoringbundle;
+    const aabName = 'TestAAB';
+    const aabContentDir = join('path', 'to', 'aiAuthoringBundles', aabName);
+    const agentFileName = `${aabName}.agent`;
+    const agentContent = 'test agent script content';
+
+    const createAABComponent = (): SourceComponent =>
+      SourceComponent.createVirtualComponent(
+        {
+          name: aabName,
+          type: aabType,
+          xml: join(aabContentDir, `${aabName}${META_XML_SUFFIX}`),
+          content: aabContentDir,
+        },
+        [
+          {
+            dirPath: join('path', 'to', 'aiAuthoringBundles'),
+            children: [aabName],
+          },
+          {
+            dirPath: aabContentDir,
+            children: [agentFileName],
+          },
+        ]
+      );
+    const aabComponent = createAABComponent();
+    const components = new ComponentSet([aabComponent]);
+
+    it('should throw error with correct data when compilation fails', async () => {
+      $$.SANDBOX.stub(Connection.prototype, 'retrieveMaxApiVersion').resolves('65.0');
+      const connection = await testOrg.getConnection();
+
+      const readFileStub = $$.SANDBOX.stub(fs.promises, 'readFile').resolves(agentContent);
+
+      $$.SANDBOX.stub(connection, 'getConnectionOptions').returns({
+        accessToken: 'test-access-token',
+        instanceUrl: 'https://test.salesforce.com',
+      });
+
+      const compileErrors = [
+        { description: 'Syntax error on line 5', lineStart: 5, colStart: 10 },
+        { description: 'Missing token', lineStart: 8, colStart: 15 },
+      ];
+
+      // Configure connection.request stub (already created by TestContext)
+      let callCount = 0;
+      (connection.request as sinon.SinonStub).callsFake((request: { url?: string }) => {
+        callCount++;
+        if (request.url?.includes('agentforce/bootstrap/nameduser')) {
+          return Promise.resolve({ access_token: 'named-user-token' });
+        }
+        if (request.url?.includes('einstein/ai-agent')) {
+          return Promise.resolve({ status: 'failure' as const, errors: compileErrors });
+        }
+        // For other requests, return empty object (deploy stub handles its own requests)
+        return Promise.resolve({});
+      });
+
+      const { operation } = await stubMetadataDeploy($$, testOrg, { components });
+
+      try {
+        await operation.start();
+        expect.fail('Should have thrown AgentCompilationError');
+      } catch (error: unknown) {
+        const err = error as { name?: string; message?: string };
+        expect(err).to.have.property('name', 'AgentCompilationError');
+        expect(err.message).to.include(`${aabName}.agent: Syntax error on line 5 5:10`);
+        expect(err.message).to.include(`${aabName}.agent: Missing token 8:15`);
+      }
+
+      expect(readFileStub.calledOnce).to.be.true;
+      expect(callCount).to.be.at.least(2);
+    });
+
+    it('should not throw error when compilation succeeds', async () => {
+      const aabComponent = createAABComponent();
+      const components = new ComponentSet([aabComponent]);
+
+      // Stub retrieveMaxApiVersion on prototype before getting connection
+      $$.SANDBOX.stub(Connection.prototype, 'retrieveMaxApiVersion').resolves('60.0');
+      const connection = await testOrg.getConnection();
+
+      const readFileStub = $$.SANDBOX.stub(fs.promises, 'readFile').resolves(agentContent);
+
+      $$.SANDBOX.stub(connection, 'getConnectionOptions').returns({
+        accessToken: 'test-access-token',
+        instanceUrl: 'https://test.salesforce.com',
+      });
+
+      // Configure connection.request stub (already created by TestContext)
+      let callCount = 0;
+      (connection.request as sinon.SinonStub).callsFake((request: { url?: string }) => {
+        callCount++;
+        if (request.url?.includes('agentforce/bootstrap/nameduser')) {
+          return Promise.resolve({ access_token: 'named-user-token' });
+        }
+        if (request.url?.includes('einstein/ai-agent')) {
+          return Promise.resolve({ status: 'success' as const, errors: [] });
+        }
+        // For other requests, return empty object (deploy stub handles its own requests)
+        return Promise.resolve({});
+      });
+
+      const { operation } = await stubMetadataDeploy($$, testOrg, { components });
+
+      // Should not throw
+      await operation.start();
+
+      expect(readFileStub.calledOnce).to.be.true;
+      expect(callCount).to.be.at.least(2);
+    });
+
+    it('should not compile when no AABs present in component set', async () => {
+      const components = new ComponentSet([COMPONENT]);
+
+      // Stub retrieveMaxApiVersion on prototype before getting connection
+      $$.SANDBOX.stub(Connection.prototype, 'retrieveMaxApiVersion').resolves('60.0');
+      const connection = await testOrg.getConnection();
+
+      const readFileStub = $$.SANDBOX.stub(fs.promises, 'readFile');
+      // Track calls to connection.request to verify compilation wasn't attempted
+      const compileCallCount = { count: 0 };
+      (connection.request as sinon.SinonStub).callsFake((request: { url?: string }) => {
+        const url = request.url ?? '';
+        if (url.includes('einstein/ai-agent') || url.includes('agentforce/bootstrap')) {
+          compileCallCount.count++;
+        }
+        // For other requests, return empty object (deploy stub handles its own requests)
+        return Promise.resolve({});
+      });
+
+      const { operation } = await stubMetadataDeploy($$, testOrg, { components });
+
+      await operation.start();
+
+      // Verify compilation endpoints were not called
+      expect(readFileStub.called).to.be.false;
+      expect(compileCallCount.count).to.equal(0);
+    });
+
+    it('should handle multiple AABs in parallel', async () => {
+      const aab1 = SourceComponent.createVirtualComponent(
+        {
+          name: 'AAB1',
+          type: aabType,
+          xml: join('path', 'to', 'aiAuthoringBundles', 'AAB1', `AAB1${META_XML_SUFFIX}`),
+          content: join('path', 'to', 'aiAuthoringBundles', 'AAB1'),
+        },
+        [
+          {
+            dirPath: join('path', 'to', 'aiAuthoringBundles'),
+            children: ['AAB1'],
+          },
+          {
+            dirPath: join('path', 'to', 'aiAuthoringBundles', 'AAB1'),
+            children: ['AAB1.agent'],
+          },
+        ]
+      );
+
+      const aab2 = SourceComponent.createVirtualComponent(
+        {
+          name: 'AAB2',
+          type: aabType,
+          xml: join('path', 'to', 'aiAuthoringBundles', 'AAB2', `AAB2${META_XML_SUFFIX}`),
+          content: join('path', 'to', 'aiAuthoringBundles', 'AAB2'),
+        },
+        [
+          {
+            dirPath: join('path', 'to', 'aiAuthoringBundles'),
+            children: ['AAB2'],
+          },
+          {
+            dirPath: join('path', 'to', 'aiAuthoringBundles', 'AAB2'),
+            children: ['AAB2.agent'],
+          },
+        ]
+      );
+
+      const components = new ComponentSet([aab1, aab2]);
+
+      // Stub retrieveMaxApiVersion on prototype before getting connection
+      $$.SANDBOX.stub(Connection.prototype, 'retrieveMaxApiVersion').resolves('60.0');
+      const connection = await testOrg.getConnection();
+
+      const readFileStub = $$.SANDBOX.stub(fs.promises, 'readFile').resolves(agentContent);
+
+      $$.SANDBOX.stub(connection, 'getConnectionOptions').returns({
+        accessToken: 'test-access-token',
+        instanceUrl: 'https://test.salesforce.com',
+      });
+
+      // Configure connection.request stub (already created by TestContext)
+      // Handle multiple AABs: 2 nameduser + 2 compile calls
+      let namedUserCallCount = 0;
+      let compileCallCount = 0;
+      (connection.request as sinon.SinonStub).callsFake((request: { url?: string }) => {
+        if (request.url?.includes('agentforce/bootstrap/nameduser')) {
+          namedUserCallCount++;
+          return Promise.resolve({ access_token: 'named-user-token' });
+        }
+        if (request.url?.includes('einstein/ai-agent')) {
+          compileCallCount++;
+          return Promise.resolve({ status: 'success' as const, errors: [] });
+        }
+        // For other requests, return empty object (deploy stub handles its own requests)
+        return Promise.resolve({});
+      });
+
+      const { operation } = await stubMetadataDeploy($$, testOrg, { components });
+
+      await operation.start();
+
+      // Should read both agent files
+      expect(readFileStub.callCount).to.equal(2);
+      // Should call compile endpoint twice (once per AAB) and nameduser once
+      expect(namedUserCallCount).to.equal(1);
+      expect(compileCallCount).to.equal(2);
     });
   });
 });

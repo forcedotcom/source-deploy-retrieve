@@ -1,3 +1,12 @@
+# [12.31.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.30.2...12.31.0) (2025-12-11)
+
+
+### Features
+
+* @W-19995019 Adding support for integArtifactDef type ([#1658](https://github.com/forcedotcom/source-deploy-retrieve/issues/1658)) ([e997a49](https://github.com/forcedotcom/source-deploy-retrieve/commit/e997a4929d2d9c474f08d5103f495654eb7fcc9a))
+
+
+
 ## [12.30.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.30.1...12.30.2) (2025-12-05)
 
 

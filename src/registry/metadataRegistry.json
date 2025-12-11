@@ -59,6 +59,7 @@
     "fieldRestrictionRules": "fieldrestrictionrule",
     "genAiFunctions": "genaifunction",
     "genAiPlannerBundles": "genaiplannerbundle",
+    "integArtifactDefs": "integartifactdef",
     "integrationHub": "integrationhubsettings",
     "lwc": "lightningcomponentbundle",
     "mktDataSources": "datasource",
@@ -2984,6 +2985,17 @@
       "inFolder": false,
       "name": "IntegrationHubSettingsType",
       "suffix": "type"
+    },
+    "integartifactdef": {
+      "directoryName": "integArtifactDefs",
+      "id": "integartifactdef",
+      "inFolder": false,
+      "name": "IntegArtifactDef",
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "bundle"
+      },
+      "supportsPartialDelete": true
     },
     "integrationproviderdef": {
       "directoryName": "integrationProviderDefinitions",

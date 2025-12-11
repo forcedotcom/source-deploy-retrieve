@@ -176,7 +176,7 @@ describe('MetadataApiRetrieve', () => {
         const toRetrieve = new ComponentSet([COMPONENT]);
         const options = {
           toRetrieve,
-          rootTypesWithDependencies: [ 'Bot' ],
+          rootTypesWithDependencies: ['Bot'],
           merge: true,
           successes: toRetrieve,
         };
@@ -754,6 +754,53 @@ hY2thZ2VkL3BhY2thZ2UueG1sUEsFBgAAAAADAAMA7QAAAJoCAAAAAA==`;
       ];
 
       expect(responses).to.deep.equal(expected);
+    });
+
+    it('should return FileResponses for web_app DigitalExperienceBundle with path-based fullNames', () => {
+      const bundlePath = join('path', 'to', 'digitalExperiences', 'web_app', 'ReactDemo');
+      const props = {
+        name: 'web_app/ReactDemo',
+        type: registry.types.digitalexperiencebundle,
+        content: bundlePath,
+      };
+      const component = SourceComponent.createVirtualComponent(props, [
+        {
+          dirPath: bundlePath,
+          children: ['webapp.json', 'index.html', 'app.js'],
+        },
+      ]);
+      const retrievedSet = new ComponentSet([component]);
+      const localSet = new ComponentSet([component]);
+      const apiStatus = {};
+      const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet, localSet);
+
+      const responses = result.getFileResponses();
+
+      // Should have 1 bundle response + 3 file responses
+      expect(responses).to.have.lengthOf(4);
+
+      // First response should be the bundle
+      expect(responses[0]).to.deep.include({
+        fullName: 'web_app/ReactDemo',
+        type: 'DigitalExperienceBundle',
+        state: ComponentStatus.Changed,
+        filePath: bundlePath,
+      });
+
+      // Remaining responses should be DigitalExperience child files with path-based fullNames
+      const childResponses = responses.slice(1);
+      childResponses.forEach((response) => {
+        expect(response.type).to.equal('DigitalExperience');
+        // fullName should be path-based: web_app/ReactDemo/<filename>
+        expect(response.fullName).to.match(/^web_app\/ReactDemo\//);
+        expect(response.state).to.equal(ComponentStatus.Changed);
+      });
+
+      // Verify specific fullNames are path-based
+      const fullNames = childResponses.map((r) => r.fullName);
+      expect(fullNames).to.include('web_app/ReactDemo/webapp.json');
+      expect(fullNames).to.include('web_app/ReactDemo/index.html');
+      expect(fullNames).to.include('web_app/ReactDemo/app.js');
     });
   });
 });

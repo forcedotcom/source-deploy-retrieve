@@ -767,9 +767,9 @@ v66 introduces the following new types.  Here's their current level of support
 |LogicSettings|✅||
 |MapReportSettings|✅||
 |ObjectMappingSettings|✅||
-|OnboardingDataObjectGroup|⚠️|Supports deploy/retrieve but not source tracking|
+|OnboardingDataObjectGroup|✅||
 |OptimizationSettings|✅||
-|PartyProfileDataObjectValidityDefinition|⚠️|Supports deploy/retrieve but not source tracking|
+|PartyProfileDataObjectValidityDefinition|✅||
 |PaynowStarterUpgradeEnabledSettings|✅||
 |ProcedurePlanDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |ProviderSampleLimitTemplate|❌|Not supported, but support could be added|

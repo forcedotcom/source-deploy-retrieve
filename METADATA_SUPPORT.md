@@ -777,6 +777,7 @@ v66 introduces the following new types.  Here's their current level of support
 |RiskMgmtSettings|✅||
 |SchedulingRecipeSettings|✅||
 |ServiceLegalStatusesSettings|✅||
+|ServiceProcessSettings|✅||
 |SoFieldMappingSettings|✅||
 |StockRotationSettings|✅||
 |SurveyStyleSet|❌|Not supported, but support could be added|

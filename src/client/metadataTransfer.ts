@@ -108,9 +108,11 @@ export abstract class MetadataTransfer<
     timeout?: number
   ): Promise<Result | undefined> {
     const normalizedOptions = normalizePollingInputs(frequencyOrOptions, timeout, sizeOfComponentSet(this.components));
+    const retryLimit = calculateRetryLimit(normalizedOptions.timeout, normalizedOptions.frequency);
     const pollingClient = await PollingClient.create({
       ...normalizedOptions,
       poll: this.poll.bind(this),
+      retryLimit,
     });
 
     try {
@@ -351,4 +353,20 @@ export const calculatePollingFrequency = (size: number): number => {
   } else {
     return size;
   }
+};
+
+/**
+ * Calculate a dynamic retry limit based on timeout and polling frequency.
+ * The retry limit is set to 10% of the maximum possible polls, with bounds between 20 and 100.
+ * This ensures that:
+ * - Short operations (1-2 minutes) get at least 20 retries
+ * - Long operations (hours) get more retries proportional to their duration
+ * - Very long operations are capped at 100 retries to prevent excessive retry attempts
+ */
+export const calculateRetryLimit = (timeout: Duration, frequency: Duration): number => {
+  const maxPossiblePolls = timeout.milliseconds / frequency.milliseconds;
+  // Allow 10% of the maximum possible polls to be retries
+  const calculatedRetryLimit = Math.floor(maxPossiblePolls * 0.1);
+  // Ensure retry limit is between 20 and 100
+  return Math.min(100, Math.max(20, calculatedRetryLimit));
 };

@@ -28,6 +28,7 @@ import {
   MetadataTransfer,
   MetadataTransferOptions,
   calculatePollingFrequency,
+  calculateRetryLimit,
   normalizePollingInputs,
 } from '../../src/client/metadataTransfer';
 import { MetadataRequestStatus, MetadataTransferResult, RequestStatus } from '../../src/client/types';
@@ -314,6 +315,74 @@ describe('MetadataTransfer', () => {
       expect(checkStatus.callCount).to.equal(3);
     });
 
+    it('should stop retrying after reaching dynamic retry limit', async () => {
+      const { checkStatus } = operation.lifecycle;
+      const networkError = new Error('something something ETIMEDOUT something');
+      // Stub checkStatus to always throw a retryable error
+      checkStatus.callsFake(() => {
+        throw networkError;
+      });
+
+      try {
+        // With frequency=50ms and timeout=1 second, retry limit should be 20 (minimum)
+        // maxPossiblePolls = 1000ms / 50ms = 20
+        // calculatedRetryLimit = floor(20 * 0.1) = 2
+        // boundedRetryLimit = max(20, 2) = 20
+        await operation.pollStatus(50, 1);
+        fail('should have thrown an error');
+      } catch (err) {
+        // The retry limit is 20, so checkStatus should be called at most 21 times
+        // (initial call + 20 retries)
+        expect(checkStatus.callCount).to.be.at.most(21);
+        expect(checkStatus.callCount).to.be.at.least(20);
+        assert(err instanceof Error);
+        expect(err.name).to.equal('MetadataTransferError');
+      }
+    });
+
+    it('should use higher retry limit for longer timeouts', async () => {
+      const { checkStatus } = operation.lifecycle;
+      const networkError = new Error('something something ETIMEDOUT something');
+      let callCount = 0;
+
+      checkStatus.callsFake(() => {
+        callCount += 1;
+        // Throw error for first 50 attempts to test higher retry limit
+        if (callCount <= 50) {
+          throw networkError;
+        }
+        return { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
+      });
+
+      // With frequency=100ms and timeout=60 seconds (1 minute):
+      // maxPossiblePolls = 60,000ms / 100ms = 600
+      // calculatedRetryLimit = floor(600 * 0.1) = 60
+      // boundedRetryLimit = min(100, max(20, 60)) = 60
+      await operation.pollStatus(100, 60);
+      // Should succeed after 50 failures + 1 success = 51 calls
+      // This is within the retry limit of 60
+      expect(checkStatus.callCount).to.equal(51);
+    });
+
+    it('should succeed if retryable errors stop before retry limit', async () => {
+      const { checkStatus } = operation.lifecycle;
+      const networkError = new Error('something something ETIMEDOUT something');
+      let callCount = 0;
+
+      checkStatus.callsFake(() => {
+        callCount += 1;
+        if (callCount <= 15) {
+          throw networkError;
+        }
+        return { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
+      });
+
+      await operation.pollStatus(50, 1);
+      // Should succeed after 15 failures + 1 success = 16 calls
+      // This is within the retry limit of 20
+      expect(checkStatus.callCount).to.equal(16);
+    });
+
     it('should tolerate known mdapi error', async () => {
       const { checkStatus } = operation.lifecycle;
       const networkError1 = new Error('foo');
@@ -395,6 +464,44 @@ describe('MetadataTransfer', () => {
     });
     it('2520 => 2520', () => {
       expect(calculatePollingFrequency(2520)).to.equal(2520);
+    });
+  });
+
+  describe('calculateRetryLimit', () => {
+    it('should return minimum of 20 for short timeouts', () => {
+      // timeout=1 second, frequency=100ms => maxPolls=10, calculated=1, result=20 (min)
+      const result = calculateRetryLimit(Duration.seconds(1), Duration.milliseconds(100));
+      expect(result).to.equal(20);
+    });
+
+    it('should return proportional retry limit for medium timeouts', () => {
+      // timeout=10 minutes=600 seconds, frequency=1000ms => maxPolls=600, calculated=60, result=60
+      const result = calculateRetryLimit(Duration.minutes(10), Duration.milliseconds(1000));
+      expect(result).to.equal(60);
+    });
+
+    it('should return maximum of 100 for very long timeouts', () => {
+      // timeout=2 hours=7200 seconds, frequency=100ms => maxPolls=72000, calculated=7200, result=100 (max)
+      const result = calculateRetryLimit(Duration.hours(2), Duration.milliseconds(100));
+      expect(result).to.equal(100);
+    });
+
+    it('should scale with different frequency and timeout combinations', () => {
+      // timeout=30 minutes, frequency=500ms => maxPolls=3600, calculated=360, result=100 (capped)
+      const result = calculateRetryLimit(Duration.minutes(30), Duration.milliseconds(500));
+      expect(result).to.equal(100);
+    });
+
+    it('should handle default 60 minute timeout with typical frequency', () => {
+      // timeout=60 minutes, frequency=1000ms => maxPolls=3600, calculated=360, result=100 (capped)
+      const result = calculateRetryLimit(Duration.minutes(60), Duration.milliseconds(1000));
+      expect(result).to.equal(100);
+    });
+
+    it('should allow exactly 10% of possible polls as retries', () => {
+      // timeout=5 minutes=300 seconds, frequency=1000ms => maxPolls=300, calculated=30, result=30
+      const result = calculateRetryLimit(Duration.minutes(5), Duration.milliseconds(1000));
+      expect(result).to.equal(30);
     });
   });
 

@@ -28,7 +28,7 @@ import {
   MetadataTransfer,
   MetadataTransferOptions,
   calculatePollingFrequency,
-  calculateRetryLimit,
+  calculateErrorRetryLimit,
   normalizePollingInputs,
 } from '../../src/client/metadataTransfer';
 import { MetadataRequestStatus, MetadataTransferResult, RequestStatus } from '../../src/client/types';
@@ -315,73 +315,84 @@ describe('MetadataTransfer', () => {
       expect(checkStatus.callCount).to.equal(3);
     });
 
-    it('should stop retrying after reaching dynamic retry limit', async () => {
+    it('should stop after reaching consecutive error retry limit', async () => {
       const { checkStatus } = operation.lifecycle;
       const networkError = new Error('something something ETIMEDOUT something');
-      // Stub checkStatus to always throw a retryable error
-      checkStatus.callsFake(() => {
-        throw networkError;
-      });
+      const originalEnvValue = process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT;
 
       try {
-        // With frequency=50ms and timeout=3 seconds, retry limit should be 20 (minimum)
-        // maxPossiblePolls = 3000ms / 50ms = 60
-        // calculatedRetryLimit = floor(60 * 0.1) = 6
-        // boundedRetryLimit = max(20, 6) = 20
-        // Using 3 second timeout ensures we hit retry limit before timeout (20 * 50ms = 1000ms + overhead)
-        await operation.pollStatus(50, 3);
+        // Set error retry limit to 5 for faster testing
+        process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = '5';
+
+        // Stub checkStatus to always throw a retryable error
+        checkStatus.callsFake(() => {
+          throw networkError;
+        });
+
+        await operation.pollStatus(10, 2);
         fail('should have thrown an error');
       } catch (err) {
-        // The retry limit is 20, so checkStatus should be called at most 21 times
-        // (initial call + 20 retries)
-        expect(checkStatus.callCount).to.be.at.most(21);
-        expect(checkStatus.callCount).to.be.at.least(20);
+        // Should fail after 5 consecutive errors (6 total calls: initial + 5 retries)
+        expect(checkStatus.callCount).to.equal(6);
         assert(err instanceof Error);
         expect(err.name).to.equal('MetadataTransferError');
+        expect(err.message).to.include('Exceeded maximum of 5 consecutive retryable errors');
+      } finally {
+        // Restore original env value
+        if (originalEnvValue === undefined) {
+          delete process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT;
+        } else {
+          process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = originalEnvValue;
+        }
       }
     });
 
-    it('should use higher retry limit for longer timeouts', async () => {
+    it('should reset error counter on successful status check', async () => {
       const { checkStatus } = operation.lifecycle;
       const networkError = new Error('something something ETIMEDOUT something');
       let callCount = 0;
 
       checkStatus.callsFake(() => {
         callCount += 1;
-        // Throw error for first 50 attempts to test higher retry limit
-        if (callCount <= 50) {
+        // Throw error for first 15 attempts
+        if (callCount <= 15) {
           throw networkError;
         }
+        // Return in-progress status (resets error counter)
+        if (callCount === 16) {
+          return { done: false, status: RequestStatus.InProgress, id: '1', success: false };
+        }
+        // Throw error for next 15 attempts (after reset)
+        if (callCount <= 31) {
+          throw networkError;
+        }
+        // Success
         return { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
       });
 
-      // With frequency=100ms and timeout=60 seconds (1 minute):
-      // maxPossiblePolls = 60,000ms / 100ms = 600
-      // calculatedRetryLimit = floor(600 * 0.1) = 60
-      // boundedRetryLimit = min(100, max(20, 60)) = 60
-      await operation.pollStatus(100, 60);
-      // Should succeed after 50 failures + 1 success = 51 calls
-      // This is within the retry limit of 60
-      expect(checkStatus.callCount).to.equal(51);
+      // Should succeed because error counter resets after successful status check
+      // Total: 15 errors + 1 success (reset) + 15 errors + 1 success = 32 calls
+      await operation.pollStatus(50, 5);
+      expect(checkStatus.callCount).to.equal(32);
     });
 
-    it('should succeed if retryable errors stop before retry limit', async () => {
+    it('should succeed if consecutive errors stop before limit', async () => {
       const { checkStatus } = operation.lifecycle;
       const networkError = new Error('something something ETIMEDOUT something');
       let callCount = 0;
 
       checkStatus.callsFake(() => {
         callCount += 1;
-        if (callCount <= 15) {
+        if (callCount <= 10) {
           throw networkError;
         }
         return { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
       });
 
       await operation.pollStatus(50, 3);
-      // Should succeed after 15 failures + 1 success = 16 calls
-      // This is within the retry limit of 20
-      expect(checkStatus.callCount).to.equal(16);
+      // Should succeed after 10 consecutive errors + 1 success = 11 calls
+      // This is within the error retry limit of 20
+      expect(checkStatus.callCount).to.equal(11);
     });
 
     it('should tolerate known mdapi error', async () => {
@@ -468,41 +479,81 @@ describe('MetadataTransfer', () => {
     });
   });
 
-  describe('calculateRetryLimit', () => {
-    it('should return minimum of 20 for short timeouts', () => {
-      // timeout=1 second, frequency=100ms => maxPolls=10, calculated=1, result=20 (min)
-      const result = calculateRetryLimit(Duration.seconds(1), Duration.milliseconds(100));
-      expect(result).to.equal(20);
+  describe('calculateErrorRetryLimit', () => {
+    let originalEnvValue: string | undefined;
+    let mockLogger: { debug: SinonStub };
+
+    beforeEach(() => {
+      // Save original env value
+      originalEnvValue = process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT;
+      // Create a mock logger
+      mockLogger = { debug: $$.SANDBOX.stub() };
     });
 
-    it('should return proportional retry limit for medium timeouts', () => {
-      // timeout=10 minutes=600 seconds, frequency=1000ms => maxPolls=600, calculated=60, result=60
-      const result = calculateRetryLimit(Duration.minutes(10), Duration.milliseconds(1000));
-      expect(result).to.equal(60);
+    afterEach(() => {
+      // Restore original env value
+      if (originalEnvValue === undefined) {
+        delete process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT;
+      } else {
+        process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = originalEnvValue;
+      }
     });
 
-    it('should return maximum of 100 for very long timeouts', () => {
-      // timeout=2 hours=7200 seconds, frequency=100ms => maxPolls=72000, calculated=7200, result=100 (max)
-      const result = calculateRetryLimit(Duration.hours(2), Duration.milliseconds(100));
-      expect(result).to.equal(100);
+    it('should return default of 25 consecutive error retries', () => {
+      const result = calculateErrorRetryLimit(mockLogger as never);
+      expect(result).to.equal(25);
+      expect(mockLogger.debug.called).to.be.false;
     });
 
-    it('should scale with different frequency and timeout combinations', () => {
-      // timeout=30 minutes, frequency=500ms => maxPolls=3600, calculated=360, result=100 (capped)
-      const result = calculateRetryLimit(Duration.minutes(30), Duration.milliseconds(500));
-      expect(result).to.equal(100);
+    it('should use SF_METADATA_POLL_ERROR_RETRY_LIMIT env var when set to valid positive integer', () => {
+      process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = '50';
+      const result = calculateErrorRetryLimit(mockLogger as never);
+      expect(result).to.equal(50);
+      expect(mockLogger.debug.calledOnce).to.be.true;
+      expect(mockLogger.debug.firstCall.args[0]).to.include('SF_METADATA_POLL_ERROR_RETRY_LIMIT');
+      expect(mockLogger.debug.firstCall.args[0]).to.include('50');
     });
 
-    it('should handle default 60 minute timeout with typical frequency', () => {
-      // timeout=60 minutes, frequency=1000ms => maxPolls=3600, calculated=360, result=100 (capped)
-      const result = calculateRetryLimit(Duration.minutes(60), Duration.milliseconds(1000));
-      expect(result).to.equal(100);
+    it('should use SF_METADATA_POLL_ERROR_RETRY_LIMIT env var for custom limit', () => {
+      process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = '5';
+      const result = calculateErrorRetryLimit(mockLogger as never);
+      expect(result).to.equal(5);
+      expect(mockLogger.debug.calledOnce).to.be.true;
+      expect(mockLogger.debug.firstCall.args[0]).to.include('SF_METADATA_POLL_ERROR_RETRY_LIMIT');
+      expect(mockLogger.debug.firstCall.args[0]).to.include('5');
     });
 
-    it('should allow exactly 10% of possible polls as retries', () => {
-      // timeout=5 minutes=300 seconds, frequency=1000ms => maxPolls=300, calculated=30, result=30
-      const result = calculateRetryLimit(Duration.minutes(5), Duration.milliseconds(1000));
-      expect(result).to.equal(30);
+    it('should ignore SF_METADATA_POLL_ERROR_RETRY_LIMIT when set to invalid value (NaN)', () => {
+      process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = 'invalid';
+      const result = calculateErrorRetryLimit(mockLogger as never);
+      // Should fall back to default value: 25
+      expect(result).to.equal(25);
+      expect(mockLogger.debug.called).to.be.false;
+    });
+
+    it('should ignore SF_METADATA_POLL_ERROR_RETRY_LIMIT when set to zero', () => {
+      process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = '0';
+      const result = calculateErrorRetryLimit(mockLogger as never);
+      // Should fall back to default value: 25
+      expect(result).to.equal(25);
+      expect(mockLogger.debug.called).to.be.false;
+    });
+
+    it('should ignore SF_METADATA_POLL_ERROR_RETRY_LIMIT when set to negative value', () => {
+      process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = '-10';
+      const result = calculateErrorRetryLimit(mockLogger as never);
+      // Should fall back to default value: 25
+      expect(result).to.equal(25);
+      expect(mockLogger.debug.called).to.be.false;
+    });
+
+    it('should use SF_METADATA_POLL_ERROR_RETRY_LIMIT=1 for minimal error retries', () => {
+      process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = '1';
+      const result = calculateErrorRetryLimit(mockLogger as never);
+      expect(result).to.equal(1);
+      expect(mockLogger.debug.calledOnce).to.be.true;
+      expect(mockLogger.debug.firstCall.args[0]).to.include('SF_METADATA_POLL_ERROR_RETRY_LIMIT');
+      expect(mockLogger.debug.firstCall.args[0]).to.include('1');
     });
   });
 

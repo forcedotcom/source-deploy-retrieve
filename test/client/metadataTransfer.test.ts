@@ -324,11 +324,12 @@ describe('MetadataTransfer', () => {
       });
 
       try {
-        // With frequency=50ms and timeout=1 second, retry limit should be 20 (minimum)
-        // maxPossiblePolls = 1000ms / 50ms = 20
-        // calculatedRetryLimit = floor(20 * 0.1) = 2
-        // boundedRetryLimit = max(20, 2) = 20
-        await operation.pollStatus(50, 1);
+        // With frequency=50ms and timeout=3 seconds, retry limit should be 20 (minimum)
+        // maxPossiblePolls = 3000ms / 50ms = 60
+        // calculatedRetryLimit = floor(60 * 0.1) = 6
+        // boundedRetryLimit = max(20, 6) = 20
+        // Using 3 second timeout ensures we hit retry limit before timeout (20 * 50ms = 1000ms + overhead)
+        await operation.pollStatus(50, 3);
         fail('should have thrown an error');
       } catch (err) {
         // The retry limit is 20, so checkStatus should be called at most 21 times
@@ -377,7 +378,7 @@ describe('MetadataTransfer', () => {
         return { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
       });
 
-      await operation.pollStatus(50, 1);
+      await operation.pollStatus(50, 3);
       // Should succeed after 15 failures + 1 success = 16 calls
       // This is within the retry limit of 20
       expect(checkStatus.callCount).to.equal(16);

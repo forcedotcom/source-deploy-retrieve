@@ -1,3 +1,12 @@
+## [12.31.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.0...12.31.1) (2026-01-07)
+
+
+### Bug Fixes
+
+* **poll:** track consequent errors during polling W-18203875 ([#1663](https://github.com/forcedotcom/source-deploy-retrieve/issues/1663)) ([588ed78](https://github.com/forcedotcom/source-deploy-retrieve/commit/588ed78b28e2b486ee7ed2f5f8abd04dd1a13409))
+
+
+
 # [12.31.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.30.2...12.31.0) (2025-12-11)
 
 

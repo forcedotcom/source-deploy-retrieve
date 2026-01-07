@@ -739,6 +739,10 @@ v66 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
+|AiResponseFormat|❌|Not supported, but support could be added (but not for tracking)|
+|AiResponseFormatIstr|❌|Not supported, but support could be added (but not for tracking)|
+|AiSurface|❌|Not supported, but support could be added (but not for tracking)|
+|AiSurfaceInstruction|❌|Not supported, but support could be added (but not for tracking)|
 |ApexLimitSettings|✅||
 |AppointmentBookingSettings|✅||
 |AutomatorConfigSettings|✅||

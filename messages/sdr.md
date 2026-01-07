@@ -2,6 +2,10 @@
 
 Metadata API request failed: %s
 
+# error_retry_limit_exceeded
+
+Exceeded maximum of %s consecutive retryable errors. Last error: %s
+
 # error_could_not_infer_type
 
 %s: Could not infer a metadata type

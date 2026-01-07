@@ -499,9 +499,9 @@ describe('MetadataTransfer', () => {
       }
     });
 
-    it('should return default of 25 consecutive error retries', () => {
+    it('should return default of 1000 consecutive error retries', () => {
       const result = calculateErrorRetryLimit(mockLogger as never);
-      expect(result).to.equal(25);
+      expect(result).to.equal(1000);
       expect(mockLogger.debug.called).to.be.false;
     });
 
@@ -526,24 +526,24 @@ describe('MetadataTransfer', () => {
     it('should ignore SF_METADATA_POLL_ERROR_RETRY_LIMIT when set to invalid value (NaN)', () => {
       process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = 'invalid';
       const result = calculateErrorRetryLimit(mockLogger as never);
-      // Should fall back to default value: 25
-      expect(result).to.equal(25);
+      // Should fall back to default value: 1000
+      expect(result).to.equal(1000);
       expect(mockLogger.debug.called).to.be.false;
     });
 
     it('should ignore SF_METADATA_POLL_ERROR_RETRY_LIMIT when set to zero', () => {
       process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = '0';
       const result = calculateErrorRetryLimit(mockLogger as never);
-      // Should fall back to default value: 25
-      expect(result).to.equal(25);
+      // Should fall back to default value: 1000
+      expect(result).to.equal(1000);
       expect(mockLogger.debug.called).to.be.false;
     });
 
     it('should ignore SF_METADATA_POLL_ERROR_RETRY_LIMIT when set to negative value', () => {
       process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = '-10';
       const result = calculateErrorRetryLimit(mockLogger as never);
-      // Should fall back to default value: 25
-      expect(result).to.equal(25);
+      // Should fall back to default value: 1000
+      expect(result).to.equal(1000);
       expect(mockLogger.debug.called).to.be.false;
     });
 

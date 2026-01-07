@@ -412,7 +412,7 @@ export const calculatePollingFrequency = (size: number): number => {
  * This limit prevents infinite loops from repeated network/server errors while allowing
  * normal status polling to continue indefinitely (until timeout).
  *
- * Default is 25 consecutive errors, which can be overridden via SF_METADATA_POLL_ERROR_RETRY_LIMIT.
+ * Default is 1000 consecutive errors, which can be overridden via SF_METADATA_POLL_ERROR_RETRY_LIMIT.
  *
  * @param logger Logger instance for logging when env var override is used
  * @returns The maximum number of consecutive errors to tolerate
@@ -428,5 +428,5 @@ export const calculateErrorRetryLimit = (logger: Logger): number => {
       return parsedLimit;
     }
   }
-  return 25;
+  return 1000;
 };

@@ -116,8 +116,11 @@ export abstract class MetadataTransfer<
     this.errorRetryLimit = calculateErrorRetryLimit(this.logger);
     this.errorRetryLimitExceeded = undefined;
 
-    // Set a very high retryLimit for PollingClient to prevent it from stopping on errors
-    // Our consecutive error tracking will handle limiting retryable errors
+    // IMPORTANT:
+    // We omit passing the `retryLimit` option on purpose
+    // to allow long-running deploy/retrieve jobs with low frequency checks to complete.
+    //
+    // https://forcedotcom.github.io/sfdx-core/types/status_pollingClient.PollingClient.Options.html#__type.retryLimit
     const pollingClient = await PollingClient.create({
       ...normalizedOptions,
       poll: this.poll.bind(this),

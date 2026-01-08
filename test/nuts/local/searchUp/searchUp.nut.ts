@@ -142,5 +142,28 @@ describe('searchUp nut test', () => {
 
       expect(result).to.equal(expected);
     });
+
+    it('stops at filesystem root when traversing up', () => {
+      // Start from a deep absolute path and search for a file that doesn't exist
+      // This should traverse up to the filesystem root and stop there (not try to go above root)
+      const startPath = path.resolve(session.project.dir, 'level1', 'level2', 'startDir');
+      const result = searchUp(startPath, 'definitelyDoesNotExist.txt');
+
+      expect(result).to.be.undefined;
+    });
+
+    it('stops immediately when starting from filesystem root', () => {
+      // Test that starting from root itself doesn't try to use .. logic
+      // Find the root by resolving up until parent equals start
+      let rootPath = path.resolve(session.project.dir);
+      let parent = path.resolve(rootPath, '..');
+      while (parent !== rootPath) {
+        rootPath = parent;
+        parent = path.resolve(rootPath, '..');
+      }
+      // Now rootPath is the filesystem root
+      const result = searchUp(rootPath, 'someFileThatDoesNotExist.txt');
+      expect(result).to.be.undefined;
+    });
   });
 });

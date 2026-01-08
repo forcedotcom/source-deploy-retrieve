@@ -573,7 +573,7 @@
     "stageAssignment": "stageassignment",
     "onboardingDataObjectGroup": "onboardingdataobjectgroup",
     "partyProfileDataObjectValidityDefinition": "partyprofiledataobjectvaliditydefinition",
-    "flexcardDefinition": "flexcardDefinition"
+    "flexcardDefinition": "flexcarddefinition"
   },
   "types": {
     "accesscontrolpolicy": {

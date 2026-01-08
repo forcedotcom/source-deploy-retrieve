@@ -572,7 +572,8 @@
     "lightningOutApp": "lightningoutapp",
     "stageAssignment": "stageassignment",
     "onboardingDataObjectGroup": "onboardingdataobjectgroup",
-    "partyProfileDataObjectValidityDefinition": "partyprofiledataobjectvaliditydefinition"
+    "partyProfileDataObjectValidityDefinition": "partyprofiledataobjectvaliditydefinition",
+    "flexcardDefinition": "flexcardDefinition"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5106,6 +5107,14 @@
       "name": "PartyProfileDataObjectValidityDefinition",
       "suffix": "partyProfileDataObjectValidityDefinition",
       "directoryName": "partyProfileDataObjectValidityDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+      "flexcardDefinition": {
+      "id": "flexcarddefinition",
+      "name": "FlexcardDefinition",
+      "suffix": "flexcardDefinition",
+      "directoryName": "flexcardDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     }

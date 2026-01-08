@@ -28,7 +28,6 @@ import {
   MetadataTransfer,
   MetadataTransferOptions,
   calculatePollingFrequency,
-  calculateErrorRetryLimit,
   normalizePollingInputs,
 } from '../../src/client/metadataTransfer';
 import { MetadataRequestStatus, MetadataTransferResult, RequestStatus } from '../../src/client/types';
@@ -315,86 +314,6 @@ describe('MetadataTransfer', () => {
       expect(checkStatus.callCount).to.equal(3);
     });
 
-    it('should stop after reaching consecutive error retry limit', async () => {
-      const { checkStatus } = operation.lifecycle;
-      const networkError = new Error('something something ETIMEDOUT something');
-      const originalEnvValue = process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT;
-
-      try {
-        // Set error retry limit to 5 for faster testing
-        process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = '5';
-
-        // Stub checkStatus to always throw a retryable error
-        checkStatus.callsFake(() => {
-          throw networkError;
-        });
-
-        await operation.pollStatus(10, 2);
-        fail('should have thrown an error');
-      } catch (err) {
-        // Should fail after 5 consecutive errors (6 total calls: initial + 5 retries)
-        expect(checkStatus.callCount).to.equal(6);
-        assert(err instanceof Error);
-        expect(err.name).to.equal('MetadataTransferError');
-        expect(err.message).to.include('Exceeded maximum of 5 consecutive retryable errors');
-      } finally {
-        // Restore original env value
-        if (originalEnvValue === undefined) {
-          delete process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT;
-        } else {
-          process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = originalEnvValue;
-        }
-      }
-    });
-
-    it('should reset error counter on successful status check', async () => {
-      const { checkStatus } = operation.lifecycle;
-      const networkError = new Error('something something ETIMEDOUT something');
-      let callCount = 0;
-
-      checkStatus.callsFake(() => {
-        callCount += 1;
-        // Throw error for first 15 attempts
-        if (callCount <= 15) {
-          throw networkError;
-        }
-        // Return in-progress status (resets error counter)
-        if (callCount === 16) {
-          return { done: false, status: RequestStatus.InProgress, id: '1', success: false };
-        }
-        // Throw error for next 15 attempts (after reset)
-        if (callCount <= 31) {
-          throw networkError;
-        }
-        // Success
-        return { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
-      });
-
-      // Should succeed because error counter resets after successful status check
-      // Total: 15 errors + 1 success (reset) + 15 errors + 1 success = 32 calls
-      await operation.pollStatus(50, 5);
-      expect(checkStatus.callCount).to.equal(32);
-    });
-
-    it('should succeed if consecutive errors stop before limit', async () => {
-      const { checkStatus } = operation.lifecycle;
-      const networkError = new Error('something something ETIMEDOUT something');
-      let callCount = 0;
-
-      checkStatus.callsFake(() => {
-        callCount += 1;
-        if (callCount <= 10) {
-          throw networkError;
-        }
-        return { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
-      });
-
-      await operation.pollStatus(50, 3);
-      // Should succeed after 10 consecutive errors + 1 success = 11 calls
-      // This is within the error retry limit of 20
-      expect(checkStatus.callCount).to.equal(11);
-    });
-
     it('should tolerate known mdapi error', async () => {
       const { checkStatus } = operation.lifecycle;
       const networkError1 = new Error('foo');
@@ -476,84 +395,6 @@ describe('MetadataTransfer', () => {
     });
     it('2520 => 2520', () => {
       expect(calculatePollingFrequency(2520)).to.equal(2520);
-    });
-  });
-
-  describe('calculateErrorRetryLimit', () => {
-    let originalEnvValue: string | undefined;
-    let mockLogger: { debug: SinonStub };
-
-    beforeEach(() => {
-      // Save original env value
-      originalEnvValue = process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT;
-      // Create a mock logger
-      mockLogger = { debug: $$.SANDBOX.stub() };
-    });
-
-    afterEach(() => {
-      // Restore original env value
-      if (originalEnvValue === undefined) {
-        delete process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT;
-      } else {
-        process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = originalEnvValue;
-      }
-    });
-
-    it('should return default of 1000 consecutive error retries', () => {
-      const result = calculateErrorRetryLimit(mockLogger as never);
-      expect(result).to.equal(1000);
-      expect(mockLogger.debug.called).to.be.false;
-    });
-
-    it('should use SF_METADATA_POLL_ERROR_RETRY_LIMIT env var when set to valid positive integer', () => {
-      process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = '50';
-      const result = calculateErrorRetryLimit(mockLogger as never);
-      expect(result).to.equal(50);
-      expect(mockLogger.debug.calledOnce).to.be.true;
-      expect(mockLogger.debug.firstCall.args[0]).to.include('SF_METADATA_POLL_ERROR_RETRY_LIMIT');
-      expect(mockLogger.debug.firstCall.args[0]).to.include('50');
-    });
-
-    it('should use SF_METADATA_POLL_ERROR_RETRY_LIMIT env var for custom limit', () => {
-      process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = '5';
-      const result = calculateErrorRetryLimit(mockLogger as never);
-      expect(result).to.equal(5);
-      expect(mockLogger.debug.calledOnce).to.be.true;
-      expect(mockLogger.debug.firstCall.args[0]).to.include('SF_METADATA_POLL_ERROR_RETRY_LIMIT');
-      expect(mockLogger.debug.firstCall.args[0]).to.include('5');
-    });
-
-    it('should ignore SF_METADATA_POLL_ERROR_RETRY_LIMIT when set to invalid value (NaN)', () => {
-      process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = 'invalid';
-      const result = calculateErrorRetryLimit(mockLogger as never);
-      // Should fall back to default value: 1000
-      expect(result).to.equal(1000);
-      expect(mockLogger.debug.called).to.be.false;
-    });
-
-    it('should ignore SF_METADATA_POLL_ERROR_RETRY_LIMIT when set to zero', () => {
-      process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = '0';
-      const result = calculateErrorRetryLimit(mockLogger as never);
-      // Should fall back to default value: 1000
-      expect(result).to.equal(1000);
-      expect(mockLogger.debug.called).to.be.false;
-    });
-
-    it('should ignore SF_METADATA_POLL_ERROR_RETRY_LIMIT when set to negative value', () => {
-      process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = '-10';
-      const result = calculateErrorRetryLimit(mockLogger as never);
-      // Should fall back to default value: 1000
-      expect(result).to.equal(1000);
-      expect(mockLogger.debug.called).to.be.false;
-    });
-
-    it('should use SF_METADATA_POLL_ERROR_RETRY_LIMIT=1 for minimal error retries', () => {
-      process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT = '1';
-      const result = calculateErrorRetryLimit(mockLogger as never);
-      expect(result).to.equal(1);
-      expect(mockLogger.debug.calledOnce).to.be.true;
-      expect(mockLogger.debug.firstCall.args[0]).to.include('SF_METADATA_POLL_ERROR_RETRY_LIMIT');
-      expect(mockLogger.debug.firstCall.args[0]).to.include('1');
     });
   });
 

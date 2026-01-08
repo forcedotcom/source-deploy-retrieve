@@ -1,3 +1,12 @@
+## [12.31.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.1...12.31.2) (2026-01-08)
+
+
+### Bug Fixes
+
+* use prod endpoint for AAB compilation @W-20819985@ ([#1666](https://github.com/forcedotcom/source-deploy-retrieve/issues/1666)) ([a032b29](https://github.com/forcedotcom/source-deploy-retrieve/commit/a032b29a9a2e4a29aa85ad89a1fb34ec1617550e)), closes [#1667](https://github.com/forcedotcom/source-deploy-retrieve/issues/1667)
+
+
+
 ## [12.31.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.0...12.31.1) (2026-01-07)
 
 

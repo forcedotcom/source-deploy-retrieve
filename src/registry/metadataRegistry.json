@@ -5110,7 +5110,7 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
-      "flexcardDefinition": {
+    "flexcardDefinition": {
       "id": "flexcarddefinition",
       "name": "FlexcardDefinition",
       "suffix": "flexcardDefinition",

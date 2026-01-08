@@ -1458,12 +1458,14 @@ describe('MetadataApiDeploy', () => {
 
       // Configure connection.request stub (already created by TestContext)
       let callCount = 0;
+      let compileUrl: string | undefined;
       (connection.request as sinon.SinonStub).callsFake((request: { url?: string }) => {
         callCount++;
         if (request.url?.includes('agentforce/bootstrap/nameduser')) {
           return Promise.resolve({ access_token: 'named-user-token' });
         }
         if (request.url?.includes('einstein/ai-agent')) {
+          compileUrl = request.url;
           return Promise.resolve({ status: 'failure' as const, errors: compileErrors });
         }
         // For other requests, return empty object (deploy stub handles its own requests)
@@ -1484,6 +1486,8 @@ describe('MetadataApiDeploy', () => {
 
       expect(readFileStub.calledOnce).to.be.true;
       expect(callCount).to.be.at.least(2);
+      // Verify URL uses production endpoint when SF_TEST_API is not set
+      expect(compileUrl).to.equal('https://api.salesforce.com/einstein/ai-agent/v1.1/authoring/scripts');
     });
 
     it('should not throw error when compilation succeeds', async () => {
@@ -1503,12 +1507,14 @@ describe('MetadataApiDeploy', () => {
 
       // Configure connection.request stub (already created by TestContext)
       let callCount = 0;
+      let compileUrl: string | undefined;
       (connection.request as sinon.SinonStub).callsFake((request: { url?: string }) => {
         callCount++;
         if (request.url?.includes('agentforce/bootstrap/nameduser')) {
           return Promise.resolve({ access_token: 'named-user-token' });
         }
         if (request.url?.includes('einstein/ai-agent')) {
+          compileUrl = request.url;
           return Promise.resolve({ status: 'success' as const, errors: [] });
         }
         // For other requests, return empty object (deploy stub handles its own requests)
@@ -1522,6 +1528,8 @@ describe('MetadataApiDeploy', () => {
 
       expect(readFileStub.calledOnce).to.be.true;
       expect(callCount).to.be.at.least(2);
+      // Verify URL uses production endpoint when SF_TEST_API is not set
+      expect(compileUrl).to.equal('https://api.salesforce.com/einstein/ai-agent/v1.1/authoring/scripts');
     });
 
     it('should not compile when no AABs present in component set', async () => {
@@ -1608,6 +1616,7 @@ describe('MetadataApiDeploy', () => {
       // Handle multiple AABs: 2 nameduser + 2 compile calls
       let namedUserCallCount = 0;
       let compileCallCount = 0;
+      const compileUrls: string[] = [];
       (connection.request as sinon.SinonStub).callsFake((request: { url?: string }) => {
         if (request.url?.includes('agentforce/bootstrap/nameduser')) {
           namedUserCallCount++;
@@ -1615,6 +1624,7 @@ describe('MetadataApiDeploy', () => {
         }
         if (request.url?.includes('einstein/ai-agent')) {
           compileCallCount++;
+          compileUrls.push(request.url);
           return Promise.resolve({ status: 'success' as const, errors: [] });
         }
         // For other requests, return empty object (deploy stub handles its own requests)
@@ -1630,6 +1640,58 @@ describe('MetadataApiDeploy', () => {
       // Should call compile endpoint twice (once per AAB) and nameduser once
       expect(namedUserCallCount).to.equal(1);
       expect(compileCallCount).to.equal(2);
+      // Verify both URLs use production endpoint when SF_TEST_API is not set
+      compileUrls.forEach((url) => {
+        expect(url).to.equal('https://api.salesforce.com/einstein/ai-agent/v1.1/authoring/scripts');
+      });
+    });
+
+    it('should use test API URL when SF_TEST_API is set to true', async () => {
+      const originalEnvValue = process.env.SF_TEST_API;
+      try {
+        process.env.SF_TEST_API = 'true';
+        const aabComponent = createAABComponent();
+        const components = new ComponentSet([aabComponent]);
+
+        // Stub retrieveMaxApiVersion on prototype before getting connection
+        $$.SANDBOX.stub(Connection.prototype, 'retrieveMaxApiVersion').resolves('60.0');
+        const connection = await testOrg.getConnection();
+
+        const readFileStub = $$.SANDBOX.stub(fs.promises, 'readFile').resolves(agentContent);
+
+        $$.SANDBOX.stub(connection, 'getConnectionOptions').returns({
+          accessToken: 'test-access-token',
+          instanceUrl: 'https://test.salesforce.com',
+        });
+
+        // Configure connection.request stub (already created by TestContext)
+        let compileUrl: string | undefined;
+        (connection.request as sinon.SinonStub).callsFake((request: { url?: string }) => {
+          if (request.url?.includes('agentforce/bootstrap/nameduser')) {
+            return Promise.resolve({ access_token: 'named-user-token' });
+          }
+          if (request.url?.includes('einstein/ai-agent')) {
+            compileUrl = request.url;
+            return Promise.resolve({ status: 'success' as const, errors: [] });
+          }
+          // For other requests, return empty object (deploy stub handles its own requests)
+          return Promise.resolve({});
+        });
+
+        const { operation } = await stubMetadataDeploy($$, testOrg, { components });
+
+        await operation.start();
+
+        expect(readFileStub.calledOnce).to.be.true;
+        // Verify URL uses test endpoint when SF_TEST_API is set to true
+        expect(compileUrl).to.equal('https://test.api.salesforce.com/einstein/ai-agent/v1.1/authoring/scripts');
+      } finally {
+        if (originalEnvValue === undefined) {
+          delete process.env.SF_TEST_API;
+        } else {
+          process.env.SF_TEST_API = originalEnvValue;
+        }
+      }
     });
   });
 });

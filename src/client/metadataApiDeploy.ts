@@ -23,7 +23,7 @@ import { Lifecycle } from '@salesforce/core/lifecycle';
 import { Messages } from '@salesforce/core/messages';
 import { SfError } from '@salesforce/core/sfError';
 import { envVars } from '@salesforce/core/envVars';
-import { ensureArray } from '@salesforce/kit';
+import { ensureArray, env } from '@salesforce/kit';
 import { RegistryAccess } from '../registry';
 import { ReplacementEvent } from '../convert/types';
 import { MetadataConverter } from '../convert';
@@ -270,12 +270,12 @@ export class MetadataApiDeploy extends MetadataTransfer<
                 lineStart: number;
                 colStart: number;
               }>;
-              // name added here for post-processing convenience
               name: string;
             }>({
               method: 'POST',
-              // this will need to be api.salesforce once changes are in prod
-              url: 'https://test.api.salesforce.com/einstein/ai-agent/v1.1/authoring/scripts',
+              url: `https://${
+                env.getBoolean('SF_TEST_API') ? 'test.' : ''
+              }api.salesforce.com/einstein/ai-agent/v1.1/authoring/scripts`,
               headers: {
                 'x-client-name': 'afdx',
                 'content-type': 'application/json',

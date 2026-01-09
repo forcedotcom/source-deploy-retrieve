@@ -1,3 +1,12 @@
+## [12.31.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.2...12.31.3) (2026-01-09)
+
+
+### Bug Fixes
+
+* revert PR 1667 ([#1668](https://github.com/forcedotcom/source-deploy-retrieve/issues/1668)) ([3387549](https://github.com/forcedotcom/source-deploy-retrieve/commit/33875498eddc4c24d825aec7458947537dd9366e))
+
+
+
 ## [12.31.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.1...12.31.2) (2026-01-08)
 
 

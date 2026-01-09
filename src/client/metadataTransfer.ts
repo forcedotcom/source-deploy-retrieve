@@ -56,6 +56,9 @@ export abstract class MetadataTransfer<
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
   private apiVersion?: string;
+  private consecutiveErrorRetries = 0;
+  private errorRetryLimit = 0;
+  private errorRetryLimitExceeded: { error: Error; count: number } | undefined;
 
   public constructor({ usernameOrConnection, components, apiVersion, id }: Options) {
     this.usernameOrConnection = usernameOrConnection;
@@ -108,6 +111,16 @@ export abstract class MetadataTransfer<
     timeout?: number
   ): Promise<Result | undefined> {
     const normalizedOptions = normalizePollingInputs(frequencyOrOptions, timeout, sizeOfComponentSet(this.components));
+    // Initialize error retry tracking
+    this.consecutiveErrorRetries = 0;
+    this.errorRetryLimit = calculateErrorRetryLimit(this.logger);
+    this.errorRetryLimitExceeded = undefined;
+
+    // IMPORTANT:
+    // We omit passing the `retryLimit` option on purpose
+    // to allow long-running deploy/retrieve jobs with low frequency checks to complete.
+    //
+    // https://forcedotcom.github.io/sfdx-core/types/status_pollingClient.PollingClient.Options.html#__type.retryLimit
     const pollingClient = await PollingClient.create({
       ...normalizedOptions,
       poll: this.poll.bind(this),
@@ -117,7 +130,18 @@ export abstract class MetadataTransfer<
       this.logger.debug(`Polling for metadata transfer status. ID = ${this.id ?? '<no id>'}`);
       this.logger.debug(`Polling frequency (ms): ${normalizedOptions.frequency.milliseconds}`);
       this.logger.debug(`Polling timeout (min): ${normalizedOptions.timeout.minutes}`);
+      this.logger.debug(`Polling error retry limit (consecutive errors): ${this.errorRetryLimit}`);
       const completedMdapiStatus = (await pollingClient.subscribe()) as unknown as Status;
+
+      // Check if polling exited due to error retry limit (throw unwrapped error)
+      if (this.errorRetryLimitExceeded !== undefined) {
+        const errorData: { error: Error; count: number } = this.errorRetryLimitExceeded;
+        throw new SfError(
+          messages.getMessage('error_retry_limit_exceeded', [errorData.count, errorData.error.message]),
+          'MetadataTransferError'
+        );
+      }
+
       const result = await this.post(completedMdapiStatus);
       if (completedMdapiStatus.status === RequestStatus.Canceled) {
         this.event.emit('cancel', completedMdapiStatus);
@@ -127,6 +151,16 @@ export abstract class MetadataTransfer<
       return result;
     } catch (e) {
       const err = e as Error | SfError;
+
+      // Don't wrap the error retry limit exceeded error
+      if (err instanceof SfError && err.message.includes('consecutive retryable errors')) {
+        if (this.event.listenerCount('error') === 0) {
+          throw err;
+        }
+        this.event.emit('error', err);
+        return;
+      }
+
       const error = new SfError(messages.getMessage('md_request_fail', [err.message]), 'MetadataTransferError');
 
       if (error.stack && err.stack) {
@@ -253,6 +287,8 @@ export abstract class MetadataTransfer<
     } else {
       try {
         mdapiStatus = await this.checkStatus();
+        // Reset error counter on successful status check
+        this.consecutiveErrorRetries = 0;
         completed = mdapiStatus?.done;
         if (!completed) {
           this.event.emit('update', mdapiStatus);
@@ -262,14 +298,35 @@ export abstract class MetadataTransfer<
         // tolerate a known mdapi problem 500/INVALID_CROSS_REFERENCE_KEY: invalid cross reference id
         // that happens when request moves out of Pending
         if (e instanceof Error && e.name === 'JsonParseError') {
+          this.consecutiveErrorRetries++;
+          if (this.consecutiveErrorRetries > this.errorRetryLimit) {
+            // Store error info and signal completion to stop polling
+            this.errorRetryLimitExceeded = {
+              error: e,
+              count: this.errorRetryLimit,
+            };
+            return { completed: true };
+          }
           this.logger.debug('Metadata API response not parseable', e);
           await Lifecycle.getInstance().emitWarning('Metadata API response not parseable');
           return { completed: false };
         }
 
-        // tolerate intermittent network errors upto retry limit
+        // tolerate intermittent network errors up to error retry limit
         if (this.isRetryableError(e)) {
-          this.logger.debug('Network error on the request', e);
+          this.consecutiveErrorRetries++;
+          if (this.consecutiveErrorRetries > this.errorRetryLimit) {
+            // Store error info and signal completion to stop polling
+            this.errorRetryLimitExceeded = {
+              error: e instanceof Error ? e : new Error(String(e)),
+              count: this.errorRetryLimit,
+            };
+            return { completed: true };
+          }
+          this.logger.debug(
+            `Network error on request (retry ${this.consecutiveErrorRetries}/${this.errorRetryLimit})`,
+            e
+          );
           await Lifecycle.getInstance().emitWarning('Network error occurred.  Continuing to poll.');
           return { completed: false };
         }
@@ -351,4 +408,28 @@ export const calculatePollingFrequency = (size: number): number => {
   } else {
     return size;
   }
+};
+
+/**
+ * Calculate the maximum number of consecutive retryable errors allowed during polling.
+ * This limit prevents infinite loops from repeated network/server errors while allowing
+ * normal status polling to continue indefinitely (until timeout).
+ *
+ * Default is 1000 consecutive errors, which can be overridden via SF_METADATA_POLL_ERROR_RETRY_LIMIT.
+ *
+ * @param logger Logger instance for logging when env var override is used
+ * @returns The maximum number of consecutive errors to tolerate
+ */
+export const calculateErrorRetryLimit = (logger: Logger): number => {
+  const envRetryLimit = process.env.SF_METADATA_POLL_ERROR_RETRY_LIMIT;
+  if (envRetryLimit) {
+    const parsedLimit = parseInt(envRetryLimit, 10);
+    if (!isNaN(parsedLimit) && parsedLimit > 0) {
+      logger.debug(
+        `Using error retry limit from SF_METADATA_POLL_ERROR_RETRY_LIMIT environment variable: ${parsedLimit}`
+      );
+      return parsedLimit;
+    }
+  }
+  return 1000;
 };

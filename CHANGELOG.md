@@ -1,3 +1,12 @@
+## [12.31.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.3...12.31.4) (2026-01-09)
+
+
+### Bug Fixes
+
+* add FlexcardDefinition to metadata registry ([#1669](https://github.com/forcedotcom/source-deploy-retrieve/issues/1669)) ([6c98cc9](https://github.com/forcedotcom/source-deploy-retrieve/commit/6c98cc91734434e81503542bc4fdf405731c8546))
+
+
+
 ## [12.31.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.2...12.31.3) (2026-01-09)
 
 

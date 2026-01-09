@@ -38,7 +38,7 @@ import {
 import { extract } from './retrieveExtract';
 import { getPackageOptions } from './retrieveExtract';
 import { MetadataApiRetrieveOptions } from './types';
-import { isWebAppBundle } from './utils';
+import { isWebAppBundle, computeWebAppPathName } from './utils';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -112,11 +112,19 @@ export class RetrieveResult implements MetadataTransferResult {
       // Special handling for web_app bundles - they need to walk content and report individual files
       if (isWebAppBundle(retrievedComponent)) {
         // Add the bundle directory itself
-        this.fileResponses.push(
-          ...[retrievedComponent.content, ...retrievedComponent.walkContent()].map(
-            (filePath) => ({ ...baseResponse, filePath } satisfies FileResponseSuccess)
-          )
-        );
+        this.fileResponses.push({
+          ...baseResponse,
+          filePath: retrievedComponent.content,
+        } satisfies FileResponseSuccess);
+        // Add individual files with path-based fullNames
+        for (const filePath of retrievedComponent.walkContent()) {
+          this.fileResponses.push({
+            fullName: computeWebAppPathName(filePath),
+            type: 'DigitalExperience',
+            state: this.localComponents.has(retrievedComponent) ? ComponentStatus.Changed : ComponentStatus.Created,
+            filePath,
+          } satisfies FileResponseSuccess);
+        }
       } else if (!type.children || Object.values(type.children.types).some((t) => t.unaddressableWithoutParent)) {
         this.fileResponses.push(
           ...retrievedComponent

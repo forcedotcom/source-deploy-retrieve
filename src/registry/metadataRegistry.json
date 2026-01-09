@@ -5109,7 +5109,7 @@
       "directoryName": "partyProfileDataObjectValidityDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
-    }, 
+    },
     "flexcarddefinition": {
       "id": "flexcarddefinition",
       "name": "FlexcardDefinition",

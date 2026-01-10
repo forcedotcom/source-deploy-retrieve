@@ -860,3 +860,4 @@ v66 introduces the following new types.  Here's their current level of support
 - DataMapperDefinition
 - IntegrationProcdDefinition
 - OmniscriptDefinition
+- FlexcardDefinition

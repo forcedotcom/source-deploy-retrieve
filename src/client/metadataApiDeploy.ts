@@ -212,7 +212,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
       // Use optimized getter method instead of filtering all components
       const aabComponents = this.options.components.getAiAuthoringBundles().toArray();
 
-      if (aabComponents.length > 0) {
+      if (aabComponents.length > 0 && env.getBoolean('SF_AAB_COMPILATION', true)) {
         await compileAABComponents(connection, aabComponents);
       }
     }
@@ -487,8 +487,7 @@ const compileAABComponents = async (connection: Connection, aabComponents: Sourc
 
       const agentContent = await fs.promises.readFile(contentPath, 'utf-8');
 
-      // to avoid circular dependencies between libraries, just call the compile endpoint here
-      const result = await connection.request<{
+      let result: {
         // minimal typings here, more is returned, just using what we need
         status: 'failure' | 'success';
         errors: Array<{
@@ -497,28 +496,42 @@ const compileAABComponents = async (connection: Connection, aabComponents: Sourc
           colStart: number;
         }>;
         name: string;
-      }>({
-        method: 'POST',
-        url: `https://${
-          env.getBoolean('SF_TEST_API') ? 'test.' : ''
-        }api.salesforce.com/einstein/ai-agent/v1.1/authoring/scripts`,
-        headers: {
-          'x-client-name': 'afdx',
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          assets: [
-            {
-              type: 'AFScript',
-              name: 'AFScript',
-              content: agentContent,
-            },
-          ],
-          afScriptVersion: '1.0.1',
-        }),
-      });
-      result.name = aab.name;
-      return result;
+      };
+      try {
+        // to avoid circular dependencies between libraries, just call the compile endpoint here
+        result = await connection.request<typeof result>({
+          method: 'POST',
+          url: `https://${
+            env.getBoolean('SF_TEST_API') ? 'test.' : ''
+          }api.salesforce.com/einstein/ai-agent/v1.1/authoring/scripts`,
+          headers: {
+            'x-client-name': 'afdx',
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({
+            assets: [
+              {
+                type: 'AFScript',
+                name: 'AFScript',
+                content: agentContent,
+              },
+            ],
+            afScriptVersion: '1.0.1',
+          }),
+        });
+        result.name = aab.name;
+        return result;
+      } catch (e) {
+        const error = SfError.wrap(e);
+        if (error.name.includes('ERROR_HTTP_404')) {
+          error.message = 'HTTP 404 error encountered when compiling AiAuthoringBundles';
+          error.actions = [
+            "Ensure the org's agent functionality is working outside of deployments",
+            "Try the 'sf agent validate authoring-bundle' command",
+          ];
+        }
+        throw error;
+      }
     })
   );
 

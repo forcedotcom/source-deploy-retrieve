@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { dirname, join, relative } from 'node:path';
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import * as os from 'node:os';
 import ignore, { Ignore } from 'ignore/index';
 import { readFileSync } from 'graceful-fs';
@@ -72,7 +72,8 @@ export class ForceIgnore {
   public denies(fsPath: SourcePath): boolean {
     if (!this.parser || !this.forceIgnoreDirectory) return false;
     try {
-      const res = this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));
+      const absoluteFsPath = isAbsolute(fsPath) ? fsPath : resolve(this.forceIgnoreDirectory, fsPath);
+      const res = this.parser.ignores(relative(this.forceIgnoreDirectory, absoluteFsPath));
       if (res) {
         Logger.childFromRoot('forceIgnore.denies').debug(
           `Ignoring file '${fsPath}' because it matched .forceignore patterns.`
@@ -87,7 +88,8 @@ export class ForceIgnore {
   public accepts(fsPath: SourcePath): boolean {
     if (!this.parser || !this.forceIgnoreDirectory) return true;
     try {
-      return !this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));
+      const absoluteFsPath = isAbsolute(fsPath) ? fsPath : resolve(this.forceIgnoreDirectory, fsPath);
+      return !this.parser.ignores(relative(this.forceIgnoreDirectory, absoluteFsPath));
     } catch (e) {
       return true;
     }

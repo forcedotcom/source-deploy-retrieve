@@ -33,9 +33,14 @@ export function searchUp(start: SourcePath, fileName: string): string | undefine
   if (fs.existsSync(filePath)) {
     return filePath;
   }
-  const parent = path.resolve(start, '..');
-  if (parent === start || start.split(path.sep).length > 25) {
+
+  const normalizedStart = path.normalize(start);
+  const parent = path.dirname(normalizedStart);
+
+  // If we're at root, stop (don't try to go up with ..)
+  if (parent === normalizedStart || normalizedStart === path.parse(normalizedStart).root) {
     return;
   }
+
   return searchUp(parent, fileName);
 }

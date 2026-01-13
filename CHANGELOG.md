@@ -1,3 +1,12 @@
+## [12.31.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.5...12.31.6) (2026-01-13)
+
+
+### Bug Fixes
+
+* catch 404 error and print nicer message ([#1670](https://github.com/forcedotcom/source-deploy-retrieve/issues/1670)) ([b20dad3](https://github.com/forcedotcom/source-deploy-retrieve/commit/b20dad3ce1fce73ea49a36d6a5c5302b3e9f8dca))
+
+
+
 ## [12.31.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.4...12.31.5) (2026-01-12)
 
 

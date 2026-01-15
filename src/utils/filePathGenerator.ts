@@ -119,13 +119,20 @@ export const filePathsFromMetadataComponent = (
     ];
   }
 
-  // lwc, aura, waveTemplate, experiencePropertyType, lightningTypeBundle, contentTypeBundle
-  if (type.strategies?.adapter === 'bundle') {
+  // lwc, aura, waveTemplate, experiencePropertyType, lightningTypeBundle, contentTypeBundle, webApplications
+  if (type.strategies?.adapter === 'bundle' || type.strategies?.adapter === 'webApplications') {
     const mappings = new Map<string, string[]>([
       ['ExperiencePropertyTypeBundle', [join(packageDirWithTypeDir, `${fullName}${sep}schema.json`)]],
       ['LightningTypeBundle', [join(packageDirWithTypeDir, `${fullName}${sep}schema.json`)]],
       ['ContentTypeBundle', [join(packageDirWithTypeDir, `${fullName}${sep}schema.json`)]],
       ['WaveTemplateBundle', [join(packageDirWithTypeDir, `${fullName}${sep}template-info.json`)]],
+      [
+        'WebApplication',
+        [
+          join(packageDirWithTypeDir, `${fullName}${sep}webapplication.json`),
+          join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.webapplication${META_XML_SUFFIX}`),
+        ],
+      ],
       ['LightningComponentBundle', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.js${META_XML_SUFFIX}`)]],
       ['AuraDefinitionBundle', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.cmp${META_XML_SUFFIX}`)]],
       ['GenAiFunction', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.genAiFunction${META_XML_SUFFIX}`)]],

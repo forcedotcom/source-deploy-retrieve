@@ -20,3 +20,4 @@ export { DecomposedSourceAdapter } from './decomposedSourceAdapter';
 export { DefaultSourceAdapter } from './defaultSourceAdapter';
 export { BaseSourceAdapter } from './baseSourceAdapter';
 export { DigitalExperienceSourceAdapter } from './digitalExperienceSourceAdapter';
+export { WebApplicationsSourceAdapter } from './webApplicationsSourceAdapter';

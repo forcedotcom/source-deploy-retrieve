@@ -145,6 +145,20 @@ const testData = {
       },
     ],
   },
+  bundleWebApplications: {
+    fullName: 'MyWebApp',
+    typeName: 'WebApplication',
+    expectedFilePaths: [
+      getFilePath('webapplications/MyWebApp/webapplication.json'),
+      getFilePath('webapplications/MyWebApp/MyWebApp.webapplication-meta.xml'),
+    ],
+    expectedComponents: [
+      {
+        content: getFilePath('webapplications/MyWebApp'),
+        xml: getFilePath('webapplications/MyWebApp/MyWebApp.webapplication-meta.xml'),
+      },
+    ],
+  },
   bundleAppTemplates: {
     fullName: 'test_template',
     typeName: 'AppFrameworkTemplateBundle',
@@ -347,6 +361,10 @@ describe('generating virtual tree from component name/type', () => {
 
     it('waveTemplate', () => {
       runTest(testData.bundleWave);
+    });
+
+    it('webApplications', () => {
+      runTest(testData.bundleWebApplications);
     });
 
     it('appFrameworkTemplate', () => {

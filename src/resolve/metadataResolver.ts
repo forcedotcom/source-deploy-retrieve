@@ -41,7 +41,6 @@ export class MetadataResolver {
   public forceIgnoredPaths: Set<string>;
   private forceIgnore?: ForceIgnore;
 
-  // Resolves filesystem paths into SourceComponents for both source and metadata formats.
   /**
    * @param registry Custom registry data
    * @param tree `TreeContainer` to traverse with

@@ -1,3 +1,12 @@
+## [12.31.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.6...12.31.7) (2026-01-16)
+
+
+### Bug Fixes
+
+* add finally block to refresh access token ([#1671](https://github.com/forcedotcom/source-deploy-retrieve/issues/1671)) ([22ffb04](https://github.com/forcedotcom/source-deploy-retrieve/commit/22ffb045e75dab288d821430d9863a789e09fcb3))
+
+
+
 ## [12.31.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.5...12.31.6) (2026-01-13)
 
 

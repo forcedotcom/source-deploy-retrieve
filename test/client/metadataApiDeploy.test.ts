@@ -1445,6 +1445,7 @@ describe('MetadataApiDeploy', () => {
       const connection = await testOrg.getConnection();
 
       const readFileStub = $$.SANDBOX.stub(fs.promises, 'readFile').resolves(agentContent);
+      const refreshAuthStub = $$.SANDBOX.stub(Connection.prototype, 'refreshAuth').resolves();
 
       $$.SANDBOX.stub(connection, 'getConnectionOptions').returns({
         accessToken: 'test-access-token',
@@ -1488,6 +1489,8 @@ describe('MetadataApiDeploy', () => {
       expect(callCount).to.be.at.least(2);
       // Verify URL uses production endpoint when SF_TEST_API is not set
       expect(compileUrl).to.equal('https://api.salesforce.com/einstein/ai-agent/v1.1/authoring/scripts');
+      // Regardless of success or failure, compileAABComponents should refresh auth.
+      expect(refreshAuthStub.calledOnce).to.be.true;
     });
 
     it('should not throw error when compilation succeeds', async () => {
@@ -1496,6 +1499,7 @@ describe('MetadataApiDeploy', () => {
 
       // Stub retrieveMaxApiVersion on prototype before getting connection
       $$.SANDBOX.stub(Connection.prototype, 'retrieveMaxApiVersion').resolves('60.0');
+      const refreshAuthStub = $$.SANDBOX.stub(Connection.prototype, 'refreshAuth').resolves();
       const connection = await testOrg.getConnection();
 
       const readFileStub = $$.SANDBOX.stub(fs.promises, 'readFile').resolves(agentContent);
@@ -1530,6 +1534,8 @@ describe('MetadataApiDeploy', () => {
       expect(callCount).to.be.at.least(2);
       // Verify URL uses production endpoint when SF_TEST_API is not set
       expect(compileUrl).to.equal('https://api.salesforce.com/einstein/ai-agent/v1.1/authoring/scripts');
+      // Regardless of success or failure, compileAABComponents should refresh auth.
+      expect(refreshAuthStub.calledOnce).to.be.true;
     });
 
     it('should not compile when no AABs present in component set', async () => {
@@ -1669,6 +1675,7 @@ describe('MetadataApiDeploy', () => {
 
       // Stub retrieveMaxApiVersion on prototype before getting connection
       $$.SANDBOX.stub(Connection.prototype, 'retrieveMaxApiVersion').resolves('60.0');
+      const refreshAuthStub = $$.SANDBOX.stub(Connection.prototype, 'refreshAuth').resolves();
       const connection = await testOrg.getConnection();
 
       const readFileStub = $$.SANDBOX.stub(fs.promises, 'readFile').resolves(agentContent);
@@ -1705,6 +1712,8 @@ describe('MetadataApiDeploy', () => {
         expect((e as Error).name).to.equal('ERROR_HTTP_404');
         expect((e as SfError).actions!.length).to.equal(2);
       }
+      // Regardless of success or failure, compileAABComponents should refresh auth.
+      expect(refreshAuthStub.calledOnce).to.be.true;
     });
 
     it('should not compile when SF_AAB_COMPILATION=false', async () => {

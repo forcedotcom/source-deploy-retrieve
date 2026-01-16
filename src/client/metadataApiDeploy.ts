@@ -531,6 +531,10 @@ const compileAABComponents = async (connection: Connection, aabComponents: Sourc
           ];
         }
         throw error;
+      } finally {
+        // regardless of success or failure, we don't need the named user jwt access token anymore
+        delete connection.accessToken;
+        await connection.refreshAuth();
       }
     })
   );
@@ -546,11 +550,6 @@ const compileAABComponents = async (connection: Connection, aabComponents: Sourc
       message: `${EOL}${errors.join(EOL)}`,
       name: 'AgentCompilationError',
     });
-  } else {
-    // everything successfully compiled
-    // stop using named user jwt access token
-    delete connection.accessToken;
-    await connection.refreshAuth();
   }
 };
 

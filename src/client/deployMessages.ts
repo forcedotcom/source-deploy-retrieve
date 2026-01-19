@@ -17,8 +17,7 @@
 import { basename, dirname, extname, join, posix, sep } from 'node:path';
 import { SfError } from '@salesforce/core/sfError';
 import { ensureArray } from '@salesforce/kit';
-import { SourceComponentWithContent, SourceComponent } from '../resolve/sourceComponent';
-import { ComponentLike } from '../resolve';
+import { ComponentLike, SourceComponent } from '../resolve';
 import { registry } from '../registry/registry';
 import {
   BooleanString,
@@ -30,7 +29,6 @@ import {
   MetadataApiDeployStatus,
 } from './types';
 import { parseDeployDiagnostic } from './diagnosticUtil';
-import { isWebAppBundle } from './utils';
 
 type DeployMessageWithComponentType = DeployMessage & { componentType: string };
 /**
@@ -92,28 +90,12 @@ export const createResponses =
         return [{ ...base, state, ...parseDeployDiagnostic(component, message) } satisfies FileResponseFailure];
       }
 
-      return (
-        isWebAppBundle(component)
-          ? [
-              {
-                ...base,
-                state,
-                filePath: component.content,
-              },
-              ...component.walkContent().map((filePath) => ({
-                fullName: getWebAppBundleContentFullName(component)(filePath),
-                type: 'DigitalExperience',
-                state,
-                filePath,
-              })),
-            ]
-          : [
-              ...(shouldWalkContent(component)
-                ? component.walkContent().map((filePath): FileResponseSuccess => ({ ...base, state, filePath }))
-                : []),
-              ...(component.xml ? [{ ...base, state, filePath: component.xml }] : []),
-            ]
-      ).map((response) => ({
+      return [
+        ...(shouldWalkContent(component)
+          ? component.walkContent().map((filePath): FileResponseSuccess => ({ ...base, state, filePath }))
+          : []),
+        ...(component.xml ? [{ ...base, state, filePath: component.xml } satisfies FileResponseSuccess] : []),
+      ].map((response) => ({
         ...response,
         filePath:
           // deployResults will produce filePaths relative to cwd, which might not be set in all environments
@@ -123,16 +105,6 @@ export const createResponses =
             : response.filePath,
       })) satisfies FileResponseSuccess[];
     });
-
-const getWebAppBundleContentFullName =
-  (component: SourceComponentWithContent) =>
-  (filePath: string): string => {
-    // Normalize paths to ensure relative() works correctly on Windows
-    const normalizedContent = component.content.split(sep).join(posix.sep);
-    const normalizedFilePath = filePath.split(sep).join(posix.sep);
-    const relPath = posix.relative(normalizedContent, normalizedFilePath);
-    return posix.join(component.fullName, relPath);
-  };
 
 /**
  * Groups messages from the deploy result by component fullName and type

@@ -85,9 +85,7 @@ const getContentSourceDestination = (
   if (mergeWith?.content) {
     if (component.content && component.tree.isDirectory(component.content)) {
       // DEs are always inside a dir.
-      // For web_app base type, use standard relative path logic (no ContentType folders)
-      const isWebApp = source.includes(`${sep}web_app${sep}`);
-      if (component.type.strategies?.adapter === 'digitalExperience' && !isWebApp) {
+      if (component.type.strategies?.adapter === 'digitalExperience') {
         const parts = source.split(sep);
         const file = parts.pop() ?? '';
         const dir = join(mergeWith.content, parts.pop() ?? '');

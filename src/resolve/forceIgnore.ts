@@ -28,7 +28,22 @@ export class ForceIgnore {
 
   private readonly parser?: Ignore;
   private readonly forceIgnoreDirectory?: string;
-  private DEFAULT_IGNORE = ['**/*.dup', '**/.*', '**/package2-descriptor.json', '**/package2-manifest.json'];
+  private DEFAULT_IGNORE = [
+    '**/*.dup',
+    // I know it's ugly.  But I want to be able to retrieve metadata to a local dir, segregated by org.
+    // and `.sf` is already ignored in projects, and we already have orgIds for STL
+    // so this nastiness is "ignore all dot files except this one directory"
+    // once you ignore a parent ex `**/.*` you can't unignore something inside that path, at least with the curent ignore library
+    '**/.*',
+    '!.sf',
+    '**/.sf/**',
+    '!**/.sf/orgs',
+    '!**/.sf/orgs/*',
+    '!**/.sf/orgs/*/remoteMetadata',
+    '!**/.sf/orgs/*/remoteMetadata/**',
+    '**/package2-descriptor.json',
+    '**/package2-manifest.json',
+  ];
 
   public constructor(forceIgnorePath = '') {
     try {

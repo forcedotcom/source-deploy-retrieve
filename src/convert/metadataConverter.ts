@@ -38,7 +38,6 @@ export class MetadataConverter {
   public static readonly DESTRUCTIVE_CHANGES_PRE_XML_FILE = 'destructiveChangesPre.xml';
   public static readonly DEFAULT_PACKAGE_PREFIX = 'metadataPackage';
 
-  // Converts between source and metadata formats using registry-driven rules.
   private registry: RegistryAccess;
 
   public constructor(registry = new RegistryAccess()) {

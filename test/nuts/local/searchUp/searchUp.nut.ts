@@ -60,42 +60,70 @@ describe('searchUp nut test', () => {
 
   describe('relative paths', () => {
     it('finds file in parent directory', () => {
-      const startPath = path.join(session.project.dir, 'level1', 'level2', 'startDir');
-      const result = searchUp(startPath, 'target.txt');
-      const expected = path.join(session.project.dir, 'level1', 'level2', 'target.txt');
+      const relativeStartPath = path.relative(
+        session.project.dir,
+        path.join(session.project.dir, 'level1', 'level2', 'startDir')
+      );
+      expect(path.isAbsolute(relativeStartPath)).to.be.false;
+      const result = searchUp(relativeStartPath, 'target.txt');
+      const expected = path.relative(
+        session.project.dir,
+        path.join(session.project.dir, 'level1', 'level2', 'target.txt')
+      );
 
       expect(result).to.equal(expected);
     });
 
     it('finds file multiple levels up', () => {
-      const startPath = path.join(session.project.dir, 'level1', 'level2', 'startDir');
-      const result = searchUp(startPath, '.gitignore');
-      const expected = path.join(session.project.dir, '.gitignore');
+      const relativeStartPath = path.relative(
+        session.project.dir,
+        path.join(session.project.dir, 'level1', 'level2', 'startDir')
+      );
+      expect(path.isAbsolute(relativeStartPath)).to.be.false;
+      const result = searchUp(relativeStartPath, '.gitignore');
+      const expected = path.relative(session.project.dir, path.join(session.project.dir, '.gitignore'));
 
       expect(result).to.equal(expected);
     });
 
     it('finds file in current directory', () => {
-      const startPath = path.join(session.project.dir, 'level1', 'level2', 'startDir');
-      fs.writeFileSync(path.join(startPath, 'localFile.txt'), 'local content');
-      const result = searchUp(startPath, 'localFile.txt');
-      const expected = path.join(startPath, 'localFile.txt');
+      const relativeStartPath = path.relative(
+        session.project.dir,
+        path.join(session.project.dir, 'level1', 'level2', 'startDir')
+      );
+      expect(path.isAbsolute(relativeStartPath)).to.be.false;
+      const absoluteStartPath = path.resolve(session.project.dir, relativeStartPath);
+      fs.writeFileSync(path.join(absoluteStartPath, 'localFile.txt'), 'local content');
+      const result = searchUp(relativeStartPath, 'localFile.txt');
+      const expected = path.relative(session.project.dir, path.join(absoluteStartPath, 'localFile.txt'));
 
       expect(result).to.equal(expected);
     });
 
     it('returns undefined when file not found', () => {
-      const startPath = path.join(session.project.dir, 'level1', 'level2', 'startDir');
-      const result = searchUp(startPath, 'nonexistent.txt');
+      const relativeStartPath = path.relative(
+        session.project.dir,
+        path.join(session.project.dir, 'level1', 'level2', 'startDir')
+      );
+      expect(path.isAbsolute(relativeStartPath)).to.be.false;
+      const result = searchUp(relativeStartPath, 'nonexistent.txt');
 
       expect(result).to.be.undefined;
     });
 
     it('works when starting from file path', () => {
-      const filePath = path.join(session.project.dir, 'level1', 'level2', 'startDir', 'someFile.txt');
-      fs.writeFileSync(filePath, 'content');
-      const result = searchUp(filePath, 'target.txt');
-      const expected = path.join(session.project.dir, 'level1', 'level2', 'target.txt');
+      const relativeFilePath = path.relative(
+        session.project.dir,
+        path.join(session.project.dir, 'level1', 'level2', 'startDir', 'someFile.txt')
+      );
+      expect(path.isAbsolute(relativeFilePath)).to.be.false;
+      const absoluteFilePath = path.resolve(session.project.dir, relativeFilePath);
+      fs.writeFileSync(absoluteFilePath, 'content');
+      const result = searchUp(relativeFilePath, 'target.txt');
+      const expected = path.relative(
+        session.project.dir,
+        path.join(session.project.dir, 'level1', 'level2', 'target.txt')
+      );
 
       expect(result).to.equal(expected);
     });

@@ -331,8 +331,19 @@ export async function filterBotVersionsFromRetrievedComponents(
             // XMLBuilder needs the structure: {botVersions: {fullName: ['v0', 'v1', ...]}}
             if (botXml.Bot) {
               const fullNames = filteredVersions.map((v) => v.fullName).filter((fn): fn is string => !!fn);
-              botXml.Bot.botVersions =
-                fullNames.length > 0 ? { fullName: fullNames.length === 1 ? fullNames[0] : fullNames } : {};
+
+              // Create a new structure for XMLBuilder with the correct type
+              // We need to preserve all other Bot properties and only transform botVersions
+              const botForBuilder: {
+                Bot: { botVersions?: { fullName: string | string[] } } & Omit<typeof botXml.Bot, 'botVersions'>;
+              } = {
+                Bot: {
+                  ...botXml.Bot,
+                  botVersions:
+                    fullNames.length > 0 ? { fullName: fullNames.length === 1 ? fullNames[0] : fullNames } : undefined,
+                },
+              };
+
               // Update the component's cached XML content
               // Build XML string using XMLBuilder (same as JsToXml does internally)
               const builder = new XMLBuilder({
@@ -340,7 +351,7 @@ export async function filterBotVersionsFromRetrievedComponents(
                 indentBy: '    ',
                 ignoreAttributes: false,
               });
-              const builtXml = String(builder.build(botXml));
+              const builtXml = String(builder.build(botForBuilder));
               const xmlContent = correctComments(XML_DECL.concat(handleSpecialEntities(builtXml)));
               if (comp.pathContentMap && comp.xml) {
                 comp.pathContentMap.set(comp.xml, xmlContent);

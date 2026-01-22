@@ -264,6 +264,31 @@ export function extractVersionNumber(fullName: string): number | null {
 }
 
 /**
+ * Determines if a version number matches the filter criteria.
+ * Shared logic for both Bot and GenAiPlannerBundle filtering.
+ *
+ * @param versionNum The version number to check
+ * @param versionFilter The filter criteria ('all', 'highest', or specific number)
+ * @param highestVersion The highest version number (required when filter is 'highest')
+ * @returns true if the version should be kept, false otherwise
+ * @internal Exported for testing purposes
+ */
+export function versionMatchesFilter(
+  versionNum: number,
+  versionFilter: 'all' | 'highest' | number,
+  highestVersion?: number
+): boolean {
+  if (versionFilter === 'all') {
+    return true;
+  }
+  if (versionFilter === 'highest') {
+    return highestVersion !== undefined && versionNum === highestVersion;
+  }
+  // Specific version number
+  return versionNum === versionFilter;
+}
+
+/**
  * Filters BotVersion entries from a Bot XML based on version filter criteria.
  *
  * @internal Exported for testing purposes
@@ -276,32 +301,27 @@ export function filterBotVersionEntries(
     return botVersions;
   }
 
-  if (versionFilter === 'highest') {
-    // Find the highest version number
-    let highestVersion = -1;
-    let highestIndex = -1;
-    for (let i = 0; i < botVersions.length; i++) {
-      const version = botVersions[i];
-      if (version?.fullName) {
-        const versionNum = extractVersionNumber(version.fullName);
-        if (versionNum !== null && versionNum > highestVersion) {
+  // Extract version numbers and find highest if needed
+  const versionsWithNumbers: Array<{ version: { fullName?: string }; versionNum: number; index: number }> = [];
+  let highestVersion = -1;
+
+  for (let i = 0; i < botVersions.length; i++) {
+    const version = botVersions[i];
+    if (version?.fullName) {
+      const versionNum = extractVersionNumber(version.fullName);
+      if (versionNum !== null) {
+        versionsWithNumbers.push({ version, versionNum, index: i });
+        if (versionNum > highestVersion) {
           highestVersion = versionNum;
-          highestIndex = i;
         }
       }
     }
-    return highestIndex >= 0 ? [botVersions[highestIndex]] : [];
   }
 
-  // Filter to specific version
-  const versionNum = versionFilter;
-  return botVersions.filter((version) => {
-    if (version?.fullName) {
-      const extractedVersion = extractVersionNumber(version.fullName);
-      return extractedVersion !== null && extractedVersion === versionNum;
-    }
-    return false;
-  });
+  // Filter using shared logic
+  return versionsWithNumbers
+    .filter(({ versionNum }) => versionMatchesFilter(versionNum, versionFilter, highestVersion))
+    .map(({ version }) => version);
 }
 
 /**
@@ -375,19 +395,8 @@ export async function filterAgentComponents(
       const versionNum = parseInt(nameMatch[2], 10);
       const matchingFilter = filterMap.get(botName);
       if (matchingFilter) {
-        const filter: BotVersionFilter = matchingFilter;
-        let shouldKeep = false;
-
-        if (filter.versionFilter === 'all') {
-          shouldKeep = true;
-        } else if (filter.versionFilter === 'highest') {
-          const highestVersion = highestVersions.get(botName) ?? -1;
-          shouldKeep = versionNum === highestVersion;
-        } else {
-          const targetVersion = typeof filter.versionFilter === 'number' ? filter.versionFilter : -1;
-          shouldKeep = versionNum === targetVersion;
-        }
-
+        const highestVersion = matchingFilter.versionFilter === 'highest' ? highestVersions.get(botName) : undefined;
+        const shouldKeep = versionMatchesFilter(versionNum, matchingFilter.versionFilter, highestVersion);
         if (shouldKeep) {
           filtered.push(comp);
         }

@@ -17,10 +17,11 @@ import * as path from 'node:path';
 import { Logger } from '@salesforce/core/logger';
 import { isString } from '@salesforce/ts-types';
 import fs from 'graceful-fs';
-import { ConvertOutputConfig } from '../convert/types';
-import { MetadataConverter } from '../convert/metadataConverter';
-import { ComponentSet } from '../collections/componentSet';
-import { ZipTreeContainer } from '../resolve/treeContainers';
+import { XMLBuilder } from 'fast-xml-parser';
+import { XML_DECL } from '../common';
+import { ConvertOutputConfig, MetadataConverter } from '../convert';
+import { ComponentSet } from '../collections';
+import { ZipTreeContainer } from '../resolve';
 import { SourceComponent, SourceComponentWithContent } from '../resolve/sourceComponent';
 import { fnJoin } from '../utils/path';
 import {
@@ -242,8 +243,10 @@ const deleteFilePath =
 /**
  * Extracts version number from BotVersion fullName.
  * BotVersion fullName can be in formats like "v0", "v1", "v2" or "0", "1", "2"
+ *
+ * @internal Exported for testing purposes
  */
-function extractVersionNumber(fullName: string): number | null {
+export function extractVersionNumber(fullName: string): number | null {
   // Match patterns like "v0", "v1", "v2" or just "0", "1", "2"
   const versionMatch = fullName.match(/^v?(\d+)$/);
   if (versionMatch) {
@@ -254,8 +257,10 @@ function extractVersionNumber(fullName: string): number | null {
 
 /**
  * Filters BotVersion entries from a Bot XML based on version filter criteria.
+ *
+ * @internal Exported for testing purposes
  */
-function filterBotVersionEntries(
+export function filterBotVersionEntries(
   botVersions: Array<{ fullName?: string }>,
   versionFilter: 'all' | 'highest' | number
 ): Array<{ fullName?: string }> {
@@ -298,14 +303,12 @@ function filterBotVersionEntries(
  * @param components Retrieved source components
  * @param botVersionFilters Version filter rules for bots
  * @returns Components with filtered BotVersion entries removed from Bot XML
+ * @internal Exported for testing purposes
  */
-async function filterBotVersionsFromRetrievedComponents(
+export async function filterBotVersionsFromRetrievedComponents(
   components: SourceComponent[],
   botVersionFilters: BotVersionFilter[]
 ): Promise<SourceComponent[]> {
-  const { XMLBuilder } = await import('fast-xml-parser');
-  const { XML_DECL } = await import('../common/constants.js');
-
   // Helper functions (copied from streams.ts since they're not exported)
   const correctComments = (xml: string): string =>
     xml.includes('<!--') ? xml.replace(/\s+<!--(.*?)-->\s+/g, '<!--$1-->') : xml;
@@ -325,8 +328,11 @@ async function filterBotVersionsFromRetrievedComponents(
             const filteredVersions = filterBotVersionEntries(botVersions, matchingFilter.versionFilter);
 
             // Update the Bot XML with filtered versions
+            // XMLBuilder needs the structure: {botVersions: {fullName: ['v0', 'v1', ...]}}
             if (botXml.Bot) {
-              botXml.Bot.botVersions = filteredVersions;
+              const fullNames = filteredVersions.map((v) => v.fullName).filter((fn): fn is string => !!fn);
+              botXml.Bot.botVersions =
+                fullNames.length > 0 ? { fullName: fullNames.length === 1 ? fullNames[0] : fullNames } : {};
               // Update the component's cached XML content
               // Build XML string using XMLBuilder (same as JsToXml does internally)
               const builder = new XMLBuilder({
@@ -334,17 +340,10 @@ async function filterBotVersionsFromRetrievedComponents(
                 indentBy: '    ',
                 ignoreAttributes: false,
               });
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
               const builtXml = String(builder.build(botXml));
               const xmlContent = correctComments(XML_DECL.concat(handleSpecialEntities(builtXml)));
-              const xmlString = xmlContent;
-              // Update the private pathContentMap using type assertion to access private member
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-              const compWithPrivate = comp as any;
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-              if (compWithPrivate.pathContentMap && comp.xml) {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-                compWithPrivate.pathContentMap.set(comp.xml, xmlString);
+              if (comp.pathContentMap && comp.xml) {
+                comp.pathContentMap.set(comp.xml, xmlContent);
               }
             }
           }
@@ -367,8 +366,9 @@ async function filterBotVersionsFromRetrievedComponents(
  * @param components Retrieved source components
  * @param botVersionFilters Version filter rules for bots
  * @returns Components with filtered GenAiPlannerBundle components removed
+ * @internal Exported for testing purposes
  */
-function filterGenAiPlannerBundles(
+export function filterGenAiPlannerBundles(
   components: SourceComponent[],
   botVersionFilters: BotVersionFilter[]
 ): SourceComponent[] {

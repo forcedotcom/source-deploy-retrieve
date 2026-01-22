@@ -59,12 +59,12 @@ export class SourceComponent implements MetadataComponent {
   public readonly parent?: SourceComponent;
   public parentType?: MetadataType;
   public content?: string;
+  public pathContentMap = new Map<string, string>();
   public replacements?: Record<string, MarkedReplacement[]>;
   private readonly treeContainer: TreeContainer;
   private readonly forceIgnore: ForceIgnore;
   private markedForDelete = false;
   private destructiveChangesType?: DestructiveChangesType;
-  private pathContentMap = new Map<string, string>();
 
   public constructor(
     props: ComponentProperties,

@@ -212,14 +212,12 @@ export class MetadataApiRetrieve extends MetadataTransfer<
           await handleMdapiResponse(mdapiTempOptions, zipFileContents);
         }
 
-        // Pass botVersionFilters from ComponentSet to extract options
-        const extractOptions = {
-          ...this.options,
-          botVersionFilters: this.components?.botVersionFilters ?? this.options.botVersionFilters,
-        };
         ({ componentSet, partialDeleteFileResponses } = await extract({
           zip: zipFileContents,
-          options: extractOptions,
+          options: {
+            ...this.options,
+            botVersionFilters: this.components?.botVersionFilters ?? this.options.botVersionFilters,
+          },
           logger: this.logger,
           mainComponents: this.components,
         }));

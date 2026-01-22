@@ -295,13 +295,13 @@ export class ComponentSetBuilder {
       if (metadata.excludedEntries?.length) {
         debugMsg += ` excluding metadata: ${metadata.excludedEntries.toString()}`;
       }
-      mdMap = buildMapFromMetadata(metadata, registry, botVersionFilters);
+      mdMap = buildMapFromMetadata(metadata, registry);
     }
     getLogger().debug(debugMsg);
 
     const componentSet = await ComponentSet.fromConnection({
       usernameOrConnection: connection,
-      componentFilter: getOrgComponentFilter(org, mdMap, metadata, botVersionFilters),
+      componentFilter: getOrgComponentFilter(org, mdMap, metadata),
       metadataTypes: mdMap.size ? Array.from(mdMap.keys()) : undefined,
       registry,
     });
@@ -360,8 +360,7 @@ const logComponents = (componentSet: ComponentSet): void => {
 const getOrgComponentFilter = (
   org: OrgOption,
   mdMap: MetadataMap,
-  metadata?: MetadataOption,
-  botVersionFilters?: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>
+  metadata?: MetadataOption
 ): FromConnectionOptions['componentFilter'] =>
   metadata?.metadataEntries?.length
     ? (component: Partial<FileProperties>): boolean => {
@@ -369,15 +368,6 @@ const getOrgComponentFilter = (
           const mdMapEntry = mdMap.get(component.type);
           if (!mdMapEntry) {
             return false;
-          }
-
-          // Special handling for Bot components when we have botVersionFilters
-          // We only want to match the base bot name, not versioned names (e.g., BotName_2)
-          if (component.type === 'Bot' && botVersionFilters && botVersionFilters.length > 0) {
-            const baseBotNames = new Set(botVersionFilters.map((f) => f.botName));
-            // Only match if the component name exactly matches a base bot name
-            // This prevents matching versioned names like "MineToPublish_2"
-            return typeof component.fullName === 'string' && baseBotNames.has(component.fullName);
           }
 
           // using minimatch versus RegExp provides better (more expected) matching results
@@ -433,28 +423,13 @@ const typeAndNameToMetadataComponents =
           .filter((cs) => minimatch(cs.fullName, metadataName))
       : [{ type, fullName: metadataName }];
 
-const buildMapFromMetadata = (
-  mdOption: MetadataOption,
-  registry: RegistryAccess,
-  botVersionFilters?: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>
-): MetadataMap => {
+const buildMapFromMetadata = (mdOption: MetadataOption, registry: RegistryAccess): MetadataMap => {
   const mdMap: MetadataMap = new Map<string, string[]>();
 
   // Add metadata type entries we were told to include
   if (mdOption.metadataEntries?.length) {
     mdOption.metadataEntries.map(entryToTypeAndName(registry)).map((cmp) => {
-      // Strip version suffixes and wildcards from Bot names (e.g., MineToPublish_2 -> MineToPublish, MineToPublish_* -> MineToPublish)
-      // This ensures the manifest uses base bot names, not versioned names
-      let metadataName = cmp.metadataName;
-      if (cmp.type.name === 'Bot' && botVersionFilters && botVersionFilters.length > 0) {
-        const { baseBotName } = parseBotVersionFilter(metadataName);
-        const matchingFilter = botVersionFilters.find((f) => f.botName === baseBotName);
-        if (matchingFilter) {
-          metadataName = matchingFilter.botName;
-        }
-      }
-
-      mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), metadataName]);
+      mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), cmp.metadataName]);
     });
   }
 

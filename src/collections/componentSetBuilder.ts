@@ -206,6 +206,7 @@ export class ComponentSetBuilder {
       registry,
     });
     metadata.metadataEntries = replacedEntries;
+    // Always set botVersionFilters if they exist (even if empty, to distinguish from undefined)
     if (localBotVersionFilters.length > 0) {
       componentSet.botVersionFilters = localBotVersionFilters;
     }

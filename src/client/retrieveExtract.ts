@@ -97,15 +97,39 @@ export const extract = async ({
     // Filter BotVersion components and GenAiPlannerBundle components right after retrieval
     // This is needed when rootTypesWithDependencies is used, as it will retrieve all BotVersions
     // and GenAiPlannerBundles regardless of what's in the manifest.
-    if (botVersionFilters && Array.isArray(botVersionFilters) && botVersionFilters.length > 0) {
+    // If botVersionFilters is undefined, default to 'highest' for all Bot components
+    let filtersToUse: BotVersionFilter[] | undefined = botVersionFilters;
+    if (!filtersToUse || filtersToUse.length === 0) {
+      // No filters specified - default to 'highest' for all Bot components
+      // eslint-disable-next-line no-console
+      console.log("[extract] No botVersionFilters specified, defaulting to 'highest' for all Bot components");
+      const allBotNames = new Set<string>();
+      for (const comp of retrievedComponents) {
+        if (comp.type.name === 'Bot') {
+          allBotNames.add(comp.fullName);
+        }
+      }
+      filtersToUse = Array.from(allBotNames).map((botName) => ({
+        botName,
+        versionFilter: 'highest',
+      }));
+      if (filtersToUse.length > 0) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `[extract] Created default filters for ${filtersToUse.length} bots: ${JSON.stringify(filtersToUse)}`
+        );
+      }
+    }
+
+    if (filtersToUse && filtersToUse.length > 0) {
       // eslint-disable-next-line no-console
       console.log(
-        `[extract] Filtering BotVersions and GenAiPlannerBundles after retrieve: ${JSON.stringify(botVersionFilters)}`
+        `[extract] Filtering BotVersions and GenAiPlannerBundles after retrieve: ${JSON.stringify(filtersToUse)}`
       );
       // eslint-disable-next-line no-await-in-loop
-      retrievedComponents = await filterBotVersionsFromRetrievedComponents(retrievedComponents, botVersionFilters);
+      retrievedComponents = await filterBotVersionsFromRetrievedComponents(retrievedComponents, filtersToUse);
       // Filter GenAiPlannerBundle components based on version filters
-      retrievedComponents = filterGenAiPlannerBundles(retrievedComponents, botVersionFilters);
+      retrievedComponents = filterGenAiPlannerBundles(retrievedComponents, filtersToUse);
     }
 
     if (merge) {

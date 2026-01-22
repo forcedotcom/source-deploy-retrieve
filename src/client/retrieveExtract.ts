@@ -24,6 +24,7 @@ import { ComponentSet } from '../collections';
 import { ZipTreeContainer } from '../resolve';
 import { SourceComponent, SourceComponentWithContent } from '../resolve/sourceComponent';
 import { fnJoin } from '../utils/path';
+import { correctComments, handleSpecialEntities } from '../convert/streams';
 import {
   BotVersionFilter,
   ComponentStatus,
@@ -83,27 +84,34 @@ export const extract = async ({
     // Filter BotVersion components and GenAiPlannerBundle components right after retrieval
     // This is needed when rootTypesWithDependencies is used, as it will retrieve all BotVersions
     // and GenAiPlannerBundles regardless of what's in the manifest.
-    // If botVersionFilters is undefined, default to 'highest' for all Bot components
-    let filtersToUse = botVersionFilters && Array.isArray(botVersionFilters) ? botVersionFilters : undefined;
-    if (!filtersToUse || filtersToUse.length === 0) {
-      // No filters specified - default to 'highest' for all Bot components
-      const allBotNames = new Set<string>();
-      for (const comp of retrievedComponents) {
-        if (comp.type.name === 'Bot') {
-          allBotNames.add(comp.fullName);
+    // Early exit: only process if there are Bot or GenAiPlannerBundle components
+    const hasRelevantComponents = retrievedComponents.some(
+      (comp) => comp.type.name === 'Bot' || comp.type.name === 'GenAiPlannerBundle'
+    );
+
+    if (hasRelevantComponents) {
+      // If botVersionFilters is undefined, default to 'highest' for all Bot components
+      let filtersToUse = botVersionFilters && Array.isArray(botVersionFilters) ? botVersionFilters : undefined;
+      if (!filtersToUse || filtersToUse.length === 0) {
+        // No filters specified - default to 'highest' for all Bot components
+        const allBotNames = new Set<string>();
+        for (const comp of retrievedComponents) {
+          if (comp.type.name === 'Bot') {
+            allBotNames.add(comp.fullName);
+          }
+        }
+        if (allBotNames.size > 0) {
+          filtersToUse = Array.from(allBotNames).map((botName) => ({
+            botName,
+            versionFilter: 'highest',
+          }));
         }
       }
-      filtersToUse = Array.from(allBotNames).map((botName) => ({
-        botName,
-        versionFilter: 'highest',
-      }));
-    }
 
-    if (filtersToUse && filtersToUse.length > 0) {
-      // eslint-disable-next-line no-await-in-loop
-      retrievedComponents = await filterBotVersionsFromRetrievedComponents(retrievedComponents, filtersToUse);
-      // Filter GenAiPlannerBundle components based on version filters
-      retrievedComponents = filterGenAiPlannerBundles(retrievedComponents, filtersToUse);
+      if (filtersToUse && filtersToUse.length > 0) {
+        // eslint-disable-next-line no-await-in-loop
+        retrievedComponents = await filterAgentComponents(retrievedComponents, filtersToUse);
+      }
     }
 
     if (merge) {
@@ -297,145 +305,153 @@ export function filterBotVersionEntries(
 }
 
 /**
- * Filters BotVersion components from retrieved Bot components by modifying their XML content.
- * This removes unwanted BotVersion entries from the Bot component's XML before conversion.
+ * Filters Bot and GenAiPlannerBundle components based on botVersionFilters.
+ * For Bot components: modifies XML to filter BotVersion entries.
+ * For GenAiPlannerBundle components: removes components that don't match filter criteria.
  *
  * @param components Retrieved source components
  * @param botVersionFilters Version filter rules for bots
- * @returns Components with filtered BotVersion entries removed from Bot XML
+ * @returns Components with filtered BotVersion entries and GenAiPlannerBundle components
  * @internal Exported for testing purposes
  */
-export async function filterBotVersionsFromRetrievedComponents(
+export async function filterAgentComponents(
   components: SourceComponent[],
   botVersionFilters: BotVersionFilter[]
 ): Promise<SourceComponent[]> {
-  // Helper functions (copied from streams.ts since they're not exported)
-  const correctComments = (xml: string): string =>
-    xml.includes('<!--') ? xml.replace(/\s+<!--(.*?)-->\s+/g, '<!--$1-->') : xml;
-  const handleSpecialEntities = (xml: string): string => xml.replaceAll('&amp;#160;', '&#160;');
+  const filterMap = new Map<string, BotVersionFilter>();
+  for (const filter of botVersionFilters) {
+    const botFilter: BotVersionFilter = filter;
+    filterMap.set(botFilter.botName, botFilter);
+  }
 
-  // Process all Bot components in parallel
-  const filteredPromises = components.map(async (comp) => {
+  // Pre-compute which bots need 'highest' filtering
+  const botsNeedingHighest = new Set<string>();
+  for (const filter of botVersionFilters) {
+    const botFilter: BotVersionFilter = filter;
+    if (botFilter.versionFilter === 'highest') {
+      botsNeedingHighest.add(botFilter.botName);
+    }
+  }
+
+  // Single pass: pre-compute highest versions, collect Bot components for async processing,
+  // and collect GenAiPlannerBundle components for filtering
+  const highestVersions = new Map<string, number>();
+  const botComponents: SourceComponent[] = [];
+  const genAiPlannerBundles: SourceComponent[] = [];
+  const filtered: SourceComponent[] = [];
+
+  for (const comp of components) {
     if (comp.type.name === 'Bot') {
-      const matchingFilter = botVersionFilters.find((f) => f.botName === comp.fullName);
-      if (matchingFilter && comp.xml) {
-        try {
-          // Parse the Bot XML to get BotVersion entries
-          const botXml = await comp.parseXml<{ Bot?: { botVersions?: Array<{ fullName?: string }> } }>();
-          const botVersions = botXml.Bot?.botVersions;
+      // Collect Bot components for async processing
+      botComponents.push(comp);
+      // Include in result (will be modified in place)
+      filtered.push(comp);
+    } else if (comp.type.name === 'GenAiPlannerBundle') {
+      // Collect for filtering after we know highest versions
+      genAiPlannerBundles.push(comp);
+      // Pre-compute highest versions
+      const nameMatch = comp.fullName.match(/^(.+)_v(\d+)$/);
+      if (nameMatch) {
+        const botName = nameMatch[1];
+        const versionNum = parseInt(nameMatch[2], 10);
+        if (botsNeedingHighest.has(botName)) {
+          const currentHighest = highestVersions.get(botName) ?? -1;
+          if (versionNum > currentHighest) {
+            highestVersions.set(botName, versionNum);
+          }
+        }
+      }
+    } else {
+      // Not a Bot or GenAiPlannerBundle, keep it
+      filtered.push(comp);
+    }
+  }
 
-          if (botVersions && Array.isArray(botVersions)) {
-            const filteredVersions = filterBotVersionEntries(botVersions, matchingFilter.versionFilter);
+  // Filter GenAiPlannerBundle components now that we have final highest versions
+  for (const comp of genAiPlannerBundles) {
+    const nameMatch = comp.fullName.match(/^(.+)_v(\d+)$/);
+    if (nameMatch) {
+      const botName = nameMatch[1];
+      const versionNum = parseInt(nameMatch[2], 10);
+      const matchingFilter = filterMap.get(botName);
+      if (matchingFilter) {
+        const filter: BotVersionFilter = matchingFilter;
+        let shouldKeep = false;
 
-            // Update the Bot XML with filtered versions
-            // XMLBuilder needs the structure: {botVersions: {fullName: ['v0', 'v1', ...]}}
-            if (botXml.Bot) {
-              const fullNames = filteredVersions.map((v) => v.fullName).filter((fn): fn is string => !!fn);
+        if (filter.versionFilter === 'all') {
+          shouldKeep = true;
+        } else if (filter.versionFilter === 'highest') {
+          const highestVersion = highestVersions.get(botName) ?? -1;
+          shouldKeep = versionNum === highestVersion;
+        } else {
+          const targetVersion = typeof filter.versionFilter === 'number' ? filter.versionFilter : -1;
+          shouldKeep = versionNum === targetVersion;
+        }
 
-              // Create a new structure for XMLBuilder with the correct type
-              // We need to preserve all other Bot properties and only transform botVersions
-              const botForBuilder: {
-                Bot: { botVersions?: { fullName: string | string[] } } & Omit<typeof botXml.Bot, 'botVersions'>;
-              } = {
-                Bot: {
-                  ...botXml.Bot,
-                  botVersions:
-                    fullNames.length > 0 ? { fullName: fullNames.length === 1 ? fullNames[0] : fullNames } : undefined,
-                },
-              };
+        if (shouldKeep) {
+          filtered.push(comp);
+        }
+      } else {
+        // No filter for this bot, keep all GenAiPlannerBundles
+        filtered.push(comp);
+      }
+    } else {
+      // Name doesn't match expected pattern, keep it
+      filtered.push(comp);
+    }
+  }
 
-              // Update the component's cached XML content
-              // Build XML string using XMLBuilder (same as JsToXml does internally)
-              const builder = new XMLBuilder({
-                format: true,
-                indentBy: '    ',
-                ignoreAttributes: false,
-              });
-              const builtXml = String(builder.build(botForBuilder));
-              const xmlContent = correctComments(XML_DECL.concat(handleSpecialEntities(builtXml)));
-              if (comp.pathContentMap && comp.xml) {
-                comp.pathContentMap.set(comp.xml, xmlContent);
-              }
+  // Process Bot components in parallel (XML parsing is async)
+  const botPromises = botComponents.map(async (comp) => {
+    const matchingFilter = filterMap.get(comp.fullName);
+    if (matchingFilter && comp.xml) {
+      try {
+        // Parse the Bot XML to get BotVersion entries
+        const botXml = await comp.parseXml<{ Bot?: { botVersions?: Array<{ fullName?: string }> } }>();
+        const botVersions = botXml.Bot?.botVersions;
+
+        if (botVersions && Array.isArray(botVersions)) {
+          const filteredVersions = filterBotVersionEntries(botVersions, matchingFilter.versionFilter);
+
+          // Update the Bot XML with filtered versions
+          // XMLBuilder needs the structure: {botVersions: {fullName: ['v0', 'v1', ...]}}
+          if (botXml.Bot) {
+            const fullNames = filteredVersions.map((v) => v.fullName).filter((f): f is string => !!f);
+
+            // Create a new structure for XMLBuilder with the correct type
+            // We need to preserve all other Bot properties and only transform botVersions
+            const botForBuilder: {
+              Bot: { botVersions?: { fullName: string | string[] } } & Omit<typeof botXml.Bot, 'botVersions'>;
+            } = {
+              Bot: {
+                ...botXml.Bot,
+                botVersions:
+                  fullNames.length > 0 ? { fullName: fullNames.length === 1 ? fullNames[0] : fullNames } : undefined,
+              },
+            };
+
+            // Update the component's cached XML content
+            // Build XML string using XMLBuilder (same as JsToXml does internally)
+            const builder = new XMLBuilder({
+              format: true,
+              indentBy: '    ',
+              ignoreAttributes: false,
+            });
+            const builtXml = String(builder.build(botForBuilder));
+            const xmlContent = correctComments(XML_DECL.concat(handleSpecialEntities(builtXml)));
+            if (comp.pathContentMap && comp.xml) {
+              comp.pathContentMap.set(comp.xml, xmlContent);
             }
           }
-        } catch (error) {
-          // Continue with unfiltered component if there's an error
         }
+      } catch (error) {
+        // Continue with unfiltered component if there's an error
       }
     }
     return comp;
   });
 
-  return Promise.all(filteredPromises);
-}
-
-/**
- * Filters GenAiPlannerBundle components based on botVersionFilters.
- * GenAiPlannerBundle names follow the pattern "BotName_v{N}" where N is the version number.
- * Only keeps GenAiPlannerBundles that match the filter criteria.
- *
- * @param components Retrieved source components
- * @param botVersionFilters Version filter rules for bots
- * @returns Components with filtered GenAiPlannerBundle components removed
- * @internal Exported for testing purposes
- */
-export function filterGenAiPlannerBundles(
-  components: SourceComponent[],
-  botVersionFilters: BotVersionFilter[]
-): SourceComponent[] {
-  const filtered: SourceComponent[] = [];
-
-  for (const comp of components) {
-    if (comp.type.name === 'GenAiPlannerBundle') {
-      // GenAiPlannerBundle names are like "MineToPublish_v2"
-      // Extract bot name and version from the component name
-      const nameMatch = comp.fullName.match(/^(.+)_v(\d+)$/);
-      if (nameMatch) {
-        const botName = nameMatch[1];
-        const versionNum = parseInt(nameMatch[2], 10);
-        // Find matching filter for this bot
-        const matchingFilter = botVersionFilters.find((f) => f.botName === botName);
-        if (matchingFilter) {
-          let shouldKeep = false;
-
-          if (matchingFilter.versionFilter === 'all') {
-            shouldKeep = true;
-          } else if (matchingFilter.versionFilter === 'highest') {
-            // For highest, we need to find the highest version among all GenAiPlannerBundles for this bot
-            const allVersionsForBot = components
-              .filter((c) => c.type.name === 'GenAiPlannerBundle')
-              .map((c) => {
-                const match = c.fullName.match(/^(.+)_v(\d+)$/);
-                if (match && match[1] === botName) {
-                  return parseInt(match[2], 10);
-                }
-                return -1;
-              })
-              .filter((v) => v >= 0);
-            const highestVersion = allVersionsForBot.length > 0 ? Math.max(...allVersionsForBot) : -1;
-            shouldKeep = versionNum === highestVersion;
-          } else {
-            // Filter to specific version
-            const targetVersion = typeof matchingFilter.versionFilter === 'number' ? matchingFilter.versionFilter : -1;
-            shouldKeep = versionNum === targetVersion;
-          }
-
-          if (shouldKeep) {
-            filtered.push(comp);
-          }
-        } else {
-          // No filter for this bot, keep all GenAiPlannerBundles
-          filtered.push(comp);
-        }
-      } else {
-        // Name doesn't match expected pattern, keep it
-        filtered.push(comp);
-      }
-    } else {
-      // Not a GenAiPlannerBundle, keep it
-      filtered.push(comp);
-    }
-  }
+  await Promise.all(botPromises);
 
   return filtered;
 }

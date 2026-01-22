@@ -18,12 +18,7 @@ import { expect } from 'chai';
 import { XMLParser } from 'fast-xml-parser';
 import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../src';
 import { BotVersionFilter } from '../../src/client/types';
-import {
-  extractVersionNumber,
-  filterBotVersionEntries,
-  filterBotVersionsFromRetrievedComponents,
-  filterGenAiPlannerBundles,
-} from '../../src/client/retrieveExtract';
+import { extractVersionNumber, filterAgentComponents, filterBotVersionEntries } from '../../src/client/retrieveExtract';
 
 describe('retrieveExtract - Version Filtering', () => {
   const registryAccess = new RegistryAccess();
@@ -126,7 +121,7 @@ describe('retrieveExtract - Version Filtering', () => {
     });
   });
 
-  describe('filterBotVersionsFromRetrievedComponents', () => {
+  describe('filterAgentComponents - Bot filtering', () => {
     const createMockBotComponent = (botName: string, botVersions: string[]): SourceComponent => {
       const botXml = `<?xml version="1.0" encoding="UTF-8"?>
 <Bot xmlns="http://soap.sforce.com/2006/04/metadata">
@@ -153,21 +148,17 @@ describe('retrieveExtract - Version Filtering', () => {
       );
 
       // Mock the parseXml method and pathContentMap
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const componentWithPrivate = component as any;
+      const componentWithPrivate = component;
       componentWithPrivate.pathContentMap = new Map();
-      componentWithPrivate.pathContentMap.set(component.xml, botXml);
+      componentWithPrivate.pathContentMap.set(component.xml!, botXml);
 
       // Mock parseXml to read from pathContentMap and parse the XML
       // This allows the filter function to update pathContentMap and we can verify it
       const parser = new XMLParser({ ignoreAttributes: false, isArray: () => false });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      component.parseXml = (): Promise<any> => {
+      component.parseXml = () => {
         // Read from pathContentMap if available, otherwise use original
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
-        const xmlContent = (componentWithPrivate.pathContentMap?.get(component.xml) ?? botXml) as string;
+        const xmlContent = componentWithPrivate.pathContentMap?.get(component.xml!) ?? botXml;
         // Parse the XML content
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const parsed = parser.parse(xmlContent);
         // Convert XMLParser structure to the structure expected by the function
         // XMLParser creates: { Bot: { botVersions: { fullName: ['v0', 'v1', ...] } } }
@@ -197,15 +188,12 @@ describe('retrieveExtract - Version Filtering', () => {
       const component = createMockBotComponent('MyBot', ['v0', 'v1', 'v2']);
       const filters: BotVersionFilter[] = [{ botName: 'MyBot', versionFilter: 'all' }];
 
-      const filtered = await filterBotVersionsFromRetrievedComponents([component], filters);
+      const filtered = await filterAgentComponents([component], filters);
 
       expect(filtered).to.have.length(1);
       const filteredComponent = filtered[0];
       // Check the XML content directly from pathContentMap
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const componentWithPrivate = filteredComponent as any;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      const xmlContent = componentWithPrivate.pathContentMap?.get(filteredComponent.xml);
+      const xmlContent = filteredComponent.pathContentMap?.get(filteredComponent.xml!);
       // When filter is "all", all versions should be present
       // Count fullName elements - should include the Bot's fullName (1) + botVersions fullNames (3) = 4 total
       // But we only want to count those in botVersions section
@@ -231,15 +219,12 @@ describe('retrieveExtract - Version Filtering', () => {
       const component = createMockBotComponent('MyBot', ['v0', 'v1', 'v5', 'v2']);
       const filters: BotVersionFilter[] = [{ botName: 'MyBot', versionFilter: 'highest' }];
 
-      const filtered = await filterBotVersionsFromRetrievedComponents([component], filters);
+      const filtered = await filterAgentComponents([component], filters);
 
       expect(filtered).to.have.length(1);
       const filteredComponent = filtered[0];
       // Check the XML content directly from pathContentMap
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const componentWithPrivate = filteredComponent as any;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      const xmlContent = componentWithPrivate.pathContentMap?.get(filteredComponent.xml);
+      const xmlContent = filteredComponent.pathContentMap?.get(filteredComponent.xml!);
       // Count the number of fullName elements within botVersions section only - should be 1 (v5)
       const botVersionsMatch = xmlContent?.match(/<botVersions>([\s\S]*?)<\/botVersions>/);
       const botVersionsContent = botVersionsMatch?.[1] ?? '';
@@ -255,15 +240,12 @@ describe('retrieveExtract - Version Filtering', () => {
       const component = createMockBotComponent('MyBot', ['v0', 'v1', 'v2', 'v3']);
       const filters: BotVersionFilter[] = [{ botName: 'MyBot', versionFilter: 2 }];
 
-      const filtered = await filterBotVersionsFromRetrievedComponents([component], filters);
+      const filtered = await filterAgentComponents([component], filters);
 
       expect(filtered).to.have.length(1);
       const filteredComponent = filtered[0];
       // Check the XML content directly from pathContentMap
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const componentWithPrivate = filteredComponent as any;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      const xmlContent = componentWithPrivate.pathContentMap?.get(filteredComponent.xml);
+      const xmlContent = filteredComponent.pathContentMap?.get(filteredComponent.xml!);
       // Count the number of fullName elements within botVersions section only - should be 1 (v2)
       const botVersionsMatch = xmlContent?.match(/<botVersions>([\s\S]*?)<\/botVersions>/);
       const botVersionsContent = botVersionsMatch?.[1] ?? '';
@@ -279,14 +261,12 @@ describe('retrieveExtract - Version Filtering', () => {
       const component = createMockBotComponent('MyBot', ['v0', 'v1', 'v2']);
       const filters: BotVersionFilter[] = [{ botName: 'OtherBot', versionFilter: 'highest' }];
 
-      const filtered = await filterBotVersionsFromRetrievedComponents([component], filters);
+      const filtered = await filterAgentComponents([component], filters);
 
       expect(filtered).to.have.length(1);
       // Component should remain unchanged - check XML content directly
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const componentWithPrivate = filtered[0] as any;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      const xmlContent = componentWithPrivate.pathContentMap?.get(filtered[0].xml);
+      const firstFiltered = filtered[0];
+      const xmlContent = firstFiltered.pathContentMap?.get(filtered[0].xml!);
       // Count fullName elements within botVersions section only
       const botVersionsMatch = xmlContent?.match(/<botVersions>([\s\S]*?)<\/botVersions>/);
       const botVersionsContent = botVersionsMatch?.[1] ?? '';
@@ -302,7 +282,7 @@ describe('retrieveExtract - Version Filtering', () => {
       });
       const filters: BotVersionFilter[] = [{ botName: 'MyBot', versionFilter: 'highest' }];
 
-      const filtered = await filterBotVersionsFromRetrievedComponents([apexComponent], filters);
+      const filtered = await filterAgentComponents([apexComponent], filters);
 
       expect(filtered).to.have.length(1);
       expect(filtered[0]).to.equal(apexComponent);
@@ -312,14 +292,12 @@ describe('retrieveExtract - Version Filtering', () => {
       const component = createMockBotComponent('MyBot', []);
       const filters: BotVersionFilter[] = [{ botName: 'MyBot', versionFilter: 'highest' }];
 
-      const filtered = await filterBotVersionsFromRetrievedComponents([component], filters);
+      const filtered = await filterAgentComponents([component], filters);
 
       expect(filtered).to.have.length(1);
       // When there are no botVersions, check XML content directly
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const componentWithPrivate = filtered[0] as any;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      const xmlContent = componentWithPrivate.pathContentMap?.get(filtered[0].xml);
+      const componentWithPrivate = filtered[0];
+      const xmlContent = componentWithPrivate.pathContentMap?.get(filtered[0].xml!);
       // Should have botVersions tag but no fullName elements inside it
       const botVersionsMatch = xmlContent?.match(/<botVersions>([\s\S]*?)<\/botVersions>/);
       if (botVersionsMatch) {
@@ -340,18 +318,14 @@ describe('retrieveExtract - Version Filtering', () => {
         { botName: 'Bot2', versionFilter: 1 },
       ];
 
-      const filtered = await filterBotVersionsFromRetrievedComponents([bot1, bot2], filters);
+      const filtered = await filterAgentComponents([bot1, bot2], filters);
 
       expect(filtered).to.have.length(2);
       // Check XML content directly for both components
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const componentWithPrivate1 = filtered[0] as any;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      const xmlContent1 = componentWithPrivate1.pathContentMap?.get(filtered[0].xml);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const componentWithPrivate2 = filtered[1] as any;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      const xmlContent2 = componentWithPrivate2.pathContentMap?.get(filtered[1].xml);
+      const componentWithPrivate1 = filtered[0];
+      const xmlContent1 = componentWithPrivate1.pathContentMap?.get(filtered[0].xml!);
+      const componentWithPrivate2 = filtered[1];
+      const xmlContent2 = componentWithPrivate2.pathContentMap?.get(filtered[1].xml!);
       // Count fullName elements within botVersions section only
       const botVersionsMatch1 = xmlContent1?.match(/<botVersions>([\s\S]*?)<\/botVersions>/);
       const botVersionsContent1 = botVersionsMatch1?.[1] ?? '';
@@ -366,7 +340,7 @@ describe('retrieveExtract - Version Filtering', () => {
     });
   });
 
-  describe('filterGenAiPlannerBundles', () => {
+  describe('filterAgentComponents - GenAiPlannerBundle filtering', () => {
     const createMockGenAiPlannerBundle = (fullName: string): SourceComponent =>
       new SourceComponent({
         name: fullName,
@@ -374,7 +348,7 @@ describe('retrieveExtract - Version Filtering', () => {
         xml: join('genAiPlannerBundles', fullName, `${fullName}.genAiPlannerBundle-meta.xml`),
       });
 
-    it('should keep all GenAiPlannerBundles when filter is "all"', () => {
+    it('should keep all GenAiPlannerBundles when filter is "all"', async () => {
       const components = [
         createMockGenAiPlannerBundle('MyBot_v0'),
         createMockGenAiPlannerBundle('MyBot_v1'),
@@ -383,13 +357,13 @@ describe('retrieveExtract - Version Filtering', () => {
       ];
       const filters: BotVersionFilter[] = [{ botName: 'MyBot', versionFilter: 'all' }];
 
-      const filtered = filterGenAiPlannerBundles(components, filters);
+      const filtered = await filterAgentComponents(components, filters);
 
       expect(filtered).to.have.length(4);
       expect(filtered.filter((c: SourceComponent) => c.type.name === 'GenAiPlannerBundle')).to.have.length(3);
     });
 
-    it('should keep only highest version GenAiPlannerBundle when filter is "highest"', () => {
+    it('should keep only highest version GenAiPlannerBundle when filter is "highest"', async () => {
       const components = [
         createMockGenAiPlannerBundle('MyBot_v0'),
         createMockGenAiPlannerBundle('MyBot_v1'),
@@ -399,7 +373,7 @@ describe('retrieveExtract - Version Filtering', () => {
       ];
       const filters: BotVersionFilter[] = [{ botName: 'MyBot', versionFilter: 'highest' }];
 
-      const filtered = filterGenAiPlannerBundles(components, filters);
+      const filtered = await filterAgentComponents(components, filters);
 
       expect(filtered).to.have.length(2);
       const plannerBundles = filtered.filter((c: SourceComponent) => c.type.name === 'GenAiPlannerBundle');
@@ -407,7 +381,7 @@ describe('retrieveExtract - Version Filtering', () => {
       expect(plannerBundles[0].fullName).to.equal('MyBot_v5');
     });
 
-    it('should keep only specific version GenAiPlannerBundle when filter is a number', () => {
+    it('should keep only specific version GenAiPlannerBundle when filter is a number', async () => {
       const components = [
         createMockGenAiPlannerBundle('MyBot_v0'),
         createMockGenAiPlannerBundle('MyBot_v1'),
@@ -417,7 +391,7 @@ describe('retrieveExtract - Version Filtering', () => {
       ];
       const filters: BotVersionFilter[] = [{ botName: 'MyBot', versionFilter: 2 }];
 
-      const filtered = filterGenAiPlannerBundles(components, filters);
+      const filtered = await filterAgentComponents(components, filters);
 
       expect(filtered).to.have.length(2);
       const plannerBundles = filtered.filter((c: SourceComponent) => c.type.name === 'GenAiPlannerBundle');
@@ -425,7 +399,7 @@ describe('retrieveExtract - Version Filtering', () => {
       expect(plannerBundles[0].fullName).to.equal('MyBot_v2');
     });
 
-    it('should keep all GenAiPlannerBundles when no matching filter exists', () => {
+    it('should keep all GenAiPlannerBundles when no matching filter exists', async () => {
       const components = [
         createMockGenAiPlannerBundle('MyBot_v0'),
         createMockGenAiPlannerBundle('MyBot_v1'),
@@ -433,13 +407,13 @@ describe('retrieveExtract - Version Filtering', () => {
       ];
       const filters: BotVersionFilter[] = [{ botName: 'OtherBot', versionFilter: 'highest' }];
 
-      const filtered = filterGenAiPlannerBundles(components, filters);
+      const filtered = await filterAgentComponents(components, filters);
 
       expect(filtered).to.have.length(3);
       expect(filtered.filter((c: SourceComponent) => c.type.name === 'GenAiPlannerBundle')).to.have.length(2);
     });
 
-    it('should keep GenAiPlannerBundles that do not match expected pattern', () => {
+    it('should keep GenAiPlannerBundles that do not match expected pattern', async () => {
       const components = [
         createMockGenAiPlannerBundle('InvalidName'),
         createMockGenAiPlannerBundle('MyBot_v1'),
@@ -447,28 +421,28 @@ describe('retrieveExtract - Version Filtering', () => {
       ];
       const filters: BotVersionFilter[] = [{ botName: 'MyBot', versionFilter: 'highest' }];
 
-      const filtered = filterGenAiPlannerBundles(components, filters);
+      const filtered = await filterAgentComponents(components, filters);
 
       expect(filtered).to.have.length(3);
       const plannerBundles = filtered.filter((c: SourceComponent) => c.type.name === 'GenAiPlannerBundle');
       expect(plannerBundles).to.have.length(2);
     });
 
-    it('should not modify non-GenAiPlannerBundle components', () => {
+    it('should not modify non-GenAiPlannerBundle components', async () => {
       const components = [
         new SourceComponent({ name: 'MyClass', type: apexClassType }),
         new SourceComponent({ name: 'MyTrigger', type: registry.types.apextrigger }),
       ];
       const filters: BotVersionFilter[] = [{ botName: 'MyBot', versionFilter: 'highest' }];
 
-      const filtered = filterGenAiPlannerBundles(components, filters);
+      const filtered = await filterAgentComponents(components, filters);
 
       expect(filtered).to.have.length(2);
       expect(filtered[0].type.name).to.equal('ApexClass');
       expect(filtered[1].type.name).to.equal('ApexTrigger');
     });
 
-    it('should handle multiple bots with different filters', () => {
+    it('should handle multiple bots with different filters', async () => {
       const components = [
         createMockGenAiPlannerBundle('Bot1_v0'),
         createMockGenAiPlannerBundle('Bot1_v2'),
@@ -480,7 +454,7 @@ describe('retrieveExtract - Version Filtering', () => {
         { botName: 'Bot2', versionFilter: 0 },
       ];
 
-      const filtered = filterGenAiPlannerBundles(components, filters);
+      const filtered = await filterAgentComponents(components, filters);
 
       expect(filtered).to.have.length(2);
       expect(filtered[0].fullName).to.equal('Bot1_v2');
@@ -515,21 +489,17 @@ describe('retrieveExtract - Version Filtering', () => {
       );
 
       // Mock the parseXml method and pathContentMap
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const componentWithPrivate = component as any;
+      const componentWithPrivate = component;
       componentWithPrivate.pathContentMap = new Map();
-      componentWithPrivate.pathContentMap.set(component.xml, botXml);
+      componentWithPrivate.pathContentMap.set(component.xml!, botXml);
 
       // Mock parseXml to read from pathContentMap and parse the XML
       // This allows the filter function to update pathContentMap and we can verify it
       const parser = new XMLParser({ ignoreAttributes: false, isArray: () => false });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      component.parseXml = (): Promise<any> => {
+      component.parseXml = () => {
         // Read from pathContentMap if available, otherwise use original
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
-        const xmlContent = (componentWithPrivate.pathContentMap?.get(component.xml) ?? botXml) as string;
+        const xmlContent = componentWithPrivate.pathContentMap?.get(component.xml!) ?? botXml;
         // Parse the XML content
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const parsed = parser.parse(xmlContent);
         // Convert XMLParser structure to the structure expected by the function
         // XMLParser creates: { Bot: { botVersions: { fullName: ['v0', 'v1', ...] } } }
@@ -555,7 +525,7 @@ describe('retrieveExtract - Version Filtering', () => {
       return component;
     };
 
-    it('should NOT invoke filtering when botVersionFilters is undefined for non-Bot components', () => {
+    it('should NOT invoke filtering when botVersionFilters is undefined for non-Bot components', async () => {
       // This test documents that filtering is only applied to Bot and GenAiPlannerBundle components
       // The extract function checks for botVersionFilters before invoking filtering logic
       // Non-Bot/GenAiPlannerBundle components should pass through unchanged
@@ -566,18 +536,18 @@ describe('retrieveExtract - Version Filtering', () => {
       });
       const filters: BotVersionFilter[] = [];
 
-      const filtered = filterGenAiPlannerBundles([apexComponent], filters);
+      const filtered = await filterAgentComponents([apexComponent], filters);
       expect(filtered).to.have.length(1);
       expect(filtered[0]).to.equal(apexComponent);
     });
 
-    it('should NOT invoke filtering when botVersionFilters is empty array', () => {
+    it('should NOT invoke filtering when botVersionFilters is empty array', async () => {
       // Empty filters should not trigger filtering - components pass through unchanged
       const botComponent = createMockBotComponent('MyBot', ['v0', 'v1']);
       const filters: BotVersionFilter[] = [];
 
-      // When filters are empty, filterGenAiPlannerBundles keeps all components
-      const filtered = filterGenAiPlannerBundles([botComponent], filters);
+      // When filters are empty, filterAgentComponents keeps all components
+      const filtered = await filterAgentComponents([botComponent], filters);
       expect(filtered).to.have.length(1);
     });
   });

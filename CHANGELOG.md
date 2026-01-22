@@ -1,3 +1,12 @@
+## [12.31.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.7...12.31.8) (2026-01-22)
+
+
+### Bug Fixes
+
+* removed WebApp support in DEB ([#1673](https://github.com/forcedotcom/source-deploy-retrieve/issues/1673)) ([5fbb781](https://github.com/forcedotcom/source-deploy-retrieve/commit/5fbb781cdf50578d433d8f1a206cf9e50680cd9b))
+
+
+
 ## [12.31.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.6...12.31.7) (2026-01-16)
 
 

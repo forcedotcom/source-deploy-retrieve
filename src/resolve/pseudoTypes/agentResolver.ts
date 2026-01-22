@@ -48,6 +48,46 @@ const getLogger = (): Logger => {
 };
 
 /**
+ * Parses a bot name to extract version filtering information.
+ * Supports patterns:
+ * - `BotName_*` - retrieve all versions
+ * - `BotName_<number>` - retrieve specific version (e.g., `BotName_3` retrieves version 3)
+ * - `BotName` - retrieve highest version
+ *
+ * @param botName The bot name to parse
+ * @returns An object with the base bot name and version filter information
+ */
+export function parseBotVersionFilter(botName: string): {
+  baseBotName: string;
+  versionFilter: 'all' | 'highest' | number;
+} {
+  // Handle wildcard pattern: BotName_*
+  if (botName.endsWith('_*')) {
+    return {
+      baseBotName: botName.slice(0, -2),
+      versionFilter: 'all',
+    };
+  }
+
+  // Handle specific version pattern: BotName_<number>
+  const versionMatch = botName.match(/^(.+)_(\d+)$/);
+  if (versionMatch) {
+    const [, baseName, versionStr] = versionMatch;
+    const versionNum = parseInt(versionStr, 10);
+    return {
+      baseBotName: baseName,
+      versionFilter: versionNum,
+    };
+  }
+
+  // Default: retrieve highest version
+  return {
+    baseBotName: botName,
+    versionFilter: 'highest',
+  };
+}
+
+/**
  * This is the local "spidering" logic for agents.  Given the API name for a Bot,
  * and either an org connection or local file system paths, resolve to the top
  * level agent metadata. E.g., Bot, BotVersion, GenAiPlanner, GenAiPlugin, and
@@ -106,7 +146,11 @@ export async function resolveAgentMdEntries(agentMdInfo: {
 // Queries the org for metadata related to the provided Bot API name and returns those
 // metadata type:name pairs.
 const resolveAgentFromConnection = async (connection: Connection, botName: string): Promise<string[]> => {
+  // eslint-disable-next-line no-console
+  console.log(`[resolveAgentFromConnection] Resolving agent metadata for botName: ${botName}`);
   const mdEntries = [`Bot:${botName}`];
+  // eslint-disable-next-line no-console
+  console.log(`[resolveAgentFromConnection] Initial mdEntries: ${JSON.stringify(mdEntries)}`);
   // Query the org for agent metadata related to the Bot API name.
   try {
     // Query for the GenAiPlannerId

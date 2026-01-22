@@ -25,7 +25,7 @@ import { RegistryAccess } from '../registry/registryAccess';
 import type { FileProperties } from '../client/types';
 import { MetadataType } from '../registry/types';
 import { MetadataResolver } from '../resolve';
-import { resolveAgentMdEntries } from '../resolve/pseudoTypes/agentResolver';
+import { resolveAgentMdEntries, parseBotVersionFilter } from '../resolve/pseudoTypes/agentResolver';
 import { DestructiveChangesType, FromConnectionOptions } from './types';
 
 Messages.importMessagesDirectory(__dirname);
@@ -101,6 +101,13 @@ export class ComponentSetBuilder {
    */
 
   public static async build(options: ComponentSetOptions): Promise<ComponentSet> {
+    // eslint-disable-next-line no-console
+    console.log(
+      `[ComponentSetBuilder.build] Called with options: ${JSON.stringify({
+        metadata: options.metadata,
+        org: options.org ? { username: options.org.username } : undefined,
+      })}`
+    );
     let componentSet: ComponentSet | undefined;
 
     const { sourcepath, manifest, metadata, packagenames, org } = options;
@@ -157,72 +164,19 @@ export class ComponentSetBuilder {
     // Resolve metadata entries with source in package directories, unless we are building a ComponentSet
     // from metadata in an org.
     if (metadata && !org && !sourcepath?.length) {
-      getLogger().debug(`Building ComponentSet from metadata: ${metadata.metadataEntries.toString()}`);
-      const directoryPaths = metadata.directoryPaths;
-      componentSet ??= new ComponentSet(undefined, registry);
-      const componentSetFilter = new ComponentSet(undefined, registry);
-
-      // If pseudo types were passed without an org option replace the pseudo types with
-      // "client side spidering"
-      metadata.metadataEntries = await replacePseudoTypes({ mdOption: metadata, registry });
-
-      // Build a Set of metadata entries
-      metadata.metadataEntries
-        .map(entryToTypeAndName(registry))
-        .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry }))
-        .map(addToComponentSet(componentSet))
-        .map(addToComponentSet(componentSetFilter));
-
-      getLogger().debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
-
-      // add destructive changes if defined. Because these are deletes, all entries
-      // are resolved to SourceComponents
-      if (metadata.destructiveEntriesPre) {
-        metadata.destructiveEntriesPre
-          .map(entryToTypeAndName(registry))
-          .map(assertNoWildcardInDestructiveEntries)
-          .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry }))
-          .map((mdComponent) => new SourceComponent({ type: mdComponent.type, name: mdComponent.fullName }))
-          .map(addToComponentSet(componentSet, DestructiveChangesType.PRE));
-      }
-      if (metadata.destructiveEntriesPost) {
-        metadata.destructiveEntriesPost
-          .map(entryToTypeAndName(registry))
-          .map(assertNoWildcardInDestructiveEntries)
-          .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry }))
-          .map((mdComponent) => new SourceComponent({ type: mdComponent.type, name: mdComponent.fullName }))
-          .map(addToComponentSet(componentSet, DestructiveChangesType.POST));
-      }
-
-      const resolvedComponents = ComponentSet.fromSource({
-        fsPaths: directoryPaths,
-        include: componentSetFilter,
-        registry,
-      });
-
-      if (resolvedComponents.forceIgnoredPaths) {
-        // if useFsForceIgnore = true, then we won't be able to resolve a forceignored path,
-        // which we need to do to get the ignored source component
-        const resolver = new MetadataResolver(registry, undefined, false);
-
-        for (const ignoredPath of resolvedComponents.forceIgnoredPaths ?? []) {
-          resolver.getComponentsFromPath(ignoredPath).map((ignored) => {
-            componentSet = componentSet?.filter(
-              (resolved) => !(resolved.fullName === ignored.name && resolved.type === ignored.type)
-            );
-          });
-        }
-        componentSet.forceIgnoredPaths = resolvedComponents.forceIgnoredPaths;
-      }
-
-      resolvedComponents.toArray().map(addToComponentSet(componentSet));
+      componentSet = await this.buildFromMetadataWithoutOrg(metadata, registry, componentSet);
     }
 
     // Resolve metadata entries with an org connection
     if (org) {
       componentSet ??= new ComponentSet(undefined, registry);
-      const orgComponentSet = await this.resolveOrgComponents(registry, options);
+      const { componentSet: orgComponentSet, botVersionFilters: orgBotVersionFilters } =
+        await this.resolveOrgComponents(registry, options);
       orgComponentSet.toArray().map(addToComponentSet(componentSet));
+      // Set bot version filters if they were collected during org resolution
+      if (orgBotVersionFilters.length > 0) {
+        componentSet.botVersionFilters = orgBotVersionFilters;
+      }
     }
 
     // there should have been a componentSet created by this point.
@@ -235,10 +189,87 @@ export class ComponentSetBuilder {
     return componentSet;
   }
 
+  private static async buildFromMetadataWithoutOrg(
+    metadata: MetadataOption,
+    registry: RegistryAccess,
+    componentSet: ComponentSet | undefined
+  ): Promise<ComponentSet> {
+    getLogger().debug(`Building ComponentSet from metadata: ${metadata.metadataEntries.toString()}`);
+    const directoryPaths = metadata.directoryPaths;
+    componentSet ??= new ComponentSet(undefined, registry);
+    const componentSetFilter = new ComponentSet(undefined, registry);
+
+    // If pseudo types were passed without an org option replace the pseudo types with
+    // "client side spidering"
+    const { replacedEntries, botVersionFilters: localBotVersionFilters } = await replacePseudoTypes({
+      mdOption: metadata,
+      registry,
+    });
+    metadata.metadataEntries = replacedEntries;
+    if (localBotVersionFilters.length > 0) {
+      componentSet.botVersionFilters = localBotVersionFilters;
+    }
+
+    // Build a Set of metadata entries
+    metadata.metadataEntries
+      .map(entryToTypeAndName(registry))
+      .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry }))
+      .map(addToComponentSet(componentSet))
+      .map(addToComponentSet(componentSetFilter));
+
+    getLogger().debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
+
+    // add destructive changes if defined. Because these are deletes, all entries
+    // are resolved to SourceComponents
+    if (metadata.destructiveEntriesPre) {
+      metadata.destructiveEntriesPre
+        .map(entryToTypeAndName(registry))
+        .map(assertNoWildcardInDestructiveEntries)
+        .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry }))
+        .map((mdComponent) => new SourceComponent({ type: mdComponent.type, name: mdComponent.fullName }))
+        .map(addToComponentSet(componentSet, DestructiveChangesType.PRE));
+    }
+    if (metadata.destructiveEntriesPost) {
+      metadata.destructiveEntriesPost
+        .map(entryToTypeAndName(registry))
+        .map(assertNoWildcardInDestructiveEntries)
+        .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry }))
+        .map((mdComponent) => new SourceComponent({ type: mdComponent.type, name: mdComponent.fullName }))
+        .map(addToComponentSet(componentSet, DestructiveChangesType.POST));
+    }
+
+    const resolvedComponents = ComponentSet.fromSource({
+      fsPaths: directoryPaths,
+      include: componentSetFilter,
+      registry,
+    });
+
+    if (resolvedComponents.forceIgnoredPaths) {
+      // if useFsForceIgnore = true, then we won't be able to resolve a forceignored path,
+      // which we need to do to get the ignored source component
+      const resolver = new MetadataResolver(registry, undefined, false);
+
+      for (const ignoredPath of resolvedComponents.forceIgnoredPaths ?? []) {
+        resolver.getComponentsFromPath(ignoredPath).map((ignored) => {
+          componentSet = componentSet?.filter(
+            (resolved) => !(resolved.fullName === ignored.name && resolved.type === ignored.type)
+          );
+        });
+      }
+      componentSet.forceIgnoredPaths = resolvedComponents.forceIgnoredPaths;
+    }
+
+    resolvedComponents.toArray().map(addToComponentSet(componentSet));
+    return componentSet;
+  }
+
   private static async resolveOrgComponents(
     registry: RegistryAccess,
     options: ComponentSetOptions
-  ): Promise<ComponentSet> {
+  ): Promise<{
+    componentSet: ComponentSet;
+    botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
+  }> {
     // Get a connection from the OrgOption
     const { apiversion, org, metadata } = options;
     if (!org) {
@@ -252,25 +283,54 @@ export class ComponentSetBuilder {
 
     let mdMap = new Map() as MetadataMap;
     let debugMsg = `Building ComponentSet from metadata in an org using targetUsername: ${username}`;
+    const botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }> = [];
     if (metadata) {
       if (metadata.metadataEntries?.length) {
+        // eslint-disable-next-line no-console
+        console.log(`[resolveOrgComponents] Original metadataEntries: ${JSON.stringify(metadata.metadataEntries)}`);
         debugMsg += ` filtering on metadata: ${metadata.metadataEntries.toString()}`;
         // Replace pseudo-types from the metadataEntries
-        metadata.metadataEntries = await replacePseudoTypes({ mdOption: metadata, connection, registry });
+        const { replacedEntries, botVersionFilters: orgBotVersionFilters } = await replacePseudoTypes({
+          mdOption: metadata,
+          connection,
+          registry,
+        });
+        // eslint-disable-next-line no-console
+        console.log(
+          `[resolveOrgComponents] After replacePseudoTypes, replacedEntries: ${JSON.stringify(replacedEntries)}`
+        );
+        metadata.metadataEntries = replacedEntries;
+        // eslint-disable-next-line no-console
+        console.log(
+          `[resolveOrgComponents] metadata.metadataEntries after assignment: ${JSON.stringify(
+            metadata.metadataEntries
+          )}`
+        );
+        if (orgBotVersionFilters.length > 0) {
+          botVersionFilters.push(...orgBotVersionFilters);
+          // eslint-disable-next-line no-console
+          console.log(`[resolveOrgComponents] botVersionFilters: ${JSON.stringify(botVersionFilters)}`);
+        }
       }
       if (metadata.excludedEntries?.length) {
         debugMsg += ` excluding metadata: ${metadata.excludedEntries.toString()}`;
       }
-      mdMap = buildMapFromMetadata(metadata, registry);
+      mdMap = buildMapFromMetadata(metadata, registry, botVersionFilters);
     }
     getLogger().debug(debugMsg);
+    // eslint-disable-next-line no-console
+    console.log(`[resolveOrgComponents] mdMap before fromConnection: ${JSON.stringify(Array.from(mdMap.entries()))}`);
 
-    return ComponentSet.fromConnection({
+    const componentSet = await ComponentSet.fromConnection({
       usernameOrConnection: connection,
-      componentFilter: getOrgComponentFilter(org, mdMap, metadata),
+      componentFilter: getOrgComponentFilter(org, mdMap, metadata, botVersionFilters),
       metadataTypes: mdMap.size ? Array.from(mdMap.keys()) : undefined,
       registry,
     });
+
+    // eslint-disable-next-line no-console
+    console.log(`[resolveOrgComponents] componentSet created, botVersionFilters: ${JSON.stringify(botVersionFilters)}`);
+    return { componentSet, botVersionFilters };
   }
 }
 
@@ -324,16 +384,29 @@ const logComponents = (componentSet: ComponentSet): void => {
 const getOrgComponentFilter = (
   org: OrgOption,
   mdMap: MetadataMap,
-  metadata?: MetadataOption
+  metadata?: MetadataOption,
+  botVersionFilters?: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>
 ): FromConnectionOptions['componentFilter'] =>
   metadata?.metadataEntries?.length
     ? (component: Partial<FileProperties>): boolean => {
         if (component.type && component.fullName) {
           const mdMapEntry = mdMap.get(component.type);
+          if (!mdMapEntry) {
+            return false;
+          }
+
+          // Special handling for Bot components when we have botVersionFilters
+          // We only want to match the base bot name, not versioned names (e.g., BotName_2)
+          if (component.type === 'Bot' && botVersionFilters && botVersionFilters.length > 0) {
+            const baseBotNames = new Set(botVersionFilters.map((f) => f.botName));
+            // Only match if the component name exactly matches a base bot name
+            // This prevents matching versioned names like "MineToPublish_2"
+            return typeof component.fullName === 'string' && baseBotNames.has(component.fullName);
+          }
+
           // using minimatch versus RegExp provides better (more expected) matching results
-          return (
-            !!mdMapEntry &&
-            mdMapEntry.some((mdName) => typeof component.fullName === 'string' && minimatch(component.fullName, mdName))
+          return mdMapEntry.some(
+            (mdName) => typeof component.fullName === 'string' && minimatch(component.fullName, mdName)
           );
         }
         return false;
@@ -384,14 +457,47 @@ const typeAndNameToMetadataComponents =
           .filter((cs) => minimatch(cs.fullName, metadataName))
       : [{ type, fullName: metadataName }];
 
-const buildMapFromMetadata = (mdOption: MetadataOption, registry: RegistryAccess): MetadataMap => {
+const buildMapFromMetadata = (
+  mdOption: MetadataOption,
+  registry: RegistryAccess,
+  botVersionFilters?: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>
+): MetadataMap => {
   const mdMap: MetadataMap = new Map<string, string[]>();
 
   // Add metadata type entries we were told to include
   if (mdOption.metadataEntries?.length) {
+    // eslint-disable-next-line no-console
+    console.log(`[buildMapFromMetadata] Processing metadataEntries: ${JSON.stringify(mdOption.metadataEntries)}`);
     mdOption.metadataEntries.map(entryToTypeAndName(registry)).map((cmp) => {
-      mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), cmp.metadataName]);
+      // eslint-disable-next-line no-console
+      console.log(`[buildMapFromMetadata] Processing entry: type=${cmp.type.name}, name=${cmp.metadataName}`);
+
+      // Strip version suffixes from Bot names (e.g., MineToPublish_2 -> MineToPublish)
+      // This ensures the manifest uses base bot names, not versioned names
+      let metadataName = cmp.metadataName;
+      if (cmp.type.name === 'Bot' && botVersionFilters && botVersionFilters.length > 0) {
+        // Check if this name matches a versioned pattern and we have a filter for it
+        const versionMatch = metadataName.match(/^(.+)_(\d+)$/);
+        if (versionMatch) {
+          const baseName = versionMatch[1];
+          const matchingFilter = botVersionFilters.find((f) => {
+            // Check if the base name matches, or if the full name matches a versioned pattern
+            const filterVersionMatch = f.botName.match(/^(.+)_(\d+)$/);
+            return baseName === f.botName || (filterVersionMatch && baseName === filterVersionMatch[1]);
+          });
+          if (matchingFilter) {
+            // Use the base name from the filter (which should be the normalized base name)
+            metadataName = matchingFilter.botName;
+            // eslint-disable-next-line no-console
+            console.log(`[buildMapFromMetadata] Normalized Bot name: ${cmp.metadataName} -> ${metadataName}`);
+          }
+        }
+      }
+
+      mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), metadataName]);
     });
+    // eslint-disable-next-line no-console
+    console.log(`[buildMapFromMetadata] Final mdMap: ${JSON.stringify(Array.from(mdMap.entries()))}`);
   }
 
   // Build an array of excluded types from the options
@@ -423,15 +529,40 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
   mdOption: MetadataOption;
   connection?: Connection;
   registry: RegistryAccess;
-}): Promise<string[]> => {
+}): Promise<{
+  replacedEntries: string[];
+  botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
+}> => {
   const { mdOption, connection, registry } = pseudoTypeInfo;
+  // eslint-disable-next-line no-console
+  console.log(`[replacePseudoTypes] Called with metadataEntries: ${JSON.stringify(mdOption.metadataEntries)}`);
   const pseudoEntries: string[][] = [];
   let replacedEntries: string[] = [];
+  const botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }> = [];
 
   mdOption.metadataEntries.map((rawEntry) => {
     const [typeName, ...name] = rawEntry.split(':');
     if (Object.values(PSEUDO_TYPES).includes(typeName)) {
       pseudoEntries.push([typeName, name.join(':').trim()]);
+    } else if (typeName === 'Bot') {
+      // Also handle Bot entries that might have version suffixes (e.g., Bot:MineToPublish_2)
+      // Strip the version suffix to get the base name for the manifest
+      const botName = name.join(':').trim();
+      const versionMatch = botName.match(/^(.+)_(\d+)$/);
+      if (versionMatch) {
+        const baseBotName = versionMatch[1];
+        const versionNum = parseInt(versionMatch[2], 10);
+        // eslint-disable-next-line no-console
+        console.log(
+          `[replacePseudoTypes] Found Bot entry with version suffix: ${botName} -> ${baseBotName}, version: ${versionNum}`
+        );
+        // Store version filter info
+        botVersionFilters.push({ botName: baseBotName, versionFilter: versionNum });
+        // Use base name in the entry (this ensures the manifest uses the base name)
+        replacedEntries.push(`${typeName}:${baseBotName}`);
+      } else {
+        replacedEntries.push(rawEntry);
+      }
     } else {
       replacedEntries.push(rawEntry);
     }
@@ -444,17 +575,34 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
         const pseudoName = pseudoEntry[1] || '*';
         getLogger().debug(`Converting pseudo-type ${pseudoType}:${pseudoName}`);
         if (pseudoType === PSEUDO_TYPES.AGENT) {
+          // Parse version filter from botName
+          const { baseBotName, versionFilter } = parseBotVersionFilter(pseudoName);
+          // eslint-disable-next-line no-console
+          console.log(
+            `[Agent Pseudo-Type] Parsed pseudoName: ${pseudoName} -> baseBotName: ${baseBotName}, versionFilter: ${versionFilter}`
+          );
+          // Store version filter info for later use in retrieve (always store, even for 'all' to distinguish from no filter)
+          botVersionFilters.push({ botName: baseBotName, versionFilter });
+          // eslint-disable-next-line no-console
+          console.log(
+            `[Agent Pseudo-Type] Stored botVersionFilter: ${JSON.stringify({ botName: baseBotName, versionFilter })}`
+          );
+          // Use baseBotName for resolution since the Bot metadata uses the base name, not the versioned name
           const agentMdEntries = await resolveAgentMdEntries({
-            botName: pseudoName,
+            botName: baseBotName,
             connection,
             directoryPaths: mdOption.directoryPaths,
             registry,
           });
+          // eslint-disable-next-line no-console
+          console.log(`[Agent Pseudo-Type] resolveAgentMdEntries returned: ${JSON.stringify(agentMdEntries)}`);
           replacedEntries = [...replacedEntries, ...agentMdEntries];
+          // eslint-disable-next-line no-console
+          console.log(`[Agent Pseudo-Type] Final replacedEntries: ${JSON.stringify(replacedEntries)}`);
         }
       })
     );
   }
 
-  return replacedEntries;
+  return { replacedEntries, botVersionFilters };
 };

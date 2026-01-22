@@ -19,6 +19,7 @@ import fs from 'node:fs';
 import { AnyJson, JsonMap, ensureString, isJsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { Messages } from '@salesforce/core/messages';
+import type { BotVersionFilter } from '../../client/types';
 import { calculateRelativePath } from '../../utils/path';
 import { ForceIgnore } from '../../resolve/forceIgnore';
 import { extractUniqueElementValue, objectHasSomeRealValues } from '../../utils/decomposed';
@@ -84,6 +85,12 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const parentXmlObject = buildParentXml(component.type)(composedMetadata);
     const stateSetter = setDecomposedState(this.context.decomposition.transactionState);
 
+    // Filter BotVersion entries if we have a filter stored
+    const botVersionFilter =
+      component.type.name === 'Bot'
+        ? (component as SourceComponent & { botVersionFilter?: BotVersionFilter }).botVersionFilter
+        : undefined;
+
     const writeInfosForChildren = composedMetadata
       .filter(hasChildTypeId)
       .map(addChildType)
@@ -91,6 +98,59 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
         // iterate each array member if it's Object-like (ex: customField of a CustomObject)
         ensureArray(tagValue)
           .filter(isJsonMap)
+          .filter((entry) => {
+            // Filter BotVersion entries based on the filter
+            if (botVersionFilter && childType.name === 'BotVersion') {
+              // Extract the fullName from the BotVersion entry
+              const botVersionFullName = entry?.fullName;
+              if (botVersionFullName && typeof botVersionFullName === 'string') {
+                // The fullName should be in the form "BotName.VersionName" (e.g., "MineToPublish.v2")
+                let isAllowed = false;
+                if (botVersionFilter.versionFilter === 'all') {
+                  isAllowed = true;
+                } else if (botVersionFilter.versionFilter === 'highest') {
+                  // For highest, collect all BotVersions first to find the max
+                  const allVersions: number[] = [];
+                  composedMetadata
+                    .filter(hasChildTypeId)
+                    .map(addChildType)
+                    .filter(({ childType: ct }) => ct.name === 'BotVersion')
+                    .flatMap(({ tagValue: tv }) =>
+                      ensureArray(tv)
+                        .filter(isJsonMap)
+                        .map((e) => {
+                          const fn = e?.fullName;
+                          if (fn && typeof fn === 'string') {
+                            const vm = fn.match(/\.(v?)(\d+)$/);
+                            return vm ? parseInt(vm[2], 10) : -1;
+                          }
+                          return -1;
+                        })
+                        .filter((v) => v >= 0)
+                    )
+                    .forEach((v) => allVersions.push(v));
+                  const maxVersion = allVersions.length > 0 ? Math.max(...allVersions) : -1;
+                  const versionMatch = botVersionFullName.match(/\.(v?)(\d+)$/);
+                  isAllowed = versionMatch ? parseInt(versionMatch[2], 10) === maxVersion : false;
+                } else {
+                  // Check if this matches the specific version
+                  const versionMatch = botVersionFullName.match(/\.(v?)(\d+)$/);
+                  if (versionMatch) {
+                    const versionNum = parseInt(versionMatch[2], 10);
+                    isAllowed = versionNum === botVersionFilter.versionFilter;
+                  }
+                }
+                if (!isAllowed) {
+                  // eslint-disable-next-line no-console
+                  console.log(`[decomposedMetadataTransformer] Filtering out BotVersion: ${botVersionFullName}`);
+                  return false; // Filter out this BotVersion
+                }
+                // eslint-disable-next-line no-console
+                console.log(`[decomposedMetadataTransformer] Keeping BotVersion: ${botVersionFullName}`);
+              }
+            }
+            return true;
+          })
           .map(toInfoContainer(mergeWith)(component)(childType))
           .filter(forceIgnoreAllowsComponent(forceIgnore)) // only process child types that aren't forceignored
           .map(handleUnaddressableChildAlone(composedMetadata.length)(parentXmlObject)(stateSetter))

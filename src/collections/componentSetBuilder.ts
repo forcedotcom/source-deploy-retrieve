@@ -473,24 +473,36 @@ const buildMapFromMetadata = (
       // eslint-disable-next-line no-console
       console.log(`[buildMapFromMetadata] Processing entry: type=${cmp.type.name}, name=${cmp.metadataName}`);
 
-      // Strip version suffixes from Bot names (e.g., MineToPublish_2 -> MineToPublish)
+      // Strip version suffixes and wildcards from Bot names (e.g., MineToPublish_2 -> MineToPublish, MineToPublish_* -> MineToPublish)
       // This ensures the manifest uses base bot names, not versioned names
       let metadataName = cmp.metadataName;
       if (cmp.type.name === 'Bot' && botVersionFilters && botVersionFilters.length > 0) {
-        // Check if this name matches a versioned pattern and we have a filter for it
-        const versionMatch = metadataName.match(/^(.+)_(\d+)$/);
-        if (versionMatch) {
-          const baseName = versionMatch[1];
-          const matchingFilter = botVersionFilters.find((f) => {
-            // Check if the base name matches, or if the full name matches a versioned pattern
-            const filterVersionMatch = f.botName.match(/^(.+)_(\d+)$/);
-            return baseName === f.botName || (filterVersionMatch && baseName === filterVersionMatch[1]);
-          });
+        // Handle wildcard pattern: BotName_*
+        if (metadataName.endsWith('_*')) {
+          const baseName = metadataName.slice(0, -2);
+          const matchingFilter = botVersionFilters.find((f) => f.botName === baseName);
           if (matchingFilter) {
-            // Use the base name from the filter (which should be the normalized base name)
+            // Use the base name from the filter
             metadataName = matchingFilter.botName;
             // eslint-disable-next-line no-console
             console.log(`[buildMapFromMetadata] Normalized Bot name: ${cmp.metadataName} -> ${metadataName}`);
+          }
+        } else {
+          // Check if this name matches a versioned pattern and we have a filter for it
+          const versionMatch = metadataName.match(/^(.+)_(\d+)$/);
+          if (versionMatch) {
+            const baseName = versionMatch[1];
+            const matchingFilter = botVersionFilters.find((f) => {
+              // Check if the base name matches, or if the full name matches a versioned pattern
+              const filterVersionMatch = f.botName.match(/^(.+)_(\d+)$/);
+              return baseName === f.botName || (filterVersionMatch && baseName === filterVersionMatch[1]);
+            });
+            if (matchingFilter) {
+              // Use the base name from the filter (which should be the normalized base name)
+              metadataName = matchingFilter.botName;
+              // eslint-disable-next-line no-console
+              console.log(`[buildMapFromMetadata] Normalized Bot name: ${cmp.metadataName} -> ${metadataName}`);
+            }
           }
         }
       }
@@ -547,22 +559,37 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
       pseudoEntries.push([typeName, name.join(':').trim()]);
     } else if (typeName === 'Bot') {
       // Also handle Bot entries that might have version suffixes (e.g., Bot:MineToPublish_2)
-      // Strip the version suffix to get the base name for the manifest
+      // or wildcard patterns (e.g., Bot:MineToPublish_*)
+      // Strip the version suffix/wildcard to get the base name for the manifest
       const botName = name.join(':').trim();
-      const versionMatch = botName.match(/^(.+)_(\d+)$/);
-      if (versionMatch) {
-        const baseBotName = versionMatch[1];
-        const versionNum = parseInt(versionMatch[2], 10);
+      // Handle wildcard pattern: BotName_*
+      if (botName.endsWith('_*')) {
+        const baseBotName = botName.slice(0, -2);
         // eslint-disable-next-line no-console
         console.log(
-          `[replacePseudoTypes] Found Bot entry with version suffix: ${botName} -> ${baseBotName}, version: ${versionNum}`
+          `[replacePseudoTypes] Found Bot entry with wildcard: ${botName} -> ${baseBotName}, versionFilter: all`
         );
-        // Store version filter info
-        botVersionFilters.push({ botName: baseBotName, versionFilter: versionNum });
+        // Store version filter info for 'all'
+        botVersionFilters.push({ botName: baseBotName, versionFilter: 'all' });
         // Use base name in the entry (this ensures the manifest uses the base name)
         replacedEntries.push(`${typeName}:${baseBotName}`);
       } else {
-        replacedEntries.push(rawEntry);
+        // Handle specific version pattern: BotName_<number>
+        const versionMatch = botName.match(/^(.+)_(\d+)$/);
+        if (versionMatch) {
+          const baseBotName = versionMatch[1];
+          const versionNum = parseInt(versionMatch[2], 10);
+          // eslint-disable-next-line no-console
+          console.log(
+            `[replacePseudoTypes] Found Bot entry with version suffix: ${botName} -> ${baseBotName}, version: ${versionNum}`
+          );
+          // Store version filter info
+          botVersionFilters.push({ botName: baseBotName, versionFilter: versionNum });
+          // Use base name in the entry (this ensures the manifest uses the base name)
+          replacedEntries.push(`${typeName}:${baseBotName}`);
+        } else {
+          replacedEntries.push(rawEntry);
+        }
       }
     } else {
       replacedEntries.push(rawEntry);

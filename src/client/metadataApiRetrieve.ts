@@ -217,12 +217,6 @@ export class MetadataApiRetrieve extends MetadataTransfer<
           ...this.options,
           botVersionFilters: this.components?.botVersionFilters ?? this.options.botVersionFilters,
         };
-        // eslint-disable-next-line no-console
-        console.log(
-          `[MetadataApiRetrieve.post] Passing botVersionFilters to extract: ${JSON.stringify(
-            extractOptions.botVersionFilters
-          )}`
-        );
         ({ componentSet, partialDeleteFileResponses } = await extract({
           zip: zipFileContents,
           options: extractOptions,
@@ -277,8 +271,6 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     }
 
     const manifestData = (await this.components?.getObject())?.Package;
-    // eslint-disable-next-line no-console
-    console.log(`[MetadataApiRetrieve.pre] manifestData: ${JSON.stringify(manifestData, null, 2)}`);
 
     const requestBody: RetrieveRequest = {
       // This apiVersion is only used when the version in the package.xml (manifestData) is not defined.

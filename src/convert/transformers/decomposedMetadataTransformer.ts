@@ -141,12 +141,8 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
                   }
                 }
                 if (!isAllowed) {
-                  // eslint-disable-next-line no-console
-                  console.log(`[decomposedMetadataTransformer] Filtering out BotVersion: ${botVersionFullName}`);
                   return false; // Filter out this BotVersion
                 }
-                // eslint-disable-next-line no-console
-                console.log(`[decomposedMetadataTransformer] Keeping BotVersion: ${botVersionFullName}`);
               }
             }
             return true;

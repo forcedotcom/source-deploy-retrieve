@@ -146,11 +146,7 @@ export async function resolveAgentMdEntries(agentMdInfo: {
 // Queries the org for metadata related to the provided Bot API name and returns those
 // metadata type:name pairs.
 const resolveAgentFromConnection = async (connection: Connection, botName: string): Promise<string[]> => {
-  // eslint-disable-next-line no-console
-  console.log(`[resolveAgentFromConnection] Resolving agent metadata for botName: ${botName}`);
   const mdEntries = [`Bot:${botName}`];
-  // eslint-disable-next-line no-console
-  console.log(`[resolveAgentFromConnection] Initial mdEntries: ${JSON.stringify(mdEntries)}`);
   // Query the org for agent metadata related to the Bot API name.
   try {
     // Query for the GenAiPlannerId

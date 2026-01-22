@@ -433,10 +433,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @returns Object representation of a package manifest
    */
   public async getObject(destructiveType?: DestructiveChangesType): Promise<PackageManifestObject> {
-    // eslint-disable-next-line no-console
-    console.log(`[ComponentSet.getObject] Called with destructiveType: ${destructiveType ?? 'undefined'}`);
-    // eslint-disable-next-line no-console
-    console.log(`[ComponentSet.getObject] botVersionFilters: ${JSON.stringify(this.botVersionFilters)}`);
     // If this ComponentSet has components marked for delete, we need to
     // only include those components in a destructiveChanges.xml and
     // all other components in the regular manifest.
@@ -482,9 +478,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const typeMembers = Array.from(typeMap.entries())
       .map(([typeName, members]) => ({ members: [...members].sort(), name: typeName }))
       .sort((a, b) => (a.name > b.name ? 1 : -1));
-
-    // eslint-disable-next-line no-console
-    console.log(`[ComponentSet.getObject] Final typeMembers: ${JSON.stringify(typeMembers, null, 2)}`);
 
     return {
       Package: {

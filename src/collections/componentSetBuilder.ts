@@ -101,13 +101,6 @@ export class ComponentSetBuilder {
    */
 
   public static async build(options: ComponentSetOptions): Promise<ComponentSet> {
-    // eslint-disable-next-line no-console
-    console.log(
-      `[ComponentSetBuilder.build] Called with options: ${JSON.stringify({
-        metadata: options.metadata,
-        org: options.org ? { username: options.org.username } : undefined,
-      })}`
-    );
     let componentSet: ComponentSet | undefined;
 
     const { sourcepath, manifest, metadata, packagenames, org } = options;
@@ -287,8 +280,6 @@ export class ComponentSetBuilder {
     const botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }> = [];
     if (metadata) {
       if (metadata.metadataEntries?.length) {
-        // eslint-disable-next-line no-console
-        console.log(`[resolveOrgComponents] Original metadataEntries: ${JSON.stringify(metadata.metadataEntries)}`);
         debugMsg += ` filtering on metadata: ${metadata.metadataEntries.toString()}`;
         // Replace pseudo-types from the metadataEntries
         const { replacedEntries, botVersionFilters: orgBotVersionFilters } = await replacePseudoTypes({
@@ -296,21 +287,9 @@ export class ComponentSetBuilder {
           connection,
           registry,
         });
-        // eslint-disable-next-line no-console
-        console.log(
-          `[resolveOrgComponents] After replacePseudoTypes, replacedEntries: ${JSON.stringify(replacedEntries)}`
-        );
         metadata.metadataEntries = replacedEntries;
-        // eslint-disable-next-line no-console
-        console.log(
-          `[resolveOrgComponents] metadata.metadataEntries after assignment: ${JSON.stringify(
-            metadata.metadataEntries
-          )}`
-        );
         if (orgBotVersionFilters.length > 0) {
           botVersionFilters.push(...orgBotVersionFilters);
-          // eslint-disable-next-line no-console
-          console.log(`[resolveOrgComponents] botVersionFilters: ${JSON.stringify(botVersionFilters)}`);
         }
       }
       if (metadata.excludedEntries?.length) {
@@ -319,8 +298,6 @@ export class ComponentSetBuilder {
       mdMap = buildMapFromMetadata(metadata, registry, botVersionFilters);
     }
     getLogger().debug(debugMsg);
-    // eslint-disable-next-line no-console
-    console.log(`[resolveOrgComponents] mdMap before fromConnection: ${JSON.stringify(Array.from(mdMap.entries()))}`);
 
     const componentSet = await ComponentSet.fromConnection({
       usernameOrConnection: connection,
@@ -329,8 +306,6 @@ export class ComponentSetBuilder {
       registry,
     });
 
-    // eslint-disable-next-line no-console
-    console.log(`[resolveOrgComponents] componentSet created, botVersionFilters: ${JSON.stringify(botVersionFilters)}`);
     return { componentSet, botVersionFilters };
   }
 }
@@ -467,50 +442,20 @@ const buildMapFromMetadata = (
 
   // Add metadata type entries we were told to include
   if (mdOption.metadataEntries?.length) {
-    // eslint-disable-next-line no-console
-    console.log(`[buildMapFromMetadata] Processing metadataEntries: ${JSON.stringify(mdOption.metadataEntries)}`);
     mdOption.metadataEntries.map(entryToTypeAndName(registry)).map((cmp) => {
-      // eslint-disable-next-line no-console
-      console.log(`[buildMapFromMetadata] Processing entry: type=${cmp.type.name}, name=${cmp.metadataName}`);
-
       // Strip version suffixes and wildcards from Bot names (e.g., MineToPublish_2 -> MineToPublish, MineToPublish_* -> MineToPublish)
       // This ensures the manifest uses base bot names, not versioned names
       let metadataName = cmp.metadataName;
       if (cmp.type.name === 'Bot' && botVersionFilters && botVersionFilters.length > 0) {
-        // Handle wildcard pattern: BotName_*
-        if (metadataName.endsWith('_*')) {
-          const baseName = metadataName.slice(0, -2);
-          const matchingFilter = botVersionFilters.find((f) => f.botName === baseName);
-          if (matchingFilter) {
-            // Use the base name from the filter
-            metadataName = matchingFilter.botName;
-            // eslint-disable-next-line no-console
-            console.log(`[buildMapFromMetadata] Normalized Bot name: ${cmp.metadataName} -> ${metadataName}`);
-          }
-        } else {
-          // Check if this name matches a versioned pattern and we have a filter for it
-          const versionMatch = metadataName.match(/^(.+)_(\d+)$/);
-          if (versionMatch) {
-            const baseName = versionMatch[1];
-            const matchingFilter = botVersionFilters.find((f) => {
-              // Check if the base name matches, or if the full name matches a versioned pattern
-              const filterVersionMatch = f.botName.match(/^(.+)_(\d+)$/);
-              return baseName === f.botName || (filterVersionMatch && baseName === filterVersionMatch[1]);
-            });
-            if (matchingFilter) {
-              // Use the base name from the filter (which should be the normalized base name)
-              metadataName = matchingFilter.botName;
-              // eslint-disable-next-line no-console
-              console.log(`[buildMapFromMetadata] Normalized Bot name: ${cmp.metadataName} -> ${metadataName}`);
-            }
-          }
+        const { baseBotName } = parseBotVersionFilter(metadataName);
+        const matchingFilter = botVersionFilters.find((f) => f.botName === baseBotName);
+        if (matchingFilter) {
+          metadataName = matchingFilter.botName;
         }
       }
 
       mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), metadataName]);
     });
-    // eslint-disable-next-line no-console
-    console.log(`[buildMapFromMetadata] Final mdMap: ${JSON.stringify(Array.from(mdMap.entries()))}`);
   }
 
   // Build an array of excluded types from the options
@@ -547,8 +492,6 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
   botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
 }> => {
   const { mdOption, connection, registry } = pseudoTypeInfo;
-  // eslint-disable-next-line no-console
-  console.log(`[replacePseudoTypes] Called with metadataEntries: ${JSON.stringify(mdOption.metadataEntries)}`);
   const pseudoEntries: string[][] = [];
   let replacedEntries: string[] = [];
   const botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }> = [];
@@ -565,13 +508,7 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
       // Handle wildcard pattern: BotName_*
       if (botName.endsWith('_*')) {
         const baseBotName = botName.slice(0, -2);
-        // eslint-disable-next-line no-console
-        console.log(
-          `[replacePseudoTypes] Found Bot entry with wildcard: ${botName} -> ${baseBotName}, versionFilter: all`
-        );
-        // Store version filter info for 'all'
         botVersionFilters.push({ botName: baseBotName, versionFilter: 'all' });
-        // Use base name in the entry (this ensures the manifest uses the base name)
         replacedEntries.push(`${typeName}:${baseBotName}`);
       } else {
         // Handle specific version pattern: BotName_<number>
@@ -579,13 +516,7 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
         if (versionMatch) {
           const baseBotName = versionMatch[1];
           const versionNum = parseInt(versionMatch[2], 10);
-          // eslint-disable-next-line no-console
-          console.log(
-            `[replacePseudoTypes] Found Bot entry with version suffix: ${botName} -> ${baseBotName}, version: ${versionNum}`
-          );
-          // Store version filter info
           botVersionFilters.push({ botName: baseBotName, versionFilter: versionNum });
-          // Use base name in the entry (this ensures the manifest uses the base name)
           replacedEntries.push(`${typeName}:${baseBotName}`);
         } else {
           replacedEntries.push(rawEntry);
@@ -605,16 +536,8 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
         if (pseudoType === PSEUDO_TYPES.AGENT) {
           // Parse version filter from botName
           const { baseBotName, versionFilter } = parseBotVersionFilter(pseudoName);
-          // eslint-disable-next-line no-console
-          console.log(
-            `[Agent Pseudo-Type] Parsed pseudoName: ${pseudoName} -> baseBotName: ${baseBotName}, versionFilter: ${versionFilter}`
-          );
-          // Store version filter info for later use in retrieve (always store, even for 'all' to distinguish from no filter)
+          // Store version filter info for later use in retrieve
           botVersionFilters.push({ botName: baseBotName, versionFilter });
-          // eslint-disable-next-line no-console
-          console.log(
-            `[Agent Pseudo-Type] Stored botVersionFilter: ${JSON.stringify({ botName: baseBotName, versionFilter })}`
-          );
           // Use baseBotName for resolution since the Bot metadata uses the base name, not the versioned name
           const agentMdEntries = await resolveAgentMdEntries({
             botName: baseBotName,
@@ -622,11 +545,7 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
             directoryPaths: mdOption.directoryPaths,
             registry,
           });
-          // eslint-disable-next-line no-console
-          console.log(`[Agent Pseudo-Type] resolveAgentMdEntries returned: ${JSON.stringify(agentMdEntries)}`);
           replacedEntries = [...replacedEntries, ...agentMdEntries];
-          // eslint-disable-next-line no-console
-          console.log(`[Agent Pseudo-Type] Final replacedEntries: ${JSON.stringify(replacedEntries)}`);
         }
       })
     );

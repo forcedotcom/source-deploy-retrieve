@@ -33,19 +33,6 @@ import {
 } from './types';
 import { MetadataApiRetrieveOptions } from './types';
 
-// Module-level storage for filtered BotVersion fullNames per Bot component
-// This is used by the decomposed transformer to filter BotVersion entries during conversion
-const filteredBotVersionsMap = new WeakMap<SourceComponent, Set<string>>();
-
-export function getFilteredBotVersions(component: SourceComponent): Set<string> | undefined {
-  return filteredBotVersionsMap.get(component);
-}
-
-// Export the map setter for use in extract
-export function setFilteredBotVersions(component: SourceComponent, allowedVersions: Set<string>): void {
-  filteredBotVersionsMap.set(component, allowedVersions);
-}
-
 export const extract = async ({
   zip,
   options,
@@ -57,8 +44,6 @@ export const extract = async ({
   logger: Logger;
   mainComponents?: ComponentSet;
 }): Promise<{ componentSet: ComponentSet; partialDeleteFileResponses: FileResponse[] }> => {
-  // eslint-disable-next-line no-console
-  console.log(`[extract] Called with botVersionFilters: ${JSON.stringify(options.botVersionFilters)}`);
   const components: SourceComponent[] = [];
   const { merge, output, registry, botVersionFilters } = options;
   const converter = new MetadataConverter(registry);
@@ -98,11 +83,9 @@ export const extract = async ({
     // This is needed when rootTypesWithDependencies is used, as it will retrieve all BotVersions
     // and GenAiPlannerBundles regardless of what's in the manifest.
     // If botVersionFilters is undefined, default to 'highest' for all Bot components
-    let filtersToUse: BotVersionFilter[] | undefined = botVersionFilters;
+    let filtersToUse = botVersionFilters && Array.isArray(botVersionFilters) ? botVersionFilters : undefined;
     if (!filtersToUse || filtersToUse.length === 0) {
       // No filters specified - default to 'highest' for all Bot components
-      // eslint-disable-next-line no-console
-      console.log("[extract] No botVersionFilters specified, defaulting to 'highest' for all Bot components");
       const allBotNames = new Set<string>();
       for (const comp of retrievedComponents) {
         if (comp.type.name === 'Bot') {
@@ -113,19 +96,9 @@ export const extract = async ({
         botName,
         versionFilter: 'highest',
       }));
-      if (filtersToUse.length > 0) {
-        // eslint-disable-next-line no-console
-        console.log(
-          `[extract] Created default filters for ${filtersToUse.length} bots: ${JSON.stringify(filtersToUse)}`
-        );
-      }
     }
 
     if (filtersToUse && filtersToUse.length > 0) {
-      // eslint-disable-next-line no-console
-      console.log(
-        `[extract] Filtering BotVersions and GenAiPlannerBundles after retrieve: ${JSON.stringify(filtersToUse)}`
-      );
       // eslint-disable-next-line no-await-in-loop
       retrievedComponents = await filterBotVersionsFromRetrievedComponents(retrievedComponents, filtersToUse);
       // Filter GenAiPlannerBundle components based on version filters
@@ -341,36 +314,15 @@ async function filterBotVersionsFromRetrievedComponents(
   // Process all Bot components in parallel
   const filteredPromises = components.map(async (comp) => {
     if (comp.type.name === 'Bot') {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      const matchingFilter = botVersionFilters.find((f: BotVersionFilter) => f.botName === comp.fullName);
+      const matchingFilter = botVersionFilters.find((f) => f.botName === comp.fullName);
       if (matchingFilter && comp.xml) {
         try {
           // Parse the Bot XML to get BotVersion entries
           const botXml = await comp.parseXml<{ Bot?: { botVersions?: Array<{ fullName?: string }> } }>();
           const botVersions = botXml.Bot?.botVersions;
 
-          // eslint-disable-next-line no-console
-          console.log(`[extract] Bot XML structure: ${JSON.stringify(Object.keys(botXml))}`);
-          // eslint-disable-next-line no-console
-          console.log(`[extract] BotVersions found: ${botVersions ? botVersions.length : 0}`);
-          if (botVersions && botVersions.length > 0) {
-            // eslint-disable-next-line no-console
-            console.log(`[extract] First BotVersion sample: ${JSON.stringify(botVersions[0])}`);
-          }
-
           if (botVersions && Array.isArray(botVersions)) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-            const versionFilter = matchingFilter.versionFilter;
-            // eslint-disable-next-line no-console
-            console.log(`[extract] Filtering with versionFilter: ${JSON.stringify(versionFilter)}`);
-            // Type guard to ensure versionFilter is the correct type
-            const filter: 'all' | 'highest' | number =
-              versionFilter === 'all' || versionFilter === 'highest' || typeof versionFilter === 'number'
-                ? versionFilter
-                : 'all';
-            const filteredVersions = filterBotVersionEntries(botVersions, filter);
-            // eslint-disable-next-line no-console
-            console.log(`[extract] Filtered to ${filteredVersions.length} versions from ${botVersions.length}`);
+            const filteredVersions = filterBotVersionEntries(botVersions, matchingFilter.versionFilter);
 
             // Update the Bot XML with filtered versions
             if (botXml.Bot) {
@@ -394,16 +346,9 @@ async function filterBotVersionsFromRetrievedComponents(
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
                 compWithPrivate.pathContentMap.set(comp.xml, xmlString);
               }
-              // eslint-disable-next-line no-console
-              console.log(
-                `[extract] Filtered BotVersions for ${comp.fullName}: kept ${filteredVersions.length} of ${botVersions.length} versions`
-              );
             }
           }
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : String(error);
-          // eslint-disable-next-line no-console
-          console.log(`[extract] Error filtering BotVersions for ${comp.fullName}: ${errorMessage}`);
           // Continue with unfiltered component if there's an error
         }
       }
@@ -438,16 +383,13 @@ function filterGenAiPlannerBundles(
         const botName = nameMatch[1];
         const versionNum = parseInt(nameMatch[2], 10);
         // Find matching filter for this bot
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-        const matchingFilter = botVersionFilters.find((f: BotVersionFilter) => f.botName === botName);
+        const matchingFilter = botVersionFilters.find((f) => f.botName === botName);
         if (matchingFilter) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-          const versionFilter = matchingFilter.versionFilter;
           let shouldKeep = false;
 
-          if (versionFilter === 'all') {
+          if (matchingFilter.versionFilter === 'all') {
             shouldKeep = true;
-          } else if (versionFilter === 'highest') {
+          } else if (matchingFilter.versionFilter === 'highest') {
             // For highest, we need to find the highest version among all GenAiPlannerBundles for this bot
             const allVersionsForBot = components
               .filter((c) => c.type.name === 'GenAiPlannerBundle')
@@ -463,17 +405,12 @@ function filterGenAiPlannerBundles(
             shouldKeep = versionNum === highestVersion;
           } else {
             // Filter to specific version
-            const targetVersion = typeof versionFilter === 'number' ? versionFilter : -1;
+            const targetVersion = typeof matchingFilter.versionFilter === 'number' ? matchingFilter.versionFilter : -1;
             shouldKeep = versionNum === targetVersion;
           }
 
           if (shouldKeep) {
-            // eslint-disable-next-line no-console
-            console.log(`[extract] Keeping GenAiPlannerBundle: ${comp.fullName} (version ${versionNum})`);
             filtered.push(comp);
-          } else {
-            // eslint-disable-next-line no-console
-            console.log(`[extract] Filtering out GenAiPlannerBundle: ${comp.fullName} (version ${versionNum})`);
           }
         } else {
           // No filter for this bot, keep all GenAiPlannerBundles

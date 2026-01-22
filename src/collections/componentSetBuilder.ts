@@ -97,7 +97,7 @@ export class ComponentSetBuilder {
    *
    * @see https://github.com/forcedotcom/source-deploy-retrieve/blob/develop/src/collections/componentSet.ts
    *
-   * @param options: options for creating a ComponentSet
+   * @param options
    */
 
   // eslint-disable-next-line complexity
@@ -166,7 +166,10 @@ export class ComponentSetBuilder {
       // If pseudo types were passed without an org option replace the pseudo types with
       // "client side spidering"
       const { replacedEntries, botVersionFilters } = await replacePseudoTypes({ mdOption: metadata, registry });
-      metadata.metadataEntries = replacedEntries;
+      // Ensure all entries are valid strings
+      metadata.metadataEntries = replacedEntries.filter(
+        (entry): entry is string => typeof entry === 'string' && entry.length > 0
+      );
       if (botVersionFilters.length > 0) {
         componentSet.botVersionFilters = botVersionFilters;
       }
@@ -274,7 +277,10 @@ export class ComponentSetBuilder {
           connection,
           registry,
         });
-        metadata.metadataEntries = replacedEntries;
+        // Ensure all entries are valid strings in Type:Name format
+        metadata.metadataEntries = replacedEntries.filter(
+          (entry): entry is string => typeof entry === 'string' && entry.length > 0 && entry.includes(':')
+        );
         if (orgBotVersionFilters.length > 0) {
           botVersionFilters.push(...orgBotVersionFilters);
         }
@@ -412,8 +418,14 @@ const buildMapFromMetadata = (mdOption: MetadataOption, registry: RegistryAccess
 
   // Add metadata type entries we were told to include
   if (mdOption.metadataEntries?.length) {
-    mdOption.metadataEntries.map(entryToTypeAndName(registry)).map((cmp) => {
-      mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), cmp.metadataName]);
+    const filteredEntries = mdOption.metadataEntries.filter(
+      (entry): entry is string => typeof entry === 'string' && entry.length > 0 && entry.includes(':')
+    );
+    filteredEntries.map(entryToTypeAndName(registry)).map((cmp) => {
+      // Ensure metadataName is a string
+      if (typeof cmp.metadataName === 'string') {
+        mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), cmp.metadataName]);
+      }
     });
   }
 
@@ -442,6 +454,7 @@ const buildMapFromMetadata = (mdOption: MetadataOption, registry: RegistryAccess
 };
 
 // Replace pseudo types with actual types.
+// eslint-disable-next-line no-console
 const replacePseudoTypes = async (pseudoTypeInfo: {
   mdOption: MetadataOption;
   connection?: Connection;
@@ -487,7 +500,11 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
             directoryPaths: mdOption.directoryPaths,
             registry,
           });
-          replacedEntries = [...replacedEntries, ...agentMdEntries];
+          // Ensure all entries are strings, non-empty, and in Type:Name format
+          const validEntries = agentMdEntries.filter(
+            (entry): entry is string => typeof entry === 'string' && entry.length > 0 && entry.includes(':')
+          );
+          replacedEntries = [...replacedEntries, ...validEntries];
         }
       })
     );

@@ -15,7 +15,7 @@
  */
 import * as path from 'node:path';
 import { Logger } from '@salesforce/core/logger';
-import { isString } from '@salesforce/ts-types';
+import { isString, JsonMap } from '@salesforce/ts-types';
 import fs from 'graceful-fs';
 import { XMLBuilder } from 'fast-xml-parser';
 import { XML_DECL } from '../common';
@@ -450,6 +450,34 @@ export async function filterAgentComponents(
             const xmlContent = correctComments(XML_DECL.concat(handleSpecialEntities(builtXml)));
             if (comp.pathContentMap && comp.xml) {
               comp.pathContentMap.set(comp.xml, xmlContent);
+
+              // Override parseXml to normalize the structure after parsing
+              // XMLParser groups multiple <fullName> elements into { fullName: ['v1', 'v2'] }
+              // but the transformer expects [{ fullName: 'v1' }, { fullName: 'v2' }]
+              const originalParseXml = comp.parseXml.bind(comp);
+              comp.parseXml = async <T extends JsonMap>(xmlFilePath?: string): Promise<T> => {
+                const parsed = await originalParseXml<T>(xmlFilePath);
+                // Normalize botVersions structure if needed
+                const bot = parsed.Bot;
+                if (bot && typeof bot === 'object' && !Array.isArray(bot) && 'botVersions' in bot) {
+                  const botVersions1 = bot.botVersions;
+                  if (botVersions && !Array.isArray(botVersions) && typeof botVersions1 === 'object') {
+                    const botVersionsObj = botVersions1 as { fullName?: string | string[] };
+                    if (botVersionsObj.fullName) {
+                      const fullNames1 = Array.isArray(botVersionsObj.fullName)
+                        ? botVersionsObj.fullName
+                        : [botVersionsObj.fullName];
+                      // Convert { fullName: ['v1', 'v2'] } to [{ fullName: 'v1' }, { fullName: 'v2' }]
+                      (bot as { botVersions: Array<{ fullName: string }> }).botVersions = fullNames1.map((fn) => ({
+                        fullName: fn,
+                      }));
+                    } else {
+                      (bot as { botVersions: Array<{ fullName: string }> }).botVersions = [];
+                    }
+                  }
+                }
+                return parsed;
+              };
             }
           }
         }

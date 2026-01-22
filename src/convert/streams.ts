@@ -98,7 +98,10 @@ export class ComponentConverter extends Transform {
           converts.push(transformer.toMetadataFormat(chunk));
         }
         // could maybe improve all this with lazy async collections...
-        (await Promise.all(converts)).forEach((infos) => writeInfos.push(...infos));
+        const results = await Promise.all(converts);
+        results.forEach((infos) => {
+          writeInfos.push(...infos);
+        });
       } catch (e) {
         err = e as Error;
       }

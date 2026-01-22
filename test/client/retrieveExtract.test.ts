@@ -550,5 +550,59 @@ describe('retrieveExtract - Version Filtering', () => {
       const filtered = await filterAgentComponents([botComponent], filters);
       expect(filtered).to.have.length(1);
     });
+
+    it('should return normalized botVersions structure when parseXml is called after filtering', async () => {
+      // This test verifies the fix for the "Value is not a string" error
+      // When XMLParser groups multiple <fullName> elements into { fullName: ['v1', 'v2'] },
+      // parseXml should return [{ fullName: 'v1' }, { fullName: 'v2' }] format
+      // This is what the transformer expects
+      const component = createMockBotComponent('MineToPublish', ['v1', 'v2', 'v3', 'v4']);
+      const filters: BotVersionFilter[] = [{ botName: 'MineToPublish', versionFilter: 'all' }];
+
+      const filtered = await filterAgentComponents([component], filters);
+
+      expect(filtered).to.have.length(1);
+      const filteredComponent = filtered[0];
+
+      // Call parseXml to simulate what the transformer does
+      const parsed = await filteredComponent.parseXml<{ Bot?: { botVersions?: Array<{ fullName?: string }> } }>();
+
+      // Verify the structure is normalized (array of objects, not grouped object)
+      expect(parsed.Bot).to.exist;
+      expect(parsed.Bot?.botVersions).to.exist;
+      expect(parsed.Bot?.botVersions).to.be.an('array');
+      expect(parsed.Bot?.botVersions).to.have.length(4);
+
+      // Verify each element is an object with fullName property
+      const botVersions = parsed.Bot?.botVersions as Array<{ fullName?: string }>;
+      expect(botVersions[0]).to.have.property('fullName', 'v1');
+      expect(botVersions[1]).to.have.property('fullName', 'v2');
+      expect(botVersions[2]).to.have.property('fullName', 'v3');
+      expect(botVersions[3]).to.have.property('fullName', 'v4');
+
+      // Verify it's NOT the grouped format { fullName: ['v1', 'v2', 'v3', 'v4'] }
+      const botVersionsObj = parsed.Bot?.botVersions as unknown;
+      expect(botVersionsObj).to.not.have.property('fullName');
+      expect(Array.isArray(botVersionsObj)).to.be.true;
+    });
+
+    it('should return normalized botVersions structure for "highest" filter', async () => {
+      // Test that normalization works for different filter types
+      const component = createMockBotComponent('MyBot', ['v0', 'v1', 'v5', 'v2']);
+      const filters: BotVersionFilter[] = [{ botName: 'MyBot', versionFilter: 'highest' }];
+
+      const filtered = await filterAgentComponents([component], filters);
+
+      expect(filtered).to.have.length(1);
+      const filteredComponent = filtered[0];
+
+      // Call parseXml to simulate what the transformer does
+      const parsed = await filteredComponent.parseXml<{ Bot?: { botVersions?: Array<{ fullName?: string }> } }>();
+
+      // Verify the structure is normalized (array of objects)
+      expect(parsed.Bot?.botVersions).to.be.an('array');
+      expect(parsed.Bot?.botVersions).to.have.length(1);
+      expect((parsed.Bot?.botVersions as Array<{ fullName?: string }>)[0]).to.have.property('fullName', 'v5');
+    });
   });
 });

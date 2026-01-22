@@ -15,7 +15,7 @@
  */
 import * as path from 'node:path';
 import { Logger } from '@salesforce/core/logger';
-import { isString } from '@salesforce/ts-types';
+import { isString, JsonMap } from '@salesforce/ts-types';
 import fs from 'graceful-fs';
 import { XMLBuilder } from 'fast-xml-parser';
 import { XML_DECL } from '../common';
@@ -334,6 +334,10 @@ export function filterBotVersionEntries(
  * @returns Components with filtered BotVersion entries and GenAiPlannerBundle components
  * @internal Exported for testing purposes
  */
+// WeakMap to store normalized Bot XML structures for components that have been filtered
+// This allows us to return the normalized structure when parseXml is called
+const normalizedBotXmlMap = new WeakMap<SourceComponent, JsonMap>();
+
 export async function filterAgentComponents(
   components: SourceComponent[],
   botVersionFilters: BotVersionFilter[]
@@ -445,29 +449,66 @@ export async function filterAgentComponents(
           // Extract fullNames and reconstruct the object in the correct format
           const fullNames = filteredVersions.map((v) => v.fullName).filter((f): f is string => !!f);
 
-          // Reconstruct Bot object with normalized botVersions structure
-          // XMLBuilder needs { fullName: ['v1', 'v2'] } to create multiple <fullName> elements
-          // XMLParser will group them back, but that's handled by normalizing after parsing
+          // Reconstruct Bot XML with filtered versions
+          // We manually construct the botVersions section to avoid XMLParser grouping
           if (botXml.Bot) {
-            const botForBuilder: {
-              Bot: { botVersions?: { fullName: string | string[] } } & Omit<typeof botXml.Bot, 'botVersions'>;
-            } = {
+            // Update the component's cached XML content
+            // Build XML string using XMLBuilder, but manually construct botVersions section
+            // to avoid XMLParser grouping multiple <fullName> elements
+            const builder = new XMLBuilder({
+              format: true,
+              indentBy: '    ',
+              ignoreAttributes: false,
+            });
+
+            // Build XML with botVersions structure
+            // XMLBuilder creates multiple <fullName> elements, XMLParser groups them into { fullName: ['v1', 'v2'] }
+            // The transformer expects [{ fullName: 'v1' }, { fullName: 'v2' }]
+            // We need to normalize this when the XML is parsed, but we can't modify the transformer
+            // So we store a normalized version in pathContentMap and intercept parseXml calls
+            const botWithVersions = {
               Bot: {
                 ...botXml.Bot,
                 botVersions:
                   fullNames.length > 0 ? { fullName: fullNames.length === 1 ? fullNames[0] : fullNames } : undefined,
               },
             };
-
-            // Update the component's cached XML content
-            // Build XML string using XMLBuilder (same as JsToXml does internally)
-            const builder = new XMLBuilder({
-              format: true,
-              indentBy: '    ',
-              ignoreAttributes: false,
-            });
-            const builtXml = String(builder.build(botForBuilder));
+            const builtXml = String(builder.build(botWithVersions));
             const xmlContent = correctComments(XML_DECL.concat(handleSpecialEntities(builtXml)));
+
+            // Store normalized structure for later parsing
+            // We'll intercept parseXml to return the normalized structure
+            const normalizedBotVersionsForXml = fullNames.map((fn) => ({ fullName: fn }));
+            const normalizedBotXml = {
+              ...botXml,
+              Bot: {
+                ...botXml.Bot,
+                botVersions: normalizedBotVersionsForXml,
+              },
+            };
+
+            // Store both the XML content and the normalized structure
+            if (comp.pathContentMap && comp.xml) {
+              comp.pathContentMap.set(comp.xml, xmlContent);
+              // Store normalized structure in WeakMap for this component
+              normalizedBotXmlMap.set(comp, normalizedBotXml as JsonMap);
+
+              // Intercept parseXml to return normalized structure for Bot components
+              const originalParseXml = comp.parseXml.bind(comp);
+              comp.parseXml = async <T extends JsonMap>(xmlFilePath?: string): Promise<T> => {
+                const xml = xmlFilePath ?? comp.xml;
+                if (xml === comp.xml) {
+                  const normalized = normalizedBotXmlMap.get(comp);
+                  if (normalized) {
+                    // Return normalized structure for this Bot component
+                    return normalized as T;
+                  }
+                }
+                // For other cases, use original parseXml
+                return originalParseXml<T>(xmlFilePath);
+              };
+            }
+
             if (comp.pathContentMap && comp.xml) {
               comp.pathContentMap.set(comp.xml, xmlContent);
             }

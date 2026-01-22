@@ -454,7 +454,6 @@ const buildMapFromMetadata = (mdOption: MetadataOption, registry: RegistryAccess
 };
 
 // Replace pseudo types with actual types.
-// eslint-disable-next-line no-console
 const replacePseudoTypes = async (pseudoTypeInfo: {
   mdOption: MetadataOption;
   connection?: Connection;
@@ -500,10 +499,11 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
             directoryPaths: mdOption.directoryPaths,
             registry,
           });
-          // Ensure all entries are strings, non-empty, and in Type:Name format
-          const validEntries = agentMdEntries.filter(
-            (entry): entry is string => typeof entry === 'string' && entry.length > 0 && entry.includes(':')
-          );
+          // Convert entries to Type:Name format
+          // If entry is just a type name (no colon), treat it as Type:*
+          const validEntries = agentMdEntries
+            .filter((entry): entry is string => typeof entry === 'string' && entry.length > 0)
+            .map((entry) => (entry.includes(':') ? entry : `${entry}:*`));
           replacedEntries = [...replacedEntries, ...validEntries];
         }
       })

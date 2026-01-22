@@ -15,7 +15,7 @@
  */
 import * as path from 'node:path';
 import { Logger } from '@salesforce/core/logger';
-import { isString, JsonMap } from '@salesforce/ts-types';
+import { isString } from '@salesforce/ts-types';
 import fs from 'graceful-fs';
 import { XMLBuilder } from 'fast-xml-parser';
 import { XML_DECL } from '../common';
@@ -416,19 +416,39 @@ export async function filterAgentComponents(
     if (matchingFilter && comp.xml) {
       try {
         // Parse the Bot XML to get BotVersion entries
-        const botXml = await comp.parseXml<{ Bot?: { botVersions?: Array<{ fullName?: string }> } }>();
-        const botVersions = botXml.Bot?.botVersions;
+        const botXml = await comp.parseXml<{
+          Bot?: { botVersions?: Array<{ fullName?: string }> | { fullName?: string | string[] } };
+        }>();
+        const rawBotVersions = botXml.Bot?.botVersions;
 
-        if (botVersions && Array.isArray(botVersions)) {
-          const filteredVersions = filterBotVersionEntries(botVersions, matchingFilter.versionFilter);
+        // Normalize the structure: XMLParser may group multiple <fullName> elements into { fullName: ['v1', 'v2'] }
+        // but we need [{ fullName: 'v1' }, { fullName: 'v2' }] format
+        let normalizedBotVersions: Array<{ fullName?: string }> = [];
+        if (rawBotVersions) {
+          if (Array.isArray(rawBotVersions)) {
+            // Already in the correct format
+            normalizedBotVersions = rawBotVersions;
+          } else if (typeof rawBotVersions === 'object' && 'fullName' in rawBotVersions) {
+            // XMLParser grouped format: { fullName: ['v1', 'v2'] }
+            const fullNameValue = rawBotVersions.fullName;
+            if (Array.isArray(fullNameValue)) {
+              normalizedBotVersions = fullNameValue.map((fn) => ({ fullName: fn }));
+            } else if (typeof fullNameValue === 'string') {
+              normalizedBotVersions = [{ fullName: fullNameValue }];
+            }
+          }
+        }
 
-          // Update the Bot XML with filtered versions
-          // XMLBuilder needs the structure: {botVersions: {fullName: ['v0', 'v1', ...]}}
+        if (normalizedBotVersions.length > 0) {
+          const filteredVersions = filterBotVersionEntries(normalizedBotVersions, matchingFilter.versionFilter);
+
+          // Extract fullNames and reconstruct the object in the correct format
+          const fullNames = filteredVersions.map((v) => v.fullName).filter((f): f is string => !!f);
+
+          // Reconstruct Bot object with normalized botVersions structure
+          // XMLBuilder needs { fullName: ['v1', 'v2'] } to create multiple <fullName> elements
+          // XMLParser will group them back, but that's handled by normalizing after parsing
           if (botXml.Bot) {
-            const fullNames = filteredVersions.map((v) => v.fullName).filter((f): f is string => !!f);
-
-            // Create a new structure for XMLBuilder with the correct type
-            // We need to preserve all other Bot properties and only transform botVersions
             const botForBuilder: {
               Bot: { botVersions?: { fullName: string | string[] } } & Omit<typeof botXml.Bot, 'botVersions'>;
             } = {
@@ -450,34 +470,6 @@ export async function filterAgentComponents(
             const xmlContent = correctComments(XML_DECL.concat(handleSpecialEntities(builtXml)));
             if (comp.pathContentMap && comp.xml) {
               comp.pathContentMap.set(comp.xml, xmlContent);
-
-              // Override parseXml to normalize the structure after parsing
-              // XMLParser groups multiple <fullName> elements into { fullName: ['v1', 'v2'] }
-              // but the transformer expects [{ fullName: 'v1' }, { fullName: 'v2' }]
-              const originalParseXml = comp.parseXml.bind(comp);
-              comp.parseXml = async <T extends JsonMap>(xmlFilePath?: string): Promise<T> => {
-                const parsed = await originalParseXml<T>(xmlFilePath);
-                // Normalize botVersions structure if needed
-                const bot = parsed.Bot;
-                if (bot && typeof bot === 'object' && !Array.isArray(bot) && 'botVersions' in bot) {
-                  const botVersions1 = bot.botVersions;
-                  if (botVersions && !Array.isArray(botVersions) && typeof botVersions1 === 'object') {
-                    const botVersionsObj = botVersions1 as { fullName?: string | string[] };
-                    if (botVersionsObj.fullName) {
-                      const fullNames1 = Array.isArray(botVersionsObj.fullName)
-                        ? botVersionsObj.fullName
-                        : [botVersionsObj.fullName];
-                      // Convert { fullName: ['v1', 'v2'] } to [{ fullName: 'v1' }, { fullName: 'v2' }]
-                      (bot as { botVersions: Array<{ fullName: string }> }).botVersions = fullNames1.map((fn) => ({
-                        fullName: fn,
-                      }));
-                    } else {
-                      (bot as { botVersions: Array<{ fullName: string }> }).botVersions = [];
-                    }
-                  }
-                }
-                return parsed;
-              };
             }
           }
         }

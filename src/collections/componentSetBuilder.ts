@@ -418,14 +418,8 @@ const buildMapFromMetadata = (mdOption: MetadataOption, registry: RegistryAccess
 
   // Add metadata type entries we were told to include
   if (mdOption.metadataEntries?.length) {
-    const filteredEntries = mdOption.metadataEntries.filter(
-      (entry): entry is string => typeof entry === 'string' && entry.length > 0 && entry.includes(':')
-    );
-    filteredEntries.map(entryToTypeAndName(registry)).map((cmp) => {
-      // Ensure metadataName is a string
-      if (typeof cmp.metadataName === 'string') {
-        mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), cmp.metadataName]);
-      }
+    mdOption.metadataEntries.map(entryToTypeAndName(registry)).map((cmp) => {
+      mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), cmp.metadataName]);
     });
   }
 

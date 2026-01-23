@@ -294,7 +294,7 @@ export class ComponentSetBuilder {
 
     const componentSet = await ComponentSet.fromConnection({
       usernameOrConnection: connection,
-      componentFilter: getOrgComponentFilter(org, mdMap, metadata),
+      componentFilter: getOrgComponentFilter(org, mdMap, metadata, registry),
       metadataTypes: mdMap.size ? Array.from(mdMap.keys()) : undefined,
       registry,
     });
@@ -353,12 +353,23 @@ const logComponents = (componentSet: ComponentSet): void => {
 const getOrgComponentFilter = (
   org: OrgOption,
   mdMap: MetadataMap,
-  metadata?: MetadataOption
+  metadata?: MetadataOption,
+  registry?: RegistryAccess
 ): FromConnectionOptions['componentFilter'] =>
   metadata?.metadataEntries?.length
     ? (component: Partial<FileProperties>): boolean => {
         if (component.type && component.fullName) {
-          const mdMapEntry = mdMap.get(component.type);
+          // Normalize the type name using the registry to match mdMap keys
+          let normalizedTypeName = component.type;
+          if (registry) {
+            try {
+              normalizedTypeName = registry.getTypeByName(component.type).name;
+            } catch {
+              // If type not found in registry, use original type name
+              normalizedTypeName = component.type;
+            }
+          }
+          const mdMapEntry = mdMap.get(normalizedTypeName);
           // using minimatch versus RegExp provides better (more expected) matching results
           return (
             !!mdMapEntry &&
@@ -473,7 +484,10 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
       // Remove version suffix from metadata name
       replacedEntries.push(`${typeName}:${baseBotName}`);
     } else {
-      replacedEntries.push(rawEntry);
+      // Normalize entries without colons to Type:* format
+      // This allows entries like "PermissionSet" or "Flow" to be treated as "PermissionSet:*" or "Flow:*"
+      const normalizedEntry = name.length > 0 ? rawEntry : `${rawEntry}:*`;
+      replacedEntries.push(normalizedEntry);
     }
   });
 

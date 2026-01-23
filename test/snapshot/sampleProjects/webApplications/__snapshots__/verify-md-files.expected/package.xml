@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-  <types>
-    <members>SnapApp</members>
-    <name>WebApplication</name>
-  </types>
-  <version>66.0</version>
+    <types>
+        <members>SnapApp</members>
+        <name>WebApplication</name>
+    </types>
+    <version>66.0</version>
 </Package>

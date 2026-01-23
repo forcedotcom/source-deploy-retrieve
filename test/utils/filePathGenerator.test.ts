@@ -26,6 +26,7 @@ type TypeEntry = {
   fullName: string;
   typeName: string;
   expectedFilePaths: string[];
+  extraResolutionFilePaths?: string[];
   expectedComponents?: Array<{
     name?: string;
     type?: MetadataType;
@@ -145,6 +146,21 @@ const testData = {
       },
     ],
   },
+  bundleWebApplications: {
+    fullName: 'MyWebApp',
+    typeName: 'WebApplication',
+    expectedFilePaths: [
+      getFilePath('webapplications/MyWebApp/webapplication.json'),
+      getFilePath('webapplications/MyWebApp/MyWebApp.webapplication-meta.xml'),
+    ],
+    extraResolutionFilePaths: [getFilePath('webapplications/MyWebApp/src/index.html')],
+    expectedComponents: [
+      {
+        content: getFilePath('webapplications/MyWebApp'),
+        xml: getFilePath('webapplications/MyWebApp/MyWebApp.webapplication-meta.xml'),
+      },
+    ],
+  },
   bundleAppTemplates: {
     fullName: 'test_template',
     typeName: 'AppFrameworkTemplateBundle',
@@ -260,7 +276,10 @@ describe('generating virtual tree from component name/type', () => {
     expect(filePaths).to.deep.equal(typeEntry.expectedFilePaths);
 
     // part 2: are the files resolvable into the expected component?
-    const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filePaths));
+    const resolutionFilePaths = typeEntry.extraResolutionFilePaths
+      ? filePaths.concat(typeEntry.extraResolutionFilePaths)
+      : filePaths;
+    const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(resolutionFilePaths));
 
     const components = resolver.getComponentsFromPath(packageDir);
     const expectedComponentsSize = typeEntry.expectedComponents?.length ?? 1;
@@ -347,6 +366,10 @@ describe('generating virtual tree from component name/type', () => {
 
     it('waveTemplate', () => {
       runTest(testData.bundleWave);
+    });
+
+    it('webApplications', () => {
+      runTest(testData.bundleWebApplications);
     });
 
     it('appFrameworkTemplate', () => {

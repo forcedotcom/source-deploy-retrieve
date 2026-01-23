@@ -293,6 +293,7 @@ describe('will run preset tests', () => {
                 'decomposed',
                 'partiallyDecomposed',
                 'digitalExperience',
+                'webApplications',
               ]).includes(type.strategies?.adapter);
             });
           });

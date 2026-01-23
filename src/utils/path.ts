@@ -150,7 +150,7 @@ export const calculateRelativePath =
       !suffix ||
       Boolean(inFolder) ||
       typeof folderContentType === 'string' ||
-      ['digitalexperiencebundle', 'digitalexperience'].includes(types.self.id)
+      ['digitalexperiencebundle', 'digitalexperience', 'webapplication'].includes(types.self.id)
     ) {
       return join(base, trimUntil(fsPath, directoryName, true));
     }

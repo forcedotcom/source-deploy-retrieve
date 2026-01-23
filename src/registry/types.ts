@@ -155,7 +155,8 @@ export type MetadataType = {
       | 'digitalExperience'
       | 'bundle'
       | 'default'
-      | 'partiallyDecomposed';
+      | 'partiallyDecomposed'
+      | 'webApplications';
     transformer?:
       | 'decomposed'
       | 'staticResource'

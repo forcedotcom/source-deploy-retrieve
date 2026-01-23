@@ -458,7 +458,8 @@ const legacySuffixMatches = (type: MetadataType, fsPath: string): boolean => {
 const appendMetaXmlSuffix = (suffix: string): string => `${suffix}${META_XML_SUFFIX}`;
 
 const isMixedContentOrBundle = (type: MetadataType): boolean =>
-  typeof type.strategies?.adapter === 'string' && ['mixedContent', 'bundle'].includes(type.strategies.adapter);
+  typeof type.strategies?.adapter === 'string' &&
+  ['mixedContent', 'bundle', 'webApplications'].includes(type.strategies.adapter);
 
 /** types with folders only have folder components living at the top level.
  * if the fsPath is a folder component, let a future strategy deal with it

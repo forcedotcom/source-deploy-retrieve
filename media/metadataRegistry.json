@@ -71,7 +71,8 @@
     "staticresources": "staticresource",
     "waveTemplates": "wavetemplatebundle",
     "appTemplates": "appframeworktemplatebundle",
-    "lightningTypes": "lightningtypebundle"
+    "lightningTypes": "lightningtypebundle",
+    "webapplications": "webapplication"
   },
   "suffixes": {
     "Canvas": "canvasmetadata",
@@ -527,6 +528,7 @@
     "wds": "wavedataset",
     "webStoreBundle": "webstorebundle",
     "webStoreTemplate": "webstoretemplate",
+    "webapplication": "webapplication",
     "workflowFlowAutomation": "workflowflowautomation",
     "weblink": "custompageweblink",
     "wlens": "wavelens",
@@ -4669,6 +4671,18 @@
       "inFolder": false,
       "name": "WaveXmd",
       "suffix": "xmd"
+    },
+    "webapplication": {
+      "directoryName": "webapplications",
+      "id": "webapplication",
+      "inFolder": false,
+      "name": "WebApplication",
+      "suffix": "webapplication",
+      "strategies": {
+        "adapter": "webApplications"
+      },
+      "strictDirectoryName": true,
+      "supportsPartialDelete": true
     },
     "webstorebundle": {
       "directoryName": "webStoreBundles",

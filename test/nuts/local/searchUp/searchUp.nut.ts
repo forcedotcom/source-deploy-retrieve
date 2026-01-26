@@ -66,10 +66,7 @@ describe('searchUp nut test', () => {
       );
       expect(path.isAbsolute(relativeStartPath)).to.be.false;
       const result = searchUp(relativeStartPath, 'target.txt');
-      const expected = path.relative(
-        session.project.dir,
-        path.join(session.project.dir, 'level1', 'level2', 'target.txt')
-      );
+      const expected = path.join(session.project.dir, 'level1', 'level2', 'target.txt');
 
       expect(result).to.equal(expected);
     });
@@ -81,7 +78,7 @@ describe('searchUp nut test', () => {
       );
       expect(path.isAbsolute(relativeStartPath)).to.be.false;
       const result = searchUp(relativeStartPath, '.gitignore');
-      const expected = path.relative(session.project.dir, path.join(session.project.dir, '.gitignore'));
+      const expected = path.join(session.project.dir, '.gitignore');
 
       expect(result).to.equal(expected);
     });
@@ -95,7 +92,7 @@ describe('searchUp nut test', () => {
       const absoluteStartPath = path.resolve(session.project.dir, relativeStartPath);
       fs.writeFileSync(path.join(absoluteStartPath, 'localFile.txt'), 'local content');
       const result = searchUp(relativeStartPath, 'localFile.txt');
-      const expected = path.relative(session.project.dir, path.join(absoluteStartPath, 'localFile.txt'));
+      const expected = path.join(absoluteStartPath, 'localFile.txt');
 
       expect(result).to.equal(expected);
     });
@@ -120,10 +117,7 @@ describe('searchUp nut test', () => {
       const absoluteFilePath = path.resolve(session.project.dir, relativeFilePath);
       fs.writeFileSync(absoluteFilePath, 'content');
       const result = searchUp(relativeFilePath, 'target.txt');
-      const expected = path.relative(
-        session.project.dir,
-        path.join(session.project.dir, 'level1', 'level2', 'target.txt')
-      );
+      const expected = path.join(session.project.dir, 'level1', 'level2', 'target.txt');
 
       expect(result).to.equal(expected);
     });

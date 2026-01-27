@@ -126,7 +126,7 @@ describe('ForceIgnore', () => {
       expect(forceIgnore.denies(remoteMetadataPath)).to.be.false;
     });
 
-    it('Should NOT ignore stuff in .sf/orgs/<orgId>/remoteMetadata', () => {
+    it('Should NOT ignore stuff inside .sf/orgs/<orgId>/remoteMetadata', () => {
       const remoteMetadataPath = join(root, '.sf', 'orgs', '00D000000000000', 'remoteMetadata', 'foo', 'bar');
       expect(forceIgnore.accepts(remoteMetadataPath)).to.be.true;
       expect(forceIgnore.denies(remoteMetadataPath)).to.be.false;
@@ -138,8 +138,8 @@ describe('ForceIgnore', () => {
       expect(forceIgnore.denies(dotSfNotInRemoteMetadata)).to.be.true;
     });
 
-    it('Should ignore .sf/orgs/anythingElse', () => {
-      const dotSfNotInRemoteMetadata = join(root, '.sf', 'orgs', 'foo');
+    it('Should ignore .sf/anythingElse', () => {
+      const dotSfNotInRemoteMetadata = join(root, '.sf', 'foo');
       expect(forceIgnore.accepts(dotSfNotInRemoteMetadata)).to.be.false;
       expect(forceIgnore.denies(dotSfNotInRemoteMetadata)).to.be.true;
     });

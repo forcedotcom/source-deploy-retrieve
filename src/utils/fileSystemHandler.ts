@@ -23,22 +23,23 @@ export const ensureFileExists = async (filePath: string): Promise<void> => {
 };
 
 /**
- * Traverse up a file path and search for the given file name.
+ * Traverse up a file path and search for the given file name.  Always returns an absolute path.
  *
  * @param start File or folder path to start searching from
  * @param fileName File name to search for
  */
 export function searchUp(start: SourcePath, fileName: string): string | undefined {
-  const filePath = path.join(start, fileName);
+  const absoluteStart = path.isAbsolute(start) ? start : path.join(process.cwd(), start);
+  const filePath = path.join(absoluteStart, fileName);
   if (fs.existsSync(filePath)) {
     return filePath;
   }
 
-  const normalizedStart = path.normalize(start);
-  const parent = path.dirname(normalizedStart);
+  const normalizedAbsoluteStart = path.normalize(absoluteStart);
+  const parent = path.dirname(normalizedAbsoluteStart);
 
   // If we're at root, stop (don't try to go up with ..)
-  if (parent === normalizedStart || normalizedStart === path.parse(normalizedStart).root) {
+  if (parent === normalizedAbsoluteStart || normalizedAbsoluteStart === path.parse(normalizedAbsoluteStart).root) {
     return;
   }
 

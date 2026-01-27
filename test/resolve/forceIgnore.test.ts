@@ -116,9 +116,32 @@ describe('ForceIgnore', () => {
 
     it('Should ignore files starting with a dot', () => {
       const dotPath = join(root, '.xyz');
-
       expect(forceIgnore.accepts(dotPath)).to.be.false;
       expect(forceIgnore.denies(dotPath)).to.be.true;
+    });
+
+    it('Should NOT ignore .sf/orgs/<orgId>/remoteMetadata', () => {
+      const remoteMetadataPath = join(root, '.sf', 'orgs', '00D000000000000', 'remoteMetadata');
+      expect(forceIgnore.accepts(remoteMetadataPath)).to.be.true;
+      expect(forceIgnore.denies(remoteMetadataPath)).to.be.false;
+    });
+
+    it('Should NOT ignore stuff in .sf/orgs/<orgId>/remoteMetadata', () => {
+      const remoteMetadataPath = join(root, '.sf', 'orgs', '00D000000000000', 'remoteMetadata', 'foo', 'bar');
+      expect(forceIgnore.accepts(remoteMetadataPath)).to.be.true;
+      expect(forceIgnore.denies(remoteMetadataPath)).to.be.false;
+    });
+
+    it('Should ignore .sf/orgs/<orgId>/anythingElse', () => {
+      const dotSfNotInRemoteMetadata = join(root, '.sf', 'orgs', '00D000000000000', 'foo');
+      expect(forceIgnore.accepts(dotSfNotInRemoteMetadata)).to.be.false;
+      expect(forceIgnore.denies(dotSfNotInRemoteMetadata)).to.be.true;
+    });
+
+    it('Should ignore .sf/orgs/anythingElse', () => {
+      const dotSfNotInRemoteMetadata = join(root, '.sf', 'orgs', 'foo');
+      expect(forceIgnore.accepts(dotSfNotInRemoteMetadata)).to.be.false;
+      expect(forceIgnore.denies(dotSfNotInRemoteMetadata)).to.be.true;
     });
 
     it('Should ignore files ending in .dup', () => {

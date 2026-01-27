@@ -1,3 +1,12 @@
+## [12.31.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.8...12.31.9) (2026-01-27)
+
+
+### Bug Fixes
+
+* forceignore relative paths and 1 exception for extensions W-20965680 ([#1676](https://github.com/forcedotcom/source-deploy-retrieve/issues/1676)) ([d9655f0](https://github.com/forcedotcom/source-deploy-retrieve/commit/d9655f0983fcb1d8f4c234f680f701a9ea59b793))
+
+
+
 ## [12.31.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.7...12.31.8) (2026-01-22)
 
 

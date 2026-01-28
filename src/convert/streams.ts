@@ -98,7 +98,10 @@ export class ComponentConverter extends Transform {
           converts.push(transformer.toMetadataFormat(chunk));
         }
         // could maybe improve all this with lazy async collections...
-        (await Promise.all(converts)).forEach((infos) => writeInfos.push(...infos));
+        const results = await Promise.all(converts);
+        results.forEach((infos) => {
+          writeInfos.push(...infos);
+        });
       } catch (e) {
         err = e as Error;
       }
@@ -289,7 +292,7 @@ export class JsToXml extends Readable {
 }
 
 /** xmlBuilder likes to add newline and indent before/after the comment (hypothesis: it uses `<` as a hint to newlint/indent) */
-const correctComments = (xml: string): string =>
+export const correctComments = (xml: string): string =>
   xml.includes('<!--') ? xml.replace(/\s+<!--(.*?)-->\s+/g, '<!--$1-->') : xml;
 /**
  * use this function to handle special html entities.
@@ -301,7 +304,7 @@ const correctComments = (xml: string): string =>
  * You also can't use Builder.tagValueProcessor to use this function
  * because the escaping of `&` happens AFTER that is called.
  * */
-const handleSpecialEntities = (xml: string): string => xml.replaceAll('&amp;#160;', '&#160;');
+export const handleSpecialEntities = (xml: string): string => xml.replaceAll('&amp;#160;', '&#160;');
 
 /** discriminate between the shouldDelete and the regular WriteInfo */
 const isWriteInfoWithSource = (writeInfo: WriteInfo): writeInfo is WriteInfo & { source: Readable } =>

@@ -203,7 +203,10 @@ export class MetadataApiRetrieve extends MetadataTransfer<
 
         ({ componentSet, partialDeleteFileResponses } = await extract({
           zip: zipFileContents,
-          options: this.options,
+          options: {
+            ...this.options,
+            botVersionFilters: this.components?.botVersionFilters ?? this.options.botVersionFilters,
+          },
           logger: this.logger,
           mainComponents: this.components,
         }));

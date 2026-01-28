@@ -25,7 +25,7 @@ import { RegistryAccess } from '../registry/registryAccess';
 import type { FileProperties } from '../client/types';
 import { MetadataType } from '../registry/types';
 import { MetadataResolver } from '../resolve';
-import { resolveAgentMdEntries } from '../resolve/pseudoTypes/agentResolver';
+import { resolveAgentMdEntries, parseBotVersionFilter } from '../resolve/pseudoTypes/agentResolver';
 import { DestructiveChangesType, FromConnectionOptions } from './types';
 
 Messages.importMessagesDirectory(__dirname);
@@ -97,9 +97,10 @@ export class ComponentSetBuilder {
    *
    * @see https://github.com/forcedotcom/source-deploy-retrieve/blob/develop/src/collections/componentSet.ts
    *
-   * @param options: options for creating a ComponentSet
+   * @param options
    */
 
+  // eslint-disable-next-line complexity
   public static async build(options: ComponentSetOptions): Promise<ComponentSet> {
     let componentSet: ComponentSet | undefined;
 
@@ -164,7 +165,14 @@ export class ComponentSetBuilder {
 
       // If pseudo types were passed without an org option replace the pseudo types with
       // "client side spidering"
-      metadata.metadataEntries = await replacePseudoTypes({ mdOption: metadata, registry });
+      const { replacedEntries, botVersionFilters } = await replacePseudoTypes({ mdOption: metadata, registry });
+      // Ensure all entries are valid strings
+      metadata.metadataEntries = replacedEntries.filter(
+        (entry): entry is string => typeof entry === 'string' && entry.length > 0
+      );
+      if (botVersionFilters.length > 0) {
+        componentSet.botVersionFilters = botVersionFilters;
+      }
 
       // Build a Set of metadata entries
       metadata.metadataEntries
@@ -221,8 +229,12 @@ export class ComponentSetBuilder {
     // Resolve metadata entries with an org connection
     if (org) {
       componentSet ??= new ComponentSet(undefined, registry);
-      const orgComponentSet = await this.resolveOrgComponents(registry, options);
+      const { componentSet: orgComponentSet, botVersionFilters: orgBotVersionFilters } =
+        await this.resolveOrgComponents(registry, options);
       orgComponentSet.toArray().map(addToComponentSet(componentSet));
+      if (orgBotVersionFilters.length > 0) {
+        componentSet.botVersionFilters = orgBotVersionFilters;
+      }
     }
 
     // there should have been a componentSet created by this point.
@@ -238,7 +250,10 @@ export class ComponentSetBuilder {
   private static async resolveOrgComponents(
     registry: RegistryAccess,
     options: ComponentSetOptions
-  ): Promise<ComponentSet> {
+  ): Promise<{
+    componentSet: ComponentSet;
+    botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
+  }> {
     // Get a connection from the OrgOption
     const { apiversion, org, metadata } = options;
     if (!org) {
@@ -252,11 +267,23 @@ export class ComponentSetBuilder {
 
     let mdMap = new Map() as MetadataMap;
     let debugMsg = `Building ComponentSet from metadata in an org using targetUsername: ${username}`;
+    const botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }> = [];
     if (metadata) {
       if (metadata.metadataEntries?.length) {
         debugMsg += ` filtering on metadata: ${metadata.metadataEntries.toString()}`;
         // Replace pseudo-types from the metadataEntries
-        metadata.metadataEntries = await replacePseudoTypes({ mdOption: metadata, connection, registry });
+        const { replacedEntries, botVersionFilters: orgBotVersionFilters } = await replacePseudoTypes({
+          mdOption: metadata,
+          connection,
+          registry,
+        });
+        // Ensure all entries are valid strings in Type:Name format
+        metadata.metadataEntries = replacedEntries.filter(
+          (entry): entry is string => typeof entry === 'string' && entry.length > 0 && entry.includes(':')
+        );
+        if (orgBotVersionFilters.length > 0) {
+          botVersionFilters.push(...orgBotVersionFilters);
+        }
       }
       if (metadata.excludedEntries?.length) {
         debugMsg += ` excluding metadata: ${metadata.excludedEntries.toString()}`;
@@ -265,12 +292,14 @@ export class ComponentSetBuilder {
     }
     getLogger().debug(debugMsg);
 
-    return ComponentSet.fromConnection({
+    const componentSet = await ComponentSet.fromConnection({
       usernameOrConnection: connection,
-      componentFilter: getOrgComponentFilter(org, mdMap, metadata),
+      componentFilter: getOrgComponentFilter(org, mdMap, metadata, registry),
       metadataTypes: mdMap.size ? Array.from(mdMap.keys()) : undefined,
       registry,
     });
+
+    return { componentSet, botVersionFilters };
   }
 }
 
@@ -324,12 +353,23 @@ const logComponents = (componentSet: ComponentSet): void => {
 const getOrgComponentFilter = (
   org: OrgOption,
   mdMap: MetadataMap,
-  metadata?: MetadataOption
+  metadata?: MetadataOption,
+  registry?: RegistryAccess
 ): FromConnectionOptions['componentFilter'] =>
   metadata?.metadataEntries?.length
     ? (component: Partial<FileProperties>): boolean => {
         if (component.type && component.fullName) {
-          const mdMapEntry = mdMap.get(component.type);
+          // Normalize the type name using the registry to match mdMap keys
+          let normalizedTypeName = component.type;
+          if (registry) {
+            try {
+              normalizedTypeName = registry.getTypeByName(component.type).name;
+            } catch {
+              // If type not found in registry, use original type name
+              normalizedTypeName = component.type;
+            }
+          }
+          const mdMapEntry = mdMap.get(normalizedTypeName);
           // using minimatch versus RegExp provides better (more expected) matching results
           return (
             !!mdMapEntry &&
@@ -423,17 +463,31 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
   mdOption: MetadataOption;
   connection?: Connection;
   registry: RegistryAccess;
-}): Promise<string[]> => {
+}): Promise<{
+  replacedEntries: string[];
+  botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
+}> => {
   const { mdOption, connection, registry } = pseudoTypeInfo;
   const pseudoEntries: string[][] = [];
   let replacedEntries: string[] = [];
+  const botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }> = [];
 
   mdOption.metadataEntries.map((rawEntry) => {
     const [typeName, ...name] = rawEntry.split(':');
     if (Object.values(PSEUDO_TYPES).includes(typeName)) {
       pseudoEntries.push([typeName, name.join(':').trim()]);
+    } else if (typeName === 'Bot') {
+      // Handle Bot entries with version suffixes (e.g., Bot:myBot_1, Bot:myBot_*)
+      const botName = name.join(':').trim();
+      const { baseBotName, versionFilter } = parseBotVersionFilter(botName);
+      botVersionFilters.push({ botName: baseBotName, versionFilter });
+      // Remove version suffix from metadata name
+      replacedEntries.push(`${typeName}:${baseBotName}`);
     } else {
-      replacedEntries.push(rawEntry);
+      // Normalize entries without colons to Type:* format
+      // This allows entries like "PermissionSet" or "Flow" to be treated as "PermissionSet:*" or "Flow:*"
+      const normalizedEntry = name.length > 0 ? rawEntry : `${rawEntry}:*`;
+      replacedEntries.push(normalizedEntry);
     }
   });
 
@@ -444,17 +498,25 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
         const pseudoName = pseudoEntry[1] || '*';
         getLogger().debug(`Converting pseudo-type ${pseudoType}:${pseudoName}`);
         if (pseudoType === PSEUDO_TYPES.AGENT) {
+          // Parse version filter from botName
+          const { baseBotName, versionFilter } = parseBotVersionFilter(pseudoName);
+          botVersionFilters.push({ botName: baseBotName, versionFilter });
           const agentMdEntries = await resolveAgentMdEntries({
-            botName: pseudoName,
+            botName: baseBotName,
             connection,
             directoryPaths: mdOption.directoryPaths,
             registry,
           });
-          replacedEntries = [...replacedEntries, ...agentMdEntries];
+          // Convert entries to Type:Name format
+          // If entry is just a type name (no colon), treat it as Type:*
+          const validEntries = agentMdEntries
+            .filter((entry): entry is string => typeof entry === 'string' && entry.length > 0)
+            .map((entry) => (entry.includes(':') ? entry : `${entry}:*`));
+          replacedEntries = [...replacedEntries, ...validEntries];
         }
       })
     );
   }
 
-  return replacedEntries;
+  return { replacedEntries, botVersionFilters };
 };

@@ -87,6 +87,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public projectDirectory?: string;
   public fullName?: string;
   public forceIgnoredPaths?: Set<string>;
+  public botVersionFilters?: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
   private logger: Logger;
   private readonly registry: RegistryAccess;
   // all components stored here, regardless of what manifest they belong to
@@ -404,6 +405,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       components: this,
       registry: this.registry,
       apiVersion: this.apiVersion,
+      botVersionFilters: this.botVersionFilters,
     });
 
     this.forRetrieve = true;

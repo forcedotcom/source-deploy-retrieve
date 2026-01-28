@@ -400,4 +400,13 @@ export type RetrieveVersionData = {
   apiVersion: string;
   manifestVersion: string;
 };
-export type MetadataApiRetrieveOptions = MetadataTransferOptions & RetrieveOptions & { registry?: RegistryAccess };
+export type BotVersionFilter = {
+  botName: string;
+  versionFilter: 'all' | 'highest' | number;
+};
+
+export type MetadataApiRetrieveOptions = MetadataTransferOptions &
+  RetrieveOptions & {
+    registry?: RegistryAccess;
+    botVersionFilters?: BotVersionFilter[];
+  };

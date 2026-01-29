@@ -533,7 +533,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   /**
-   * Get all AiAuthoringBundle components in the set.
+   * Get all constructive AiAuthoringBundle components in the set, which require compilation before deploy.
    * This is an optimized method that uses a cached Set of AAB components.
    *
    * @returns Collection of AiAuthoringBundle source components
@@ -571,8 +571,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     // we're working with SourceComponents now
     this.components.get(key)?.set(srcKey, component);
 
-    // track AiAuthoringBundles separately for fast access
-    if (component.type.id === 'aiauthoringbundle') {
+    // track AiAuthoringBundles separately for fast access (exclude destructive changes - no need to compile something that will be deleted)
+    if (component.type.id === 'aiauthoringbundle' && !deletionType) {
       this.aiAuthoringBundles.add(component);
     }
 

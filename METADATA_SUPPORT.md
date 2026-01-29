@@ -753,7 +753,6 @@ v66 introduces the following new types.  Here's their current level of support
 |DocumentExtractionDef|❌|Not supported, but support could be added|
 |DripFeedConfigSettings|✅||
 |DynamicGanttSettings|✅||
-|EinsteinAIObservabilitySettings|✅||
 |EmergencySettings|✅||
 |ExtlClntAppAttestConfigurablePolicies|❌|Not supported, but support could be added (but not for tracking)|
 |ExtlClntAppAttestSettings|✅||

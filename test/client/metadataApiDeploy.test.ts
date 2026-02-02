@@ -25,6 +25,7 @@ import fs from 'graceful-fs';
 import {
   ComponentSet,
   ComponentStatus,
+  DestructiveChangesType,
   DeployMessage,
   DeployResult,
   FileResponse,
@@ -1513,6 +1514,79 @@ describe('MetadataApiDeploy', () => {
       // Verify compilation endpoints were not called
       expect(readFileStub.called).to.be.false;
       expect(compileCallCount.count).to.equal(0);
+    });
+
+    it('should skip AAB compilation when AAB is only in destructive changes', async () => {
+      // AAB marked for delete only (e.g. from destructiveChanges.xml) - no source to compile
+      const aabForDelete = new SourceComponent({
+        name: 'toDelete',
+        type: aabType,
+      });
+      const components = new ComponentSet([COMPONENT]);
+      components.add(aabForDelete, DestructiveChangesType.POST);
+
+      expect(components.getAiAuthoringBundles().toArray()).to.be.empty;
+
+      $$.SANDBOX.stub(Connection.prototype, 'retrieveMaxApiVersion').resolves('60.0');
+      const connection = await testOrg.getConnection();
+
+      const readFileStub = $$.SANDBOX.stub(fs.promises, 'readFile');
+      const compileCallCount = { count: 0 };
+      (connection.request as sinon.SinonStub).callsFake((request: { url?: string }) => {
+        const url = request.url ?? '';
+        if (url.includes('einstein/ai-agent') || url.includes('agentforce/bootstrap')) {
+          compileCallCount.count++;
+        }
+        return Promise.resolve({});
+      });
+
+      const { operation } = await stubMetadataDeploy($$, testOrg, { components });
+
+      await operation.start();
+
+      expect(readFileStub.called).to.be.false;
+      expect(compileCallCount.count).to.equal(0);
+    });
+
+    it('should compile only constructive AABs when both constructive and destructive AABs exist', async () => {
+      const aabConstructive = createAABComponent();
+      const aabForDelete = new SourceComponent({
+        name: 'AABToDelete',
+        type: aabType,
+      });
+      const components = new ComponentSet([aabConstructive]);
+      components.add(aabForDelete, DestructiveChangesType.POST);
+
+      expect(components.getAiAuthoringBundles().toArray()).to.have.length(1);
+      expect(components.getAiAuthoringBundles().toArray()[0].fullName).to.equal(aabName);
+
+      $$.SANDBOX.stub(Connection.prototype, 'retrieveMaxApiVersion').resolves('60.0');
+      const connection = await testOrg.getConnection();
+
+      const readFileStub = $$.SANDBOX.stub(fs.promises, 'readFile').resolves(agentContent);
+      $$.SANDBOX.stub(connection, 'getConnectionOptions').returns({
+        accessToken: 'test-access-token',
+        instanceUrl: 'https://test.salesforce.com',
+      });
+
+      let compileCallCount = 0;
+      (connection.request as sinon.SinonStub).callsFake((request: { url?: string }) => {
+        if (request.url?.includes('agentforce/bootstrap/nameduser')) {
+          return Promise.resolve({ access_token: 'named-user-token' });
+        }
+        if (request.url?.includes('einstein/ai-agent')) {
+          compileCallCount++;
+          return Promise.resolve({ status: 'success' as const, errors: [] });
+        }
+        return Promise.resolve({});
+      });
+
+      const { operation } = await stubMetadataDeploy($$, testOrg, { components });
+
+      await operation.start();
+
+      expect(readFileStub.calledOnce).to.be.true;
+      expect(compileCallCount).to.equal(1);
     });
 
     it('should handle multiple AABs in parallel', async () => {

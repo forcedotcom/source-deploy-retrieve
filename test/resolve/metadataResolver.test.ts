@@ -398,6 +398,31 @@ describe('MetadataResolver', () => {
         expect(comp[0]).to.have.deep.property('type', registryAccess.getTypeByName('ReportFolder'));
       });
 
+      it('should resolve folder metadata and reports from zip paths without leading directory', () => {
+        const registryAccess = new RegistryAccess();
+        const reportFolderDir = 'reports';
+        const reportSubFolder = join(reportFolderDir, 'TestFolder');
+        const virtualFS: VirtualDirectory[] = [
+          { dirPath: reportFolderDir, children: ['TestFolder-meta.xml', 'TestFolder'] },
+          { dirPath: reportSubFolder, children: ['MyReport.report-meta.xml'] },
+        ];
+        const tree = new VirtualTreeContainer(virtualFS);
+        const mdResolver = new MetadataResolver(registryAccess, tree);
+
+        const components = mdResolver.getComponentsFromPath(reportFolderDir);
+        expect(components).to.be.an('array').with.lengthOf(2);
+
+        const folderComp = components.find((c) => c.type.name === 'ReportFolder');
+        expect(folderComp).to.exist;
+        expect(folderComp).to.have.property('name', 'TestFolder');
+        expect(folderComp).to.have.deep.property('type', registryAccess.getTypeByName('ReportFolder'));
+
+        const reportComp = components.find((c) => c.type.name === 'Report');
+        expect(reportComp).to.exist;
+        expect(reportComp).to.have.property('name', 'TestFolder/MyReport');
+        expect(reportComp).to.have.deep.property('type', registryAccess.getTypeByName('Report'));
+      });
+
       it('Should not mistake folder component of a mixed content type as that type', () => {
         // this test has coveage on non-mixedContent types as well by nature of the execution path
         const path = mixedContentInFolder.FOLDER_XML_PATH;

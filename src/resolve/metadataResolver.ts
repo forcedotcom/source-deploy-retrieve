@@ -320,9 +320,9 @@ const parseAsFolderMetadataXml =
       if (parts.length > 1) {
         const folderContentTypesDirs = getFolderContentTypeDirNames(registry);
         // check if the path contains a folder content name as a directory
-        // e.g., `/reports/` and if it does return that folder name.
+        const pathWithoutFile = parts.slice(0, -1);
         folderContentTypesDirs.some((dirName) => {
-          if (fsPath.includes(`${sep}${dirName}${sep}`)) {
+          if (pathWithoutFile.includes(dirName)) {
             folderName = dirName;
           }
         });

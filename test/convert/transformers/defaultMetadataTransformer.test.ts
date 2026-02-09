@@ -296,7 +296,7 @@ describe('DefaultMetadataTransformer', () => {
       expect(await transformer.toSourceFormat({ component })).to.deep.equal(expectedInfos);
     });
 
-    it.only('should merge mobile.json into mobile/mobile.json', async () => {
+    it('should merge mobile.json into mobile/mobile.json', async () => {
       const component = SourceComponent.createVirtualComponent(digitalExperienceBundle.DE_COMPONENT_PROPERTIES, [
         {
           dirPath: digitalExperienceBundle.HOME_VIEW_PATH,

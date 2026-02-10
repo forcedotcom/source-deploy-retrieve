@@ -16,7 +16,7 @@
 import { basename, join } from 'node:path';
 import { createSandbox } from 'sinon';
 import { assert, expect } from 'chai';
-import { bundle, digitalExperienceBundle, document, matchingContentFile, nestedTypes, xmlInFolder } from '../../mock';
+import { bundle, document, matchingContentFile, nestedTypes, xmlInFolder } from '../../mock';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
 import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer, WriteInfo } from '../../../src';
 import { TestReadable } from '../../mock/convert/readables';
@@ -294,24 +294,6 @@ describe('DefaultMetadataTransformer', () => {
       ];
 
       expect(await transformer.toSourceFormat({ component })).to.deep.equal(expectedInfos);
-    });
-
-    it('should merge mobile.json into mobile/mobile.json', async () => {
-      const component = SourceComponent.createVirtualComponent(digitalExperienceBundle.DE_COMPONENT_PROPERTIES, [
-        {
-          dirPath: digitalExperienceBundle.HOME_VIEW_PATH,
-          children: [digitalExperienceBundle.HOME_VIEW_MOBILE_VARIANT_FILE],
-        },
-      ]);
-      const mergeWith = digitalExperienceBundle.DE_COMPONENT;
-
-      assert(typeof mergeWith.content === 'string');
-      const transformed = await transformer.toSourceFormat({ component, mergeWith });
-      const expected = {
-        source: component.tree.stream(join(digitalExperienceBundle.DE_COMPONENT_PROPERTIES.content, 'mobile.json')),
-        output: join(mergeWith.content, 'home', 'mobile.json'),
-      };
-      expect(transformed).to.deep.include(expected);
     });
 
     it('should merge output with merge component when content is a directory', async () => {

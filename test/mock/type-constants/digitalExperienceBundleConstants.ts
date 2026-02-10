@@ -35,7 +35,6 @@ export const BUNDLE_META_FILE = `foo.${DEB_TYPE.suffix}${META_XML_SUFFIX}`;
 export const HOME_VIEW_META_FILE = DE_METAFILE;
 export const HOME_VIEW_CONTENT_FILE = 'content.json';
 export const HOME_VIEW_FRENCH_VARIANT_FILE = 'fr.json';
-export const HOME_VIEW_MOBILE_VARIANT_FILE = 'mobile.json';
 
 export const BASE_PATH = join('path', 'to', DEB_TYPE.directoryName);
 export const BUNDLE_PATH = join(BASE_PATH, 'site', 'foo');
@@ -75,12 +74,3 @@ export const DE_COMPONENT = SourceComponent.createVirtualComponent(
     },
   ]
 );
-
-export const DE_COMPONENT_PROPERTIES = {
-  name: HOME_VIEW_NAME,
-  type: DE_TYPE,
-  content: HOME_VIEW_PATH,
-  xml: HOME_VIEW_META_FILE_PATH,
-  parent: DEB_COMPONENT,
-  parentType: DEB_TYPE,
-};

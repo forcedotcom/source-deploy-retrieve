@@ -1,0 +1,99 @@
+{
+  "type": "sfdc_cms__view",
+  "title": "Register",
+  "contentBody": {
+    "component": {
+      "children": [
+        {
+          "children": [
+            {
+              "attributes": {
+                "backgroundImageConfig": "",
+                "backgroundImageOverlay": "rgba(0,0,0,0)",
+                "componentSpacerSize": "",
+                "layoutDirectionDesktop": "row",
+                "layoutDirectionMobile": "column",
+                "layoutDirectionTablet": "column",
+                "maxContentWidth": "",
+                "sectionColumnGutterWidth": "",
+                "sectionConfig": "{\"UUID\":\"eb94e656-c1c5-4fc1-a3fb-7bfd61c98a26\",\"columns\":[{\"UUID\":\"2efbac64-5fba-4d80-b9d4-84718ae26d74\",\"columnName\":\"Column 1\",\"columnKey\":\"col1\",\"columnWidth\":\"12\",\"seedComponents\":null}]}",
+                "sectionMinHeight": "",
+                "sectionVerticalAlign": "flex-start"
+              },
+              "children": [
+                {
+                  "children": [
+                    {
+                      "attributes": {
+                        "alignment": "left",
+                        "imageInfo": "",
+                        "imageInfoMobile": "",
+                        "logoWidth": 250
+                      },
+                      "definition": "dxp_content_layout:siteLogo",
+                      "id": "595d1af2-2b69-4384-9ea3-92e098864f19",
+                      "type": "component"
+                    },
+                    {
+                      "attributes": {
+                        "cancelLinkLabel": "Already have an account?",
+                        "confirmPasswordLabel": "Confirm Password",
+                        "emailLabel": "Email",
+                        "firstnameLabel": "First Name",
+                        "includePasswordField": true,
+                        "lastnameLabel": "Last Name",
+                        "passwordLabel": "Create Password",
+                        "regConfirmUrl": "./CheckPasswordResetEmail",
+                        "submitButtonLabel": "Sign Up"
+                      },
+                      "definition": "community_login:selfRegister",
+                      "id": "13d22ad1-5016-423f-9e93-15583ea0a6b3",
+                      "type": "component"
+                    }
+                  ],
+                  "id": "2efbac64-5fba-4d80-b9d4-84718ae26d74",
+                  "name": "col1",
+                  "title": "Column 1",
+                  "type": "region"
+                }
+              ],
+              "definition": "community_layout:section",
+              "id": "eb94e656-c1c5-4fc1-a3fb-7bfd61c98a26",
+              "type": "component"
+            }
+          ],
+          "id": "65e4b1f7-4671-4734-81aa-7088741dd3f0",
+          "name": "content",
+          "title": "Content",
+          "type": "region"
+        },
+        {
+          "children": [
+            {
+              "attributes": {
+                "customHeadTags": "",
+                "description": "",
+                "pageTitle": "Register",
+                "recordId": "{!recordId}"
+              },
+              "definition": "community_builder:seoAssistant",
+              "id": "5f17f275-e1a7-4540-ab9f-d957419092cf",
+              "type": "component"
+            }
+          ],
+          "id": "9f9d98ef-a8db-40e0-a3a2-eed8913436a6",
+          "name": "sfdcHiddenRegion",
+          "title": "sfdcHiddenRegion",
+          "type": "region"
+        }
+      ],
+      "definition": "community_layout:sldsFlexibleLayout",
+      "id": "e857b371-b165-406b-a299-6dca315d6076",
+      "type": "component"
+    },
+    "dataProviders": [],
+    "themeLayoutType": "Inner",
+    "viewType": "self-register"
+  },
+  "urlName": "register"
+}

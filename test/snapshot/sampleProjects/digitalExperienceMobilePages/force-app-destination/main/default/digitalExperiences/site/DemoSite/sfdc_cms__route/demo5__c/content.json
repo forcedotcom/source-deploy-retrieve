@@ -1,0 +1,12 @@
+{
+  "type": "sfdc_cms__route",
+  "title": "demo5",
+  "contentBody": {
+    "activeViewId": "demo5",
+    "configurationTags": [],
+    "pageAccess": "UseParent",
+    "routeType": "custom-demo5",
+    "urlPrefix": "demo5"
+  },
+  "urlName": "demo5"
+}

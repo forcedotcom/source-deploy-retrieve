@@ -107,9 +107,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   // used to store components meant for a "constructive" (not destructive) manifest
   private manifestComponents = new DecodeableMap<string, DecodeableMap<string, SourceComponent>>();
 
-  // optimization: track AiAuthoringBundles separately for faster access during compilation check
-  private aiAuthoringBundles = new Set<SourceComponent>();
-
   private destructiveChangesType = DestructiveChangesType.POST;
 
   public constructor(components: Iterable<ComponentLike> = [], registry = new RegistryAccess()) {
@@ -532,16 +529,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     return new LazyCollection(iter).filter((c) => c instanceof SourceComponent) as LazyCollection<SourceComponent>;
   }
 
-  /**
-   * Get all constructive AiAuthoringBundle components in the set, which require compilation before deploy.
-   * This is an optimized method that uses a cached Set of AAB components.
-   *
-   * @returns Collection of AiAuthoringBundle source components
-   */
-  public getAiAuthoringBundles(): LazyCollection<SourceComponent> {
-    return new LazyCollection(this.aiAuthoringBundles);
-  }
-
   public add(component: ComponentLike, deletionType?: DestructiveChangesType): void {
     const key = simpleKey(component);
     if (!this.components.has(key)) {
@@ -570,11 +557,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     // we're working with SourceComponents now
     this.components.get(key)?.set(srcKey, component);
-
-    // track AiAuthoringBundles separately for fast access (exclude destructive changes - no need to compile something that will be deleted)
-    if (component.type.id === 'aiauthoringbundle' && !deletionType) {
-      this.aiAuthoringBundles.add(component);
-    }
 
     // Build maps of destructive components and regular components as they are added
     // as an optimization when building manifests.

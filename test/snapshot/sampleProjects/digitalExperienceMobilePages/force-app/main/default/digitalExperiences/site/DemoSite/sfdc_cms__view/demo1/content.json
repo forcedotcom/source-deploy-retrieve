@@ -1,0 +1,70 @@
+{
+  "type": "sfdc_cms__view",
+  "title": "demo1",
+  "contentBody": {
+    "component": {
+      "children": [
+        {
+          "children": [
+            {
+              "attributes": {
+                "backgroundImageConfig": "",
+                "backgroundImageOverlay": "rgba(0,0,0,0)",
+                "componentSpacerSize": "",
+                "layoutDirectionDesktop": "row",
+                "layoutDirectionMobile": "column",
+                "layoutDirectionTablet": "column",
+                "maxContentWidth": "",
+                "sectionColumnGutterWidth": "",
+                "sectionConfig": "{\"UUID\":\"84a7ea9d-934f-4732-9dda-99a5aa5a122d\",\"columns\":[{\"UUID\":\"5214a5db-2554-45ec-a041-0756ff949b3d\",\"columnName\":\"Column 1\",\"columnKey\":\"col1\",\"columnWidth\":\"12\",\"seedComponents\":[]}]}",
+                "sectionMinHeight": "",
+                "sectionVerticalAlign": "flex-start"
+              },
+              "children": [
+                {
+                  "id": "5214a5db-2554-45ec-a041-0756ff949b3d",
+                  "name": "col1",
+                  "title": "Column 1",
+                  "type": "region"
+                }
+              ],
+              "definition": "community_layout:section",
+              "id": "84a7ea9d-934f-4732-9dda-99a5aa5a122d",
+              "type": "component"
+            }
+          ],
+          "id": "b6465c64-eb28-4050-aad9-454bc5b66a4f",
+          "name": "content",
+          "title": "Content",
+          "type": "region"
+        },
+        {
+          "children": [
+            {
+              "attributes": {
+                "customHeadTags": "",
+                "description": "",
+                "pageTitle": "demo1",
+                "recordId": "{!recordId}"
+              },
+              "definition": "community_builder:seoAssistant",
+              "id": "424708a2-2c50-4fd7-9084-1618b0c666af",
+              "type": "component"
+            }
+          ],
+          "id": "f06d5c34-72ae-424a-adfd-2a7a312a979a",
+          "name": "sfdcHiddenRegion",
+          "title": "sfdcHiddenRegion",
+          "type": "region"
+        }
+      ],
+      "definition": "community_layout:sldsFlexibleLayout",
+      "id": "c6522146-c508-47f5-8f54-ed7d9386cb46",
+      "type": "component"
+    },
+    "dataProviders": [],
+    "themeLayoutType": "Inner",
+    "viewType": "custom-demo1"
+  },
+  "urlName": "demo1"
+}

@@ -1,0 +1,8 @@
+{
+  "type": "sfdc_cms__site",
+  "title": "JamieSite2",
+  "contentBody": {
+    "authenticationType": "AUTHENTICATED"
+  },
+  "urlName": "jamiesite2"
+}

@@ -297,7 +297,6 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should merge output with merge component when content is a directory', async () => {
-      assert(typeof bundle.COMPONENT.name === 'string');
       const root = join('path', 'to', 'another', bundle.COMPONENT.type.directoryName, bundle.COMPONENT.name);
       const component = SourceComponent.createVirtualComponent(
         {

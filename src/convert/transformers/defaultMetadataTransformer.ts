@@ -92,7 +92,9 @@ const getContentSourceDestination = (
         if (
           source.endsWith('content.json') ||
           source.endsWith('_meta.json') ||
-          !(fs.existsSync(dir) && fs.statSync(dir).isDirectory())
+          (!(fs.existsSync(dir) && fs.statSync(dir).isDirectory()) &&
+            !source.endsWith('mobile.json') &&
+            !source.endsWith('tablet.json'))
         ) {
           return join(mergeWith.content, basename(source));
         } else {

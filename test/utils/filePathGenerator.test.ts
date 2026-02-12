@@ -174,6 +174,16 @@ const testData = {
       },
     ],
   },
+  bundleAiAuthoring: {
+    fullName: 'MyAiAuthoringBundle',
+    typeName: 'AiAuthoringBundle',
+    expectedFilePaths: [getFilePath('aiAuthoringBundles/MyAiAuthoringBundle/MyAiAuthoringBundle.bundle-meta.xml')],
+    expectedComponents: [
+      {
+        xml: getFilePath('aiAuthoringBundles/MyAiAuthoringBundle/MyAiAuthoringBundle.bundle-meta.xml'),
+      },
+    ],
+  },
   nonDecomposedExplicit: {
     fullName: 'CustomLabels',
     typeName: 'CustomLabels',

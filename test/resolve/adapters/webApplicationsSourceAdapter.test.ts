@@ -16,7 +16,14 @@
 import { join } from 'node:path';
 import { assert, expect } from 'chai';
 import { Messages, SfError } from '@salesforce/core';
-import { ForceIgnore, RegistryAccess, SourceComponent, VirtualTreeContainer, registry } from '../../../src';
+import {
+  ForceIgnore,
+  RegistryAccess,
+  SourceComponent,
+  VirtualTreeContainer,
+  VirtualDirectory,
+  registry,
+} from '../../../src';
 import { WebApplicationsSourceAdapter } from '../../../src/resolve/adapters';
 import { RegistryTestUtil } from '../registryTestUtil';
 
@@ -30,19 +37,31 @@ describe('WebApplicationsSourceAdapter', () => {
   const META_FILE = join(APP_PATH, `${APP_NAME}.webapplication-meta.xml`);
   const JSON_FILE = join(APP_PATH, 'webapplication.json');
   const CONTENT_FILE = join(APP_PATH, 'src', 'index.html');
+  const DIST_PATH = join(APP_PATH, 'dist');
+
+  const VALID_CONFIG = {
+    outputDir: 'dist',
+    routing: { trailingSlash: 'never', fallback: '/index.html' },
+  };
 
   const registryAccess = new RegistryAccess();
   const forceIgnore = new ForceIgnore();
-  const tree = VirtualTreeContainer.fromFilePaths([META_FILE, JSON_FILE, CONTENT_FILE]);
+  const tree = new VirtualTreeContainer([
+    {
+      dirPath: APP_PATH,
+      children: [
+        `${APP_NAME}.webapplication-meta.xml`,
+        { name: 'webapplication.json', data: Buffer.from(JSON.stringify(VALID_CONFIG)) },
+        'src',
+      ],
+    },
+    { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
+    { dirPath: DIST_PATH, children: [{ name: 'index.html', data: Buffer.from('<html>test</html>') }] },
+  ]);
   const adapter = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, tree);
 
   const expectedComponent = new SourceComponent(
-    {
-      name: APP_NAME,
-      type: registry.types.webapplication,
-      content: APP_PATH,
-      xml: META_FILE,
-    },
+    { name: APP_NAME, type: registry.types.webapplication, content: APP_PATH, xml: META_FILE },
     tree,
     forceIgnore
   );
@@ -63,7 +82,7 @@ describe('WebApplicationsSourceAdapter', () => {
     expect(adapter.getComponent(APP_PATH)).to.deep.equal(expectedComponent);
   });
 
-  it('should throw ExpectedSourceFilesError if metadata xml is missing', () => {
+  it('should throw ExpectedSourceFilesError when metadata xml is missing', () => {
     const noXmlTree = VirtualTreeContainer.fromFilePaths([JSON_FILE, CONTENT_FILE]);
     const noXmlAdapter = new WebApplicationsSourceAdapter(
       registry.types.webapplication,
@@ -71,46 +90,14 @@ describe('WebApplicationsSourceAdapter', () => {
       forceIgnore,
       noXmlTree
     );
-    const expectedXmlPath = join(APP_PATH, `${APP_NAME}.webapplication-meta.xml`);
     assert.throws(
       () => noXmlAdapter.getComponent(APP_PATH),
       SfError,
-      messages.getMessage('error_expected_source_files', [expectedXmlPath, registry.types.webapplication.name])
+      messages.getMessage('error_expected_source_files', [META_FILE, registry.types.webapplication.name])
     );
   });
 
-  it('should throw ExpectedSourceFilesError if content files are missing', () => {
-    const noContentTree = VirtualTreeContainer.fromFilePaths([META_FILE, JSON_FILE]);
-    const noContentAdapter = new WebApplicationsSourceAdapter(
-      registry.types.webapplication,
-      registryAccess,
-      forceIgnore,
-      noContentTree
-    );
-    assert.throws(
-      () => noContentAdapter.getComponent(APP_PATH),
-      SfError,
-      messages.getMessage('error_expected_source_files', [APP_PATH, registry.types.webapplication.name])
-    );
-  });
-
-  it('should throw ExpectedSourceFilesError if webapplication.json is missing', () => {
-    const noJsonTree = VirtualTreeContainer.fromFilePaths([META_FILE, CONTENT_FILE]);
-    const noJsonAdapter = new WebApplicationsSourceAdapter(
-      registry.types.webapplication,
-      registryAccess,
-      forceIgnore,
-      noJsonTree
-    );
-    const expectedJsonPath = join(APP_PATH, 'webapplication.json');
-    assert.throws(
-      () => noJsonAdapter.getComponent(APP_PATH),
-      SfError,
-      messages.getMessage('error_expected_source_files', [expectedJsonPath, registry.types.webapplication.name])
-    );
-  });
-
-  it('should allow missing webapplication.json when resolving metadata', () => {
+  it('should skip source validation when resolving metadata only', () => {
     const metadataTree = VirtualTreeContainer.fromFilePaths([META_FILE]);
     const metadataAdapter = new WebApplicationsSourceAdapter(
       registry.types.webapplication,
@@ -118,38 +105,323 @@ describe('WebApplicationsSourceAdapter', () => {
       forceIgnore,
       metadataTree
     );
-    const expectedMetadataComponent = new SourceComponent(
-      {
-        name: APP_NAME,
-        type: registry.types.webapplication,
-        content: APP_PATH,
-        xml: META_FILE,
-      },
+    const expected = new SourceComponent(
+      { name: APP_NAME, type: registry.types.webapplication, content: APP_PATH, xml: META_FILE },
       metadataTree,
       forceIgnore
     );
-
-    expect(metadataAdapter.getComponent(META_FILE, false)).to.deep.equal(expectedMetadataComponent);
+    expect(metadataAdapter.getComponent(META_FILE, false)).to.deep.equal(expected);
   });
 
-  it('should throw noSourceIgnore if webapplication.json is forceignored', () => {
-    const testUtil = new RegistryTestUtil();
-    const forceIgnore = testUtil.stubForceIgnore({
-      seed: APP_PATH,
-      deny: [JSON_FILE],
+  describe('without webapplication.json (dist fallback)', () => {
+    it('should throw when the dist folder does not exist', () => {
+      const t = VirtualTreeContainer.fromFilePaths([META_FILE, CONTENT_FILE]);
+      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+      assert.throws(
+        () => a.getComponent(APP_PATH),
+        SfError,
+        "When webapplication.json is not present, a 'dist' folder containing 'index.html' is required. The 'dist' folder was not found."
+      );
     });
-    const ignoredAdapter = new WebApplicationsSourceAdapter(
-      registry.types.webapplication,
-      registryAccess,
-      forceIgnore,
-      tree
-    );
 
-    assert.throws(
-      () => ignoredAdapter.getComponent(APP_PATH),
-      SfError,
-      messages.getMessage('noSourceIgnore', [registry.types.webapplication.name, JSON_FILE])
-    );
-    testUtil.restore();
+    it('should throw when dist exists but index.html is missing', () => {
+      const vfs: VirtualDirectory[] = [
+        { dirPath: APP_PATH, children: [`${APP_NAME}.webapplication-meta.xml`, 'dist'] },
+        { dirPath: DIST_PATH, children: [] },
+      ];
+      const t = new VirtualTreeContainer(vfs);
+      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+      assert.throws(
+        () => a.getComponent(APP_PATH),
+        SfError,
+        "When webapplication.json is not present, a 'dist/index.html' file is required as the entry point. The file was not found."
+      );
+    });
+
+    it('should throw when dist/index.html is empty', () => {
+      const vfs: VirtualDirectory[] = [
+        { dirPath: APP_PATH, children: [`${APP_NAME}.webapplication-meta.xml`] },
+        { dirPath: DIST_PATH, children: [{ name: 'index.html', data: Buffer.from('') }] },
+      ];
+      const t = new VirtualTreeContainer(vfs);
+      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+      assert.throws(
+        () => a.getComponent(APP_PATH),
+        SfError,
+        "When webapplication.json is not present, 'dist/index.html' must exist and be non-empty. The file was found but is empty."
+      );
+    });
+
+    it('should succeed when dist/index.html exists and is non-empty', () => {
+      const vfs: VirtualDirectory[] = [
+        { dirPath: APP_PATH, children: [`${APP_NAME}.webapplication-meta.xml`] },
+        { dirPath: DIST_PATH, children: [{ name: 'index.html', data: Buffer.from('<html><body>App</body></html>') }] },
+      ];
+      const t = new VirtualTreeContainer(vfs);
+      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+      const expected = new SourceComponent(
+        { name: APP_NAME, type: registry.types.webapplication, content: APP_PATH, xml: META_FILE },
+        t,
+        forceIgnore
+      );
+      expect(a.getComponent(APP_PATH)).to.deep.equal(expected);
+    });
+
+    it('should fall back to dist/index.html when webapplication.json is force-ignored', () => {
+      const testUtil = new RegistryTestUtil();
+      const fi = testUtil.stubForceIgnore({ seed: APP_PATH, deny: [JSON_FILE] });
+      const vfs: VirtualDirectory[] = [
+        {
+          dirPath: APP_PATH,
+          children: [
+            `${APP_NAME}.webapplication-meta.xml`,
+            { name: 'webapplication.json', data: Buffer.from(JSON.stringify(VALID_CONFIG)) },
+          ],
+        },
+        { dirPath: DIST_PATH, children: [{ name: 'index.html', data: Buffer.from('<html>test</html>') }] },
+      ];
+      const t = new VirtualTreeContainer(vfs);
+      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, fi, t);
+      const expected = new SourceComponent(
+        { name: APP_NAME, type: registry.types.webapplication, content: APP_PATH, xml: META_FILE },
+        t,
+        fi
+      );
+      expect(a.getComponent(APP_PATH)).to.deep.equal(expected);
+      testUtil.restore();
+    });
+  });
+
+  describe('webapplication.json validation', () => {
+    // helper: build an adapter whose tree has the given webapplication.json content
+    // plus optional extra VirtualDirectory entries for dist, etc.
+    const adapterWith = (config: object, extraDirs: VirtualDirectory[] = []): WebApplicationsSourceAdapter => {
+      const vfs: VirtualDirectory[] = [
+        {
+          dirPath: APP_PATH,
+          children: [
+            `${APP_NAME}.webapplication-meta.xml`,
+            { name: 'webapplication.json', data: Buffer.from(JSON.stringify(config)) },
+          ],
+        },
+        ...extraDirs,
+      ];
+      return new WebApplicationsSourceAdapter(
+        registry.types.webapplication,
+        registryAccess,
+        forceIgnore,
+        new VirtualTreeContainer(vfs)
+      );
+    };
+
+    it('should throw on malformed JSON', () => {
+      const vfs: VirtualDirectory[] = [
+        {
+          dirPath: APP_PATH,
+          children: [
+            `${APP_NAME}.webapplication-meta.xml`,
+            { name: 'webapplication.json', data: Buffer.from('{ not valid json }') },
+          ],
+        },
+      ];
+      const a = new WebApplicationsSourceAdapter(
+        registry.types.webapplication,
+        registryAccess,
+        forceIgnore,
+        new VirtualTreeContainer(vfs)
+      );
+      assert.throws(() => a.getComponent(APP_PATH), SfError, 'Invalid JSON in webapplication.json');
+    });
+
+    it('should throw when outputDir is missing', () => {
+      const a = adapterWith({ routing: { fallback: '/index.html' } });
+      assert.throws(
+        () => a.getComponent(APP_PATH),
+        SfError,
+        "webapplication.json is missing required field 'outputDir'"
+      );
+    });
+
+    it('should throw when outputDir directory does not exist on disk', () => {
+      const a = adapterWith({ outputDir: 'build', routing: { trailingSlash: 'auto', fallback: '/index.html' } });
+      assert.throws(
+        () => a.getComponent(APP_PATH),
+        SfError,
+        messages.getMessage('error_expected_source_files', [
+          join(APP_PATH, 'build'),
+          registry.types.webapplication.name,
+        ])
+      );
+    });
+
+    it('should throw when routing is missing', () => {
+      const a = adapterWith({ outputDir: 'dist' }, [
+        { dirPath: DIST_PATH, children: [{ name: 'index.html', data: Buffer.from('<html>test</html>') }] },
+      ]);
+      assert.throws(() => a.getComponent(APP_PATH), SfError, "webapplication.json is missing required field 'routing'");
+    });
+
+    it('should throw when routing.fallback is missing', () => {
+      const a = adapterWith({ outputDir: 'dist', routing: { trailingSlash: 'never' } }, [
+        { dirPath: DIST_PATH, children: [{ name: 'index.html', data: Buffer.from('<html>test</html>') }] },
+      ]);
+      assert.throws(
+        () => a.getComponent(APP_PATH),
+        SfError,
+        "webapplication.json is missing required field 'routing.fallback'"
+      );
+    });
+
+    it('should throw when routing.trailingSlash is missing', () => {
+      const a = adapterWith({ outputDir: 'dist', routing: { fallback: '/index.html' } }, [
+        { dirPath: DIST_PATH, children: [{ name: 'index.html', data: Buffer.from('<html>test</html>') }] },
+      ]);
+      assert.throws(
+        () => a.getComponent(APP_PATH),
+        SfError,
+        "webapplication.json is missing required field 'routing.trailingSlash'"
+      );
+    });
+
+    it('should throw when the fallback file does not exist on disk', () => {
+      const a = adapterWith({ outputDir: 'dist', routing: { trailingSlash: 'never', fallback: '/missing.html' } }, [
+        { dirPath: DIST_PATH, children: [] },
+      ]);
+      assert.throws(
+        () => a.getComponent(APP_PATH),
+        SfError,
+        "The filepath defined in the webapplication.json -> routing.fallback was not found. Ensure this file exists at the location defined."
+      );
+    });
+
+    it('should throw when a rewrite target does not exist on disk', () => {
+      const config = {
+        outputDir: 'dist',
+        routing: {
+          trailingSlash: 'never',
+          fallback: '/index.html',
+          rewrites: [{ route: '/test', rewrite: '/missing-rewrite.html' }],
+        },
+      };
+      const a = adapterWith(config, [
+        { dirPath: DIST_PATH, children: [{ name: 'index.html', data: Buffer.from('<html>test</html>') }] },
+      ]);
+      assert.throws(
+        () => a.getComponent(APP_PATH),
+        SfError,
+        messages.getMessage('error_expected_source_files', [
+          join(DIST_PATH, 'missing-rewrite.html'),
+          registry.types.webapplication.name,
+        ])
+      );
+    });
+
+    it('should accept a valid descriptor with outputDir, routing, and rewrites', () => {
+      const config = {
+        outputDir: 'dist',
+        routing: {
+          trailingSlash: 'never',
+          fallback: '/index.html',
+          rewrites: [{ route: '/api/*', rewrite: '/api-proxy.html' }],
+        },
+      };
+      const distDir: VirtualDirectory = {
+        dirPath: DIST_PATH,
+        children: [
+          { name: 'index.html', data: Buffer.from('<html>test</html>') },
+          { name: 'api-proxy.html', data: Buffer.from('<html>api</html>') },
+        ],
+      };
+      const a = adapterWith(config, [distDir]);
+      const t = new VirtualTreeContainer([
+        {
+          dirPath: APP_PATH,
+          children: [
+            `${APP_NAME}.webapplication-meta.xml`,
+            { name: 'webapplication.json', data: Buffer.from(JSON.stringify(config)) },
+          ],
+        },
+        distDir,
+      ]);
+      const expected = new SourceComponent(
+        { name: APP_NAME, type: registry.types.webapplication, content: APP_PATH, xml: META_FILE },
+        t,
+        forceIgnore
+      );
+      expect(a.getComponent(APP_PATH)).to.deep.equal(expected);
+    });
+
+    it('should validate all rewrites when multiple are present', () => {
+      const config = {
+        outputDir: 'dist',
+        routing: {
+          trailingSlash: 'auto',
+          fallback: '/index.html',
+          rewrites: [
+            { route: '/api/*', rewrite: '/api.html' },
+            { route: '/docs/*', rewrite: '/docs.html' },
+            { route: '/admin', rewrite: '/admin.html' },
+          ],
+        },
+      };
+      const distDir: VirtualDirectory = {
+        dirPath: DIST_PATH,
+        children: [
+          { name: 'index.html', data: Buffer.from('<html>test</html>') },
+          { name: 'api.html', data: Buffer.from('<html>api</html>') },
+          { name: 'docs.html', data: Buffer.from('<html>docs</html>') },
+          { name: 'admin.html', data: Buffer.from('<html>admin</html>') },
+        ],
+      };
+      const a = adapterWith(config, [distDir]);
+      const t = new VirtualTreeContainer([
+        {
+          dirPath: APP_PATH,
+          children: [
+            `${APP_NAME}.webapplication-meta.xml`,
+            { name: 'webapplication.json', data: Buffer.from(JSON.stringify(config)) },
+          ],
+        },
+        distDir,
+      ]);
+      const expected = new SourceComponent(
+        { name: APP_NAME, type: registry.types.webapplication, content: APP_PATH, xml: META_FILE },
+        t,
+        forceIgnore
+      );
+      expect(a.getComponent(APP_PATH)).to.deep.equal(expected);
+    });
+
+    it('should throw when one of multiple rewrites is missing', () => {
+      const config = {
+        outputDir: 'dist',
+        routing: {
+          trailingSlash: 'never',
+          fallback: '/index.html',
+          rewrites: [
+            { route: '/api/*', rewrite: '/api.html' },
+            { route: '/docs/*', rewrite: '/missing-docs.html' },
+            { route: '/admin', rewrite: '/admin.html' },
+          ],
+        },
+      };
+      const distDir: VirtualDirectory = {
+        dirPath: DIST_PATH,
+        children: [
+          { name: 'index.html', data: Buffer.from('<html>test</html>') },
+          { name: 'api.html', data: Buffer.from('<html>api</html>') },
+          { name: 'admin.html', data: Buffer.from('<html>admin</html>') },
+        ],
+      };
+      const a = adapterWith(config, [distDir]);
+      assert.throws(
+        () => a.getComponent(APP_PATH),
+        SfError,
+        messages.getMessage('error_expected_source_files', [
+          join(DIST_PATH, 'missing-docs.html'),
+          registry.types.webapplication.name,
+        ])
+      );
+    });
   });
 });

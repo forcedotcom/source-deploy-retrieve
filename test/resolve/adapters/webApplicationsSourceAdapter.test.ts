@@ -214,7 +214,7 @@ describe('WebApplicationsSourceAdapter', () => {
       );
     };
 
-    it('should throw on malformed JSON', () => {
+    it('should throw on malformed JSON with full error detail', () => {
       const vfs: VirtualDirectory[] = [
         {
           dirPath: APP_PATH,
@@ -230,7 +230,11 @@ describe('WebApplicationsSourceAdapter', () => {
         forceIgnore,
         new VirtualTreeContainer(vfs)
       );
-      assert.throws(() => a.getComponent(APP_PATH), SfError, 'Invalid JSON in webapplication.json');
+      assert.throws(
+        () => a.getComponent(APP_PATH),
+        SfError,
+        /^Invalid JSON in webapplication\.json: .+/
+      );
     });
 
     it('should throw when outputDir is missing', () => {
@@ -306,13 +310,11 @@ describe('WebApplicationsSourceAdapter', () => {
       const a = adapterWith(config, [
         { dirPath: DIST_PATH, children: [{ name: 'index.html', data: Buffer.from('<html>test</html>') }] },
       ]);
+      const expectedPath = join(DIST_PATH, 'missing-rewrite.html');
       assert.throws(
         () => a.getComponent(APP_PATH),
         SfError,
-        messages.getMessage('error_expected_source_files', [
-          join(DIST_PATH, 'missing-rewrite.html'),
-          registry.types.webapplication.name,
-        ])
+        `A rewrite target defined in webapplication.json -> routing.rewrites was not found: ${expectedPath}. Ensure the file exists at that location.`
       );
     });
 
@@ -414,13 +416,11 @@ describe('WebApplicationsSourceAdapter', () => {
         ],
       };
       const a = adapterWith(config, [distDir]);
+      const expectedPath = join(DIST_PATH, 'missing-docs.html');
       assert.throws(
         () => a.getComponent(APP_PATH),
         SfError,
-        messages.getMessage('error_expected_source_files', [
-          join(DIST_PATH, 'missing-docs.html'),
-          registry.types.webapplication.name,
-        ])
+        `A rewrite target defined in webapplication.json -> routing.rewrites was not found: ${expectedPath}. Ensure the file exists at that location.`
       );
     });
   });

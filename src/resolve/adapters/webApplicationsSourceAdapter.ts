@@ -167,7 +167,10 @@ export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
         if (rewrite) {
           const rewritePath = join(outputDirPath, stripLeadingSep(rewrite));
           if (!this.tree.exists(rewritePath)) {
-            this.expectedSourceError(rewritePath);
+            throw new SfError(
+              `A rewrite target defined in webapplication.json -> routing.rewrites was not found: ${rewritePath}. Ensure the file exists at that location.`,
+              'ExpectedSourceFilesError'
+            );
           }
         }
       }

@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771001642217,
+  "lastUpdate": 1771034355909,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -89273,6 +89273,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 20532,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lturanscaia@salesforce.com",
+            "name": "shinoni",
+            "username": "lesya7"
+          },
+          "committer": {
+            "email": "lturanscaia@salesforce.com",
+            "name": "shinoni",
+            "username": "lesya7"
+          },
+          "distinct": true,
+          "id": "8aef611418472d62c90d95c69e596e4b544efccd",
+          "message": "fix: allow WebApplication app name in any case, add tests\n\n- Remove lowercase normalization; preserve folder/meta xml case\n- Add tests for MyApp, myapp, MYAPP\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+          "timestamp": "2026-02-13T17:35:38-08:00",
+          "tree_id": "be1637b5cca4b428f9ec4037eb7d6c72e03fbd86",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/8aef611418472d62c90d95c69e596e4b544efccd"
+        },
+        "date": 1771034344345,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 571,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 3910,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3650,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 7007,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 895,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 10750,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10216,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 10572,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1610,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 19746,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 21067,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 19688,
             "unit": "ms"
           }
         ]

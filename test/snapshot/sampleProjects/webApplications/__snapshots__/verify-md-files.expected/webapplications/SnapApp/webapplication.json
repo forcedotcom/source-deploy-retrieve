@@ -1,3 +1,7 @@
 {
-  "outputDir": "src"
+  "outputDir": "src",
+  "routing": {
+    "trailingSlash": "auto",
+    "fallback": "/index.html"
+  }
 }

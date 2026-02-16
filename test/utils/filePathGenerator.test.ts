@@ -27,6 +27,7 @@ type TypeEntry = {
   typeName: string;
   expectedFilePaths: string[];
   extraResolutionFilePaths?: string[];
+  resolutionTree?: VirtualTreeContainer;
   expectedComponents?: Array<{
     name?: string;
     type?: MetadataType;
@@ -154,6 +155,29 @@ const testData = {
       getFilePath('webapplications/MyWebApp/MyWebApp.webapplication-meta.xml'),
     ],
     extraResolutionFilePaths: [getFilePath('webapplications/MyWebApp/src/index.html')],
+    resolutionTree: new VirtualTreeContainer([
+      { dirPath: path.normalize('force-app'), children: ['main'] },
+      { dirPath: path.normalize('force-app/main'), children: ['default'] },
+      { dirPath: path.normalize('force-app/main/default'), children: ['webapplications'] },
+      { dirPath: getFilePath('webapplications'), children: ['MyWebApp'] },
+      {
+        dirPath: getFilePath('webapplications/MyWebApp'),
+        children: [
+          'MyWebApp.webapplication-meta.xml',
+          {
+            name: 'webapplication.json',
+            data: Buffer.from(
+              JSON.stringify({
+                outputDir: 'src',
+                routing: { trailingSlash: 'auto', fallback: '/index.html' },
+              })
+            ),
+          },
+          'src',
+        ],
+      },
+      { dirPath: getFilePath('webapplications/MyWebApp/src'), children: ['index.html'] },
+    ]),
     expectedComponents: [
       {
         content: getFilePath('webapplications/MyWebApp'),
@@ -289,7 +313,8 @@ describe('generating virtual tree from component name/type', () => {
     const resolutionFilePaths = typeEntry.extraResolutionFilePaths
       ? filePaths.concat(typeEntry.extraResolutionFilePaths)
       : filePaths;
-    const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(resolutionFilePaths));
+    const tree = typeEntry.resolutionTree ?? VirtualTreeContainer.fromFilePaths(resolutionFilePaths);
+    const resolver = new MetadataResolver(registryAccess, tree);
 
     const components = resolver.getComponentsFromPath(packageDir);
     const expectedComponentsSize = typeEntry.expectedComponents?.length ?? 1;

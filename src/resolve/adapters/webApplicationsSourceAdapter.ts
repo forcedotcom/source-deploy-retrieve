@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import { Messages } from '@salesforce/core/messages';
 import { SfError } from '@salesforce/core/sfError';
 import { SourcePath } from '../../common/types';
@@ -24,9 +24,23 @@ import { BundleSourceAdapter } from './bundleSourceAdapter';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
+type WebApplicationConfig = {
+  outputDir: string;
+  routing: {
+    trailingSlash: string;
+    fallback: string;
+    rewrites?: Array<{ route: string; rewrite: string }>;
+  };
+};
+
+/**
+ * Source adapter for WebApplication bundles.
+ *
+ * If `webapplication.json` is present (and not force-ignored) we validate its
+ * required fields and check that the files it references exist on disk.
+ * Otherwise we require a non-empty `dist/index.html`.
+ */
 export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
-  // Enforces WebApplication bundle requirements for source/deploy while staying
-  // compatible with metadata-only retrievals.
   protected populate(
     trigger: SourcePath,
     component?: SourceComponent,
@@ -41,14 +55,11 @@ export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
     const appName = baseName(contentPath);
     const expectedXmlPath = join(contentPath, `${appName}.webapplication-meta.xml`);
     if (!this.tree.exists(expectedXmlPath)) {
-      throw new SfError(
-        messages.getMessage('error_expected_source_files', [expectedXmlPath, this.type.name]),
-        'ExpectedSourceFilesError'
-      );
+      this.expectedSourceError(expectedXmlPath);
     }
 
     const resolvedSource =
-      source.xml && source.xml === expectedXmlPath
+      source.xml === expectedXmlPath
         ? source
         : new SourceComponent(
             {
@@ -65,28 +76,111 @@ export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
 
     if (isResolvingSource) {
       const descriptorPath = join(contentPath, 'webapplication.json');
-      const xmlFileName = `${appName}.webapplication-meta.xml`;
-      const contentEntries = (this.tree.readDirectory(contentPath) ?? []).filter(
-        (entry) => entry !== xmlFileName && entry !== 'webapplication.json'
-      );
-      if (contentEntries.length === 0) {
-        // For deploy/source, we expect at least one non-metadata content file (e.g. index.html).
-        throw new SfError(
-          messages.getMessage('error_expected_source_files', [contentPath, this.type.name]),
-          'ExpectedSourceFilesError'
-        );
-      }
-      if (!this.tree.exists(descriptorPath)) {
-        throw new SfError(
-          messages.getMessage('error_expected_source_files', [descriptorPath, this.type.name]),
-          'ExpectedSourceFilesError'
-        );
-      }
-      if (this.forceIgnore.denies(descriptorPath)) {
-        throw messages.createError('noSourceIgnore', [this.type.name, descriptorPath]);
+      const hasDescriptor = this.tree.exists(descriptorPath) && !this.forceIgnore.denies(descriptorPath);
+
+      if (hasDescriptor) {
+        this.validateDescriptor(descriptorPath, contentPath);
+      } else {
+        this.validateDistFolder(contentPath);
       }
     }
 
     return resolvedSource;
+  }
+
+  private validateDistFolder(contentPath: SourcePath): void {
+    const distPath = join(contentPath, 'dist');
+    const indexPath = join(distPath, 'index.html');
+
+    if (!this.tree.exists(distPath) || !this.tree.isDirectory(distPath)) {
+      throw new SfError(
+        "When webapplication.json is not present, a 'dist' folder containing 'index.html' is required. The 'dist' folder was not found.",
+        'ExpectedSourceFilesError'
+      );
+    }
+    if (!this.tree.exists(indexPath)) {
+      throw new SfError(
+        "When webapplication.json is not present, a 'dist/index.html' file is required as the entry point. The file was not found.",
+        'ExpectedSourceFilesError'
+      );
+    }
+    if (this.tree.readFileSync(indexPath).length === 0) {
+      throw new SfError(
+        "When webapplication.json is not present, 'dist/index.html' must exist and be non-empty. The file was found but is empty.",
+        'ExpectedSourceFilesError'
+      );
+    }
+  }
+
+  private validateDescriptor(descriptorPath: SourcePath, contentPath: SourcePath): void {
+    const raw = this.tree.readFileSync(descriptorPath);
+    let config: WebApplicationConfig;
+
+    try {
+      config = JSON.parse(raw.toString('utf8')) as WebApplicationConfig;
+    } catch (e) {
+      const detail = e instanceof Error ? e.message : String(e);
+      throw new SfError(`Invalid JSON in webapplication.json: ${detail}`, 'InvalidJsonError');
+    }
+
+    if (!config.outputDir || typeof config.outputDir !== 'string') {
+      throw new SfError(
+        "webapplication.json is missing required field 'outputDir'",
+        'InvalidWebApplicationConfigError'
+      );
+    }
+    const outputDirPath = join(contentPath, config.outputDir);
+    if (!this.tree.exists(outputDirPath) || !this.tree.isDirectory(outputDirPath)) {
+      this.expectedSourceError(outputDirPath);
+    }
+
+    if (!config.routing || typeof config.routing !== 'object') {
+      throw new SfError("webapplication.json is missing required field 'routing'", 'InvalidWebApplicationConfigError');
+    }
+    if (!config.routing.trailingSlash || typeof config.routing.trailingSlash !== 'string') {
+      throw new SfError(
+        "webapplication.json is missing required field 'routing.trailingSlash'",
+        'InvalidWebApplicationConfigError'
+      );
+    }
+    if (!config.routing.fallback || typeof config.routing.fallback !== 'string') {
+      throw new SfError(
+        "webapplication.json is missing required field 'routing.fallback'",
+        'InvalidWebApplicationConfigError'
+      );
+    }
+
+    // Strip leading path separator (path.sep and / for URL-style paths)
+    const sepChar = sep.replace(/\\/g, '\\\\');
+    const stripLeadingSep = (p: string) => p.replace(new RegExp(`^[${sepChar}/]`), '');
+    const fallbackPath = join(outputDirPath, stripLeadingSep(config.routing.fallback));
+    if (!this.tree.exists(fallbackPath)) {
+      throw new SfError(
+        "The filepath defined in the webapplication.json -> routing.fallback was not found. Ensure this file exists at the location defined.",
+        'ExpectedSourceFilesError'
+      );
+    }
+
+    // rewrites are optional, but every target must resolve
+    if (Array.isArray(config.routing.rewrites)) {
+      for (const { rewrite } of config.routing.rewrites) {
+        if (rewrite) {
+          const rewritePath = join(outputDirPath, stripLeadingSep(rewrite));
+          if (!this.tree.exists(rewritePath)) {
+            throw new SfError(
+              `A rewrite target defined in webapplication.json -> routing.rewrites was not found: ${rewritePath}. Ensure the file exists at that location.`,
+              'ExpectedSourceFilesError'
+            );
+          }
+        }
+      }
+    }
+  }
+
+  private expectedSourceError(path: SourcePath): never {
+    throw new SfError(
+      messages.getMessage('error_expected_source_files', [path, this.type.name]),
+      'ExpectedSourceFilesError'
+    );
   }
 }

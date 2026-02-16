@@ -799,6 +799,7 @@ v67 introduces the following new types.  Here's their current level of support
 |IntegrationProcdDefinition|✅||
 |OmniscriptDefinition|✅||
 |PlanningMeasureDef|❌|Not supported, but support could be added|
+|PlanningMeasureGroup|❌|Not supported, but support could be added|
 |ServiceIssueManagementSettings|✅||
 |ServiceItsmChangeManagementSettings|✅||
 |UnifiedSalesIntelligenceEngagementInsightsSettings|✅||

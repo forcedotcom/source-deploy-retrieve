@@ -147,6 +147,10 @@ export const filePathsFromMetadataComponent = (
           join(packageDirWithTypeDir, `${fullName}${sep}layout.json`),
         ],
       ],
+      [
+        'AiAuthoringBundle',
+        [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.aiAuthoringBundle${META_XML_SUFFIX}`)],
+      ],
     ]);
 
     const matched = mappings.get(type.name);

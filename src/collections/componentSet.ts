@@ -644,16 +644,25 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public getComponentFilenamesByNameAndType({ fullName, type }: MetadataMember): string[] {
     const key = simpleKey({ fullName, type });
     const componentMap = this.components.get(key);
-    if (!componentMap) {
-      return [];
+    if (componentMap) {
+      return collectFilenames(componentMap.values());
     }
-    const output = new Set<string>();
-    componentMap.forEach((component) => {
-      [...component.walkContent(), component.content, component.xml]
-        .filter(isString)
-        .map((filename) => output.add(filename));
-    });
-    return Array.from(output);
+
+    // child type fallback: look for the child inside its parent component
+    const parentType = this.registry.getParentType(type);
+    if (parentType && fullName.includes('.')) {
+      const parentFullName = fullName.slice(0, fullName.lastIndexOf('.'));
+      const parentKey = simpleKey({ fullName: parentFullName, type: parentType });
+      const parentMap = this.components.get(parentKey);
+      if (parentMap) {
+        const matchingChildren = [...parentMap.values()]
+          .flatMap((parent) => parent.getChildren())
+          .filter((child) => child.fullName === fullName);
+        return collectFilenames(matchingChildren);
+      }
+    }
+
+    return [];
   }
 
   public *[Symbol.iterator](): Iterator<MetadataComponent> {
@@ -766,6 +775,16 @@ const sourceKey = (component: SourceComponent): string => {
 export const simpleKey = (component: ComponentLike): SimpleKeyString => {
   const typeName = typeof component.type === 'string' ? component.type.toLowerCase().trim() : component.type.id;
   return `${typeName}${KEY_DELIMITER}${component.fullName}`;
+};
+
+const collectFilenames = (components: Iterable<MetadataComponent>): string[] => {
+  const output = new Set<string>();
+  for (const component of components) {
+    if (component instanceof SourceComponent) {
+      [...component.walkContent(), component.content, component.xml].filter(isString).map((f) => output.add(f));
+    }
+  }
+  return Array.from(output);
 };
 
 const splitOnFirstDelimiter = (input: string): [string, string] => {

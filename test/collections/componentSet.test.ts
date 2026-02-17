@@ -40,7 +40,13 @@ import {
   SourceComponent,
   ZipTreeContainer,
 } from '../../src';
-import { decomposedtoplevel, digitalExperienceBundle, matchingContentFile, mixedContentSingleFile } from '../mock';
+import {
+  decomposed,
+  decomposedtoplevel,
+  digitalExperienceBundle,
+  matchingContentFile,
+  mixedContentSingleFile,
+} from '../mock';
 import { MATCHING_RULES_COMPONENT } from '../mock/type-constants/customlabelsConstant';
 import * as manifestFiles from '../mock/manifestConstants';
 import { testApiVersion, testApiVersionAsString } from '../mock/manifestConstants';
@@ -1481,6 +1487,19 @@ describe('ComponentSet', () => {
         join(digitalExperienceBundle.HOME_VIEW_PATH, 'content.json'),
         join(digitalExperienceBundle.HOME_VIEW_PATH, 'fr.json'),
         join(digitalExperienceBundle.HOME_VIEW_PATH, '_meta.json'),
+      ]);
+    });
+
+    it('should return CustomField file paths when only the parent CustomObject is in the set', () => {
+      const set = new ComponentSet([decomposed.DECOMPOSED_COMPONENT], registryAccess);
+
+      const customField: MetadataMember = {
+        fullName: decomposed.DECOMPOSED_CHILD_COMPONENT_1.fullName,
+        type: 'CustomField',
+      };
+
+      expect(set.getComponentFilenamesByNameAndType(customField)).to.have.members([
+        decomposed.DECOMPOSED_CHILD_XML_PATH_1,
       ]);
     });
   });

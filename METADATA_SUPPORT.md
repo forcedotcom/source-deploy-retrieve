@@ -1,10 +1,10 @@
 # Supported CLI Metadata Types
 
-This list compares metadata types found in Salesforce v65 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
+This list compares metadata types found in Salesforce v66 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 679/720 supported metadata types.
+Currently, there are 717/769 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -47,7 +47,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |Ai4mSettings|✅||
 |AiAuthoringBundle|✅||
 |AiEvaluationDefinition|⚠️|Supports deploy/retrieve but not source tracking|
+|AiEvaluationFunctionDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |AiPlannerVoiceDef|❌|Not supported, but support could be added (but not for tracking)|
+|AiResponseFormat|❌|Not supported, but support could be added (but not for tracking)|
+|AiResponseFormatIstr|❌|Not supported, but support could be added (but not for tracking)|
+|AiSurface|❌|Not supported, but support could be added (but not for tracking)|
+|AiSurfaceInstruction|❌|Not supported, but support could be added (but not for tracking)|
 |AnalyticSnapshot|✅||
 |AnalyticsDashboard|✅||
 |AnalyticsDatasetDefinition|❌|Not supported, but support could be added|
@@ -58,6 +63,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ApexClass|✅||
 |ApexComponent|✅||
 |ApexEmailNotifications|✅||
+|ApexLimitSettings|✅||
 |ApexPage|✅||
 |ApexSettings|✅||
 |ApexTestSuite|✅||
@@ -70,6 +76,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ApplicationRecordTypeConfig|✅||
 |ApplicationSubtypeDefinition|✅||
 |AppointmentAssignmentPolicy|✅||
+|AppointmentBookingSettings|✅||
 |AppointmentSchedulingPolicy|✅||
 |ApprovalProcess|✅||
 |AssessmentConfiguration|✅||
@@ -86,6 +93,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AuraDefinitionBundle|✅||
 |AuthProvider|✅||
 |AutoResponseRules|✅||
+|AutomatorConfigSettings|✅||
 |BatchCalcJobDefinition|✅||
 |BatchProcessJobDefinition|✅||
 |BenefitAction|✅||
@@ -146,7 +154,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CommerceSettings|✅||
 |CommissionStatementConfig|❌|Not supported, but support could be added|
 |CommsServiceConsoleSettings|✅||
-|CommsUpsellSettings|✅||
 |CommunicationChannelLine|❌|Not supported, but support could be added|
 |CommunicationChannelType|❌|Not supported, but support could be added|
 |CommunitiesSettings|✅||
@@ -155,12 +162,13 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CommunityThemeDefinition|✅||
 |CompactLayout|✅||
 |CompanySettings|✅||
+|ComputeExtension|✅||
 |ConnectedApp|✅||
 |ConnectedAppSettings|✅||
 |ContentAsset|✅||
 |ContentSettings|✅||
 |ContentTypeBundle|✅||
-|ContextDefinition|⚠️|Supports deploy/retrieve but not source tracking|
+|ContextDefinition|✅||
 |ContextMappingConfig|❌|Not supported, but support could be added|
 |ContextUseCaseMapping|✅||
 |ContractSettings|✅||
@@ -172,6 +180,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ConversationVendorInfo|✅||
 |ConversationalIntelligenceSettings|✅||
 |CorsWhitelistOrigin|✅||
+|CourseWaitlistConfig|❌|Not supported, but support could be added|
+|CriteriaSettings|✅||
 |CspTrustedSite|✅||
 |CurrencySettings|✅||
 |CustomAddressFieldSettings|✅||
@@ -228,6 +238,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DevHubSettings|✅||
 |DgtAssetMgmtProvider|✅||
 |DgtAssetMgmtPrvdLghtCpnt|✅||
+|DictionariesSettings|✅||
 |DigitalExperience|✅||
 |DigitalExperienceBundle|✅||
 |DigitalExperienceConfig|✅||
@@ -242,14 +253,17 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DocumentCategory|✅||
 |DocumentCategoryDocumentType|✅||
 |DocumentChecklistSettings|✅||
+|DocumentExtractionDef|❌|Not supported, but support could be added|
 |DocumentFolder|✅||
 |DocumentGenerationSetting|✅||
 |DocumentTemplate|⚠️|Supports deploy/retrieve but not source tracking|
 |DocumentType|✅||
+|DripFeedConfigSettings|✅||
 |DuplicateRule|✅||
 |DxGlobalTermsSettings|✅||
 |DynamicFormsSettings|✅||
 |DynamicFulfillmentOrchestratorSettings|✅||
+|DynamicGanttSettings|✅||
 |EACSettings|✅||
 |ESignatureConfig|✅||
 |ESignatureEnvelopeConfig|✅||
@@ -273,6 +287,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |EmbeddedServiceFlowConfig|✅||
 |EmbeddedServiceLiveAgent|✅||
 |EmbeddedServiceMenuSettings|✅||
+|EmergencySettings|✅||
 |EmployeeDataSyncProfile|✅||
 |EmployeeFieldAccessSettings|✅||
 |EmployeeUserSettings|✅||
@@ -314,7 +329,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExternalDocStorageConfig|✅||
 |ExternalServiceRegistration|✅||
 |ExternalStoragePrvdConfig|✅||
-|ExtlClntAppCanvasStngs|❌|Not supported, but support could be added|
+|ExtlClntAppAttestConfigurablePolicies|❌|Not supported, but support could be added (but not for tracking)|
+|ExtlClntAppAttestSettings|✅||
+|ExtlClntAppCanvasSettings|✅||
 |ExtlClntAppConfigurablePolicies|✅||
 |ExtlClntAppGlobalOauthSettings|✅||
 |ExtlClntAppMobileConfigurablePolicies|✅||
@@ -356,13 +373,18 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |FuelTypeSustnUom|✅||
 |FunctionReference|⚠️|Supports deploy/retrieve but not source tracking|
 |FundraisingConfig|✅||
+|GRCIntelligenceUddSettings|✅||
 |GatewayProviderPaymentMethodType|✅||
 |GenAiFunction|✅||
 |GenAiPlannerBundle|✅||
 |GenAiPlugin|✅||
 |GenAiPromptTemplate|✅||
 |GenAiPromptTemplateActv|✅||
+|GenComputingSummaryDef|❌|Not supported, but support could be added|
 |GenOpPlanEligibilityConfig|❌|Not supported, but support could be added|
+|GeneralConfigSettings|✅||
+|GeocodeSettings|✅||
+|GiftEntryGridTemplate|✅||
 |GlobalValueSet|✅||
 |GlobalValueSetTranslation|✅||
 |GoogleAppsSettings|✅||
@@ -386,14 +408,17 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |IndustriesAutomotiveSettings|✅||
 |IndustriesChannelPartnerInventorySettings|✅||
 |IndustriesConnectedServiceSettings|✅||
+|IndustriesConstraintsSettings|✅||
 |IndustriesContextSettings|✅||
 |IndustriesEinsteinFeatureSettings|✅||
+|IndustriesEnergyUtilitiesMultiSiteSettings|✅||
 |IndustriesEventOrchSettings|✅||
 |IndustriesFieldServiceSettings|✅||
 |IndustriesGamificationSettings|✅||
 |IndustriesLoyaltySettings|✅||
 |IndustriesLsCommercialSettings|✅||
 |IndustriesManufacturingSettings|✅||
+|IndustriesMfgSampleManagementSettings|✅||
 |IndustriesPricingSettings|✅||
 |IndustriesRatingSettings|✅||
 |IndustriesSettings|✅||
@@ -408,10 +433,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |InsRatePlanTypeConfig|❌|Not supported, but support could be added|
 |InstalledPackage|⚠️|Supports deploy/retrieve but not source tracking|
 |InsuranceBrokerageSettings|✅||
+|IntegArtifactDef|✅||
 |IntegrationProviderDef|✅||
 |InterestTaggingSettings|✅||
 |InternalDataConnector|✅||
 |InvLatePymntRiskCalcSettings|✅||
+|InventoryAllocationSettings|✅||
 |InventoryReplenishmentSettings|✅||
 |InventorySettings|✅||
 |InvocableActionExtension|✅||
@@ -438,7 +465,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |LightningExperienceTheme|✅||
 |LightningMessageChannel|✅||
 |LightningOnboardingConfig|✅||
-|LightningOutApp|✅||
 |LightningTypeBundle|✅||
 |ListView|✅||
 |LiveAgentSettings|✅||
@@ -448,12 +474,14 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |LiveChatSensitiveDataRule|✅||
 |LiveMessageSettings|✅||
 |LocationUse|✅||
+|LogicSettings|✅||
 |LoyaltyProgramSetup|⚠️|Supports deploy/retrieve but not source tracking|
 |MacroSettings|✅||
 |MailMergeSettings|✅||
 |ManagedContentType|⚠️|Supports deploy/retrieve but not source tracking|
 |ManagedEventSubscription|✅||
 |ManagedTopics|✅||
+|MapReportSettings|✅||
 |MapsAndLocationSettings|✅||
 |MarketSegmentDefinition|✅||
 |MarketingAppExtActivity|❌|Not supported, but support could be added|
@@ -495,6 +523,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ObjIntegProviderDefMapping|✅||
 |ObjectHierarchyRelationship|✅||
 |ObjectLinkingSettings|✅||
+|ObjectMappingSettings|✅||
 |ObjectSourceTargetMap|✅||
 |OcrSampleDocument|✅||
 |OcrTemplate|✅||
@@ -510,9 +539,11 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |OmniSupervisorConfig|✅||
 |OmniTrackingGroup|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniUiCard|⚠️|Supports deploy/retrieve but not source tracking|
+|OnboardingDataObjectGroup|✅||
 |OnlineSalesSettings|✅||
 |OpportunityScoreSettings|✅||
 |OpportunitySettings|✅||
+|OptimizationSettings|✅||
 |OrderManagementSettings|✅||
 |OrderSettings|✅||
 |OrgSettings|✅||
@@ -521,12 +552,14 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PardotSettings|✅||
 |ParticipantRole|✅||
 |PartyDataModelSettings|✅||
+|PartyProfileDataObjectValidityDefinition|✅||
 |PathAssistant|✅||
 |PathAssistantSettings|✅||
 |PaymentGatewayProvider|✅||
 |PaymentsManagementEnabledSettings|✅||
 |PaymentsSettings|✅||
 |PaymentsSharingSettings|✅||
+|PaynowStarterUpgradeEnabledSettings|✅||
 |PermissionSet|✅||
 |PermissionSetGroup|✅||
 |PermissionSetLicenseDefinition|✅||
@@ -540,6 +573,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PlatformEventSettings|✅||
 |PlatformEventSubscriberConfig|✅||
 |PlatformSlackSettings|✅||
+|PlatformWebIdeSettings|✅||
 |PolicyRuleDefinition|❌|Not supported, but support could be added|
 |PolicyRuleDefinitionSet|❌|Not supported, but support could be added|
 |PortalDelegablePermissionSet|✅||
@@ -553,6 +587,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PrivacySettings|✅||
 |PrmCoreSettings|✅||
 |ProcedureOutputResolution|❌|Not supported, but support could be added (but not for tracking)|
+|ProcedurePlanDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |ProcessFlowMigration|✅||
 |ProductAttrDisplayConfig|✅||
 |ProductAttributeSet|✅||
@@ -566,8 +601,10 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ProfilePasswordPolicy|✅||
 |ProfileSessionSetting|✅||
 |Prompt|✅||
+|ProviderSampleLimitTemplate|❌|Not supported, but support could be added|
 |PublicKeyCertificate|⚠️|Supports deploy/retrieve but not source tracking|
 |PublicKeyCertificateSet|⚠️|Supports deploy/retrieve but not source tracking|
+|PurchaseOrderMgmtSettings|✅||
 |Queue|✅||
 |QueueRoutingConfig|✅||
 |QuickAction|✅||
@@ -601,6 +638,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |RetailExecutionSettings|✅||
 |RetrievalSummaryDefinition|✅||
 |RevenueManagementSettings|✅||
+|RiskMgmtSettings|✅||
 |Role|✅||
 |RpaRobotPoolMetadata|❌|Not supported, but support could be added|
 |SalesAgreementSettings|✅||
@@ -610,12 +648,14 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SandboxSettings|✅||
 |SceGlobalModelOptOutSettings|✅||
 |SchedulingObjective|✅||
+|SchedulingRecipeSettings|✅||
 |SchedulingRule|✅||
 |SchemaSettings|✅||
 |ScoreCategory|✅||
 |SearchCustomization|⚠️|Supports deploy/retrieve but not source tracking|
 |SearchOrgWideObjectConfig|⚠️|Supports deploy/retrieve but not source tracking|
 |SearchSettings|✅||
+|SecurityAgentSettings|✅||
 |SecurityHubSettings|✅||
 |SecuritySettings|✅||
 |SequenceServiceSettings|✅||
@@ -626,10 +666,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ServiceCloudNotificationOrchestratorSettings|✅||
 |ServiceCloudVoiceSettings|✅||
 |ServiceItsmIntelligenceUddSettings|✅||
+|ServiceLegalStatusesSettings|✅||
 |ServiceMgmtKnwlgArtclConfig|❌|Not supported, but support could be added|
 |ServiceMgmtKnwlgArtclConfigSettings|✅||
 |ServicePresenceStatus|✅||
 |ServiceProcess|✅||
+|ServiceProcessSettings|✅||
 |ServiceScheduleConfig|❌|Not supported, but support could be added|
 |ServiceSetupAssistantSettings|✅||
 |SetupCopilotSettings|✅||
@@ -646,6 +688,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |Skill|✅||
 |SkillType|✅||
 |SlackApp|✅||
+|SoFieldMappingSettings|✅||
 |SocialCustomerServiceSettings|✅||
 |SourceTrackingSettings|✅||
 |SrvcMgmtObjCollabAppCnfg|❌|Not supported, but support could be added|
@@ -656,15 +699,18 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |StandardValueSetTranslation|✅||
 |StaticResource|✅||
 |StnryAssetEnvSrcCnfg|✅||
+|StockRotationSettings|✅||
 |StreamingAppDataConnector|✅||
 |SubscriptionManagementSettings|✅||
 |SurveySettings|✅||
+|SurveyStyleSet|❌|Not supported, but support could be added|
 |SustainabilityUom|✅||
 |SustnUomConversion|✅||
 |SvcCatalogCategory|✅||
 |SvcCatalogFilterCriteria|✅||
 |SvcCatalogFulfillmentFlow|✅||
 |SvcCatalogItemDef|✅||
+|SynchronizeSettings|✅||
 |SynonymDictionary|✅||
 |SystemNotificationSettings|✅||
 |Territory|✅||
@@ -676,16 +722,19 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |TimeSheetTemplate|✅||
 |TimelineObjectDefinition|✅||
 |TmfOutboundNotificationSettings|✅||
+|TmshtLaborCostOptimAiSettings|✅||
 |TopicsForObjects|✅||
 |TrailheadSettings|✅||
 |TransactionProcessingType|⚠️|Supports deploy/retrieve but not source tracking|
 |TransactionSecurityPolicy|✅||
 |Translations|✅||
 |TrialOrgSettings|✅||
+|TriggerConfigurationsSettings|✅||
 |UIObjectRelationConfig|✅||
 |UiFormatSpecificationSet|✅||
 |UiPlugin|✅||
 |UiPreviewMessageTabDef|✅||
+|UnifiedSalesIntelligenceSettings|✅||
 |UserAccessPolicy|✅||
 |UserAuthCertificate|✅||
 |UserCriteria|✅||
@@ -713,6 +762,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |WaveTemplateBundle|✅||
 |WaveXmd|✅||
 |Web3Settings|✅||
+|WebApplication|✅||
 |WebLink|✅||
 |WebStoreBundle|✅||
 |WebStoreTemplate|✅||
@@ -723,7 +773,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |WorkflowAlert|✅||
 |WorkflowFieldUpdate|✅||
 |WorkflowFlowAction|✅||
-|WorkflowFlowAutomation|✅||
 |WorkflowKnowledgePublish|✅||
 |WorkflowOutboundMessage|✅||
 |WorkflowRule|✅||
@@ -733,62 +782,28 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 
 
-## Next Release (v66)
+## Next Release (v67)
 
-v66 introduces the following new types.  Here's their current level of support
+v67 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
-|AiResponseFormat|❌|Not supported, but support could be added (but not for tracking)|
-|AiResponseFormatIstr|❌|Not supported, but support could be added (but not for tracking)|
-|AiSurface|❌|Not supported, but support could be added (but not for tracking)|
-|AiSurfaceInstruction|❌|Not supported, but support could be added (but not for tracking)|
-|ApexLimitSettings|✅||
-|AppointmentBookingSettings|✅||
-|AutomatorConfigSettings|✅||
-|ComputeExtension|✅||
-|CourseWaitlistConfig|❌|Not supported, but support could be added|
-|CriteriaSettings|✅||
-|DictionariesSettings|✅||
-|DocumentExtractionDef|❌|Not supported, but support could be added|
-|DripFeedConfigSettings|✅||
-|DynamicGanttSettings|✅||
-|EmergencySettings|✅||
-|ExtlClntAppAttestConfigurablePolicies|❌|Not supported, but support could be added (but not for tracking)|
-|ExtlClntAppAttestSettings|✅||
-|ExtlClntAppCanvasSettings|✅||
-|GRCIntelligenceUddSettings|✅||
-|GenComputingSummaryDef|❌|Not supported, but support could be added|
-|GeneralConfigSettings|✅||
-|GeocodeSettings|✅||
-|GiftEntryGridTemplate|✅||
-|IndustriesConstraintsSettings|✅||
-|IndustriesEnergyUtilitiesMultiSiteSettings|✅||
-|IndustriesMfgSampleManagementSettings|✅||
-|IntegArtifactDef|✅||
-|InventoryAllocationSettings|✅||
-|LogicSettings|✅||
-|MapReportSettings|✅||
-|ObjectMappingSettings|✅||
-|OnboardingDataObjectGroup|✅||
-|OptimizationSettings|✅||
-|PartyProfileDataObjectValidityDefinition|✅||
-|PaynowStarterUpgradeEnabledSettings|✅||
-|ProcedurePlanDefinition|❌|Not supported, but support could be added (but not for tracking)|
-|ProviderSampleLimitTemplate|❌|Not supported, but support could be added|
-|PurchaseOrderMgmtSettings|✅||
-|RiskMgmtSettings|✅||
-|SchedulingRecipeSettings|✅||
-|SecurityAgentSettings|✅||
-|ServiceLegalStatusesSettings|✅||
-|ServiceProcessSettings|✅||
-|SoFieldMappingSettings|✅||
-|StockRotationSettings|✅||
-|SurveyStyleSet|❌|Not supported, but support could be added|
-|SynchronizeSettings|✅||
-|TmshtLaborCostOptimAiSettings|✅||
-|TriggerConfigurationsSettings|✅||
-|UnifiedSalesIntelligenceSettings|✅||
+|ConversationGuidanceSettings|✅||
+|DataMapperDefinition|✅||
+|DealInsightsSettings|✅||
+|DelegateAccessDataSet|❌|Not supported, but support could be added|
+|DelegateAccessDef|❌|Not supported, but support could be added|
+|DelegateAccsDataSetObj|❌|Not supported, but support could be added|
+|EvidenceMgmtSettings|✅||
+|FlexcardDefinition|✅||
+|IndustriesVectorSearchSettings|✅||
+|IntegrationProcdDefinition|✅||
+|OmniscriptDefinition|✅||
+|PlanningMeasureDef|❌|Not supported, but support could be added|
+|PlanningMeasureGroup|❌|Not supported, but support could be added|
+|ServiceIssueManagementSettings|✅||
+|ServiceItsmChangeManagementSettings|✅||
+|UnifiedSalesIntelligenceEngagementInsightsSettings|✅||
 
 ## Additional Types
 
@@ -854,11 +869,8 @@ v66 introduces the following new types.  Here's their current level of support
 - UiViewDefinition
 - UserProfileSearchScope
 - VisualizationPlugin
-- WebApplication
+- WorkflowFlowAutomation
 - WorkSkillRoutingAttribute
 - XOrgHub
 - RuleLibraryDefinition
-- DataMapperDefinition
-- IntegrationProcdDefinition
-- OmniscriptDefinition
-- FlexcardDefinition
+- LightningOutApp

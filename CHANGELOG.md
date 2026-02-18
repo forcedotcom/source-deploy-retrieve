@@ -1,3 +1,12 @@
+## [12.31.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.11...12.31.12) (2026-02-17)
+
+
+### Bug Fixes
+
+* child types for getComponentFilenamesByNameAndType ([#1685](https://github.com/forcedotcom/source-deploy-retrieve/issues/1685)) ([cf97e86](https://github.com/forcedotcom/source-deploy-retrieve/commit/cf97e86f3d1a3dccf82817d1ee8603ec7bed99bd))
+
+
+
 ## [12.31.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.10...12.31.11) (2026-02-10)
 
 

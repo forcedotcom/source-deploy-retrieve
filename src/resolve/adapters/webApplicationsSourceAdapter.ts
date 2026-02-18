@@ -52,7 +52,7 @@ export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
         ? source
         : new SourceComponent(
             {
-              name: source.name,
+              name: appName,
               type: source.type,
               content: source.content,
               xml: expectedXmlPath,

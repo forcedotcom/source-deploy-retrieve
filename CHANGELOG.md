@@ -1,3 +1,7 @@
+## [12.31.13](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.12...12.31.13) (2026-02-18)
+
+
+
 ## [12.31.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.11...12.31.12) (2026-02-17)
 
 

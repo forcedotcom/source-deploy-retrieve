@@ -799,6 +799,7 @@ v67 introduces the following new types.  Here's their current level of support
 |IndustriesVectorSearchSettings|✅||
 |IntegrationProcdDefinition|✅||
 |OmniscriptDefinition|✅||
+|OrchestrationPlanCtxMapping|❌|Not supported, but support could be added|
 |PlanningMeasureDef|❌|Not supported, but support could be added|
 |PlanningMeasureGroup|❌|Not supported, but support could be added|
 |ServiceIssueManagementSettings|✅||

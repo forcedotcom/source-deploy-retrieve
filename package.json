@@ -30,7 +30,7 @@
     "@salesforce/ts-types": "^2.0.12",
     "@salesforce/types": "^1.6.0",
     "fast-levenshtein": "^3.0.0",
-    "fast-xml-parser": "^5.3.4",
+    "fast-xml-parser": "^5.3.6",
     "got": "^11.8.6",
     "graceful-fs": "^4.2.11",
     "ignore": "^5.3.2",

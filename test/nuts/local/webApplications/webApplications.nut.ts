@@ -16,7 +16,7 @@
 import * as path from 'node:path';
 import JSZip from 'jszip';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
-import { assert, expect } from 'chai';
+import { expect } from 'chai';
 import {
   ComponentSetBuilder,
   MetadataConverter,
@@ -56,7 +56,7 @@ describe('webApplications local e2e', () => {
     expect(zip.file('webapplications/HappyApp/src/index.html')).to.exist;
   });
 
-  it('rejects metadata-only retrieve conversion for WebApplication', async () => {
+  it('resolves metadata-only zip for WebApplication (retrieve path skips validation)', async () => {
     const converter = new MetadataConverter();
     const cs = await ComponentSetBuilder.build({ sourcepath: [path.join(projectDir, 'force-app')] });
     const { zipBuffer } = await converter.convert(cs, 'metadata', { type: 'zip' });
@@ -75,6 +75,11 @@ describe('webApplications local e2e', () => {
     const resolver = new MetadataResolver(new RegistryAccess(), tree);
     const xmlPath = 'webapplications/HappyApp/HappyApp.webapplication-meta.xml';
 
-    assert.throws(() => resolver.getComponentsFromPath(xmlPath));
+    // webapplication.json is optional and ZipTreeContainer skips validation,
+    // so a zip with only the meta XML resolves without error.
+    const components = resolver.getComponentsFromPath(xmlPath);
+    expect(components).to.have.lengthOf(1);
+    expect(components[0].type.name).to.equal('WebApplication');
+    expect(components[0].fullName).to.equal('HappyApp');
   });
 });

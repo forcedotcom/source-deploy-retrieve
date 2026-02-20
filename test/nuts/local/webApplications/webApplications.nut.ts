@@ -75,8 +75,8 @@ describe('webApplications local e2e', () => {
     const resolver = new MetadataResolver(new RegistryAccess(), tree);
     const xmlPath = path.join('webapplications', 'HappyApp', 'HappyApp.webapplication-meta.xml');
 
-    // webapplication.json is optional and ZipTreeContainer skips validation,
-    // so a zip with only the meta XML resolves without error.
+    // webapplication.json is optional and ZipTreeContainer skips validation.
+    // So a zip with only the meta XML resolves without error.
     const components = resolver.getComponentsFromPath(xmlPath);
     expect(components).to.have.lengthOf(1);
     expect(components[0].type.name).to.equal('WebApplication');

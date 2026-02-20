@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771552976374,
+  "lastUpdate": 1771554033997,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -90617,6 +90617,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 20169,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lturanscaia@salesforce.com",
+            "name": "shinoni",
+            "username": "lesya7"
+          },
+          "committer": {
+            "email": "lturanscaia@salesforce.com",
+            "name": "shinoni",
+            "username": "lesya7"
+          },
+          "distinct": true,
+          "id": "3f09601f6026b8192c66c2596ef6000a646c1d87",
+          "message": "fix: clarify forward-slash requirement in path validation messages\n\nConfig paths are bundle-relative and URL-style; backslashes are\nrejected to match the server's pure-string logic and avoid\nWindows path-traversal tricks.\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+          "timestamp": "2026-02-19T18:11:53-08:00",
+          "tree_id": "13d40babcbcb58ace6b6b7a74e24dc8ee7662598",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/3f09601f6026b8192c66c2596ef6000a646c1d87"
+        },
+        "date": 1771554021727,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 586,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 3944,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3848,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 7048,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 891,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 10822,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 12417,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 15057,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 2152,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 21372,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 18716,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 19897,
             "unit": "ms"
           }
         ]

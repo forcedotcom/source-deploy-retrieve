@@ -73,7 +73,7 @@ describe('webApplications local e2e', () => {
     });
     const tree = await ZipTreeContainer.create(metadataOnlyZip);
     const resolver = new MetadataResolver(new RegistryAccess(), tree);
-    const xmlPath = 'webapplications/HappyApp/HappyApp.webapplication-meta.xml';
+    const xmlPath = path.join('webapplications', 'HappyApp', 'HappyApp.webapplication-meta.xml');
 
     // webapplication.json is optional and ZipTreeContainer skips validation,
     // so a zip with only the meta XML resolves without error.

@@ -126,12 +126,10 @@ export const filePathsFromMetadataComponent = (
       ['LightningTypeBundle', [join(packageDirWithTypeDir, `${fullName}${sep}schema.json`)]],
       ['ContentTypeBundle', [join(packageDirWithTypeDir, `${fullName}${sep}schema.json`)]],
       ['WaveTemplateBundle', [join(packageDirWithTypeDir, `${fullName}${sep}template-info.json`)]],
+      // webapplication.json is optional, so only the meta XML is a guaranteed file path.
       [
         'WebApplication',
-        [
-          join(packageDirWithTypeDir, `${fullName}${sep}webapplication.json`),
-          join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.webapplication${META_XML_SUFFIX}`),
-        ],
+        [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.webapplication${META_XML_SUFFIX}`)],
       ],
       ['LightningComponentBundle', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.js${META_XML_SUFFIX}`)]],
       ['AuraDefinitionBundle', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.cmp${META_XML_SUFFIX}`)]],

@@ -796,6 +796,7 @@ v67 introduces the following new types.  Here's their current level of support
 |DelegateAccsDataSetObj|❌|Not supported, but support could be added|
 |EvidenceMgmtSettings|✅||
 |FlexcardDefinition|✅||
+|FlowValueMap|✅||
 |IndustriesVectorSearchSettings|✅||
 |IntegrationProcdDefinition|✅||
 |OmniscriptDefinition|✅||
@@ -839,7 +840,6 @@ v67 introduces the following new types.  Here's their current level of support
 - ExtlClntAppSampleConfigurablePolicies
 - ExtlClntAppSampleSettings
 - FieldMappingConfigItem
-- FlowValueMap
 - Form
 - FormSection
 - GenAiPlanner

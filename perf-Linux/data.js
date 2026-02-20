@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771549603447,
+  "lastUpdate": 1771552167955,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -95805,6 +95805,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 10504,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lturanscaia@salesforce.com",
+            "name": "shinoni",
+            "username": "lesya7"
+          },
+          "committer": {
+            "email": "lturanscaia@salesforce.com",
+            "name": "shinoni",
+            "username": "lesya7"
+          },
+          "distinct": true,
+          "id": "8e4b1cfadca4b1b447cc6273339bd0595998e0bf",
+          "message": "fix: align client-side path security with server-side checks\n\nAdd containsPathTraversal() to reject .., absolute paths, null bytes,\ncontrol characters, glob wildcards, backslashes, and percent-encoding\nin outputDir, routing.fallback, and routing.rewrites[].rewrite.\n\nAdd MAX_WEBAPPLICATION_JSON_BYTES (100 KB) size limit matching\nWebApplicationFileProcessor.java.\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+          "timestamp": "2026-02-19T17:46:06-08:00",
+          "tree_id": "bb6dc7aa3e2e1e811600cf396b700841b6b7b60d",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/8e4b1cfadca4b1b447cc6273339bd0595998e0bf"
+        },
+        "date": 1771552157531,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 231,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2308,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2438,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 3101,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 437,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 5550,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7494,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 5703,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 772,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 9950,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 14533,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 10450,
             "unit": "ms"
           }
         ]

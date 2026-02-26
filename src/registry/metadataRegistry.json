@@ -569,6 +569,7 @@
     "dataMapperDefinition": "datamapperdefinition",
     "integrationProcdDefinition": "integrationprocddefinition",
     "omniscriptDefinition": "omniscriptdefinition",
+    "procedurePlanDefinition": "procedureplandefinition",
     "computeExtension": "computeextension",
     "dataObjectSearchIndexConf": "dataobjectsearchindexconf",
     "lightningOutApp": "lightningoutapp",
@@ -5121,6 +5122,14 @@
       "name": "PartyProfileDataObjectValidityDefinition",
       "suffix": "partyProfileDataObjectValidityDefinition",
       "directoryName": "partyProfileDataObjectValidityDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "procedureplandefinition": {
+      "id": "procedureplandefinition",
+      "name": "ProcedurePlanDefinition",
+      "suffix": "procedurePlanDefinition",
+      "directoryName": "procedurePlanDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     },

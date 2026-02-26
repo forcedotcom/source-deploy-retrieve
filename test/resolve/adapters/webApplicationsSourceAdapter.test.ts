@@ -37,7 +37,7 @@ const META_FILE = join(APP_PATH, `${APP_NAME}.webapplication-meta.xml`);
 const JSON_FILE = join(APP_PATH, 'webapplication.json');
 const CONTENT_FILE = join(APP_PATH, 'src', 'index.html');
 
-/** Build a tree with given webapplication.json content. Optionally include outputDir with files. */
+/** Helper: builds a VirtualTreeContainer with webapplication.json and optional outputDir files. */
 function buildTree(
   jsonContent: object | string,
   options?: {

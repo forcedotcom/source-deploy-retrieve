@@ -57,6 +57,7 @@ export type WebApplicationRouting = {
 };
 
 export type WebApplicationConfig = {
+  apiVersion?: string;
   outputDir?: string;
   routing?: WebApplicationRouting;
   headers?: WebApplicationHeaderRule[];
@@ -68,10 +69,11 @@ export function isWebApplicationConfig(value: unknown): value is WebApplicationC
 }
 
 // Keep in sync with server-side validation (WebApplicationFileProcessor.java).
-const ALLOWED_TOP_LEVEL = new Set(['outputDir', 'routing', 'headers']);
+const ALLOWED_TOP_LEVEL = new Set(['apiVersion', 'outputDir', 'routing', 'headers']);
 const ROUTING_ALLOWED = new Set(['rewrites', 'redirects', 'fallback', 'trailingSlash', 'fileBasedRouting']);
 const TRAILING_SLASH_VALUES = new Set(['always', 'never', 'auto']);
 const REDIRECT_STATUS_CODES = new Set([301, 302, 307, 308]);
+const API_VERSION_REGEX = /^\d+\.0$/;
 const MAX_RECURSION_DEPTH = 20;
 const MAX_WEBAPPLICATION_JSON_BYTES = 102_400; // 100 KB
 
@@ -201,9 +203,14 @@ export function validateWebApplicationJson(
   if (disallowed.length > 0) {
     const list = disallowed.map((k) => `'${k}'`).join(', ');
     const word = disallowed.length === 1 ? 'property' : 'properties';
-    throw createConfigError(msgs.getMessage('webapp_unknown_props', [word, list, 'outputDir, routing, headers']), [
-      `Remove ${list} from webapplication.json.`,
-    ]);
+    throw createConfigError(
+      msgs.getMessage('webapp_unknown_props', [word, list, 'apiVersion, outputDir, routing, headers']),
+      [`Remove ${list} from webapplication.json.`]
+    );
+  }
+
+  if (rawObj.apiVersion !== undefined) {
+    validateApiVersion(rawObj.apiVersion);
   }
 
   const outputDir = rawObj.outputDir !== undefined ? validateOutputDir(rawObj.outputDir) : undefined;
@@ -221,6 +228,19 @@ export function validateWebApplicationJson(
 
   if (outputDir ?? obj.routing) {
     validateFileExistence(obj, outputDir, contentPath, tree);
+  }
+}
+
+function validateApiVersion(value: unknown): void {
+  if (typeof value !== 'string') {
+    throw createConfigError(msgs.getMessage('webapp_type_mismatch', ['apiVersion', 'a string', describeType(value)]), [
+      'Set apiVersion to a string like "66.0".',
+    ]);
+  }
+  if (!API_VERSION_REGEX.test(value)) {
+    throw createConfigError(msgs.getMessage('webapp_invalid_api_version', [value]), [
+      msgs.getMessage('webapp_invalid_api_version.actions'),
+    ]);
   }
 }
 

@@ -45,9 +45,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AgentforceAccountManagementSettings|✅||
 |AgentforceForDevelopersSettings|✅||
 |Ai4mSettings|✅||
+|AiAgentScorerDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |AiAuthoringBundle|✅||
 |AiEvaluationDefinition|⚠️|Supports deploy/retrieve but not source tracking|
-|AiEvaluationFunctionDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |AiPlannerVoiceDef|❌|Not supported, but support could be added (but not for tracking)|
 |AiResponseFormat|❌|Not supported, but support could be added (but not for tracking)|
 |AiResponseFormatIstr|❌|Not supported, but support could be added (but not for tracking)|
@@ -800,6 +800,7 @@ v67 introduces the following new types.  Here's their current level of support
 |IndustriesVectorSearchSettings|✅||
 |IntegrationProcdDefinition|✅||
 |LaborCostOptimCrewMgmtSettings|✅||
+|MeetingPlaybookDefinition|❌|Not supported, but support could be added|
 |OmniscriptDefinition|✅||
 |OrchestrationPlanCtxMapping|❌|Not supported, but support could be added|
 |PlanningMeasureDef|❌|Not supported, but support could be added|
@@ -809,6 +810,7 @@ v67 introduces the following new types.  Here's their current level of support
 |ServiceIssueManagementSettings|✅||
 |ServiceItsmChangeManagementSettings|✅||
 |UnifiedSalesIntelligenceEngagementInsightsSettings|✅||
+|WebApplicationSettings|✅||
 
 ## Additional Types
 

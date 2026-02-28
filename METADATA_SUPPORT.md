@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v66 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 717/769 supported metadata types.
+Currently, there are 717/771 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -713,6 +713,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SynchronizeSettings|✅||
 |SynonymDictionary|✅||
 |SystemNotificationSettings|✅||
+|Tag|❌|Not supported, but support could be added (but not for tracking)|
+|TagSet|❌|Not supported, but support could be added (but not for tracking)|
 |Territory|✅||
 |Territory2|✅||
 |Territory2Model|✅||
@@ -788,6 +790,7 @@ v67 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
+|AdminSuccessSettings|✅||
 |ConversationGuidanceSettings|✅||
 |DataMapperDefinition|✅||
 |DealInsightsSettings|✅||

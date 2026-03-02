@@ -44,7 +44,7 @@ webapplication.json must contain at least one property.
 
 # webapp_empty_object.actions
 
-Add a property: apiVersion, outputDir, routing, or headers.
+Add a property: outputDir, routing, or headers.
 
 # webapp_unknown_props
 
@@ -57,14 +57,6 @@ webapplication.json '%s' must be %s (received %s).
 # webapp_empty_value
 
 webapplication.json '%s' must not be empty.
-
-# webapp_invalid_api_version
-
-webapplication.json 'apiVersion' must match pattern ^\d+\.0$ (e.g. "66.0"), but got "%s".
-
-# webapp_invalid_api_version.actions
-
-Use a version string like "66.0" or "67.0".
 
 # webapp_invalid_enum
 

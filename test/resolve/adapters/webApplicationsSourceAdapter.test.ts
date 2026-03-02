@@ -240,16 +240,8 @@ describe('WebApplicationsSourceAdapter', () => {
     });
 
     describe('Types & Formats', () => {
-      it('apiVersion wrong type - fail', () => {
-        expectFail({ apiVersion: 66.0 } as unknown as object);
-      });
-
-      it('apiVersion invalid format - fail', () => {
-        expectFail({ apiVersion: '66' });
-      });
-
-      it('apiVersion valid - pass', () => {
-        expectPass({ apiVersion: '66.0' });
+      it('apiVersion is unknown property - fail', () => {
+        expectFail({ apiVersion: '66.0' } as unknown as object);
       });
 
       it('outputDir empty string - fail', () => {
@@ -556,10 +548,6 @@ describe('WebApplicationsSourceAdapter', () => {
         expectPass({ outputDir: 'src' });
       });
 
-      it('only apiVersion - pass', () => {
-        expectPass({ apiVersion: '66.0' });
-      });
-
       it('only routing (fileBasedRouting) - pass', () => {
         expectPass({ routing: { fileBasedRouting: false } });
       });
@@ -624,13 +612,8 @@ describe('WebApplicationsSourceAdapter', () => {
       };
 
       it('includes received type in type-mismatch errors', () => {
-        const err = getError({ apiVersion: 66.0 } as unknown as object);
+        const err = getError({ outputDir: 123 } as unknown as object);
         expect(err.message).to.include('received number');
-      });
-
-      it('includes the actual value for invalid apiVersion format', () => {
-        const err = getError({ apiVersion: '66' });
-        expect(err.message).to.include('"66"');
       });
 
       it('includes actual value for invalid trailingSlash', () => {

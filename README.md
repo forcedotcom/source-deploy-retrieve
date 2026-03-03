@@ -18,6 +18,17 @@ A JavaScript toolkit for working with Salesforce metadata. Built to support the 
 - An [index](./src/registry/metadataRegistry.json) to reference available metadata types.
 - Utilize promises with `async/await` syntax
 
+## Web Applications
+
+SDR supports the WebApplication metadata type for deploying and retrieving web app bundles (HTML, JS, CSS, etc.) to a Salesforce org.
+
+- **Bundle structure:** Each app lives under `force-app/main/default/webapplications/{AppName}/` with required `{AppName}.webapplication-meta.xml` and optional `webapplication.json`
+- **webapplication.json:** Configures `outputDir` (where built files live), `routing` (rewrites, redirects, fallback), and `headers`. Validated on deploy; optional for file-based routing
+- **Deploy/retrieve:** Use `sf project deploy start` or `sf project retrieve start` with a source path or manifest. WebApplication is resolved as a bundle type
+- **Destructive changes:** Use `--post-destructive-changes` with a manifest listing `WebApplication` components to delete apps from the org
+
+See [docs/WEBAPPLICATION.md](./docs/WEBAPPLICATION.md) for bundle structure, `webapplication.json` schema, and examples.
+
 ## Issues
 
 Please report all issues to the [issues only repository](https://github.com/forcedotcom/cli/issues).

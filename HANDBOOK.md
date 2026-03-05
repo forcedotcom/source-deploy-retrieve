@@ -375,6 +375,24 @@ The "\_meta.json" files are child metadata files of DigitalExperienceBundle belo
 corresponding folder are the contents to the DigitalExperience metadata. So, in case of DigitalExperience the metadata file is a JSON file
 and not an XML file.
 
+### The `webApplicationsSourceAdapter`
+
+Source Adapter for WebApplication metadata types. This metadata type is a bundled type that extends `BundleSourceAdapter` to enforce bundle requirements for source/deploy while staying compatible with metadata-only retrievals.
+
+**Example Structure**:
+
+```text
+webapplications/
+├── MyApp/
+|   ├── MyApp.webapplication-meta.xml
+|   ├── webapplication.json
+|   └── dist/
+|       ├── index.html
+|       └── assets/
+```
+
+The metadata xml file ending with "webapplication-meta.xml" belongs to the WebApplication MD type. The `webapplication.json` descriptor configures the deployable content (e.g. `outputDir` pointing to `dist`). For deploy/source, the adapter requires at least one non-metadata content file (e.g. `index.html`) in addition to the xml and descriptor.
+
 ### The `matchingContentAdapter`
 
 This adapter is used for `ApexClass` or other types where there is a "content" file and an .xml file. In source-format, an `ApexClass` is made up of two files, the `.cls` which contains the actual code from the class, and an accompanying "meta" file

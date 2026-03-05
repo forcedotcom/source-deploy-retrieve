@@ -55,6 +55,7 @@ export class ReplacementStream extends Transform {
   private readonly foundReplacements = new Set<string>();
   private readonly allReplacements: MarkedReplacement[];
   private readonly lifecycleInstance = Lifecycle.getInstance();
+  private leftover: string = '';
 
   public constructor(private readonly replacements: MarkedReplacement[]) {
     super({ objectMode: true });
@@ -66,16 +67,32 @@ export class ReplacementStream extends Transform {
     encoding: string,
     callback: (error?: Error, data?: Buffer) => void
   ): Promise<void> {
-    let error: Error | undefined;
-    const { output, found } = await replacementIterations(chunk.toString(), this.replacements);
-    for (const foundKey of found) {
-      this.foundReplacements.add(foundKey);
+    const combined = this.leftover + chunk.toString();
+    const lastNewlineIndex = combined.lastIndexOf('\n');
+    const safeLength = lastNewlineIndex === -1 ? combined.length : lastNewlineIndex + 1;
+
+    this.leftover = combined.slice(safeLength);
+
+    if (safeLength > 0) {
+      const { output, found } = await replacementIterations(combined.slice(0, safeLength), this.replacements);
+      for (const foundKey of found) {
+        this.foundReplacements.add(foundKey);
+      }
+      callback(undefined, Buffer.from(output));
+    } else {
+      callback();
     }
-    callback(error, Buffer.from(output));
   }
 
   public async _flush(callback: (error?: Error) => void): Promise<void> {
-    // At the end of the stream, emit warnings for replacements not found
+    if (this.leftover.length > 0) {
+      const { output, found } = await replacementIterations(this.leftover, this.replacements);
+      for (const foundKey of found) {
+        this.foundReplacements.add(foundKey);
+      }
+      this.push(Buffer.from(output));
+    }
+
     for (const replacement of this.allReplacements) {
       const key = replacement.toReplace.toString();
       if (replacement.singleFile && !this.foundReplacements.has(key)) {

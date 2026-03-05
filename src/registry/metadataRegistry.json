@@ -211,6 +211,7 @@
     "dataKitObjectTemplate": "datakitobjecttemplate",
     "dataObjectBuildOrgTemplate": "dataobjectbuildorgtemplate",
     "dataPackageKitDefinition": "datapackagekitdefinition",
+    "mktDatalakeSrcKeyQualifier": "mktdatalakesrckeyqualifier",
     "dataPipeline": "datapipeline",
     "dataSource": "externaldatasource",
     "dataSourceBundleDefinition": "datasourcebundledefinition",
@@ -1812,6 +1813,13 @@
       "name": "DataObjectBuildOrgTemplate",
       "strictDirectoryName": false,
       "suffix": "dataObjectBuildOrgTemplate"
+    },
+    "mktdatalakesrckeyqualifier": {
+      "directoryName": "mktDatalakeSrcKeyQualifier",
+      "id": "mktdatalakesrckeyqualifier",
+      "name": "MktDatalakeSrcKeyQualifier",
+      "strictDirectoryName": false,
+      "suffix": "mktDatalakeSrcKeyQualifier"
     },
     "datapackagekitdefinition": {
       "directoryName": "dataPackageKitDefinitions",

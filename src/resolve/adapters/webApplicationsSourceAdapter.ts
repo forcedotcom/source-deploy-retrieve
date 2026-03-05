@@ -20,13 +20,17 @@ import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
 import { baseName } from '../../utils/path';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
+import { validateWebApplicationJson } from './webApplicationValidation';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
+/**
+ * Source adapter for WebApplication bundles.
+ *
+ * webapplication.json is optional; validated on deploy, skipped on retrieve.
+ */
 export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
-  // Enforces WebApplication bundle requirements for source/deploy while staying
-  // compatible with metadata-only retrievals.
   protected populate(
     trigger: SourcePath,
     component?: SourceComponent,
@@ -47,6 +51,7 @@ export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
       );
     }
 
+    // Ensure the component always points at the canonical meta xml.
     const resolvedSource =
       source.xml && source.xml === expectedXmlPath
         ? source
@@ -63,27 +68,22 @@ export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
             this.forceIgnore
           );
 
+    // Only validate on deploy; skip on retrieve (ZipTreeContainer throws).
     if (isResolvingSource) {
       const descriptorPath = join(contentPath, 'webapplication.json');
-      const xmlFileName = `${appName}.webapplication-meta.xml`;
-      const contentEntries = (this.tree.readDirectory(contentPath) ?? []).filter(
-        (entry) => entry !== xmlFileName && entry !== 'webapplication.json'
-      );
-      if (contentEntries.length === 0) {
-        // For deploy/source, we expect at least one non-metadata content file (e.g. index.html).
-        throw new SfError(
-          messages.getMessage('error_expected_source_files', [contentPath, this.type.name]),
-          'ExpectedSourceFilesError'
-        );
-      }
-      if (!this.tree.exists(descriptorPath)) {
-        throw new SfError(
-          messages.getMessage('error_expected_source_files', [descriptorPath, this.type.name]),
-          'ExpectedSourceFilesError'
-        );
-      }
-      if (this.forceIgnore.denies(descriptorPath)) {
-        throw messages.createError('noSourceIgnore', [this.type.name, descriptorPath]);
+      const hasDescriptor = this.tree.exists(descriptorPath) && !this.forceIgnore.denies(descriptorPath);
+
+      if (hasDescriptor) {
+        try {
+          const raw = this.tree.readFileSync(descriptorPath);
+          validateWebApplicationJson(raw, descriptorPath, contentPath, this.tree);
+        } catch (e) {
+          if (e instanceof Error && e.message === 'Method not implemented') {
+            // ZipTreeContainer (retrieve path) — skip client-side validation
+          } else {
+            throw e;
+          }
+        }
       }
     }
 

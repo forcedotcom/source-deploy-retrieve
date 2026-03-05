@@ -575,7 +575,12 @@
     "stageAssignment": "stageassignment",
     "onboardingDataObjectGroup": "onboardingdataobjectgroup",
     "partyProfileDataObjectValidityDefinition": "partyprofiledataobjectvaliditydefinition",
-    "flexcardDefinition": "flexcarddefinition"
+    "flexcardDefinition": "flexcarddefinition",
+    "TelemetryDefinition": "telemetrydefinition",
+    "TelemetryDefinitionVersion": "telemetrydefinitionversion",
+    "TelemetryActionDefinition": "telemetryactiondefinition",
+    "TelemetryActionDefStep": "telemetryactiondefstep",
+    "TelemetryActnDefStepAttr": "telemetryactndefstepattr"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5129,6 +5134,46 @@
       "name": "FlexcardDefinition",
       "suffix": "flexcardDefinition",
       "directoryName": "flexcardDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "telemetrydefinition": {
+      "id": "telemetrydefinition",
+      "name": "TelemetryDefinition",
+      "suffix": "TelemetryDefinition",
+      "directoryName": "TelemetryDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "telemetrydefinitionversion": {
+      "id": "telemetrydefinitionversion",
+      "name": "TelemetryDefinitionVersion",
+      "suffix": "TelemetryDefinitionVersion",
+      "directoryName": "TelemetryDefinitionVersions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "telemetryactiondefinition": {
+      "id": "telemetryactiondefinition",
+      "name": "TelemetryActionDefinition",
+      "suffix": "TelemetryActionDefinition",
+      "directoryName": "TelemetryActionDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "telemetryactiondefstep": {
+      "id": "telemetryactiondefstep",
+      "name": "TelemetryActionDefStep",
+      "suffix": "TelemetryActionDefStep",
+      "directoryName": "TelemetryActionDefSteps",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "telemetryactndefstepattr": {
+      "id": "telemetryactndefstepattr",
+      "name": "TelemetryActnDefStepAttr",
+      "suffix": "TelemetryActnDefStepAttr",
+      "directoryName": "TelemetryActnDefStepAttrs",
       "inFolder": false,
       "strictDirectoryName": false
     }

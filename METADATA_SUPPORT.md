@@ -836,6 +836,7 @@ v67 introduces the following new types.  Here's their current level of support
 - CustomExperience
 - CustomLabel
 - CustomFieldTranslation
+- MktDatalakeSrcKeyQualifier
 - DataPipeline
 - DynamicTrigger
 - EmbeddedServiceFieldService

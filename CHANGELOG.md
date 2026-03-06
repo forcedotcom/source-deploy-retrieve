@@ -1,3 +1,12 @@
+## [12.31.16](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.15...12.31.16) (2026-03-06)
+
+
+### Bug Fixes
+
+* add ProcedurePlanDefinition to metadata registry-W-21371522 ([#1692](https://github.com/forcedotcom/source-deploy-retrieve/issues/1692)) ([458b27c](https://github.com/forcedotcom/source-deploy-retrieve/commit/458b27c02f80e060029cc99691daca99b28393ff))
+
+
+
 ## [12.31.15](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.14...12.31.15) (2026-03-05)
 
 

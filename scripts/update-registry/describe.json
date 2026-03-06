@@ -4162,7 +4162,7 @@
   "SchedulingObjective": {
     "name": "SchedulingObjective",
     "directoryName": "SchedulingObjectives",
-    "suffix": "schedulingObjective",
+    "suffix": "SchedulingObjective",
     "inFolder": false,
     "metaFile": false,
     "hasChildren": false

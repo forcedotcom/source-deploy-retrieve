@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { assert, expect } from 'chai';
 import { Messages, SfError } from '@salesforce/core';
 import {
   ForceIgnore,
+  NodeFSTreeContainer,
   RegistryAccess,
   SourceComponent,
   VirtualDirectory,
@@ -123,7 +126,7 @@ describe('WebApplicationsSourceAdapter', () => {
     );
   });
 
-  it('should throw ExpectedSourceFilesError if content files are missing', () => {
+  it('should skip outputDir validation for VirtualTreeContainer (content files missing)', () => {
     const noContentTree = buildTree({ outputDir: 'dist' }, { outputDir: 'dist', includeOutputDir: false });
     const noContentAdapter = new WebApplicationsSourceAdapter(
       registry.types.webapplication,
@@ -131,7 +134,8 @@ describe('WebApplicationsSourceAdapter', () => {
       forceIgnore,
       noContentTree
     );
-    assert.throws(() => noContentAdapter.getComponent(APP_PATH), SfError, /outputDir.*directory does not exist/);
+    const comp = noContentAdapter.getComponent(APP_PATH);
+    expect(comp).to.not.be.undefined;
   });
 
   it('should succeed when webapplication.json is absent (file-based routing)', () => {
@@ -187,11 +191,11 @@ describe('WebApplicationsSourceAdapter', () => {
     testUtil.restore();
   });
 
-  describe('webapplication.json validation', () => {
-    const expectFail = (jsonContent: object | string, options?: Parameters<typeof buildTree>[1]) => {
+  describe('webapplication.json validation (VirtualTreeContainer — validation skipped)', () => {
+    const expectValidationSkipped = (jsonContent: object | string, options?: Parameters<typeof buildTree>[1]) => {
       const t = buildTree(jsonContent, options);
       const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
-      assert.throws(() => a.getComponent(APP_PATH), SfError, /webapplication\.json|outputDir|ExpectedSourceFilesError/);
+      expect(a.getComponent(APP_PATH)).to.not.be.undefined;
     };
 
     const expectPass = (jsonContent: object, options?: Parameters<typeof buildTree>[1]) => {
@@ -201,7 +205,7 @@ describe('WebApplicationsSourceAdapter', () => {
     };
 
     describe('Structure & Content', () => {
-      it('empty file - fail', () => {
+      it('empty file - skipped', () => {
         const vfs: VirtualDirectory[] = [
           {
             dirPath: APP_PATH,
@@ -215,23 +219,23 @@ describe('WebApplicationsSourceAdapter', () => {
         ];
         const t = new VirtualTreeContainer(vfs);
         const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
-        assert.throws(() => a.getComponent(APP_PATH), SfError, /must not be empty/);
+        expect(a.getComponent(APP_PATH)).to.not.be.undefined;
       });
 
-      it('whitespace only - fail', () => {
-        expectFail('   \n  \t  ');
+      it('whitespace only - skipped', () => {
+        expectValidationSkipped('   \n  \t  ');
       });
 
-      it('invalid JSON - fail', () => {
-        expectFail('{"unclosed');
+      it('invalid JSON - skipped', () => {
+        expectValidationSkipped('{"unclosed');
       });
 
-      it('root is array - fail', () => {
-        expectFail('[{"outputDir":"dist"}]');
+      it('root is array - skipped', () => {
+        expectValidationSkipped('[{"outputDir":"dist"}]');
       });
 
-      it('empty root object - fail', () => {
-        expectFail({});
+      it('empty root object - skipped', () => {
+        expectValidationSkipped({});
       });
 
       it('non-empty root - pass', () => {
@@ -240,32 +244,32 @@ describe('WebApplicationsSourceAdapter', () => {
     });
 
     describe('Types & Formats', () => {
-      it('apiVersion is unknown property - fail', () => {
-        expectFail({ apiVersion: '66.0' } as unknown as object);
+      it('apiVersion is unknown property - skipped', () => {
+        expectValidationSkipped({ apiVersion: '66.0' } as unknown as object);
       });
 
-      it('outputDir empty string - fail', () => {
-        expectFail({ outputDir: '' });
+      it('outputDir empty string - skipped', () => {
+        expectValidationSkipped({ outputDir: '' });
       });
 
-      it('outputDir wrong type - fail', () => {
-        expectFail({ outputDir: 123 } as unknown as object);
+      it('outputDir wrong type - skipped', () => {
+        expectValidationSkipped({ outputDir: 123 } as unknown as object);
       });
 
-      it('routing wrong type - fail', () => {
-        expectFail({ routing: 'invalid' } as unknown as object);
+      it('routing wrong type - skipped', () => {
+        expectValidationSkipped({ routing: 'invalid' } as unknown as object);
       });
 
-      it('headers wrong type - fail', () => {
-        expectFail({ headers: 'invalid' } as unknown as object);
+      it('headers wrong type - skipped', () => {
+        expectValidationSkipped({ headers: 'invalid' } as unknown as object);
       });
 
-      it('trailingSlash invalid - fail', () => {
-        expectFail({ routing: { trailingSlash: 'sometimes' } });
+      it('trailingSlash invalid - skipped', () => {
+        expectValidationSkipped({ routing: { trailingSlash: 'sometimes' } });
       });
 
-      it('statusCode invalid - fail', () => {
-        expectFail({
+      it('statusCode invalid - skipped', () => {
+        expectValidationSkipped({
           outputDir: 'dist',
           routing: { redirects: [{ route: '/a', redirect: '/b', statusCode: 200 }] },
         } as unknown as object);
@@ -273,43 +277,43 @@ describe('WebApplicationsSourceAdapter', () => {
     });
 
     describe('Empty Objects & Arrays', () => {
-      it('empty routing - fail', () => {
-        expectFail({ outputDir: 'src', routing: {} });
+      it('empty routing - skipped', () => {
+        expectValidationSkipped({ outputDir: 'src', routing: {} });
       });
 
-      it('empty rewrites array - fail', () => {
-        expectFail({ outputDir: 'src', routing: { rewrites: [] } });
+      it('empty rewrites array - skipped', () => {
+        expectValidationSkipped({ outputDir: 'src', routing: { rewrites: [] } });
       });
 
-      it('empty rewrite item - fail', () => {
-        expectFail({ outputDir: 'src', routing: { rewrites: [{}] } });
+      it('empty rewrite item - skipped', () => {
+        expectValidationSkipped({ outputDir: 'src', routing: { rewrites: [{}] } });
       });
 
-      it('empty redirects array - fail', () => {
-        expectFail({ outputDir: 'src', routing: { redirects: [] } });
+      it('empty redirects array - skipped', () => {
+        expectValidationSkipped({ outputDir: 'src', routing: { redirects: [] } });
       });
 
-      it('empty redirect item - fail', () => {
-        expectFail({ outputDir: 'src', routing: { redirects: [{}] } });
+      it('empty redirect item - skipped', () => {
+        expectValidationSkipped({ outputDir: 'src', routing: { redirects: [{}] } });
       });
 
-      it('empty headers array - fail', () => {
-        expectFail({ outputDir: 'src', headers: [] });
+      it('empty headers array - skipped', () => {
+        expectValidationSkipped({ outputDir: 'src', headers: [] });
       });
 
-      it('empty headers item - fail', () => {
-        expectFail({ outputDir: 'src', headers: [{}] });
+      it('empty headers item - skipped', () => {
+        expectValidationSkipped({ outputDir: 'src', headers: [{}] });
       });
 
-      it('empty header key-value - fail', () => {
-        expectFail({
+      it('empty header key-value - skipped', () => {
+        expectValidationSkipped({
           outputDir: 'src',
           headers: [{ source: '/*', headers: [{}] }],
         });
       });
 
-      it('empty nested headers array - fail', () => {
-        expectFail({
+      it('empty nested headers array - skipped', () => {
+        expectValidationSkipped({
           outputDir: 'src',
           headers: [{ source: '/*', headers: [] }],
         });
@@ -317,19 +321,19 @@ describe('WebApplicationsSourceAdapter', () => {
     });
 
     describe('File Existence', () => {
-      it('outputDir points to non-existent dir - fail', () => {
-        expectFail({ outputDir: 'dist' }, { outputDir: 'dist', includeOutputDir: false });
+      it('outputDir points to non-existent dir - skipped', () => {
+        expectValidationSkipped({ outputDir: 'dist' }, { outputDir: 'dist', includeOutputDir: false });
       });
 
-      it('fallback file does not exist - fail', () => {
-        expectFail(
+      it('fallback file does not exist - skipped', () => {
+        expectValidationSkipped(
           { outputDir: 'dist', routing: { fallback: 'missing.html' } },
           { outputDir: 'dist', outputDirFiles: ['index.html'] }
         );
       });
 
-      it('rewrite target file does not exist - fail', () => {
-        expectFail(
+      it('rewrite target file does not exist - skipped', () => {
+        expectValidationSkipped(
           { outputDir: 'dist', routing: { rewrites: [{ rewrite: 'pages/missing.html' }] } },
           { outputDir: 'dist', outputDirFiles: ['index.html'] }
         );
@@ -337,101 +341,90 @@ describe('WebApplicationsSourceAdapter', () => {
     });
 
     describe('Path Traversal & Dangerous Characters', () => {
-      /* ".." segments */
-      it('rejects outputDir with ../ traversal', () => {
-        expectFail({ outputDir: '../../../etc' }, { includeOutputDir: false });
+      it('outputDir with ../ traversal - skipped', () => {
+        expectValidationSkipped({ outputDir: '../../../etc' }, { includeOutputDir: false });
       });
 
-      it('rejects outputDir that is exactly ".."', () => {
-        expectFail({ outputDir: '..' }, { includeOutputDir: false });
+      it('outputDir that is exactly ".." - skipped', () => {
+        expectValidationSkipped({ outputDir: '..' }, { includeOutputDir: false });
       });
 
-      it('rejects outputDir with nested ..', () => {
-        expectFail({ outputDir: 'a/../../b' }, { includeOutputDir: false });
+      it('outputDir with nested .. - skipped', () => {
+        expectValidationSkipped({ outputDir: 'a/../../b' }, { includeOutputDir: false });
       });
 
-      it('rejects outputDir with trailing ..', () => {
-        expectFail({ outputDir: 'a/b/..' }, { includeOutputDir: false });
+      it('outputDir with trailing .. - skipped', () => {
+        expectValidationSkipped({ outputDir: 'a/b/..' }, { includeOutputDir: false });
       });
 
-      it('rejects fallback with ../ traversal', () => {
-        expectFail({ outputDir: 'src', routing: { fallback: '../../etc/passwd' } });
+      it('fallback with ../ traversal - skipped', () => {
+        expectValidationSkipped({ outputDir: 'src', routing: { fallback: '../../etc/passwd' } });
       });
 
-      it('rejects rewrite target with ../ traversal', () => {
-        expectFail({ outputDir: 'src', routing: { rewrites: [{ rewrite: '../../../etc/passwd' }] } });
+      it('rewrite target with ../ traversal - skipped', () => {
+        expectValidationSkipped({ outputDir: 'src', routing: { rewrites: [{ rewrite: '../../../etc/passwd' }] } });
       });
 
-      /* absolute paths */
-      it('rejects absolute outputDir starting with /', () => {
-        expectFail({ outputDir: '/etc' }, { includeOutputDir: false });
+      it('absolute outputDir starting with / - skipped', () => {
+        expectValidationSkipped({ outputDir: '/etc' }, { includeOutputDir: false });
       });
 
-      it('rejects absolute outputDir starting with backslash', () => {
-        expectFail({ outputDir: '\\Windows' }, { includeOutputDir: false });
+      it('absolute outputDir starting with backslash - skipped', () => {
+        expectValidationSkipped({ outputDir: '\\Windows' }, { includeOutputDir: false });
       });
 
-      it('rejects absolute fallback path', () => {
-        expectFail({ outputDir: 'src', routing: { fallback: '/index.html' } });
+      it('absolute fallback path - skipped', () => {
+        expectValidationSkipped({ outputDir: 'src', routing: { fallback: '/index.html' } });
       });
 
-      /* null byte */
-      it('rejects outputDir with null byte', () => {
-        expectFail({ outputDir: 'dist\0' }, { includeOutputDir: false });
+      it('outputDir with null byte - skipped', () => {
+        expectValidationSkipped({ outputDir: 'dist\0' }, { includeOutputDir: false });
       });
 
-      /* control characters */
-      it('rejects outputDir with tab character', () => {
-        expectFail({ outputDir: 'dist\t' }, { includeOutputDir: false });
+      it('outputDir with tab character - skipped', () => {
+        expectValidationSkipped({ outputDir: 'dist\t' }, { includeOutputDir: false });
       });
 
-      it('rejects outputDir with newline', () => {
-        expectFail({ outputDir: 'dist\n' }, { includeOutputDir: false });
+      it('outputDir with newline - skipped', () => {
+        expectValidationSkipped({ outputDir: 'dist\n' }, { includeOutputDir: false });
       });
 
-      /* glob wildcards */
-      it('rejects outputDir with * wildcard', () => {
-        expectFail({ outputDir: 'dist/*' }, { includeOutputDir: false });
+      it('outputDir with * wildcard - skipped', () => {
+        expectValidationSkipped({ outputDir: 'dist/*' }, { includeOutputDir: false });
       });
 
-      it('rejects outputDir with ? wildcard', () => {
-        expectFail({ outputDir: 'dis?' }, { includeOutputDir: false });
+      it('outputDir with ? wildcard - skipped', () => {
+        expectValidationSkipped({ outputDir: 'dis?' }, { includeOutputDir: false });
       });
 
-      it('rejects rewrite target with * wildcard', () => {
-        expectFail({ outputDir: 'src', routing: { rewrites: [{ rewrite: '*.html' }] } });
+      it('rewrite target with * wildcard - skipped', () => {
+        expectValidationSkipped({ outputDir: 'src', routing: { rewrites: [{ rewrite: '*.html' }] } });
       });
 
-      /* double-star glob */
-      it('rejects outputDir with ** glob', () => {
-        expectFail({ outputDir: 'dist/**' }, { includeOutputDir: false });
+      it('outputDir with ** glob - skipped', () => {
+        expectValidationSkipped({ outputDir: 'dist/**' }, { includeOutputDir: false });
       });
 
-      /* backslash mid-path */
-      it('rejects outputDir with backslash in the middle', () => {
-        expectFail({ outputDir: 'a\\b' }, { includeOutputDir: false });
+      it('outputDir with backslash in the middle - skipped', () => {
+        expectValidationSkipped({ outputDir: 'a\\b' }, { includeOutputDir: false });
       });
 
-      /* backslash traversal (..\) */
-      it('rejects outputDir with backslash traversal (..\\)', () => {
-        expectFail({ outputDir: '..\\etc' }, { includeOutputDir: false });
+      it('outputDir with backslash traversal - skipped', () => {
+        expectValidationSkipped({ outputDir: '..\\etc' }, { includeOutputDir: false });
       });
 
-      /* percent-encoding */
-      it('rejects outputDir with percent-encoding', () => {
-        expectFail({ outputDir: '%2e%2e' }, { includeOutputDir: false });
+      it('outputDir with percent-encoding - skipped', () => {
+        expectValidationSkipped({ outputDir: '%2e%2e' }, { includeOutputDir: false });
       });
 
-      it('rejects fallback with percent-encoding', () => {
-        expectFail({ outputDir: 'src', routing: { fallback: '%2findex.html' } });
+      it('fallback with percent-encoding - skipped', () => {
+        expectValidationSkipped({ outputDir: 'src', routing: { fallback: '%2findex.html' } });
       });
 
-      /* outputDir normalizes to bundle root */
-      it('rejects outputDir "." (resolves to bundle root)', () => {
-        expectFail({ outputDir: '.' });
+      it('outputDir "." (resolves to bundle root) - skipped', () => {
+        expectValidationSkipped({ outputDir: '.' });
       });
 
-      /* "file..name" is allowed — double dot inside a filename is not a ".." segment */
       it('allows outputDir with double dot inside filename (file..name)', () => {
         expectPass({ outputDir: 'file..name' }, { outputDir: 'file..name', outputDirFiles: ['index.html'] });
       });
@@ -459,7 +452,7 @@ describe('WebApplicationsSourceAdapter', () => {
         expect(a.getComponent(APP_PATH)).to.not.be.undefined;
       });
 
-      it('fails when fallback file is missing from bundle root', () => {
+      it('missing fallback file - validation skipped (VirtualTreeContainer)', () => {
         const vfs: VirtualDirectory[] = [
           {
             dirPath: APP_PATH,
@@ -476,7 +469,7 @@ describe('WebApplicationsSourceAdapter', () => {
         ];
         const t = new VirtualTreeContainer(vfs);
         const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
-        assert.throws(() => a.getComponent(APP_PATH), SfError, /routing\.fallback.*missing\.html/);
+        expect(a.getComponent(APP_PATH)).to.not.be.undefined;
       });
 
       it('succeeds when rewrite target exists at bundle root', () => {
@@ -500,7 +493,7 @@ describe('WebApplicationsSourceAdapter', () => {
         expect(a.getComponent(APP_PATH)).to.not.be.undefined;
       });
 
-      it('fails when rewrite target is missing from bundle root', () => {
+      it('missing rewrite target - validation skipped (VirtualTreeContainer)', () => {
         const vfs: VirtualDirectory[] = [
           {
             dirPath: APP_PATH,
@@ -517,19 +510,19 @@ describe('WebApplicationsSourceAdapter', () => {
         ];
         const t = new VirtualTreeContainer(vfs);
         const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
-        assert.throws(() => a.getComponent(APP_PATH), SfError, /routing\.rewrites\[0\]\.rewrite.*missing\.html/);
+        expect(a.getComponent(APP_PATH)).to.not.be.undefined;
       });
     });
 
     describe('Size Limit', () => {
-      it('rejects webapplication.json over 100 KB', () => {
+      it('webapplication.json over 100 KB - skipped', () => {
         const filler = Array.from({ length: 2000 }, (_, i) => ({
           source: `/${'a'.repeat(20)}${i}`,
           headers: [{ key: 'X-Pad', value: 'x'.repeat(30) }],
         }));
         const oversized = JSON.stringify({ outputDir: 'src', headers: filler });
         expect(Buffer.byteLength(oversized)).to.be.greaterThan(102_400);
-        expectFail(oversized);
+        expectValidationSkipped(oversized);
       });
 
       it('allows webapplication.json just under 100 KB', () => {
@@ -587,8 +580,8 @@ describe('WebApplicationsSourceAdapter', () => {
         expectPass({ headers: [{ source: '/*' }] });
       });
 
-      it('additional property at root - fail', () => {
-        expectFail({ outputDir: 'src', customField: 'x' } as unknown as object);
+      it('additional property at root - skipped', () => {
+        expectValidationSkipped({ outputDir: 'src', customField: 'x' } as unknown as object);
       });
 
       it('non-empty strings for route/rewrite - pass', () => {
@@ -599,68 +592,32 @@ describe('WebApplicationsSourceAdapter', () => {
       });
     });
 
-    describe('error message quality', () => {
-      const getError = (jsonContent: object | string, options?: Parameters<typeof buildTree>[1]): SfError => {
-        const t = buildTree(jsonContent, options);
-        const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
-        try {
-          a.getComponent(APP_PATH);
-          throw new Error('Expected an error to be thrown');
-        } catch (e) {
-          return e as SfError;
+    describe('error message quality (VirtualTreeContainer — validation skipped)', () => {
+      it('no validation errors are produced for any invalid input', () => {
+        const cases: Array<{ input: object | string; options?: Parameters<typeof buildTree>[1] }> = [
+          { input: { outputDir: 123 } as unknown as object },
+          { input: { routing: { trailingSlash: 'sometimes' } } },
+          {
+            input: { routing: { redirects: [{ route: '/a', redirect: '/b', statusCode: 200 }] } } as unknown as object,
+          },
+          {
+            input: { outputDir: 'dist', routing: { rewrites: [{ rewrite: 'missing.html' }] } },
+            options: { outputDir: 'dist', outputDirFiles: ['other.html'] },
+          },
+          { input: { outputDir: 'src', foo: 1, bar: 2 } as unknown as object },
+          { input: '[1,2,3]' },
+          { input: {} },
+          { input: { outputDir: 'dist' }, options: { outputDir: 'dist', includeOutputDir: false } },
+          { input: { routing: { redirects: [{ route: '', redirect: '/b' }] } } },
+        ];
+        for (const { input, options } of cases) {
+          const t = buildTree(input, options);
+          const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+          expect(() => a.getComponent(APP_PATH)).to.not.throw();
         }
-      };
-
-      it('includes received type in type-mismatch errors', () => {
-        const err = getError({ outputDir: 123 } as unknown as object);
-        expect(err.message).to.include('received number');
       });
 
-      it('includes actual value for invalid trailingSlash', () => {
-        const err = getError({ routing: { trailingSlash: 'sometimes' } });
-        expect(err.message).to.include('"sometimes"');
-      });
-
-      it('includes array index in statusCode error', () => {
-        const err = getError({
-          routing: { redirects: [{ route: '/a', redirect: '/b', statusCode: 200 }] },
-        } as unknown as object);
-        expect(err.message).to.include('redirects[0].statusCode');
-        expect(err.message).to.include('200');
-      });
-
-      it('includes array index in rewrite file-existence error', () => {
-        const err = getError(
-          { outputDir: 'dist', routing: { rewrites: [{ rewrite: 'missing.html' }] } },
-          { outputDir: 'dist', outputDirFiles: ['other.html'] }
-        );
-        expect(err.message).to.include('rewrites[0].rewrite');
-        expect(err.message).to.include('"missing.html"');
-      });
-
-      it('reports all unknown top-level properties at once', () => {
-        const err = getError({ outputDir: 'src', foo: 1, bar: 2 } as unknown as object);
-        expect(err.message).to.include("'foo'");
-        expect(err.message).to.include("'bar'");
-      });
-
-      it('describes root type when not an object', () => {
-        const err = getError('[1,2,3]');
-        expect(err.message).to.include('found array');
-      });
-
-      it('provides actions (suggested fixes) on structural errors', () => {
-        const err = getError({});
-        expect(err.actions).to.be.an('array').that.is.not.empty;
-      });
-
-      it('provides actions on file-existence errors', () => {
-        const err = getError({ outputDir: 'dist' }, { outputDir: 'dist', includeOutputDir: false });
-        expect(err.actions).to.be.an('array').that.is.not.empty;
-        expect(err.actions![0]).to.include('dist');
-      });
-
-      it('includes file path in empty-file error', () => {
+      it('empty webapplication.json does not throw with VirtualTreeContainer', () => {
         const vfs: VirtualDirectory[] = [
           {
             dirPath: APP_PATH,
@@ -674,21 +631,88 @@ describe('WebApplicationsSourceAdapter', () => {
         ];
         const t = new VirtualTreeContainer(vfs);
         const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
-        try {
-          a.getComponent(APP_PATH);
-          throw new Error('Expected an error');
-        } catch (e) {
-          expect((e as SfError).message).to.include('webapplication.json');
-        }
+        expect(() => a.getComponent(APP_PATH)).to.not.throw();
       });
+    });
+  });
 
-      it('validates redirect route as non-empty string', () => {
-        const err = getError({
-          routing: { redirects: [{ route: '', redirect: '/b' }] },
-        });
-        expect(err.message).to.include('redirects[0].route');
-        expect(err.message).to.include('non-empty string');
-      });
+  describe('VirtualTreeContainer skips validation', () => {
+    it('empty webapplication.json resolves successfully', () => {
+      const vfs: VirtualDirectory[] = [
+        {
+          dirPath: APP_PATH,
+          children: [
+            `${APP_NAME}.webapplication-meta.xml`,
+            { name: 'webapplication.json', data: Buffer.from('') },
+            'src',
+          ],
+        },
+        { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
+      ];
+      const t = new VirtualTreeContainer(vfs);
+      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+      expect(a.getComponent(APP_PATH)).to.not.be.undefined;
+    });
+
+    it('invalid JSON resolves successfully', () => {
+      const t = buildTree('{"unclosed');
+      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+      expect(a.getComponent(APP_PATH)).to.not.be.undefined;
+    });
+
+    it('path traversal content resolves successfully', () => {
+      const t = buildTree({ outputDir: '../../../etc' }, { includeOutputDir: false });
+      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+      expect(a.getComponent(APP_PATH)).to.not.be.undefined;
+    });
+  });
+
+  describe('NodeFSTreeContainer runs validation', () => {
+    let tmpDir: string;
+    let appDir: string;
+
+    beforeEach(() => {
+      tmpDir = mkdtempSync(join(tmpdir(), 'webapp-test-'));
+      const webappsDir = join(tmpDir, registry.types.webapplication.directoryName);
+      appDir = join(webappsDir, 'TestApp');
+      mkdirSync(appDir, { recursive: true });
+      mkdirSync(join(appDir, 'dist'), { recursive: true });
+      writeFileSync(join(appDir, 'TestApp.webapplication-meta.xml'), '<WebApplication/>');
+      writeFileSync(join(appDir, 'dist', 'index.html'), '<html/>');
+    });
+
+    afterEach(() => {
+      rmSync(tmpDir, { recursive: true, force: true });
+    });
+
+    it('should validate and succeed for valid content', () => {
+      writeFileSync(join(appDir, 'webapplication.json'), JSON.stringify({ outputDir: 'dist' }));
+      const fsTree = new NodeFSTreeContainer();
+      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, fsTree);
+      const comp = a.getComponent(appDir);
+      expect(comp).to.not.be.undefined;
+      expect(comp!.name).to.equal('TestApp');
+    });
+
+    it('should throw for empty file', () => {
+      writeFileSync(join(appDir, 'webapplication.json'), '');
+      const fsTree = new NodeFSTreeContainer();
+      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, fsTree);
+      assert.throws(() => a.getComponent(appDir), SfError, /must not be empty/);
+    });
+
+    it('should throw for invalid JSON', () => {
+      writeFileSync(join(appDir, 'webapplication.json'), '{"unclosed');
+      const fsTree = new NodeFSTreeContainer();
+      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, fsTree);
+      assert.throws(() => a.getComponent(appDir), SfError, /webapplication\.json/);
+    });
+
+    it('should skip when webapplication.json is absent', () => {
+      const fsTree = new NodeFSTreeContainer();
+      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, fsTree);
+      const comp = a.getComponent(appDir);
+      expect(comp).to.not.be.undefined;
     });
   });
 

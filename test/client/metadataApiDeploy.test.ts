@@ -1277,6 +1277,230 @@ describe('MetadataApiDeploy', () => {
 
         expect(responses).to.deep.equal(expected);
       });
+
+      describe('WebApplication per-file FileResponses', () => {
+        const bundlePath = join('path', 'to', 'webapplications', 'MyApp');
+        const webAppProps = {
+          name: 'MyApp',
+          type: registry.types.webapplication,
+          xml: join(bundlePath, 'MyApp.webapplication-meta.xml'),
+          content: bundlePath,
+        };
+        const webAppVirtualDirs = [
+          {
+            dirPath: bundlePath,
+            children: ['MyApp.webapplication-meta.xml', 'webapplication.json', 'dist'],
+          },
+          {
+            dirPath: join(bundlePath, 'dist'),
+            children: ['index.html', 'app.js', 'styles.css'],
+          },
+        ];
+
+        const makeWebAppComponent = (): SourceComponent =>
+          SourceComponent.createVirtualComponent(webAppProps, webAppVirtualDirs);
+
+        const parentMessage = (overrides: Partial<DeployMessage> = {}): DeployMessage =>
+          ({
+            changed: 'true',
+            created: 'false',
+            deleted: 'false',
+            success: 'true',
+            fullName: 'MyApp',
+            componentType: 'WebApplication',
+            fileName: 'webapplications/MyApp.webapplication-meta.xml',
+            ...overrides,
+          } as DeployMessage);
+
+        const resourceMessage = (relativePath: string, overrides: Partial<DeployMessage> = {}): DeployMessage =>
+          ({
+            changed: 'true',
+            created: 'false',
+            deleted: 'false',
+            success: 'true',
+            fullName: `MyApp/${relativePath}`,
+            componentType: 'WebApplicationResource',
+            fileName: `webapplications/MyApp/${relativePath}`,
+            ...overrides,
+          } as DeployMessage);
+
+        it('should build per-file responses for each WebApplicationResource message', () => {
+          const component = makeWebAppComponent();
+          const deployedSet = new ComponentSet([component]);
+          const apiStatus: Partial<MetadataApiDeployStatus> = {
+            details: {
+              componentSuccesses: [
+                parentMessage(),
+                resourceMessage('dist/index.html', { changed: 'false', created: 'true' }),
+                resourceMessage('dist/app.js'),
+                resourceMessage('dist/styles.css', { changed: 'false', success: 'true' }),
+              ] as DeployMessage[],
+            },
+          };
+          const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+          const responses = result.getFileResponses();
+
+          expect(responses).to.deep.equalInAnyOrder([
+            {
+              fullName: 'MyApp',
+              type: 'WebApplication',
+              state: ComponentStatus.Created,
+              filePath: join(bundlePath, 'dist', 'index.html'),
+            },
+            {
+              fullName: 'MyApp',
+              type: 'WebApplication',
+              state: ComponentStatus.Changed,
+              filePath: join(bundlePath, 'dist', 'app.js'),
+            },
+            {
+              fullName: 'MyApp',
+              type: 'WebApplication',
+              state: ComponentStatus.Unchanged,
+              filePath: join(bundlePath, 'dist', 'styles.css'),
+            },
+            {
+              fullName: 'MyApp',
+              type: 'WebApplication',
+              state: ComponentStatus.Changed,
+              filePath: join(bundlePath, 'MyApp.webapplication-meta.xml'),
+            },
+          ] as FileResponse[]);
+        });
+
+        it('should include parent meta with bundle-level state when one file Changed and others Unchanged', () => {
+          const component = makeWebAppComponent();
+          const deployedSet = new ComponentSet([component]);
+          const apiStatus: Partial<MetadataApiDeployStatus> = {
+            details: {
+              componentSuccesses: [
+                parentMessage({ changed: 'true' }),
+                resourceMessage('dist/index.html'),
+                resourceMessage('dist/app.js', { changed: 'false', success: 'true' }),
+                resourceMessage('dist/styles.css', { changed: 'false', success: 'true' }),
+              ] as DeployMessage[],
+            },
+          };
+          const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+          const responses = result.getFileResponses();
+
+          const metaResponse = responses.find((r) => r.filePath === join(bundlePath, 'MyApp.webapplication-meta.xml'));
+          expect(metaResponse).to.exist;
+          expect(metaResponse!.state).to.equal(ComponentStatus.Changed);
+
+          const changedFile = responses.find((r) => r.filePath === join(bundlePath, 'dist', 'index.html'));
+          expect(changedFile).to.exist;
+          expect(changedFile!.state).to.equal(ComponentStatus.Changed);
+
+          const unchangedFiles = responses.filter((r) => r.state === ComponentStatus.Unchanged);
+          expect(unchangedFiles).to.have.length(2);
+        });
+
+        it('should map deleted=true to Deleted state (not Changed)', () => {
+          const component = makeWebAppComponent();
+          const deployedSet = new ComponentSet([component]);
+          const apiStatus: Partial<MetadataApiDeployStatus> = {
+            details: {
+              componentSuccesses: [
+                parentMessage({ changed: 'true' }),
+                resourceMessage('dist/index.html', { changed: 'true', deleted: 'true' }),
+                resourceMessage('dist/app.js'),
+              ] as DeployMessage[],
+            },
+          };
+          const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+          const responses = result.getFileResponses();
+
+          const deletedFile = responses.find((r) => r.filePath === join(bundlePath, 'dist', 'index.html'));
+          expect(deletedFile).to.exist;
+          expect(deletedFile!.state).to.equal(ComponentStatus.Deleted);
+        });
+
+        it('should include error and problemType for failed WebApplicationResource messages', () => {
+          const component = makeWebAppComponent();
+          const deployedSet = new ComponentSet([component]);
+          const problem = 'Invalid markup in index.html';
+          const problemType = 'Error';
+          const apiStatus: Partial<MetadataApiDeployStatus> = {
+            details: {
+              componentSuccesses: parentMessage(),
+              componentFailures: {
+                changed: 'false',
+                created: 'false',
+                deleted: 'false',
+                success: 'false',
+                problem,
+                problemType,
+                fullName: 'MyApp/dist/index.html',
+                componentType: 'WebApplicationResource',
+                fileName: 'webapplications/MyApp/dist/index.html',
+              } as DeployMessage,
+            },
+          };
+          const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+          const responses = result.getFileResponses();
+
+          const failedFile = responses.find((r) => r.filePath === join(bundlePath, 'dist', 'index.html'));
+          expect(failedFile).to.exist;
+          expect(failedFile!.state).to.equal(ComponentStatus.Failed);
+          expect((failedFile as FileResponse & { error: string }).error).to.include(problem);
+          expect((failedFile as FileResponse & { problemType: string }).problemType).to.equal(problemType);
+        });
+
+        it('should filter out internal paths like webapplicationcontentindex.json', () => {
+          const component = makeWebAppComponent();
+          const deployedSet = new ComponentSet([component]);
+          const apiStatus: Partial<MetadataApiDeployStatus> = {
+            details: {
+              componentSuccesses: [
+                parentMessage(),
+                resourceMessage('dist/index.html'),
+                resourceMessage('webapplicationcontentindex.json'),
+                resourceMessage('languageSettings'),
+                resourceMessage('languages/en_US.json'),
+              ] as DeployMessage[],
+            },
+          };
+          const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+          const responses = result.getFileResponses();
+
+          const filePaths = responses.map((r) => r.filePath);
+          expect(filePaths).to.include(join(bundlePath, 'dist', 'index.html'));
+          expect(filePaths).to.not.include(join(bundlePath, 'webapplicationcontentindex.json'));
+          expect(filePaths).to.not.include(join(bundlePath, 'languageSettings'));
+          expect(filePaths).to.not.include(join(bundlePath, 'languages', 'en_US.json'));
+        });
+
+        it('should NOT warn for consumed WebApplicationResource messages', () => {
+          const warnSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emitWarning');
+          const emitSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emit');
+
+          const component = makeWebAppComponent();
+          const deployedSet = new ComponentSet([component]);
+          const apiStatus: Partial<MetadataApiDeployStatus> = {
+            details: {
+              componentSuccesses: [
+                parentMessage(),
+                resourceMessage('dist/index.html'),
+                resourceMessage('dist/app.js'),
+              ] as DeployMessage[],
+            },
+          };
+          const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+          result.getFileResponses();
+
+          expect(warnSpy.called).to.be.false;
+
+          warnSpy.restore();
+          emitSpy.restore();
+        });
+      });
     });
   });
 

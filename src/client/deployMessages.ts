@@ -147,13 +147,35 @@ export const getDeployMessages = (result: MetadataApiDeployStatus): Map<string, 
   return messageMap;
 };
 
+export const WEB_APP_RESOURCE_TYPE = 'WebApplicationResource';
+
+/** Server-generated internal files that should not appear in per-file deploy results. */
+export const isWebApplicationInternalPath = (resourceFullName: string): boolean =>
+  resourceFullName.endsWith('webapplicationcontentindex.json') ||
+  resourceFullName.includes('languageSettings') ||
+  resourceFullName.includes('/languages/');
+
+export const isWebApplicationResourceMessage = (msg: DeployMessage): boolean =>
+  typeof msg.componentType === 'string' && msg.componentType === WEB_APP_RESOURCE_TYPE;
+
+/** Strips "AppName/" prefix from the resource fullName and joins with the local content path. */
+export const webAppResourceFullNameToFilePath = (
+  appContentPath: string,
+  appFullName: string,
+  resourceFullName: string
+): string => {
+  const prefix = `${appFullName}/`;
+  const relativePath = resourceFullName.startsWith(prefix) ? resourceFullName.slice(prefix.length) : resourceFullName;
+  return join(appContentPath, relativePath);
+};
+
 export const getState = (message: DeployMessage): ComponentStatus => {
   if (isTrue(message.created)) {
     return ComponentStatus.Created;
-  } else if (isTrue(message.changed)) {
-    return ComponentStatus.Changed;
   } else if (isTrue(message.deleted)) {
     return ComponentStatus.Deleted;
+  } else if (isTrue(message.changed)) {
+    return ComponentStatus.Changed;
   } else if (!isTrue(message.success)) {
     return ComponentStatus.Failed;
   }

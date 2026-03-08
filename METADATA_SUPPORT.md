@@ -802,6 +802,7 @@ v67 introduces the following new types.  Here's their current level of support
 |FlexcardDefinition|✅||
 |FlowValueMap|✅||
 |IndustriesVectorSearchSettings|✅||
+|IntegratedPlanDefinition|❌|Not supported, but support could be added|
 |IntegrationProcdDefinition|✅||
 |LaborCostOptimCrewMgmtSettings|✅||
 |MeetingPlaybookDefinition|❌|Not supported, but support could be added|

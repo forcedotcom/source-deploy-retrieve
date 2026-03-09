@@ -18,6 +18,7 @@ import { Messages } from '@salesforce/core/messages';
 import { SfError } from '@salesforce/core/sfError';
 import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
+import { NodeFSTreeContainer } from '../treeContainers';
 import { baseName } from '../../utils/path';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
 import { validateWebApplicationJson } from './webApplicationValidation';
@@ -68,22 +69,14 @@ export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
             this.forceIgnore
           );
 
-    // Only validate on deploy; skip on retrieve (ZipTreeContainer throws).
-    if (isResolvingSource) {
+    // Validate only on real filesystem; ZipTreeContainer (retrieve) doesn't support readFileSync.
+    if (isResolvingSource && this.tree instanceof NodeFSTreeContainer) {
       const descriptorPath = join(contentPath, 'webapplication.json');
       const hasDescriptor = this.tree.exists(descriptorPath) && !this.forceIgnore.denies(descriptorPath);
 
       if (hasDescriptor) {
-        try {
-          const raw = this.tree.readFileSync(descriptorPath);
-          validateWebApplicationJson(raw, descriptorPath, contentPath, this.tree);
-        } catch (e) {
-          if (e instanceof Error && e.message === 'Method not implemented') {
-            // ZipTreeContainer (retrieve path) — skip client-side validation
-          } else {
-            throw e;
-          }
-        }
+        const raw = this.tree.readFileSync(descriptorPath);
+        validateWebApplicationJson(raw, descriptorPath, contentPath, this.tree);
       }
     }
 

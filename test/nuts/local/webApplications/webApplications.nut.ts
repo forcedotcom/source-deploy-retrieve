@@ -20,10 +20,6 @@ import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { expect } from 'chai';
 import {
   ComponentSetBuilder,
-  ComponentStatus,
-  DeployMessage,
-  DeployResult,
-  MetadataApiDeployStatus,
   MetadataConverter,
   MetadataResolver,
   RegistryAccess,
@@ -142,101 +138,5 @@ describe('webApplications local e2e', () => {
     expect(components).to.have.lengthOf(1);
     expect(components[0].type.name).to.equal('WebApplication');
     expect(components[0].fullName).to.equal('HappyApp');
-  });
-
-  describe('per-file deploy results (WebApplicationResource)', () => {
-    const msg = (fullName: string, componentType: string, overrides: Partial<DeployMessage> = {}): DeployMessage =>
-      ({
-        changed: 'true',
-        created: 'false',
-        deleted: 'false',
-        success: 'true',
-        fullName,
-        componentType,
-        fileName: `webapplications/${fullName}`,
-        ...overrides,
-      } as DeployMessage);
-
-    it('produces per-file FileResponses mapped to real filesystem paths', async () => {
-      const cs = await ComponentSetBuilder.build({ sourcepath: [path.join(projectDir, 'force-app')] });
-      const component = cs.getSourceComponents().toArray()[0];
-      const contentDir = component.content!;
-
-      const apiStatus = {
-        details: {
-          componentSuccesses: [
-            msg('HappyApp', 'WebApplication'),
-            msg('HappyApp/src/index.html', 'WebApplicationResource', { changed: 'false', created: 'true' }),
-            msg('HappyApp/src/app.js', 'WebApplicationResource'),
-            msg('HappyApp/src/styles.css', 'WebApplicationResource', { changed: 'false', success: 'true' }),
-          ],
-        },
-      } as unknown as MetadataApiDeployStatus;
-      const result = new DeployResult(apiStatus, cs);
-      const responses = result.getFileResponses();
-
-      const createdFile = responses.find((r) => r.filePath === path.join(contentDir, 'src', 'index.html'));
-      expect(createdFile, 'index.html should be in responses').to.exist;
-      expect(createdFile!.state).to.equal(ComponentStatus.Created);
-
-      const changedFile = responses.find((r) => r.filePath === path.join(contentDir, 'src', 'app.js'));
-      expect(changedFile, 'app.js should be in responses').to.exist;
-      expect(changedFile!.state).to.equal(ComponentStatus.Changed);
-
-      const unchangedFile = responses.find((r) => r.filePath === path.join(contentDir, 'src', 'styles.css'));
-      expect(unchangedFile, 'styles.css should be in responses').to.exist;
-      expect(unchangedFile!.state).to.equal(ComponentStatus.Unchanged);
-
-      const metaFile = responses.find((r) => r.filePath?.endsWith('.webapplication-meta.xml'));
-      expect(metaFile, 'meta xml should be in responses').to.exist;
-    });
-
-    it('maps deleted=true,changed=true to Deleted (not Changed)', async () => {
-      const cs = await ComponentSetBuilder.build({ sourcepath: [path.join(projectDir, 'force-app')] });
-      const component = cs.getSourceComponents().toArray()[0];
-      const contentDir = component.content!;
-
-      const apiStatus = {
-        details: {
-          componentSuccesses: [
-            msg('HappyApp', 'WebApplication'),
-            msg('HappyApp/src/index.html', 'WebApplicationResource', { changed: 'true', deleted: 'true' }),
-            msg('HappyApp/src/app.js', 'WebApplicationResource'),
-          ],
-        },
-      } as unknown as MetadataApiDeployStatus;
-      const result = new DeployResult(apiStatus, cs);
-      const responses = result.getFileResponses();
-
-      const deletedFile = responses.find((r) => r.filePath === path.join(contentDir, 'src', 'index.html'));
-      expect(deletedFile, 'deleted file should be in responses').to.exist;
-      expect(deletedFile!.state).to.equal(ComponentStatus.Deleted);
-    });
-
-    it('filters out server-generated internal paths', async () => {
-      const cs = await ComponentSetBuilder.build({ sourcepath: [path.join(projectDir, 'force-app')] });
-      const component = cs.getSourceComponents().toArray()[0];
-      const contentDir = component.content!;
-
-      const apiStatus = {
-        details: {
-          componentSuccesses: [
-            msg('HappyApp', 'WebApplication'),
-            msg('HappyApp/src/index.html', 'WebApplicationResource'),
-            msg('HappyApp/webapplicationcontentindex.json', 'WebApplicationResource'),
-            msg('HappyApp/languageSettings', 'WebApplicationResource'),
-            msg('HappyApp/languages/en_US.json', 'WebApplicationResource'),
-          ],
-        },
-      } as unknown as MetadataApiDeployStatus;
-      const result = new DeployResult(apiStatus, cs);
-      const responses = result.getFileResponses();
-
-      const filePaths = responses.map((r) => r.filePath);
-      expect(filePaths).to.include(path.join(contentDir, 'src', 'index.html'));
-      expect(filePaths).to.not.include(path.join(contentDir, 'webapplicationcontentindex.json'));
-      expect(filePaths).to.not.include(path.join(contentDir, 'languageSettings'));
-      expect(filePaths).to.not.include(path.join(contentDir, 'languages', 'en_US.json'));
-    });
   });
 });

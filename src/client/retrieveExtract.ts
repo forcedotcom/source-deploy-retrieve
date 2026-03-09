@@ -15,9 +15,10 @@
  */
 import * as path from 'node:path';
 import { Logger } from '@salesforce/core/logger';
-import { isString, JsonMap } from '@salesforce/ts-types';
+import { isString, JsonMap, getString } from '@salesforce/ts-types';
 import fs from 'graceful-fs';
 import { XMLBuilder } from 'fast-xml-parser';
+import { ensureArray } from '@salesforce/kit';
 import { XML_DECL } from '../common';
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
@@ -420,70 +421,56 @@ export async function filterAgentComponents(
     if (matchingFilter && comp.xml) {
       try {
         // Parse the Bot XML to get BotVersion entries
+        // BotVersion objects contain all fields (entryDialog, botDialogs, etc.), not just fullName
         const botXml = await comp.parseXml<{
-          Bot?: { botVersions?: Array<{ fullName?: string }> | { fullName?: string | string[] } };
+          Bot?: { botVersions?: JsonMap[] | JsonMap };
         }>();
-        const rawBotVersions = botXml.Bot?.botVersions;
-
-        // Normalize the structure: XMLParser may group multiple <fullName> elements into { fullName: ['v1', 'v2'] }
-        // but we need [{ fullName: 'v1' }, { fullName: 'v2' }] format
-        let normalizedBotVersions: Array<{ fullName?: string }> = [];
-        if (rawBotVersions) {
-          if (Array.isArray(rawBotVersions)) {
-            // Already in the correct format
-            normalizedBotVersions = rawBotVersions;
-          } else if (typeof rawBotVersions === 'object' && 'fullName' in rawBotVersions) {
-            // XMLParser grouped format: { fullName: ['v1', 'v2'] }
-            const fullNameValue = rawBotVersions.fullName;
-            if (Array.isArray(fullNameValue)) {
-              normalizedBotVersions = fullNameValue.map((fn) => ({ fullName: fn }));
-            } else if (typeof fullNameValue === 'string') {
-              normalizedBotVersions = [{ fullName: fullNameValue }];
-            }
-          }
-        }
+        // Normalize the structure: handle both array and single object formats
+        // Preserve ALL fields from each BotVersion, not just fullName
+        const normalizedBotVersions = ensureArray(botXml.Bot?.botVersions);
 
         if (normalizedBotVersions.length > 0) {
-          const filteredVersions = filterBotVersionEntries(normalizedBotVersions, matchingFilter.versionFilter);
+          // Filter versions while preserving all fields
+          const filteredVersions = filterBotVersionEntries(
+            normalizedBotVersions.map((v) => ({ fullName: getString(v, 'fullName') ?? undefined })),
+            matchingFilter.versionFilter
+          );
 
-          // Extract fullNames and reconstruct the object in the correct format
-          const fullNames = filteredVersions.map((v) => v.fullName).filter((f): f is string => !!f);
+          // Get the fullNames of versions to keep
+          const fullNamesToKeep = new Set(filteredVersions.map((v) => v.fullName).filter((f): f is string => !!f));
 
-          // Reconstruct Bot XML with filtered versions
-          // We manually construct the botVersions section to avoid XMLParser grouping
-          if (botXml.Bot) {
-            // Update the component's cached XML content
-            // Build XML string using XMLBuilder, but manually construct botVersions section
-            // to avoid XMLParser grouping multiple <fullName> elements
+          // Filter the complete BotVersion objects based on fullName
+          const filteredCompleteVersions = normalizedBotVersions.filter((version) => {
+            const fullName = getString(version, 'fullName');
+            return fullName && fullNamesToKeep.has(fullName);
+          });
+
+          // Reconstruct Bot XML with filtered versions, preserving all fields
+          if (botXml.Bot && filteredCompleteVersions.length > 0) {
             const builder = new XMLBuilder({
               format: true,
               indentBy: '    ',
               ignoreAttributes: false,
             });
 
-            // Build XML with botVersions structure
-            // XMLBuilder creates multiple <fullName> elements, XMLParser groups them into { fullName: ['v1', 'v2'] }
-            // The transformer expects [{ fullName: 'v1' }, { fullName: 'v2' }]
-            // We need to normalize this when the XML is parsed, but we can't modify the transformer
-            // So we store a normalized version in pathContentMap and intercept parseXml calls
+            // Build XML with complete BotVersion objects (all fields preserved)
             const botWithVersions = {
               Bot: {
                 ...botXml.Bot,
                 botVersions:
-                  fullNames.length > 0 ? { fullName: fullNames.length === 1 ? fullNames[0] : fullNames } : undefined,
+                  filteredCompleteVersions.length === 1 ? filteredCompleteVersions[0] : filteredCompleteVersions,
               },
             };
             const builtXml = String(builder.build(botWithVersions));
             const xmlContent = correctComments(XML_DECL.concat(handleSpecialEntities(builtXml)));
 
             // Store normalized structure for later parsing
-            // We'll intercept parseXml to return the normalized structure
-            const normalizedBotVersionsForXml = fullNames.map((fn) => ({ fullName: fn }));
+            // The normalized structure should have botVersions as an array of complete objects
             const normalizedBotXml = {
               ...botXml,
               Bot: {
                 ...botXml.Bot,
-                botVersions: normalizedBotVersionsForXml,
+                botVersions: filteredCompleteVersions,
               },
             };
 
@@ -507,10 +494,6 @@ export async function filterAgentComponents(
                 // For other cases, use original parseXml
                 return originalParseXml<T>(xmlFilePath);
               };
-            }
-
-            if (comp.pathContentMap && comp.xml) {
-              comp.pathContentMap.set(comp.xml, xmlContent);
             }
           }
         }

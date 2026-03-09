@@ -122,13 +122,22 @@ describe('retrieveExtract - Version Filtering', () => {
   });
 
   describe('filterAgentComponents - Bot filtering', () => {
-    const createMockBotComponent = (botName: string, botVersions: string[]): SourceComponent => {
+    const createMockBotComponent = (
+      botName: string,
+      botVersions: Array<{ fullName: string; entryDialog?: string; mainMenuDialog?: string }>
+    ): SourceComponent => {
       const botXml = `<?xml version="1.0" encoding="UTF-8"?>
 <Bot xmlns="http://soap.sforce.com/2006/04/metadata">
   <fullName>${botName}</fullName>
-  <botVersions>
-    ${botVersions.map((v) => `<fullName>${v}</fullName>`).join('\n    ')}
-  </botVersions>
+  ${botVersions
+    .map(
+      (v) => `<botVersions>
+    <fullName>${v.fullName}</fullName>
+    ${v.entryDialog ? `<entryDialog>${v.entryDialog}</entryDialog>` : ''}
+    ${v.mainMenuDialog ? `<mainMenuDialog>${v.mainMenuDialog}</mainMenuDialog>` : ''}
+  </botVersions>`
+    )
+    .join('\n  ')}
 </Bot>`;
 
       const tree = new VirtualTreeContainer([
@@ -161,21 +170,13 @@ describe('retrieveExtract - Version Filtering', () => {
         // Parse the XML content
         const parsed = parser.parse(xmlContent);
         // Convert XMLParser structure to the structure expected by the function
-        // XMLParser creates: { Bot: { botVersions: { fullName: ['v0', 'v1', ...] } } }
-        // Function expects: { Bot: { botVersions: [{ fullName: 'v0' }, { fullName: 'v1' }, ...] } }
+        // Ensure botVersions is always an array of complete objects
         if (parsed.Bot?.botVersions) {
-          if (parsed.Bot.botVersions.fullName) {
-            // Convert array of strings to array of objects
-            const fullNames = Array.isArray(parsed.Bot.botVersions.fullName)
-              ? parsed.Bot.botVersions.fullName
-              : [parsed.Bot.botVersions.fullName];
-            parsed.Bot.botVersions = fullNames.map((fn: string) => ({ fullName: fn }));
-          } else if (Array.isArray(parsed.Bot.botVersions)) {
-            // Already in the correct format
-            // Do nothing
-          } else {
-            // Empty botVersions - set to empty array
-            parsed.Bot.botVersions = [];
+          if (Array.isArray(parsed.Bot.botVersions)) {
+            // Already in array format - keep as is
+          } else if (typeof parsed.Bot.botVersions === 'object') {
+            // Single botVersions object - convert to array
+            parsed.Bot.botVersions = [parsed.Bot.botVersions];
           }
         }
         return parsed;
@@ -185,7 +186,11 @@ describe('retrieveExtract - Version Filtering', () => {
     };
 
     it('should filter BotVersion entries when filter is "all"', async () => {
-      const component = createMockBotComponent('MyBot', ['v0', 'v1', 'v2']);
+      const component = createMockBotComponent('MyBot', [
+        { fullName: 'v0', entryDialog: 'Welcome0' },
+        { fullName: 'v1', entryDialog: 'Welcome1' },
+        { fullName: 'v2', entryDialog: 'Welcome2' },
+      ]);
       const filters: BotVersionFilter[] = [{ botName: 'MyBot', versionFilter: 'all' }];
 
       const filtered = await filterAgentComponents([component], filters);
@@ -195,28 +200,22 @@ describe('retrieveExtract - Version Filtering', () => {
       // Check the XML content directly from pathContentMap
       const xmlContent = filteredComponent.pathContentMap?.get(filteredComponent.xml!);
       // When filter is "all", all versions should be present
-      // Count fullName elements - should include the Bot's fullName (1) + botVersions fullNames (3) = 4 total
-      // But we only want to count those in botVersions section
-      const botVersionsMatch = xmlContent?.match(/<botVersions>([\s\S]*?)<\/botVersions>/);
-      if (botVersionsMatch) {
-        const botVersionsContent = botVersionsMatch[1];
-        // XMLBuilder may create multiple fullName elements or a single element with multiple values
-        // Count both opening tags and check for all version values
-        const fullNameTagCount = (botVersionsContent.match(/<fullName>/g) ?? []).length;
-        // Also verify all version values are present
-        expect(botVersionsContent).to.include('v0');
-        expect(botVersionsContent).to.include('v1');
-        expect(botVersionsContent).to.include('v2');
-        // Should have at least the version values present (may be in different XML structure)
-        expect(fullNameTagCount).to.be.greaterThanOrEqual(1);
-      } else {
-        // If botVersions section doesn't exist, that's a problem
-        expect.fail('botVersions section not found in XML');
-      }
+      expect(xmlContent).to.include('<fullName>v0</fullName>');
+      expect(xmlContent).to.include('<fullName>v1</fullName>');
+      expect(xmlContent).to.include('<fullName>v2</fullName>');
+      // Verify that entryDialog fields are preserved
+      expect(xmlContent).to.include('<entryDialog>Welcome0</entryDialog>');
+      expect(xmlContent).to.include('<entryDialog>Welcome1</entryDialog>');
+      expect(xmlContent).to.include('<entryDialog>Welcome2</entryDialog>');
     });
 
     it('should filter BotVersion entries when filter is "highest"', async () => {
-      const component = createMockBotComponent('MyBot', ['v0', 'v1', 'v5', 'v2']);
+      const component = createMockBotComponent('MyBot', [
+        { fullName: 'v0', entryDialog: 'Welcome0' },
+        { fullName: 'v1', entryDialog: 'Welcome1' },
+        { fullName: 'v5', entryDialog: 'Welcome5', mainMenuDialog: 'MainMenu5' },
+        { fullName: 'v2', entryDialog: 'Welcome2' },
+      ]);
       const filters: BotVersionFilter[] = [{ botName: 'MyBot', versionFilter: 'highest' }];
 
       const filtered = await filterAgentComponents([component], filters);
@@ -225,19 +224,27 @@ describe('retrieveExtract - Version Filtering', () => {
       const filteredComponent = filtered[0];
       // Check the XML content directly from pathContentMap
       const xmlContent = filteredComponent.pathContentMap?.get(filteredComponent.xml!);
-      // Count the number of fullName elements within botVersions section only - should be 1 (v5)
-      const botVersionsMatch = xmlContent?.match(/<botVersions>([\s\S]*?)<\/botVersions>/);
-      const botVersionsContent = botVersionsMatch?.[1] ?? '';
-      const fullNameMatches = botVersionsContent.match(/<fullName>/g) ?? [];
-      expect(fullNameMatches).to.have.length(1);
-      expect(botVersionsContent).to.include('v5');
-      expect(botVersionsContent).to.not.include('<fullName>v0</fullName>');
-      expect(botVersionsContent).to.not.include('<fullName>v1</fullName>');
-      expect(botVersionsContent).to.not.include('<fullName>v2</fullName>');
+      // Only v5 should be present
+      expect(xmlContent).to.include('<fullName>v5</fullName>');
+      expect(xmlContent).to.not.include('<fullName>v0</fullName>');
+      expect(xmlContent).to.not.include('<fullName>v1</fullName>');
+      expect(xmlContent).to.not.include('<fullName>v2</fullName>');
+      // Critical: Verify that entryDialog and mainMenuDialog are preserved
+      expect(xmlContent).to.include('<entryDialog>Welcome5</entryDialog>');
+      expect(xmlContent).to.include('<mainMenuDialog>MainMenu5</mainMenuDialog>');
+      // Verify other version's fields are not present
+      expect(xmlContent).to.not.include('Welcome0');
+      expect(xmlContent).to.not.include('Welcome1');
+      expect(xmlContent).to.not.include('Welcome2');
     });
 
     it('should filter BotVersion entries when filter is a specific number', async () => {
-      const component = createMockBotComponent('MyBot', ['v0', 'v1', 'v2', 'v3']);
+      const component = createMockBotComponent('MyBot', [
+        { fullName: 'v0', entryDialog: 'Welcome0' },
+        { fullName: 'v1', entryDialog: 'Welcome1' },
+        { fullName: 'v2', entryDialog: 'Welcome2', mainMenuDialog: 'MainMenu2' },
+        { fullName: 'v3', entryDialog: 'Welcome3' },
+      ]);
       const filters: BotVersionFilter[] = [{ botName: 'MyBot', versionFilter: 2 }];
 
       const filtered = await filterAgentComponents([component], filters);
@@ -246,32 +253,33 @@ describe('retrieveExtract - Version Filtering', () => {
       const filteredComponent = filtered[0];
       // Check the XML content directly from pathContentMap
       const xmlContent = filteredComponent.pathContentMap?.get(filteredComponent.xml!);
-      // Count the number of fullName elements within botVersions section only - should be 1 (v2)
-      const botVersionsMatch = xmlContent?.match(/<botVersions>([\s\S]*?)<\/botVersions>/);
-      const botVersionsContent = botVersionsMatch?.[1] ?? '';
-      const fullNameMatches = botVersionsContent.match(/<fullName>/g) ?? [];
-      expect(fullNameMatches).to.have.length(1);
-      expect(botVersionsContent).to.include('v2');
-      expect(botVersionsContent).to.not.include('<fullName>v0</fullName>');
-      expect(botVersionsContent).to.not.include('<fullName>v1</fullName>');
-      expect(botVersionsContent).to.not.include('<fullName>v3</fullName>');
+      // Only v2 should be present
+      expect(xmlContent).to.include('<fullName>v2</fullName>');
+      expect(xmlContent).to.not.include('<fullName>v0</fullName>');
+      expect(xmlContent).to.not.include('<fullName>v1</fullName>');
+      expect(xmlContent).to.not.include('<fullName>v3</fullName>');
+      // Critical: Verify that all fields are preserved for v2
+      expect(xmlContent).to.include('<entryDialog>Welcome2</entryDialog>');
+      expect(xmlContent).to.include('<mainMenuDialog>MainMenu2</mainMenuDialog>');
     });
 
     it('should not filter Bot components without matching filter', async () => {
-      const component = createMockBotComponent('MyBot', ['v0', 'v1', 'v2']);
+      const component = createMockBotComponent('MyBot', [
+        { fullName: 'v0', entryDialog: 'Welcome0' },
+        { fullName: 'v1', entryDialog: 'Welcome1' },
+        { fullName: 'v2', entryDialog: 'Welcome2' },
+      ]);
       const filters: BotVersionFilter[] = [{ botName: 'OtherBot', versionFilter: 'highest' }];
 
       const filtered = await filterAgentComponents([component], filters);
 
       expect(filtered).to.have.length(1);
-      // Component should remain unchanged - check XML content directly
+      // Component should remain unchanged - all versions present
       const firstFiltered = filtered[0];
       const xmlContent = firstFiltered.pathContentMap?.get(filtered[0].xml!);
-      // Count fullName elements within botVersions section only
-      const botVersionsMatch = xmlContent?.match(/<botVersions>([\s\S]*?)<\/botVersions>/);
-      const botVersionsContent = botVersionsMatch?.[1] ?? '';
-      const fullNameMatches = botVersionsContent.match(/<fullName>/g) ?? [];
-      expect(fullNameMatches).to.have.length(3);
+      expect(xmlContent).to.include('<fullName>v0</fullName>');
+      expect(xmlContent).to.include('<fullName>v1</fullName>');
+      expect(xmlContent).to.include('<fullName>v2</fullName>');
     });
 
     it('should not modify non-Bot components', async () => {
@@ -295,24 +303,25 @@ describe('retrieveExtract - Version Filtering', () => {
       const filtered = await filterAgentComponents([component], filters);
 
       expect(filtered).to.have.length(1);
-      // When there are no botVersions, check XML content directly
+      // Component should remain unchanged when there are no versions to filter
       const componentWithPrivate = filtered[0];
       const xmlContent = componentWithPrivate.pathContentMap?.get(filtered[0].xml!);
-      // Should have botVersions tag but no fullName elements inside it
-      const botVersionsMatch = xmlContent?.match(/<botVersions>([\s\S]*?)<\/botVersions>/);
-      if (botVersionsMatch) {
-        const botVersionsContent = botVersionsMatch[1];
-        const fullNameMatches = botVersionsContent.match(/<fullName>/g) ?? [];
-        expect(fullNameMatches).to.have.length(0);
-      } else {
-        // If botVersions tag doesn't exist, that's also acceptable
-        expect(xmlContent).to.not.include('<botVersions>');
-      }
+      // The Bot's fullName should be present, but no botVersions section
+      expect(xmlContent).to.include('<fullName>MyBot</fullName>');
+      expect(xmlContent).to.not.include('<botVersions>');
     });
 
     it('should handle multiple Bot components with different filters', async () => {
-      const bot1 = createMockBotComponent('Bot1', ['v0', 'v1', 'v2']);
-      const bot2 = createMockBotComponent('Bot2', ['v0', 'v1', 'v3']);
+      const bot1 = createMockBotComponent('Bot1', [
+        { fullName: 'v0', entryDialog: 'Welcome0' },
+        { fullName: 'v1', entryDialog: 'Welcome1' },
+        { fullName: 'v2', entryDialog: 'Welcome2' },
+      ]);
+      const bot2 = createMockBotComponent('Bot2', [
+        { fullName: 'v0', entryDialog: 'Start0' },
+        { fullName: 'v1', entryDialog: 'Start1' },
+        { fullName: 'v3', entryDialog: 'Start3' },
+      ]);
       const filters: BotVersionFilter[] = [
         { botName: 'Bot1', versionFilter: 'highest' },
         { botName: 'Bot2', versionFilter: 1 },
@@ -326,17 +335,276 @@ describe('retrieveExtract - Version Filtering', () => {
       const xmlContent1 = componentWithPrivate1.pathContentMap?.get(filtered[0].xml!);
       const componentWithPrivate2 = filtered[1];
       const xmlContent2 = componentWithPrivate2.pathContentMap?.get(filtered[1].xml!);
-      // Count fullName elements within botVersions section only
-      const botVersionsMatch1 = xmlContent1?.match(/<botVersions>([\s\S]*?)<\/botVersions>/);
-      const botVersionsContent1 = botVersionsMatch1?.[1] ?? '';
-      const fullNameMatches1 = botVersionsContent1.match(/<fullName>/g) ?? [];
-      const botVersionsMatch2 = xmlContent2?.match(/<botVersions>([\s\S]*?)<\/botVersions>/);
-      const botVersionsContent2 = botVersionsMatch2?.[1] ?? '';
-      const fullNameMatches2 = botVersionsContent2.match(/<fullName>/g) ?? [];
-      expect(fullNameMatches1).to.have.length(1);
-      expect(botVersionsContent1).to.include('v2');
-      expect(fullNameMatches2).to.have.length(1);
-      expect(botVersionsContent2).to.include('v1');
+      // Bot1 should have v2 with its entryDialog
+      expect(xmlContent1).to.include('<fullName>v2</fullName>');
+      expect(xmlContent1).to.include('<entryDialog>Welcome2</entryDialog>');
+      expect(xmlContent1).to.not.include('Welcome0');
+      expect(xmlContent1).to.not.include('Welcome1');
+      // Bot2 should have v1 with its entryDialog
+      expect(xmlContent2).to.include('<fullName>v1</fullName>');
+      expect(xmlContent2).to.include('<entryDialog>Start1</entryDialog>');
+      expect(xmlContent2).to.not.include('Start0');
+      expect(xmlContent2).to.not.include('Start3');
+    });
+
+    it('should preserve complex BotVersion metadata with all fields (regression test for missing entryDialog)', async () => {
+      // This test specifically addresses the reported issue where entryDialog and other fields were being lost
+      const complexBotXml = `<?xml version="1.0" encoding="UTF-8"?>
+<Bot xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fullName>Agentforce</fullName>
+  <botVersions>
+    <fullName>v1</fullName>
+    <entryDialog>Welcome</entryDialog>
+    <mainMenuDialog>Main_Menu</mainMenuDialog>
+    <botDialogs>
+      <botSteps>
+        <botMessages>
+          <message>Hi! I'm your helpful bot.</message>
+          <messageIdentifier>m1</messageIdentifier>
+        </botMessages>
+        <stepIdentifier>s1</stepIdentifier>
+        <type>Message</type>
+      </botSteps>
+      <developerName>Welcome</developerName>
+      <label>Welcome</label>
+    </botDialogs>
+    <conversationVariables>
+      <dataType>Text</dataType>
+      <developerName>currentAppName</developerName>
+      <label>Current App Name</label>
+    </conversationVariables>
+    <conversationSystemDialogs>
+      <dialog>Error_Handler</dialog>
+      <type>ErrorHandling</type>
+    </conversationSystemDialogs>
+  </botVersions>
+  <botVersions>
+    <fullName>v2</fullName>
+    <entryDialog>Welcome_v2</entryDialog>
+  </botVersions>
+</Bot>`;
+
+      const tree = new VirtualTreeContainer([
+        {
+          dirPath: join('bots', 'Agentforce'),
+          children: ['Agentforce.bot-meta.xml'],
+        },
+      ]);
+
+      const component = new SourceComponent(
+        {
+          name: 'Agentforce',
+          type: botType,
+          xml: join('bots', 'Agentforce', 'Agentforce.bot-meta.xml'),
+        },
+        tree
+      );
+
+      component.pathContentMap = new Map();
+      component.pathContentMap.set(component.xml!, complexBotXml);
+
+      const parser = new XMLParser({ ignoreAttributes: false, isArray: () => false });
+      component.parseXml = () => {
+        const xmlContent = component.pathContentMap?.get(component.xml!) ?? complexBotXml;
+        const parsed = parser.parse(xmlContent);
+        if (parsed.Bot?.botVersions) {
+          if (Array.isArray(parsed.Bot.botVersions)) {
+            // Already in array format
+          } else if (typeof parsed.Bot.botVersions === 'object') {
+            parsed.Bot.botVersions = [parsed.Bot.botVersions];
+          }
+        }
+        return parsed;
+      };
+
+      const filters: BotVersionFilter[] = [{ botName: 'Agentforce', versionFilter: 'highest' }];
+
+      const filtered = await filterAgentComponents([component], filters);
+
+      expect(filtered).to.have.length(1);
+      const filteredComponent = filtered[0];
+      const xmlContent = filteredComponent.pathContentMap?.get(filteredComponent.xml!);
+
+      // Verify that v2 is selected (highest version)
+      expect(xmlContent).to.include('<fullName>v2</fullName>');
+      expect(xmlContent).to.not.include('<fullName>v1</fullName>');
+
+      // CRITICAL: Verify that entryDialog is preserved (the reported bug)
+      expect(xmlContent).to.include('<entryDialog>Welcome_v2</entryDialog>');
+
+      // Parse the parsed structure to verify it's correctly normalized
+      const parsedXml = await filteredComponent.parseXml<{
+        Bot?: { botVersions?: Array<{ fullName?: string; entryDialog?: string }> };
+      }>();
+
+      expect(parsedXml.Bot?.botVersions).to.be.an('array');
+      expect(parsedXml.Bot?.botVersions).to.have.length(1);
+      expect(parsedXml.Bot?.botVersions?.[0]).to.have.property('fullName', 'v2');
+      expect(parsedXml.Bot?.botVersions?.[0]).to.have.property('entryDialog', 'Welcome_v2');
+    });
+
+    it('should preserve all BotVersion fields including botDialogs, conversationVariables, etc.', async () => {
+      // Comprehensive test with many fields to ensure nothing is lost
+      const complexBotXml = `<?xml version="1.0" encoding="UTF-8"?>
+<Bot xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fullName>ComplexBot</fullName>
+  <botVersions>
+    <fullName>v1</fullName>
+    <entryDialog>Welcome</entryDialog>
+    <mainMenuDialog>Main_Menu</mainMenuDialog>
+    <nlpProviders>
+      <language>en_US</language>
+      <nlpProviderType>EinsteinAi</nlpProviderType>
+    </nlpProviders>
+    <conversationVariables>
+      <dataType>Text</dataType>
+      <developerName>var1</developerName>
+      <label>Variable 1</label>
+    </conversationVariables>
+    <conversationSystemDialogs>
+      <dialog>Transfer_Failed</dialog>
+      <type>TransferFailed</type>
+    </conversationSystemDialogs>
+    <botDialogs>
+      <developerName>Welcome</developerName>
+      <label>Welcome Dialog</label>
+    </botDialogs>
+  </botVersions>
+  <botVersions>
+    <fullName>v3</fullName>
+    <entryDialog>Start</entryDialog>
+  </botVersions>
+</Bot>`;
+
+      const tree = new VirtualTreeContainer([
+        {
+          dirPath: join('bots', 'ComplexBot'),
+          children: ['ComplexBot.bot-meta.xml'],
+        },
+      ]);
+
+      const component = new SourceComponent(
+        {
+          name: 'ComplexBot',
+          type: botType,
+          xml: join('bots', 'ComplexBot', 'ComplexBot.bot-meta.xml'),
+        },
+        tree
+      );
+
+      component.pathContentMap = new Map();
+      component.pathContentMap.set(component.xml!, complexBotXml);
+
+      const parser = new XMLParser({ ignoreAttributes: false, isArray: () => false });
+      component.parseXml = () => {
+        const xmlContent = component.pathContentMap?.get(component.xml!) ?? complexBotXml;
+        const parsed = parser.parse(xmlContent);
+        if (parsed.Bot?.botVersions) {
+          if (Array.isArray(parsed.Bot.botVersions)) {
+            // Already in array format
+          } else if (typeof parsed.Bot.botVersions === 'object') {
+            parsed.Bot.botVersions = [parsed.Bot.botVersions];
+          }
+        }
+        return parsed;
+      };
+
+      const filters: BotVersionFilter[] = [{ botName: 'ComplexBot', versionFilter: 'highest' }];
+
+      const filtered = await filterAgentComponents([component], filters);
+
+      expect(filtered).to.have.length(1);
+      const filteredComponent = filtered[0];
+      const xmlContent = filteredComponent.pathContentMap?.get(filteredComponent.xml!);
+
+      // Should select v3 (highest)
+      expect(xmlContent).to.include('<fullName>v3</fullName>');
+      expect(xmlContent).to.include('<entryDialog>Start</entryDialog>');
+      expect(xmlContent).to.not.include('<fullName>v1</fullName>');
+
+      // Verify v1's fields are NOT present since it was filtered out
+      expect(xmlContent).to.not.include('<mainMenuDialog>Main_Menu</mainMenuDialog>');
+      expect(xmlContent).to.not.include('<developerName>var1</developerName>');
+      expect(xmlContent).to.not.include('<developerName>Welcome</developerName>');
+    });
+
+    it('should preserve all fields when filtering to a specific version', async () => {
+      // Test filtering to v1 which has many fields
+      const complexBotXml = `<?xml version="1.0" encoding="UTF-8"?>
+<Bot xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fullName>SpecificBot</fullName>
+  <botVersions>
+    <fullName>v1</fullName>
+    <entryDialog>Welcome</entryDialog>
+    <mainMenuDialog>Main_Menu</mainMenuDialog>
+    <conversationVariables>
+      <dataType>Text</dataType>
+      <developerName>myVar</developerName>
+      <label>My Variable</label>
+    </conversationVariables>
+    <nlpProviders>
+      <language>en_US</language>
+      <nlpProviderType>EinsteinAi</nlpProviderType>
+    </nlpProviders>
+  </botVersions>
+  <botVersions>
+    <fullName>v2</fullName>
+    <entryDialog>Start</entryDialog>
+  </botVersions>
+</Bot>`;
+
+      const tree = new VirtualTreeContainer([
+        {
+          dirPath: join('bots', 'SpecificBot'),
+          children: ['SpecificBot.bot-meta.xml'],
+        },
+      ]);
+
+      const component = new SourceComponent(
+        {
+          name: 'SpecificBot',
+          type: botType,
+          xml: join('bots', 'SpecificBot', 'SpecificBot.bot-meta.xml'),
+        },
+        tree
+      );
+
+      component.pathContentMap = new Map();
+      component.pathContentMap.set(component.xml!, complexBotXml);
+
+      const parser = new XMLParser({ ignoreAttributes: false, isArray: () => false });
+      component.parseXml = () => {
+        const xmlContent = component.pathContentMap?.get(component.xml!) ?? complexBotXml;
+        const parsed = parser.parse(xmlContent);
+        if (parsed.Bot?.botVersions) {
+          if (Array.isArray(parsed.Bot.botVersions)) {
+            // Already in array format
+          } else if (typeof parsed.Bot.botVersions === 'object') {
+            parsed.Bot.botVersions = [parsed.Bot.botVersions];
+          }
+        }
+        return parsed;
+      };
+
+      const filters: BotVersionFilter[] = [{ botName: 'SpecificBot', versionFilter: 1 }];
+
+      const filtered = await filterAgentComponents([component], filters);
+
+      expect(filtered).to.have.length(1);
+      const filteredComponent = filtered[0];
+      const xmlContent = filteredComponent.pathContentMap?.get(filteredComponent.xml!);
+
+      // Should select v1 with ALL its fields
+      expect(xmlContent).to.include('<fullName>v1</fullName>');
+      expect(xmlContent).to.include('<entryDialog>Welcome</entryDialog>');
+      expect(xmlContent).to.include('<mainMenuDialog>Main_Menu</mainMenuDialog>');
+      expect(xmlContent).to.include('<developerName>myVar</developerName>');
+      expect(xmlContent).to.include('<language>en_US</language>');
+      expect(xmlContent).to.include('<nlpProviderType>EinsteinAi</nlpProviderType>');
+
+      // v2 should not be present
+      expect(xmlContent).to.not.include('<fullName>v2</fullName>');
+      expect(xmlContent).to.not.include('<entryDialog>Start</entryDialog>');
     });
   });
 

@@ -1,3 +1,12 @@
+## [12.31.19](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.18...12.31.19) (2026-03-09)
+
+
+### Bug Fixes
+
+* keep BV fields after parsing ([#1704](https://github.com/forcedotcom/source-deploy-retrieve/issues/1704)) ([2bdcb5b](https://github.com/forcedotcom/source-deploy-retrieve/commit/2bdcb5b05704fbdcb6190381991cf4791508e8ab))
+
+
+
 ## [12.31.18](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.17...12.31.18) (2026-03-09)
 
 

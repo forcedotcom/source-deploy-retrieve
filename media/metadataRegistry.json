@@ -460,7 +460,7 @@
     "salesAgreementSetting": "salesagreementsettings",
     "samlssoconfig": "samlssoconfig",
     "scf": "scontrol",
-    "schedulingObjective": "schedulingobjective",
+    "SchedulingObjective": "schedulingobjective",
     "schedulingRule": "schedulingrule",
     "scoreCategory": "scorecategory",
     "searchCustomization": "searchcustomization",
@@ -4062,7 +4062,7 @@
       "inFolder": false,
       "name": "SchedulingObjective",
       "strictDirectoryName": false,
-      "suffix": "schedulingObjective"
+      "suffix": "SchedulingObjective"
     },
     "schedulingrule": {
       "directoryName": "SchedulingRules",

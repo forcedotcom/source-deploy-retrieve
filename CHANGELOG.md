@@ -1,3 +1,12 @@
+## [12.31.17](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.16...12.31.17) (2026-03-09)
+
+
+### Bug Fixes
+
+* update suffix of SO ([#1700](https://github.com/forcedotcom/source-deploy-retrieve/issues/1700)) ([257371e](https://github.com/forcedotcom/source-deploy-retrieve/commit/257371e1a7483cfccf8127f8587b217e15c60b1c))
+
+
+
 ## [12.31.16](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.15...12.31.16) (2026-03-06)
 
 

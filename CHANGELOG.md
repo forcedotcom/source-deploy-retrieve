@@ -1,3 +1,12 @@
+## [12.31.20](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.19...12.31.20) (2026-03-11)
+
+
+### Bug Fixes
+
+* skip false warning for pre-destructive-W-21252087 ([#1690](https://github.com/forcedotcom/source-deploy-retrieve/issues/1690)) ([7b4a114](https://github.com/forcedotcom/source-deploy-retrieve/commit/7b4a1146422b2b5f56d8fdba0e95c7f2a26bb33c))
+
+
+
 ## [12.31.19](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.18...12.31.19) (2026-03-09)
 
 

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { execSync } from 'node:child_process';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
 import { expect } from 'chai';
 
@@ -36,7 +36,7 @@ type DeployResultJson = {
  * Works around CLI progress-stage message compatibility issues when the local
  * SDR is newer than the installed CLI (metadata.transfer:Finalizing).
  */
-function deployAndWait(sourceDir: string, targetOrg: string): DeployFile[] {
+async function deployAndWait(sourceDir: string, targetOrg: string): Promise<DeployFile[]> {
   const asyncResult = execCmd<{ id: string }>(
     `project deploy start --source-dir ${sourceDir} --target-org ${targetOrg} --async --json`,
     { ensureExitCode: 0, cli: 'sf' }
@@ -44,7 +44,8 @@ function deployAndWait(sourceDir: string, targetOrg: string): DeployFile[] {
   const deployId = asyncResult.jsonOutput!.result.id;
 
   for (let attempt = 0; attempt < 40; attempt++) {
-    execSync('sleep 3');
+    // eslint-disable-next-line no-await-in-loop
+    await sleep(3000);
     const report = execCmd<DeployResultJson>(
       `project deploy report --job-id ${deployId} --target-org ${targetOrg} --json`,
       { cli: 'sf' }
@@ -92,7 +93,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     await session?.clean();
   });
 
-  it('initial deploy returns per-file Created status', () => {
+  it('initial deploy returns per-file Created status', async () => {
     const appName = `NutDeploy${Date.now()}`;
     const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'webapplications', appName);
     const distDir = path.join(appDir, 'dist');
@@ -103,7 +104,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     fs.writeFileSync(path.join(distDir, 'index.html'), '<html><body>Hello</body></html>');
     fs.writeFileSync(path.join(distDir, 'app.js'), 'console.log("init");');
 
-    const files = deployAndWait(appDir, targetOrg);
+    const files = await deployAndWait(appDir, targetOrg);
     expect(files.length).to.be.greaterThanOrEqual(3);
 
     const indexFile = files.find((f) => f.filePath.includes('index.html'));
@@ -123,7 +124,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     expect(internalFiles, 'server-internal paths should be filtered out').to.have.lengthOf(0);
   });
 
-  it('re-deploy with modified + new files returns Changed and Created', () => {
+  it('re-deploy with modified + new files returns Changed and Created', async () => {
     const appName = `NutRedeploy${Date.now()}`;
     const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'webapplications', appName);
     const distDir = path.join(appDir, 'dist');
@@ -133,12 +134,12 @@ describe('WebApplication deploy NUTs (real org)', () => {
     fs.writeFileSync(path.join(appDir, 'webapplication.json'), JSON.stringify({ outputDir: 'dist' }));
     fs.writeFileSync(path.join(distDir, 'index.html'), '<html><body>v1</body></html>');
 
-    deployAndWait(appDir, targetOrg);
+    await deployAndWait(appDir, targetOrg);
 
     fs.writeFileSync(path.join(distDir, 'index.html'), '<html><body>v2 updated</body></html>');
     fs.writeFileSync(path.join(distDir, 'newfile.js'), 'console.log("new");');
 
-    const files = deployAndWait(appDir, targetOrg);
+    const files = await deployAndWait(appDir, targetOrg);
     const states = new Set(files.map((f) => f.state));
     expect(states.has('Changed') || states.has('Created'), 'should have Changed or Created states').to.be.true;
 
@@ -147,7 +148,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     expect(newFile!.state).to.equal('Created');
   });
 
-  it('deleted file reports Deleted status, not Changed', () => {
+  it('deleted file reports Deleted status, not Changed', async () => {
     const appName = `NutDelete${Date.now()}`;
     const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'webapplications', appName);
     const distDir = path.join(appDir, 'dist');
@@ -158,11 +159,11 @@ describe('WebApplication deploy NUTs (real org)', () => {
     fs.writeFileSync(path.join(distDir, 'index.html'), '<html><body>keep</body></html>');
     fs.writeFileSync(path.join(distDir, 'remove-me.js'), 'console.log("will be deleted");');
 
-    deployAndWait(appDir, targetOrg);
+    await deployAndWait(appDir, targetOrg);
 
     fs.unlinkSync(path.join(distDir, 'remove-me.js'));
 
-    const files = deployAndWait(appDir, targetOrg);
+    const files = await deployAndWait(appDir, targetOrg);
 
     const removedFile = files.find((f) => f.filePath.includes('remove-me.js'));
     expect(removedFile, 'remove-me.js should appear in deploy results').to.exist;
@@ -173,7 +174,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     expect(keptFile!.state).to.equal('Unchanged');
   });
 
-  it('unchanged re-deploy reports all files as Unchanged', () => {
+  it('unchanged re-deploy reports all files as Unchanged', async () => {
     const appName = `NutUnchanged${Date.now()}`;
     const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'webapplications', appName);
     const distDir = path.join(appDir, 'dist');
@@ -184,9 +185,9 @@ describe('WebApplication deploy NUTs (real org)', () => {
     fs.writeFileSync(path.join(distDir, 'index.html'), '<html><body>static</body></html>');
     fs.writeFileSync(path.join(distDir, 'app.js'), 'console.log("static");');
 
-    deployAndWait(appDir, targetOrg);
+    await deployAndWait(appDir, targetOrg);
 
-    const files = deployAndWait(appDir, targetOrg);
+    const files = await deployAndWait(appDir, targetOrg);
     expect(files.length, 'deploy should return file results').to.be.greaterThan(0);
 
     const contentFiles = files.filter(
@@ -197,7 +198,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     }
   });
 
-  it('retrieve round-trip returns per-file results and matches deployed content', () => {
+  it('retrieve round-trip returns per-file results and matches deployed content', async () => {
     const appName = `NutRetrieve${Date.now()}`;
     const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'webapplications', appName);
     const distDir = path.join(appDir, 'dist');
@@ -211,7 +212,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     fs.writeFileSync(path.join(distDir, 'index.html'), htmlContent);
     fs.writeFileSync(path.join(distDir, 'app.js'), jsContent);
 
-    deployAndWait(appDir, targetOrg);
+    await deployAndWait(appDir, targetOrg);
 
     // Overwrite local files with different content, then retrieve
     fs.writeFileSync(path.join(distDir, 'index.html'), 'LOCAL STALE CONTENT');

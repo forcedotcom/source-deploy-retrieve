@@ -4,9 +4,18 @@ This list compares metadata types found in Salesforce v66 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 719/772 supported metadata types.
+Currently, there are 0/0 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
+
+|Metadata Type|Support|Notes|
+|:---|:---|:---|
+
+
+
+## Next Release (v67)
+
+v67 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
@@ -37,6 +46,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ActivitiesSettings|✅||
 |ActnblListKeyPrfmIndDef|✅||
 |AddressSettings|✅||
+|AdminSuccessSettings|✅||
 |AdvAccountForecastSet|✅||
 |AdvAcctForecastDimSource|✅||
 |AdvAcctForecastPeriodGroup|✅||
@@ -45,7 +55,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AgentforceAccountManagementSettings|✅||
 |AgentforceForDevelopersSettings|✅||
 |Ai4mSettings|✅||
-|AiAgentScorerDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |AiAuthoringBundle|✅||
 |AiEvaluationDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |AiPlannerVoiceDef|❌|Not supported, but support could be added (but not for tracking)|
@@ -175,6 +184,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ContractType|✅||
 |ConvIntelligenceSignalRule|✅||
 |ConversationChannelDefinition|✅||
+|ConversationGuidanceSettings|✅||
 |ConversationMessageDefinition|✅||
 |ConversationServiceIntegrationSettings|✅||
 |ConversationVendorInfo|✅||
@@ -217,6 +227,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DataImportManagementSettings|✅||
 |DataKitObjectDependency|✅||
 |DataKitObjectTemplate|✅||
+|DataMapperDefinition|✅||
 |DataObjectBuildOrgTemplate|✅||
 |DataObjectSearchIndexConf|⚠️|Supports deploy/retrieve but not source tracking|
 |DataPackageKitDefinition|✅||
@@ -229,10 +240,14 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DataStreamDefinition|✅||
 |DataStreamTemplate|✅||
 |DataWeaveResource|✅||
+|DealInsightsSettings|✅||
 |DecisionMatrixDefinition|✅||
 |DecisionMatrixDefinitionVersion|✅||
 |DecisionTable|✅||
 |DecisionTableDatasetLink|✅||
+|DelegateAccessDataSet|❌|Not supported, but support could be added|
+|DelegateAccessDef|❌|Not supported, but support could be added|
+|DelegateAccsDataSetObj|❌|Not supported, but support could be added|
 |DelegateGroup|✅||
 |DeploymentSettings|✅||
 |DevHubSettings|✅||
@@ -304,6 +319,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |EventRelayConfig|✅||
 |EventSettings|✅||
 |EvfSettings|✅||
+|EvidenceMgmtSettings|✅||
 |ExperienceBundle|✅||
 |ExperienceBundleSettings|✅||
 |ExperiencePropertyTypeBundle|✅||
@@ -354,12 +370,14 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |FieldSrcTrgtRelationship|✅||
 |FileUploadAndDownloadSecuritySettings|✅||
 |FilesConnectSettings|✅||
+|FlexcardDefinition|✅||
 |FlexiPage|✅||
 |Flow|✅||
 |FlowCategory|✅||
 |FlowDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |FlowSettings|✅||
 |FlowTest|✅||
+|FlowValueMap|✅||
 |ForecastingFilter|✅||
 |ForecastingFilterCondition|✅||
 |ForecastingGroup|✅||
@@ -425,6 +443,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |IndustriesUnifiedInventorySettings|✅||
 |IndustriesUnifiedPromotionsSettings|✅||
 |IndustriesUsageSettings|✅||
+|IndustriesVectorSearchSettings|✅||
 |InsPlcyCoverageSpecConfig|❌|Not supported, but support could be added|
 |InsPlcyLineOfBusConfig|❌|Not supported, but support could be added|
 |InsPolicyLifecycleConfig|❌|Not supported, but support could be added|
@@ -434,6 +453,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |InstalledPackage|⚠️|Supports deploy/retrieve but not source tracking|
 |InsuranceBrokerageSettings|✅||
 |IntegArtifactDef|✅||
+|IntegratedPlanDefinition|❌|Not supported, but support could be added|
+|IntegrationProcdDefinition|✅||
 |IntegrationProviderDef|✅||
 |InterestTaggingSettings|✅||
 |InternalDataConnector|✅||
@@ -447,6 +468,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |KeywordList|✅||
 |KnowledgeGenerationSettings|✅||
 |KnowledgeSettings|✅||
+|LaborCostOptimCrewMgmtSettings|✅||
 |LaborCostOptimizationSettings|✅||
 |LanguageSettings|✅||
 |LargeQuotesandOrdersForRlmSettings|✅||
@@ -490,6 +512,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |McpServerDefinition|✅||
 |MediaAdSalesSettings|✅||
 |MediaAgentSettings|✅||
+|MeetingPlaybookDefinition|❌|Not supported, but support could be added|
 |MeetingsSettings|✅||
 |MessagingChannel|⚠️|Supports deploy/retrieve but not source tracking|
 |MfgProgramTemplate|✅||
@@ -539,11 +562,13 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |OmniSupervisorConfig|✅||
 |OmniTrackingGroup|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniUiCard|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniscriptDefinition|✅||
 |OnboardingDataObjectGroup|✅||
 |OnlineSalesSettings|✅||
 |OpportunityScoreSettings|✅||
 |OpportunitySettings|✅||
 |OptimizationSettings|✅||
+|OrchestrationPlanCtxMapping|❌|Not supported, but support could be added|
 |OrderManagementSettings|✅||
 |OrderSettings|✅||
 |OrgSettings|✅||
@@ -567,9 +592,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PicklistSettings|✅||
 |PicklistValue|❌|Not supported, but support could be added|
 |PipelineInspMetricConfig|✅||
+|PlanningMeasureDef|❌|Not supported, but support could be added|
+|PlanningMeasureGroup|❌|Not supported, but support could be added|
 |PlatformCachePartition|✅||
 |PlatformEventChannel|✅||
 |PlatformEventChannelMember|✅||
+|PlatformEventMigration|❌|Not supported, but support could be added|
 |PlatformEventSettings|✅||
 |PlatformEventSubscriberConfig|✅||
 |PlatformSlackSettings|✅||
@@ -640,7 +668,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |RevenueManagementSettings|✅||
 |RiskMgmtSettings|✅||
 |Role|✅||
-|RpaRobotPoolMetadata|❌|Not supported, but support could be added|
 |SalesAgreementSettings|✅||
 |SalesDealAgentSettings|✅||
 |SalesWorkQueueSettings|✅||
@@ -658,6 +685,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SecurityAgentSettings|✅||
 |SecurityHubSettings|✅||
 |SecuritySettings|✅||
+|SelfSvcPortalTopic|❌|Not supported, but support could be added|
 |SequenceServiceSettings|✅||
 |ServiceAIRecommendationsSettings|✅||
 |ServiceAISetupDefinition|✅||
@@ -665,6 +693,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ServiceChannel|✅||
 |ServiceCloudNotificationOrchestratorSettings|✅||
 |ServiceCloudVoiceSettings|✅||
+|ServiceIssueManagementSettings|✅||
+|ServiceItsmChangeManagementSettings|✅||
 |ServiceItsmIntelligenceUddSettings|✅||
 |ServiceLegalStatusesSettings|✅||
 |ServiceMgmtKnwlgArtclConfig|❌|Not supported, but support could be added|
@@ -736,6 +766,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |UiFormatSpecificationSet|✅||
 |UiPlugin|✅||
 |UiPreviewMessageTabDef|✅||
+|UnifiedSalesIntelligenceEngagementInsightsSettings|✅||
 |UnifiedSalesIntelligenceSettings|✅||
 |UserAccessPolicy|✅||
 |UserAuthCertificate|✅||
@@ -782,39 +813,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |WorkflowSend|✅||
 |WorkflowTask|✅||
 |WorkforceEngagementSettings|✅||
-
-
-
-## Next Release (v67)
-
-v67 introduces the following new types.  Here's their current level of support
-
-|Metadata Type|Support|Notes|
-|:---|:---|:---|
-|AdminSuccessSettings|✅||
-|ConversationGuidanceSettings|✅||
-|DataMapperDefinition|✅||
-|DealInsightsSettings|✅||
-|DelegateAccessDataSet|❌|Not supported, but support could be added|
-|DelegateAccessDef|❌|Not supported, but support could be added|
-|DelegateAccsDataSetObj|❌|Not supported, but support could be added|
-|EvidenceMgmtSettings|✅||
-|FlexcardDefinition|✅||
-|FlowValueMap|✅||
-|IndustriesVectorSearchSettings|✅||
-|IntegratedPlanDefinition|❌|Not supported, but support could be added|
-|IntegrationProcdDefinition|✅||
-|LaborCostOptimCrewMgmtSettings|✅||
-|MeetingPlaybookDefinition|❌|Not supported, but support could be added|
-|OmniscriptDefinition|✅||
-|OrchestrationPlanCtxMapping|❌|Not supported, but support could be added|
-|PlanningMeasureDef|❌|Not supported, but support could be added|
-|PlanningMeasureGroup|❌|Not supported, but support could be added|
-|PlatformEventMigrationConfig|❌|Not supported, but support could be added|
-|SelfSvcPortalTopic|❌|Not supported, but support could be added|
-|ServiceIssueManagementSettings|✅||
-|ServiceItsmChangeManagementSettings|✅||
-|UnifiedSalesIntelligenceEngagementInsightsSettings|✅||
 
 ## Additional Types
 

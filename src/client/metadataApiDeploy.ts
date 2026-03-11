@@ -482,6 +482,11 @@ const warnIfUnmatchedServerResult =
       ) {
         const deployMessage = messageMap.get(key)!.at(0)!;
 
+        // Don't warn for deleted components - not found in the component set (pre-destructiveChanges)
+        if (deployMessage.deleted === 'true' || deployMessage.deleted === true) {
+          return;
+        }
+
         // warn that this component is found in server response, but not in component set
         void Lifecycle.getInstance().emitWarning(
           `${deployMessage.componentType ?? '<no component type in deploy message>'}, ${

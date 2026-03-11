@@ -975,7 +975,7 @@ describe('MetadataApiDeploy', () => {
               {
                 changed: 'false',
                 created: 'false',
-                deleted: 'true',
+                deleted: 'false',
                 success: 'true',
                 fullName: 'myServerOnlyComponent',
                 fileName: 'myServerOnlyComponent',
@@ -1007,6 +1007,63 @@ describe('MetadataApiDeploy', () => {
         expect(warnSpy.args[0]).to.deep.equal([
           'ApexClass, myServerOnlyComponent, returned from org, but not found in the local project',
         ]);
+
+        warnSpy.restore();
+        emitSpy.restore();
+      });
+      it('should NOT warn when deleted component is not found in deployed set', () => {
+        // everything is an emit.  Warn calls emit, too.
+        const warnSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emitWarning');
+        const emitSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emit');
+
+        const component = matchingContentFile.COMPONENT;
+        const deployedSet = new ComponentSet([component]);
+        const { fullName, type } = component;
+
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentFailures: [
+              {
+                changed: 'true',
+                created: 'false',
+                deleted: 'false',
+                success: 'true',
+                fullName,
+                fileName: component.content,
+                componentType: type.name,
+              } as DeployMessage,
+              {
+                changed: 'false',
+                created: 'false',
+                deleted: 'true',
+                success: 'true',
+                fullName: 'myServerOnlyComponent',
+                fileName: 'myServerOnlyComponent',
+                componentType: type.name,
+              } as DeployMessage,
+            ],
+          },
+        };
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+        const responses = result.getFileResponses();
+        const expected: FileResponse[] = [
+          {
+            filePath: join('path', 'to', 'classes', 'myComponent.cls'),
+            fullName: 'myComponent',
+            state: ComponentStatus.Changed,
+            type: 'ApexClass',
+          },
+          {
+            filePath: join('path', 'to', 'classes', 'myComponent.cls-meta.xml'),
+            fullName: 'myComponent',
+            state: ComponentStatus.Changed,
+            type: 'ApexClass',
+          },
+        ];
+
+        expect(responses).to.deep.equal(expected);
+        expect(warnSpy.called).to.be.false;
 
         warnSpy.restore();
         emitSpy.restore();

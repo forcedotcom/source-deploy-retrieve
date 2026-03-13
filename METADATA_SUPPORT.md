@@ -4,18 +4,9 @@ This list compares metadata types found in Salesforce v66 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 0/0 supported metadata types.
+Currently, there are 720/773 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
-
-|Metadata Type|Support|Notes|
-|:---|:---|:---|
-
-
-
-## Next Release (v67)
-
-v67 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
@@ -46,7 +37,6 @@ v67 introduces the following new types.  Here's their current level of support
 |ActivitiesSettings|✅||
 |ActnblListKeyPrfmIndDef|✅||
 |AddressSettings|✅||
-|AdminSuccessSettings|✅||
 |AdvAccountForecastSet|✅||
 |AdvAcctForecastDimSource|✅||
 |AdvAcctForecastPeriodGroup|✅||
@@ -55,6 +45,7 @@ v67 introduces the following new types.  Here's their current level of support
 |AgentforceAccountManagementSettings|✅||
 |AgentforceForDevelopersSettings|✅||
 |Ai4mSettings|✅||
+|AiAgentScorerDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |AiAuthoringBundle|✅||
 |AiEvaluationDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |AiPlannerVoiceDef|❌|Not supported, but support could be added (but not for tracking)|
@@ -184,7 +175,6 @@ v67 introduces the following new types.  Here's their current level of support
 |ContractType|✅||
 |ConvIntelligenceSignalRule|✅||
 |ConversationChannelDefinition|✅||
-|ConversationGuidanceSettings|✅||
 |ConversationMessageDefinition|✅||
 |ConversationServiceIntegrationSettings|✅||
 |ConversationVendorInfo|✅||
@@ -227,7 +217,6 @@ v67 introduces the following new types.  Here's their current level of support
 |DataImportManagementSettings|✅||
 |DataKitObjectDependency|✅||
 |DataKitObjectTemplate|✅||
-|DataMapperDefinition|✅||
 |DataObjectBuildOrgTemplate|✅||
 |DataObjectSearchIndexConf|⚠️|Supports deploy/retrieve but not source tracking|
 |DataPackageKitDefinition|✅||
@@ -240,14 +229,10 @@ v67 introduces the following new types.  Here's their current level of support
 |DataStreamDefinition|✅||
 |DataStreamTemplate|✅||
 |DataWeaveResource|✅||
-|DealInsightsSettings|✅||
 |DecisionMatrixDefinition|✅||
 |DecisionMatrixDefinitionVersion|✅||
 |DecisionTable|✅||
 |DecisionTableDatasetLink|✅||
-|DelegateAccessDataSet|❌|Not supported, but support could be added|
-|DelegateAccessDef|❌|Not supported, but support could be added|
-|DelegateAccsDataSetObj|❌|Not supported, but support could be added|
 |DelegateGroup|✅||
 |DeploymentSettings|✅||
 |DevHubSettings|✅||
@@ -319,7 +304,6 @@ v67 introduces the following new types.  Here's their current level of support
 |EventRelayConfig|✅||
 |EventSettings|✅||
 |EvfSettings|✅||
-|EvidenceMgmtSettings|✅||
 |ExperienceBundle|✅||
 |ExperienceBundleSettings|✅||
 |ExperiencePropertyTypeBundle|✅||
@@ -370,14 +354,12 @@ v67 introduces the following new types.  Here's their current level of support
 |FieldSrcTrgtRelationship|✅||
 |FileUploadAndDownloadSecuritySettings|✅||
 |FilesConnectSettings|✅||
-|FlexcardDefinition|✅||
 |FlexiPage|✅||
 |Flow|✅||
 |FlowCategory|✅||
 |FlowDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |FlowSettings|✅||
 |FlowTest|✅||
-|FlowValueMap|✅||
 |ForecastingFilter|✅||
 |ForecastingFilterCondition|✅||
 |ForecastingGroup|✅||
@@ -453,8 +435,6 @@ v67 introduces the following new types.  Here's their current level of support
 |InstalledPackage|⚠️|Supports deploy/retrieve but not source tracking|
 |InsuranceBrokerageSettings|✅||
 |IntegArtifactDef|✅||
-|IntegratedPlanDefinition|❌|Not supported, but support could be added|
-|IntegrationProcdDefinition|✅||
 |IntegrationProviderDef|✅||
 |InterestTaggingSettings|✅||
 |InternalDataConnector|✅||
@@ -468,7 +448,6 @@ v67 introduces the following new types.  Here's their current level of support
 |KeywordList|✅||
 |KnowledgeGenerationSettings|✅||
 |KnowledgeSettings|✅||
-|LaborCostOptimCrewMgmtSettings|✅||
 |LaborCostOptimizationSettings|✅||
 |LanguageSettings|✅||
 |LargeQuotesandOrdersForRlmSettings|✅||
@@ -512,7 +491,6 @@ v67 introduces the following new types.  Here's their current level of support
 |McpServerDefinition|✅||
 |MediaAdSalesSettings|✅||
 |MediaAgentSettings|✅||
-|MeetingPlaybookDefinition|❌|Not supported, but support could be added|
 |MeetingsSettings|✅||
 |MessagingChannel|⚠️|Supports deploy/retrieve but not source tracking|
 |MfgProgramTemplate|✅||
@@ -562,13 +540,11 @@ v67 introduces the following new types.  Here's their current level of support
 |OmniSupervisorConfig|✅||
 |OmniTrackingGroup|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniUiCard|⚠️|Supports deploy/retrieve but not source tracking|
-|OmniscriptDefinition|✅||
 |OnboardingDataObjectGroup|✅||
 |OnlineSalesSettings|✅||
 |OpportunityScoreSettings|✅||
 |OpportunitySettings|✅||
 |OptimizationSettings|✅||
-|OrchestrationPlanCtxMapping|❌|Not supported, but support could be added|
 |OrderManagementSettings|✅||
 |OrderSettings|✅||
 |OrgSettings|✅||
@@ -592,12 +568,9 @@ v67 introduces the following new types.  Here's their current level of support
 |PicklistSettings|✅||
 |PicklistValue|❌|Not supported, but support could be added|
 |PipelineInspMetricConfig|✅||
-|PlanningMeasureDef|❌|Not supported, but support could be added|
-|PlanningMeasureGroup|❌|Not supported, but support could be added|
 |PlatformCachePartition|✅||
 |PlatformEventChannel|✅||
 |PlatformEventChannelMember|✅||
-|PlatformEventMigration|❌|Not supported, but support could be added|
 |PlatformEventSettings|✅||
 |PlatformEventSubscriberConfig|✅||
 |PlatformSlackSettings|✅||
@@ -668,6 +641,7 @@ v67 introduces the following new types.  Here's their current level of support
 |RevenueManagementSettings|✅||
 |RiskMgmtSettings|✅||
 |Role|✅||
+|RpaRobotPoolMetadata|❌|Not supported, but support could be added|
 |SalesAgreementSettings|✅||
 |SalesDealAgentSettings|✅||
 |SalesWorkQueueSettings|✅||
@@ -685,7 +659,6 @@ v67 introduces the following new types.  Here's their current level of support
 |SecurityAgentSettings|✅||
 |SecurityHubSettings|✅||
 |SecuritySettings|✅||
-|SelfSvcPortalTopic|❌|Not supported, but support could be added|
 |SequenceServiceSettings|✅||
 |ServiceAIRecommendationsSettings|✅||
 |ServiceAISetupDefinition|✅||
@@ -693,8 +666,6 @@ v67 introduces the following new types.  Here's their current level of support
 |ServiceChannel|✅||
 |ServiceCloudNotificationOrchestratorSettings|✅||
 |ServiceCloudVoiceSettings|✅||
-|ServiceIssueManagementSettings|✅||
-|ServiceItsmChangeManagementSettings|✅||
 |ServiceItsmIntelligenceUddSettings|✅||
 |ServiceLegalStatusesSettings|✅||
 |ServiceMgmtKnwlgArtclConfig|❌|Not supported, but support could be added|
@@ -766,7 +737,6 @@ v67 introduces the following new types.  Here's their current level of support
 |UiFormatSpecificationSet|✅||
 |UiPlugin|✅||
 |UiPreviewMessageTabDef|✅||
-|UnifiedSalesIntelligenceEngagementInsightsSettings|✅||
 |UnifiedSalesIntelligenceSettings|✅||
 |UserAccessPolicy|✅||
 |UserAuthCertificate|✅||
@@ -813,6 +783,38 @@ v67 introduces the following new types.  Here's their current level of support
 |WorkflowSend|✅||
 |WorkflowTask|✅||
 |WorkforceEngagementSettings|✅||
+
+
+
+## Next Release (v67)
+
+v67 introduces the following new types.  Here's their current level of support
+
+|Metadata Type|Support|Notes|
+|:---|:---|:---|
+|AdminSuccessSettings|✅||
+|ConversationGuidanceSettings|✅||
+|DataMapperDefinition|✅||
+|DealInsightsSettings|✅||
+|DelegateAccessDataSet|❌|Not supported, but support could be added|
+|DelegateAccessDef|❌|Not supported, but support could be added|
+|DelegateAccsDataSetObj|❌|Not supported, but support could be added|
+|EvidenceMgmtSettings|✅||
+|FlexcardDefinition|✅||
+|FlowValueMap|✅||
+|IntegratedPlanDefinition|❌|Not supported, but support could be added|
+|IntegrationProcdDefinition|✅||
+|LaborCostOptimCrewMgmtSettings|✅||
+|MeetingPlaybookDefinition|❌|Not supported, but support could be added|
+|OmniscriptDefinition|✅||
+|OrchestrationPlanCtxMapping|❌|Not supported, but support could be added|
+|PlanningMeasureDef|❌|Not supported, but support could be added|
+|PlanningMeasureGroup|❌|Not supported, but support could be added|
+|PlatformEventMigration|❌|Not supported, but support could be added|
+|SelfSvcPortalTopic|❌|Not supported, but support could be added|
+|ServiceIssueManagementSettings|✅||
+|ServiceItsmChangeManagementSettings|✅||
+|UnifiedSalesIntelligenceEngagementInsightsSettings|✅||
 
 ## Additional Types
 

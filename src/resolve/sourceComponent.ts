@@ -332,12 +332,24 @@ export class SourceComponent implements MetadataComponent {
 
   private getDecomposedChildren(dirPath: string): SourceComponent[] {
     const children: SourceComponent[] = [];
+    const typeChildren = this.type.children;
+    if (!typeChildren) {
+      return children;
+    }
+    const suffixMap = typeChildren.suffixes;
+    const typesMap = typeChildren.types;
+    const rootSuffix = this.type.suffix;
+    const rootLegacySuffix = this.type.legacySuffix;
+
     for (const fsPath of this.walk(dirPath)) {
       const childXml = parseMetadataXml(fsPath);
-      const fileIsRootXml = childXml?.suffix === this.type.suffix || childXml?.suffix === this.type.legacySuffix;
-      if (childXml && !fileIsRootXml && this.type.children && childXml.suffix) {
-        const childTypeId = this.type.children?.suffixes[childXml.suffix];
-        const childType = this.type.children.types[childTypeId];
+      if (!childXml?.suffix) {
+        continue;
+      }
+      const fileIsRootXml = childXml.suffix === rootSuffix || childXml.suffix === rootLegacySuffix;
+      if (!fileIsRootXml) {
+        const childTypeId = suffixMap[childXml.suffix];
+        const childType = typesMap[childTypeId];
         if (!childTypeId || !childType) {
           void Lifecycle.getInstance().emitWarning(
             `${fsPath}: Expected a child type for ${childXml.suffix} in ${this.type.name} but none was found.`
@@ -346,7 +358,7 @@ export class SourceComponent implements MetadataComponent {
         const childComponent = new SourceComponent(
           {
             name: childType?.suffix ? baseWithoutSuffixes(fsPath, childType) : baseName(fsPath),
-            type: this.type.children.types[childTypeId],
+            type: typesMap[childTypeId],
             xml: fsPath,
             parent: this,
           },

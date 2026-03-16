@@ -479,14 +479,20 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
     } else if (typeName === 'Bot') {
       // Handle Bot entries with version suffixes (e.g., Bot:myBot_1, Bot:myBot_*)
       const botName = name.join(':').trim();
-      const { baseBotName, versionFilter } = parseBotVersionFilter(botName);
-      botVersionFilters.push({ botName: baseBotName, versionFilter });
-      // Remove version suffix from metadata name
-      replacedEntries.push(`${typeName}:${baseBotName}`);
+      // If no name is provided (e.g., just "Bot" or "Bot:"), treat it as Bot:*
+      if (!botName || botName === '*') {
+        replacedEntries.push(`${typeName}:*`);
+      } else {
+        const { baseBotName, versionFilter } = parseBotVersionFilter(botName);
+        botVersionFilters.push({ botName: baseBotName, versionFilter });
+        // Remove version suffix from metadata name
+        replacedEntries.push(`${typeName}:${baseBotName}`);
+      }
     } else {
-      // Normalize entries without colons to Type:* format
-      // This allows entries like "PermissionSet" or "Flow" to be treated as "PermissionSet:*" or "Flow:*"
-      const normalizedEntry = name.length > 0 ? rawEntry : `${rawEntry}:*`;
+      // Normalize entries to Type:* format when no name is provided
+      // This handles both "Type" (no colon) and "Type:" (colon with empty name)
+      const fullName = name.join(':').trim();
+      const normalizedEntry = fullName ? rawEntry : `${typeName}:*`;
       replacedEntries.push(normalizedEntry);
     }
   });

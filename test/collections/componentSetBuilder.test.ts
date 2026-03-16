@@ -497,6 +497,87 @@ describe('ComponentSetBuilder', () => {
           expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(expectedComps);
           expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
         });
+
+        it('should create ComponentSet from Bot without name (Bot vs Bot:)', async () => {
+          // This tests the fix for the issue where 'sf project retrieve start -m Bot'
+          // would throw "entity of type 'Bot' named '' cannot be found"
+          // The fix ensures that when no bot name is provided, it treats it as Bot:*
+
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(botComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['Bot'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          const compSet = await ComponentSetBuilder.build(options);
+          expect(fromConnectionStub.callCount).to.equal(0);
+          expect(fromSourceStub.callCount).to.equal(1);
+          const fromSourceArg = fromSourceStub.firstCall.firstArg;
+          expect(fromSourceArg).to.have.deep.property('fsPaths', [packageDir1]);
+          expect(fromSourceArg).to.have.property('include');
+          // Should be treated as Bot:* (wildcard)
+          const expectedComps = ['bot#*'];
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(expectedComps);
+          expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
+        });
+      });
+
+      describe('Generic metadata type without name', () => {
+        const packageDir1 = path.resolve('force-app');
+
+        it('should create ComponentSet from ApexClass without name', async () => {
+          // This tests that the fix is generic for all metadata types
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(apexClassComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['ApexClass'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          const compSet = await ComponentSetBuilder.build(options);
+          expect(fromSourceStub.callCount).to.equal(1);
+          const fromSourceArg = fromSourceStub.firstCall.firstArg;
+          expect(fromSourceArg).to.have.property('include');
+          // Should be treated as ApexClass:* (wildcard)
+          const expectedComps = ['apexclass#*'];
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(expectedComps);
+          expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
+        });
+
+        it('should create ComponentSet from ApexClass: (with colon, no name)', async () => {
+          // This tests that Type: (with empty name) is treated as Type:* for all types
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(apexClassComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['ApexClass:'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          const compSet = await ComponentSetBuilder.build(options);
+          expect(fromSourceStub.callCount).to.equal(1);
+          const fromSourceArg = fromSourceStub.firstCall.firstArg;
+          expect(fromSourceArg).to.have.property('include');
+          // Should be treated as ApexClass:* (wildcard)
+          const expectedComps = ['apexclass#*'];
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(expectedComps);
+          expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
+        });
       });
     });
 

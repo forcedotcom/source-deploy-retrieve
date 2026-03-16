@@ -268,8 +268,20 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       await resolveDestructiveChanges(options.destructivePost, DestructiveChangesType.POST);
     }
 
-    for (const component of manifest.components) {
+    // Process manifest components and handle BotVersion entries
+    const { botVersionFilters, processedComponents } = processBotVersionsInManifest(
+      manifest.components,
+      options.registry,
+      result.logger
+    );
+
+    for (const component of processedComponents) {
       addComponent(component);
+    }
+
+    // Store botVersionFilters on the result ComponentSet
+    if (botVersionFilters.length > 0) {
+      result.botVersionFilters = botVersionFilters;
     }
 
     if (options.resolveSourcePaths) {
@@ -827,3 +839,79 @@ const addToTypeMap = ({
     typeMap.set(type.name, existing.add(fullName));
   }
 };
+
+/**
+ * Processes BotVersion entries in a manifest and converts them to Bot entries with version filters.
+ * This ensures that specific bot versions can be retrieved from manifests.
+ *
+ * @param components Components from the manifest
+ * @param registry Registry to use for looking up Bot type
+ * @param logger Logger for debug output
+ * @returns Processed components and botVersionFilters
+ */
+function processBotVersionsInManifest(
+  components: MetadataComponent[],
+  registry: RegistryAccess | undefined,
+  logger: Logger
+): {
+  botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
+  processedComponents: MetadataComponent[];
+} {
+  const botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }> = [];
+  const botNames = new Set<string>();
+  const processedComponents: MetadataComponent[] = [];
+
+  for (const component of components) {
+    if (component.type.name === 'BotVersion') {
+      // BotVersion fullName format: BotName.vN (e.g., Local_Info_Agent.v4)
+      const fullName = component.fullName;
+      const match = fullName.match(/^(.+)\.v(\d+)$/);
+
+      if (match) {
+        const [, botName, versionStr] = match;
+        const versionNum = parseInt(versionStr, 10);
+        botVersionFilters.push({ botName, versionFilter: versionNum });
+        botNames.add(botName);
+
+        // Add corresponding Bot component instead of BotVersion
+        const botType = registry?.getTypeByName('Bot') ?? component.type;
+        processedComponents.push({ type: botType, fullName: botName });
+      } else if (fullName.endsWith('.*')) {
+        // Handle BotName.* pattern (all versions)
+        const botName = fullName.substring(0, fullName.length - 2);
+        botVersionFilters.push({ botName, versionFilter: 'all' });
+        botNames.add(botName);
+
+        const botType = registry?.getTypeByName('Bot') ?? component.type;
+        processedComponents.push({ type: botType, fullName: botName });
+      } else {
+        // Unknown format, default to highest version
+        logger.debug(`Unknown BotVersion format in manifest: ${fullName}, defaulting to highest version`);
+        const dotIndex = fullName.lastIndexOf('.');
+        if (dotIndex > 0) {
+          const botName = fullName.substring(0, dotIndex);
+          botVersionFilters.push({ botName, versionFilter: 'highest' });
+          botNames.add(botName);
+
+          const botType = registry?.getTypeByName('Bot') ?? component.type;
+          processedComponents.push({ type: botType, fullName: botName });
+        } else {
+          // No dot in name, treat as bot name
+          botVersionFilters.push({ botName: fullName, versionFilter: 'highest' });
+          botNames.add(fullName);
+
+          const botType = registry?.getTypeByName('Bot') ?? component.type;
+          processedComponents.push({ type: botType, fullName });
+        }
+      }
+    } else if (component.type.name === 'Bot') {
+      // Track Bot entries to avoid duplicates
+      botNames.add(component.fullName);
+      processedComponents.push(component);
+    } else {
+      processedComponents.push(component);
+    }
+  }
+
+  return { botVersionFilters, processedComponents };
+}

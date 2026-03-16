@@ -488,6 +488,48 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
         // Remove version suffix from metadata name
         replacedEntries.push(`${typeName}:${baseBotName}`);
       }
+    } else if (typeName === 'BotVersion') {
+      // Handle BotVersion entries (e.g., BotVersion:BV.v1)
+      // BotVersion fullName format is: BotName.vN where N is the version number
+      const fullName = name.join(':').trim();
+      if (!fullName || fullName === '*') {
+        // BotVersion:* should retrieve all bot versions - not supported as a top-level query
+        // Convert to Bot:* which will handle retrieving all bots and their versions
+        getLogger().debug('BotVersion:* is not supported, converting to Bot:*');
+        replacedEntries.push('Bot:*');
+      } else {
+        // Parse BotVersion fullName to extract bot name and version
+        // Format: BotName.vN (e.g., BV.v1)
+        const match = fullName.match(/^(.+)\.v(\d+)$/);
+        if (match) {
+          const [, botName, versionStr] = match;
+          const versionNum = parseInt(versionStr, 10);
+          botVersionFilters.push({ botName, versionFilter: versionNum });
+          // Add the Bot entry instead of BotVersion
+          replacedEntries.push(`Bot:${botName}`);
+        } else {
+          // If the format doesn't match, it might be BotName.* or just BotName
+          const dotIndex = fullName.lastIndexOf('.');
+          if (dotIndex > 0) {
+            const botName = fullName.substring(0, dotIndex);
+            const versionPart = fullName.substring(dotIndex + 1);
+            if (versionPart === '*') {
+              // BotName.* means all versions of this bot
+              botVersionFilters.push({ botName, versionFilter: 'all' });
+            } else {
+              // Unknown format, default to highest version
+              getLogger().debug(`Unknown BotVersion format: ${fullName}, defaulting to highest version`);
+              botVersionFilters.push({ botName: fullName, versionFilter: 'highest' });
+            }
+            replacedEntries.push(`Bot:${botName}`);
+          } else {
+            // No dot in the name, treat the entire thing as a bot name
+            getLogger().debug(`BotVersion entry without version: ${fullName}, defaulting to highest version`);
+            botVersionFilters.push({ botName: fullName, versionFilter: 'highest' });
+            replacedEntries.push(`Bot:${fullName}`);
+          }
+        }
+      }
     } else {
       // Normalize entries to Type:* format when no name is provided
       // This handles both "Type" (no colon) and "Type:" (colon with empty name)

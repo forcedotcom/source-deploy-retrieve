@@ -89,6 +89,7 @@ const getLogger = (): Logger => {
 };
 
 const PSEUDO_TYPES = { AGENT: 'Agent' };
+const PSEUDO_TYPES_SET = new Set(Object.values(PSEUDO_TYPES));
 
 export class ComponentSetBuilder {
   /**
@@ -474,7 +475,7 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
 
   mdOption.metadataEntries.map((rawEntry) => {
     const [typeName, ...name] = rawEntry.split(':');
-    if (Object.values(PSEUDO_TYPES).includes(typeName)) {
+    if (PSEUDO_TYPES_SET.has(typeName)) {
       pseudoEntries.push([typeName, name.join(':').trim()]);
     } else if (typeName === 'Bot') {
       // Handle Bot entries with version suffixes (e.g., Bot:myBot_1, Bot:myBot_*)

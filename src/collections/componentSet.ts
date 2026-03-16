@@ -269,19 +269,24 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
 
     // Process manifest components and handle BotVersion entries
-    const { botVersionFilters, processedComponents } = processBotVersionsInManifest(
-      manifest.components,
-      options.registry,
-      result.logger
-    );
+    // Early exit optimization: Check if any BotVersion entries exist
+    const hasBotVersions = manifest.components.some((c) => c.type.name === 'BotVersion');
 
-    for (const component of processedComponents) {
-      addComponent(component);
-    }
-
-    // Store botVersionFilters on the result ComponentSet
-    if (botVersionFilters.length > 0) {
-      result.botVersionFilters = botVersionFilters;
+    if (hasBotVersions) {
+      const botVersionFilters = processBotVersionsInManifest(
+        manifest.components,
+        options.registry,
+        result.logger,
+        addComponent
+      );
+      if (botVersionFilters.length > 0) {
+        result.botVersionFilters = botVersionFilters;
+      }
+    } else {
+      // No BotVersion entries, just add all components directly
+      for (const component of manifest.components) {
+        addComponent(component);
+      }
     }
 
     if (options.resolveSourcePaths) {
@@ -843,23 +848,21 @@ const addToTypeMap = ({
 /**
  * Processes BotVersion entries in a manifest and converts them to Bot entries with version filters.
  * This ensures that specific bot versions can be retrieved from manifests.
+ * Components are added directly via addComponent callback to avoid extra iteration.
  *
  * @param components Components from the manifest
  * @param registry Registry to use for looking up Bot type
  * @param logger Logger for debug output
- * @returns Processed components and botVersionFilters
+ * @param addComponent Callback to add components directly
+ * @returns Array of botVersionFilters
  */
 function processBotVersionsInManifest(
   components: MetadataComponent[],
   registry: RegistryAccess | undefined,
-  logger: Logger
-): {
-  botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
-  processedComponents: MetadataComponent[];
-} {
+  logger: Logger,
+  addComponent: (component: MetadataComponent) => void
+): Array<{ botName: string; versionFilter: 'all' | 'highest' | number }> {
   const botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }> = [];
-  const botNames = new Set<string>();
-  const processedComponents: MetadataComponent[] = [];
 
   for (const component of components) {
     if (component.type.name === 'BotVersion') {
@@ -871,19 +874,17 @@ function processBotVersionsInManifest(
         const [, botName, versionStr] = match;
         const versionNum = parseInt(versionStr, 10);
         botVersionFilters.push({ botName, versionFilter: versionNum });
-        botNames.add(botName);
 
         // Add corresponding Bot component instead of BotVersion
         const botType = registry?.getTypeByName('Bot') ?? component.type;
-        processedComponents.push({ type: botType, fullName: botName });
+        addComponent({ type: botType, fullName: botName });
       } else if (fullName.endsWith('.*')) {
         // Handle BotName.* pattern (all versions)
         const botName = fullName.substring(0, fullName.length - 2);
         botVersionFilters.push({ botName, versionFilter: 'all' });
-        botNames.add(botName);
 
         const botType = registry?.getTypeByName('Bot') ?? component.type;
-        processedComponents.push({ type: botType, fullName: botName });
+        addComponent({ type: botType, fullName: botName });
       } else {
         // Unknown format, default to highest version
         logger.debug(`Unknown BotVersion format in manifest: ${fullName}, defaulting to highest version`);
@@ -891,27 +892,22 @@ function processBotVersionsInManifest(
         if (dotIndex > 0) {
           const botName = fullName.substring(0, dotIndex);
           botVersionFilters.push({ botName, versionFilter: 'highest' });
-          botNames.add(botName);
 
           const botType = registry?.getTypeByName('Bot') ?? component.type;
-          processedComponents.push({ type: botType, fullName: botName });
+          addComponent({ type: botType, fullName: botName });
         } else {
           // No dot in name, treat as bot name
           botVersionFilters.push({ botName: fullName, versionFilter: 'highest' });
-          botNames.add(fullName);
 
           const botType = registry?.getTypeByName('Bot') ?? component.type;
-          processedComponents.push({ type: botType, fullName });
+          addComponent({ type: botType, fullName });
         }
       }
-    } else if (component.type.name === 'Bot') {
-      // Track Bot entries to avoid duplicates
-      botNames.add(component.fullName);
-      processedComponents.push(component);
     } else {
-      processedComponents.push(component);
+      // Not a BotVersion, add as-is
+      addComponent(component);
     }
   }
 
-  return { botVersionFilters, processedComponents };
+  return botVersionFilters;
 }

@@ -25,7 +25,11 @@ import { RegistryAccess } from '../registry/registryAccess';
 import type { FileProperties } from '../client/types';
 import { MetadataType } from '../registry/types';
 import { MetadataResolver } from '../resolve';
-import { resolveAgentMdEntries, parseBotVersionFilter } from '../resolve/pseudoTypes/agentResolver';
+import {
+  resolveAgentMdEntries,
+  parseBotVersionFilter,
+  parseBotVersionFullName,
+} from '../resolve/pseudoTypes/agentResolver';
 import { DestructiveChangesType, FromConnectionOptions } from './types';
 
 Messages.importMessagesDirectory(__dirname);
@@ -500,36 +504,16 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
         replacedEntries.push('Bot:*');
       } else {
         // Parse BotVersion fullName to extract bot name and version
-        // Format: BotName.vN (e.g., BV.v1)
-        const match = fullName.match(/^(.+)\.v(\d+)$/);
-        if (match) {
-          const [, botName, versionStr] = match;
-          const versionNum = parseInt(versionStr, 10);
-          botVersionFilters.push({ botName, versionFilter: versionNum });
-          // Add the Bot entry instead of BotVersion
-          replacedEntries.push(`Bot:${botName}`);
-        } else {
-          // If the format doesn't match, it might be BotName.* or just BotName
-          const dotIndex = fullName.lastIndexOf('.');
-          if (dotIndex > 0) {
-            const botName = fullName.substring(0, dotIndex);
-            const versionPart = fullName.substring(dotIndex + 1);
-            if (versionPart === '*') {
-              // BotName.* means all versions of this bot
-              botVersionFilters.push({ botName, versionFilter: 'all' });
-            } else {
-              // Unknown format, default to highest version
-              getLogger().debug(`Unknown BotVersion format: ${fullName}, defaulting to highest version`);
-              botVersionFilters.push({ botName: fullName, versionFilter: 'highest' });
-            }
-            replacedEntries.push(`Bot:${botName}`);
-          } else {
-            // No dot in the name, treat the entire thing as a bot name
-            getLogger().debug(`BotVersion entry without version: ${fullName}, defaulting to highest version`);
-            botVersionFilters.push({ botName: fullName, versionFilter: 'highest' });
-            replacedEntries.push(`Bot:${fullName}`);
-          }
+        const { botName, versionFilter } = parseBotVersionFullName(fullName);
+
+        // Log unknown formats for debugging
+        if (versionFilter === 'highest' && !fullName.match(/^[^.]+$/)) {
+          getLogger().debug(`Unknown BotVersion format: ${fullName}, defaulting to highest version`);
         }
+
+        botVersionFilters.push({ botName, versionFilter });
+        // Add the Bot entry instead of BotVersion
+        replacedEntries.push(`Bot:${botName}`);
       }
     } else {
       // Normalize entries to Type:* format when no name is provided

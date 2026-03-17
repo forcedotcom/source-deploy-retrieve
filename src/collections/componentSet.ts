@@ -39,6 +39,7 @@ import { ComponentLike, MetadataComponent, MetadataMember } from '../resolve/typ
 import { RegistryAccess } from '../registry/registryAccess';
 import { getCurrentApiVersion } from '../registry/coverage';
 import { MetadataType } from '../registry/types';
+import { parseBotVersionFullName } from '../resolve/pseudoTypes/agentResolver';
 import {
   DestructiveChangesType,
   FromConnectionOptions,
@@ -866,43 +867,19 @@ function processBotVersionsInManifest(
 
   for (const component of components) {
     if (component.type.name === 'BotVersion') {
-      // BotVersion fullName format: BotName.vN (e.g., Local_Info_Agent.v4)
-      const fullName = component.fullName;
-      const match = fullName.match(/^(.+)\.v(\d+)$/);
+      // Parse BotVersion fullName format: BotName.vN (e.g., Local_Info_Agent.v4)
+      const { botName, versionFilter } = parseBotVersionFullName(component.fullName);
 
-      if (match) {
-        const [, botName, versionStr] = match;
-        const versionNum = parseInt(versionStr, 10);
-        botVersionFilters.push({ botName, versionFilter: versionNum });
-
-        // Add corresponding Bot component instead of BotVersion
-        const botType = registry?.getTypeByName('Bot') ?? component.type;
-        addComponent({ type: botType, fullName: botName });
-      } else if (fullName.endsWith('.*')) {
-        // Handle BotName.* pattern (all versions)
-        const botName = fullName.substring(0, fullName.length - 2);
-        botVersionFilters.push({ botName, versionFilter: 'all' });
-
-        const botType = registry?.getTypeByName('Bot') ?? component.type;
-        addComponent({ type: botType, fullName: botName });
-      } else {
-        // Unknown format, default to highest version
-        logger.debug(`Unknown BotVersion format in manifest: ${fullName}, defaulting to highest version`);
-        const dotIndex = fullName.lastIndexOf('.');
-        if (dotIndex > 0) {
-          const botName = fullName.substring(0, dotIndex);
-          botVersionFilters.push({ botName, versionFilter: 'highest' });
-
-          const botType = registry?.getTypeByName('Bot') ?? component.type;
-          addComponent({ type: botType, fullName: botName });
-        } else {
-          // No dot in name, treat as bot name
-          botVersionFilters.push({ botName: fullName, versionFilter: 'highest' });
-
-          const botType = registry?.getTypeByName('Bot') ?? component.type;
-          addComponent({ type: botType, fullName });
-        }
+      // Log unknown formats for debugging
+      if (versionFilter === 'highest' && !component.fullName.match(/^[^.]+$/)) {
+        logger.debug(`Unknown BotVersion format in manifest: ${component.fullName}, defaulting to highest version`);
       }
+
+      botVersionFilters.push({ botName, versionFilter });
+
+      // Add corresponding Bot component instead of BotVersion
+      const botType = registry?.getTypeByName('Bot') ?? component.type;
+      addComponent({ type: botType, fullName: botName });
     } else {
       // Not a BotVersion, add as-is
       addComponent(component);

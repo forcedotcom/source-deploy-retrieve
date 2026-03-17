@@ -350,6 +350,21 @@ describe('validateWebApplicationJson (direct unit tests)', () => {
         )
       );
     });
+
+    it('throws for fallback with current directory (.)', () => {
+      expectConfigError(
+        () => validateWebApplicationJson(toBuffer({ routing: { fallback: '.' } }), DESCRIPTOR_PATH, CONTENT_PATH, tree),
+        'current directory'
+      );
+    });
+
+    it('throws for fallback with current directory (./)', () => {
+      expectConfigError(
+        () =>
+          validateWebApplicationJson(toBuffer({ routing: { fallback: './' } }), DESCRIPTOR_PATH, CONTENT_PATH, tree),
+        'current directory'
+      );
+    });
   });
 
   // ===== Rewrites validation =====
@@ -439,6 +454,17 @@ describe('validateWebApplicationJson (direct unit tests)', () => {
       expectConfigError(() =>
         validateWebApplicationJson(
           toBuffer({ routing: { rewrites: [{ rewrite: '../etc/passwd' }] } }),
+          DESCRIPTOR_PATH,
+          CONTENT_PATH,
+          tree
+        )
+      );
+    });
+
+    it('throws for rewrite target that is just /', () => {
+      expectConfigError(() =>
+        validateWebApplicationJson(
+          toBuffer({ routing: { rewrites: [{ rewrite: '/' }] } }),
           DESCRIPTOR_PATH,
           CONTENT_PATH,
           tree
@@ -792,6 +818,18 @@ describe('validateWebApplicationJson (direct unit tests)', () => {
       ).to.not.throw();
     });
 
+    it('succeeds when fallback starts with / and file exists', () => {
+      const tree = treeWith();
+      expect(() =>
+        validateWebApplicationJson(
+          toBuffer({ outputDir: 'dist', routing: { fallback: '/index.html' } }),
+          DESCRIPTOR_PATH,
+          CONTENT_PATH,
+          tree
+        )
+      ).to.not.throw();
+    });
+
     it('throws when rewrite target does not exist', () => {
       const tree = treeWith();
       expectFileError(() =>
@@ -809,6 +847,18 @@ describe('validateWebApplicationJson (direct unit tests)', () => {
       expect(() =>
         validateWebApplicationJson(
           toBuffer({ outputDir: 'dist', routing: { rewrites: [{ route: '/api/*', rewrite: 'app.html' }] } }),
+          DESCRIPTOR_PATH,
+          CONTENT_PATH,
+          tree
+        )
+      ).to.not.throw();
+    });
+
+    it('succeeds when rewrite target starts with / and file exists', () => {
+      const tree = treeWith({ [join(CONTENT_PATH, 'dist', 'app.html')]: '' });
+      expect(() =>
+        validateWebApplicationJson(
+          toBuffer({ outputDir: 'dist', routing: { rewrites: [{ route: '/api/*', rewrite: '/app.html' }] } }),
           DESCRIPTOR_PATH,
           CONTENT_PATH,
           tree

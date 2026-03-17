@@ -39,6 +39,7 @@ import { ComponentLike, MetadataComponent, MetadataMember } from '../resolve/typ
 import { RegistryAccess } from '../registry/registryAccess';
 import { getCurrentApiVersion } from '../registry/coverage';
 import { MetadataType } from '../registry/types';
+import { parseBotVersionFullName } from '../resolve/pseudoTypes/agentResolver';
 import {
   DestructiveChangesType,
   FromConnectionOptions,
@@ -268,8 +269,25 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       await resolveDestructiveChanges(options.destructivePost, DestructiveChangesType.POST);
     }
 
-    for (const component of manifest.components) {
-      addComponent(component);
+    // Process manifest components and handle BotVersion entries
+    // Early exit optimization: Check if any BotVersion entries exist
+    const hasBotVersions = manifest.components.some((c) => c.type.name === 'BotVersion');
+
+    if (hasBotVersions) {
+      const botVersionFilters = processBotVersionsInManifest(
+        manifest.components,
+        options.registry,
+        result.logger,
+        addComponent
+      );
+      if (botVersionFilters.length > 0) {
+        result.botVersionFilters = botVersionFilters;
+      }
+    } else {
+      // No BotVersion entries, just add all components directly
+      for (const component of manifest.components) {
+        addComponent(component);
+      }
     }
 
     if (options.resolveSourcePaths) {
@@ -827,3 +845,46 @@ const addToTypeMap = ({
     typeMap.set(type.name, existing.add(fullName));
   }
 };
+
+/**
+ * Processes BotVersion entries in a manifest and converts them to Bot entries with version filters.
+ * This ensures that specific bot versions can be retrieved from manifests.
+ * Components are added directly via addComponent callback to avoid extra iteration.
+ *
+ * @param components Components from the manifest
+ * @param registry Registry to use for looking up Bot type
+ * @param logger Logger for debug output
+ * @param addComponent Callback to add components directly
+ * @returns Array of botVersionFilters
+ */
+function processBotVersionsInManifest(
+  components: MetadataComponent[],
+  registry: RegistryAccess | undefined,
+  logger: Logger,
+  addComponent: (component: MetadataComponent) => void
+): Array<{ botName: string; versionFilter: 'all' | 'highest' | number }> {
+  const botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }> = [];
+
+  for (const component of components) {
+    if (component.type.name === 'BotVersion') {
+      // Parse BotVersion fullName format: BotName.vN (e.g., Local_Info_Agent.v4)
+      const { botName, versionFilter } = parseBotVersionFullName(component.fullName);
+
+      // Log unknown formats for debugging
+      if (versionFilter === 'highest' && !component.fullName.match(/^[^.]+$/)) {
+        logger.debug(`Unknown BotVersion format in manifest: ${component.fullName}, defaulting to highest version`);
+      }
+
+      botVersionFilters.push({ botName, versionFilter });
+
+      // Add corresponding Bot component instead of BotVersion
+      const botType = registry?.getTypeByName('Bot') ?? component.type;
+      addComponent({ type: botType, fullName: botName });
+    } else {
+      // Not a BotVersion, add as-is
+      addComponent(component);
+    }
+  }
+
+  return botVersionFilters;
+}

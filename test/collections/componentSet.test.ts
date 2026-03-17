@@ -565,6 +565,24 @@ describe('ComponentSet', () => {
         expect(result).to.deep.equal(expected);
       });
 
+      it('should handle BotVersion entries and set botVersionFilters', async () => {
+        // This tests the fix for BotVersion entries in manifests
+        const set = await ComponentSet.fromManifest({
+          manifestPath: manifestFiles.BOT_WITH_VERSION.name,
+          registry: registryAccess,
+          tree: manifestFiles.TREE,
+        });
+
+        // Should have a Bot component (converted from BotVersion)
+        const components = set.toArray();
+        expect(components).to.have.lengthOf(1);
+        expect(components[0].type.name).to.equal('Bot');
+        expect(components[0].fullName).to.equal('Local_Info_Agent');
+
+        // Should have botVersionFilters set correctly
+        expect(set.botVersionFilters).to.deep.equal([{ botName: 'Local_Info_Agent', versionFilter: 4 }]);
+      });
+
       it('should add components even if they were not resolved', async () => {
         const set = await ComponentSet.fromManifest({
           manifestPath: manifestFiles.ONE_FOLDER_MEMBER.name,

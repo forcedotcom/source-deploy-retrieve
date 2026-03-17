@@ -91,6 +91,22 @@ export const ONE_WILDCARD: VirtualFile = {
 </Package>\n`),
 };
 
+export const BOT_WITH_VERSION: VirtualFile = {
+  name: 'bot-with-version.xml',
+  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Local_Info_Agent</members>
+        <name>Bot</name>
+    </types>
+    <types>
+        <members>Local_Info_Agent.v4</members>
+        <name>BotVersion</name>
+    </types>
+    <version>${testApiVersionAsString}</version>
+</Package>\n`),
+};
+
 export const ONE_PARTIAL_WILDCARD: VirtualFile = {
   name: 'one-partial-wildcard.xml',
   data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
@@ -115,6 +131,7 @@ export const TREE = new VirtualTreeContainer([
       ONE_PARTIAL_WILDCARD,
       ONE_FOLDER_MEMBER,
       IN_FOLDER_WITH_CONTENT,
+      BOT_WITH_VERSION,
     ],
   },
   {

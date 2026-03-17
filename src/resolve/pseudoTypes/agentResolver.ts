@@ -88,6 +88,48 @@ export function parseBotVersionFilter(botName: string): {
 }
 
 /**
+ * Parses a BotVersion fullName from a manifest or metadata entry to extract bot name and version.
+ * Supports patterns:
+ * - `BotName.vN` - specific version (e.g., `Local_Info_Agent.v4`)
+ * - `BotName.*` - all versions
+ * - `BotName.versionPart` - unknown format, extracts bot name and defaults to highest
+ * - `BotName` - no version specified, defaults to highest
+ *
+ * @param fullName The BotVersion fullName from manifest/metadata
+ * @returns An object with the bot name and version filter
+ */
+export function parseBotVersionFullName(fullName: string): {
+  botName: string;
+  versionFilter: 'all' | 'highest' | number;
+} {
+  // Handle standard BotVersion format: BotName.vN
+  const match = fullName.match(/^(.+)\.v(\d+)$/);
+  if (match) {
+    const [, botName, versionStr] = match;
+    const versionNum = parseInt(versionStr, 10);
+    return { botName, versionFilter: versionNum };
+  }
+
+  // Handle BotName.* pattern (all versions)
+  if (fullName.endsWith('.*')) {
+    return {
+      botName: fullName.substring(0, fullName.length - 2),
+      versionFilter: 'all',
+    };
+  }
+
+  // Handle unknown formats with a dot
+  const dotIndex = fullName.lastIndexOf('.');
+  if (dotIndex > 0) {
+    const botName = fullName.substring(0, dotIndex);
+    return { botName, versionFilter: 'highest' };
+  }
+
+  // No dot in name, treat entire string as bot name
+  return { botName: fullName, versionFilter: 'highest' };
+}
+
+/**
  * This is the local "spidering" logic for agents.  Given the API name for a Bot,
  * and either an org connection or local file system paths, resolve to the top
  * level agent metadata. E.g., Bot, BotVersion, GenAiPlanner, GenAiPlugin, and

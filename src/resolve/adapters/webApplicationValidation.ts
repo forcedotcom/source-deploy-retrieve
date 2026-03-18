@@ -91,6 +91,9 @@ function containsPathTraversal(value: string): string | undefined {
   if (value === '..') {
     return 'path traversal (..)';
   }
+  if (value === '.' || value === './') {
+    return 'current directory reference (use a file path)';
+  }
   if (value.startsWith('/') || value.startsWith('\\')) {
     return 'absolute path';
   }
@@ -314,12 +317,13 @@ function validateFallback(value: unknown): void {
       msgs.getMessage('webapp_type_mismatch', ['routing.fallback', 'a string', describeType(value)])
     );
   }
-  if (value.length === 0) {
+  const stripped = stripLeadingSep(value);
+  if (stripped.length === 0) {
     throw createConfigError(msgs.getMessage('webapp_empty_value', ['routing.fallback']), [
       'Provide a file path like "index.html".',
     ]);
   }
-  assertSafePath(value, 'routing.fallback');
+  assertSafePath(stripped, 'routing.fallback');
 }
 
 function validateRewritesList(value: unknown): void {
@@ -390,7 +394,13 @@ function validateRewriteItem(item: unknown, i: number): void {
     if (typeof obj.rewrite !== 'string' || obj.rewrite.length === 0) {
       throw createConfigError(msgs.getMessage('webapp_non_empty_string', [`${key}.rewrite`]));
     }
-    assertSafePath(obj.rewrite, `${key}.rewrite`);
+    const strippedRewrite = stripLeadingSep(obj.rewrite);
+    if (strippedRewrite.length === 0) {
+      throw createConfigError(msgs.getMessage('webapp_empty_value', [`${key}.rewrite`]), [
+        'Provide a file path like "index.html".',
+      ]);
+    }
+    assertSafePath(strippedRewrite, `${key}.rewrite`);
   }
 }
 

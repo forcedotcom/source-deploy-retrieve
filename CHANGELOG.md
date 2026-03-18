@@ -1,3 +1,12 @@
+## [12.31.22](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.21...12.31.22) (2026-03-18)
+
+
+### Bug Fixes
+
+* remove the prevention of the root-relative asset references ([#1708](https://github.com/forcedotcom/source-deploy-retrieve/issues/1708)) ([c196a8f](https://github.com/forcedotcom/source-deploy-retrieve/commit/c196a8f21161661255b6505090ef9558ffa9f357))
+
+
+
 ## [12.31.21](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.20...12.31.21) (2026-03-11)
 
 

@@ -78,9 +78,9 @@ const MAX_WEBAPPLICATION_JSON_BYTES = 102_400; // 100 KB
 // Matches ".." as a standalone path segment.
 const DOT_DOT_SEGMENT = /(?:^|[/\\])\.\.[/\\]|(?:^|[/\\])\.\.$/;
 
-/** Strip leading separators so "/index.html" resolves relative to outputDir. */
+/** Strip leading forward slashes so "/index.html" resolves relative to outputDir. Only strips '/', not backslashes. */
 function stripLeadingSep(p: string): string {
-  return p.replace(new RegExp(`^[${sep.replace(/\\/g, '\\\\')}/]+`), '');
+  return p.replace(/^\/+/, '');
 }
 
 /** Returns a reason string if the path contains unsafe patterns, undefined otherwise. */
@@ -233,13 +233,14 @@ function validateOutputDir(value: unknown): string {
       'Set outputDir to a directory path like "dist" or "build".',
     ]);
   }
-  if (value.length === 0) {
+  const stripped = stripLeadingSep(value);
+  if (stripped.length === 0) {
     throw createConfigError(msgs.getMessage('webapp_empty_value', ['outputDir']), [
       'Provide a directory name, e.g. "dist".',
     ]);
   }
-  assertSafePath(value, 'outputDir');
-  return value;
+  assertSafePath(stripped, 'outputDir');
+  return stripped;
 }
 
 function validateRouting(value: unknown): void {

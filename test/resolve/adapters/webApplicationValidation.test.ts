@@ -180,11 +180,16 @@ describe('validateWebApplicationJson (direct unit tests)', () => {
       );
     });
 
-    it('throws for absolute path starting with /', () => {
-      expectConfigError(
-        () => validateWebApplicationJson(toBuffer({ outputDir: '/etc/passwd' }), DESCRIPTOR_PATH, CONTENT_PATH, tree),
-        'absolute'
+    it('strips leading / from outputDir and validates the rest', () => {
+      expectFileError(() =>
+        validateWebApplicationJson(toBuffer({ outputDir: '/etc/passwd' }), DESCRIPTOR_PATH, CONTENT_PATH, tree)
       );
+    });
+
+    it('succeeds when outputDir starts with / and directory exists', () => {
+      expect(() =>
+        validateWebApplicationJson(toBuffer({ outputDir: '/dist' }), DESCRIPTOR_PATH, CONTENT_PATH, tree)
+      ).to.not.throw();
     });
 
     it('throws for absolute path starting with backslash', () => {

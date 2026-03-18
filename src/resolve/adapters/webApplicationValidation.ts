@@ -233,13 +233,14 @@ function validateOutputDir(value: unknown): string {
       'Set outputDir to a directory path like "dist" or "build".',
     ]);
   }
-  if (value.length === 0) {
+  const stripped = stripLeadingSep(value);
+  if (stripped.length === 0) {
     throw createConfigError(msgs.getMessage('webapp_empty_value', ['outputDir']), [
       'Provide a directory name, e.g. "dist".',
     ]);
   }
-  assertSafePath(value, 'outputDir');
-  return value;
+  assertSafePath(stripped, 'outputDir');
+  return stripped;
 }
 
 function validateRouting(value: unknown): void {

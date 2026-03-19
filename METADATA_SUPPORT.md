@@ -793,6 +793,7 @@ v67 introduces the following new types.  Here's their current level of support
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
 |AdminSuccessSettings|✅||
+|AiPlannerVoiceAvatarDef|❌|Not supported, but support could be added|
 |CnfgItemAttrDef|❌|Not supported, but support could be added|
 |CnfgItemAttrPcklstValDef|❌|Not supported, but support could be added|
 |CnfgItemAttrPicklistDef|❌|Not supported, but support could be added|
@@ -801,6 +802,7 @@ v67 introduces the following new types.  Here's their current level of support
 |CnfgItemTypeAttrRelDef|❌|Not supported, but support could be added|
 |CnfgItemTypeDef|❌|Not supported, but support could be added|
 |CnfgItemTypeRelationDef|❌|Not supported, but support could be added|
+|CnfgMgmtCiSourceDef|❌|Not supported, but support could be added|
 |CnfgMgmtRelationTypeDef|❌|Not supported, but support could be added|
 |ConversationGuidanceSettings|✅||
 |DataMapperDefinition|✅||
@@ -824,6 +826,11 @@ v67 introduces the following new types.  Here's their current level of support
 |SelfSvcPortalTopic|❌|Not supported, but support could be added|
 |ServiceIssueManagementSettings|✅||
 |ServiceItsmChangeManagementSettings|✅||
+|TelemetryActionDefStep|❌|Not supported, but support could be added|
+|TelemetryActionDefinition|❌|Not supported, but support could be added|
+|TelemetryActnDefStepAttr|❌|Not supported, but support could be added|
+|TelemetryDefinition|❌|Not supported, but support could be added|
+|TelemetryDefinitionVersion|❌|Not supported, but support could be added|
 |UnifiedSalesIntelligenceEngagementInsightsSettings|✅||
 
 ## Additional Types

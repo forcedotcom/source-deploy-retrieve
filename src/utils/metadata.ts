@@ -28,7 +28,7 @@ export const parser = new XMLParser({
   // Max entity expansion limit (1000) was enforced in fast-xml-parser 5.5.6. This was too low for our existing tests
   processEntities: {
     enabled: true,
-    maxTotalExpansions: 1000,
+    maxTotalExpansions: 50_000,
   },
   ignoreDeclaration: true,
   numberParseOptions: { leadingZeros: false, hex: false },

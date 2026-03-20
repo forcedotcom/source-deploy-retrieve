@@ -817,7 +817,7 @@ v67 introduces the following new types.  Here's their current level of support
 |IntegratedPlanDefinition|❌|Not supported, but support could be added|
 |IntegrationProcdDefinition|✅||
 |LaborCostOptimCrewMgmtSettings|✅||
-|MeetingPlaybookDefinition|❌|Not supported, but support could be added|
+|MeetingPlaybookDefinition|✅||
 |OmniscriptDefinition|✅||
 |OrchestrationPlanCtxMapping|❌|Not supported, but support could be added|
 |PlanningMeasureDef|❌|Not supported, but support could be added|

@@ -577,7 +577,16 @@
     "stageAssignment": "stageassignment",
     "onboardingDataObjectGroup": "onboardingdataobjectgroup",
     "partyProfileDataObjectValidityDefinition": "partyprofiledataobjectvaliditydefinition",
-    "flexcardDefinition": "flexcarddefinition"
+    "flexcardDefinition": "flexcarddefinition",
+    "cnfgItemAttrDef": "cnfgitemattrdef",
+    "cnfgItemAttrPcklstValDef": "cnfgitemattrpcklstvaldef",
+    "cnfgItemAttrPicklistDef": "cnfgitemattrpicklistdef",
+    "cnfgItemAttrSetAttr": "cnfgitemattrsetattr",
+    "cnfgItemAttrSetDef": "cnfgitemattrsetdef",
+    "cnfgItemTypeAttrRelDef": "cnfgitemtypeattrreldef",
+    "cnfgItemTypeDef": "cnfgitemtypedef",
+    "cnfgItemTypeRelationDef": "cnfgitemtyperelationdef",
+    "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5146,6 +5155,78 @@
       "name": "FlexcardDefinition",
       "suffix": "flexcardDefinition",
       "directoryName": "flexcardDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemattrdef": {
+      "id": "cnfgitemattrdef",
+      "name": "CnfgItemAttrDef",
+      "suffix": "cnfgItemAttrDef",
+      "directoryName": "cnfgItemAttrDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemattrpcklstvaldef": {
+      "id": "cnfgitemattrpcklstvaldef",
+      "name": "CnfgItemAttrPcklstValDef",
+      "suffix": "cnfgItemAttrPcklstValDef",
+      "directoryName": "cnfgItemAttrPcklstValDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemattrpicklistdef": {
+      "id": "cnfgitemattrpicklistdef",
+      "name": "CnfgItemAttrPicklistDef",
+      "suffix": "cnfgItemAttrPicklistDef",
+      "directoryName": "cnfgItemAttrPicklistDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemattrsetattr": {
+      "id": "cnfgitemattrsetattr",
+      "name": "CnfgItemAttrSetAttr",
+      "suffix": "cnfgItemAttrSetAttr",
+      "directoryName": "cnfgItemAttrSetAttrs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemattrsetdef": {
+      "id": "cnfgitemattrsetdef",
+      "name": "CnfgItemAttrSetDef",
+      "suffix": "cnfgItemAttrSetDef",
+      "directoryName": "cnfgItemAttrSetDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemtypeattrreldef": {
+      "id": "cnfgitemtypeattrreldef",
+      "name": "CnfgItemTypeAttrRelDef",
+      "suffix": "cnfgItemTypeAttrRelDef",
+      "directoryName": "cnfgItemTypeAttrRelDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemtypedef": {
+      "id": "cnfgitemtypedef",
+      "name": "CnfgItemTypeDef",
+      "suffix": "cnfgItemTypeDef",
+      "directoryName": "cnfgItemTypeDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemtyperelationdef": {
+      "id": "cnfgitemtyperelationdef",
+      "name": "CnfgItemTypeRelationDef",
+      "suffix": "cnfgItemTypeRelationDef",
+      "directoryName": "cnfgItemTypeRelationDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgmgmtrelationtypedef": {
+      "id": "cnfgmgmtrelationtypedef",
+      "name": "CnfgMgmtRelationTypeDef",
+      "suffix": "cnfgMgmtRelationTypeDef",
+      "directoryName": "cnfgMgmtRelationTypeDefs",
       "inFolder": false,
       "strictDirectoryName": false
     }

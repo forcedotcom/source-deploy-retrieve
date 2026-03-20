@@ -1,3 +1,16 @@
+## [12.31.24](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.23...12.31.24) (2026-03-20)
+
+
+
+## [12.31.23](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.22...12.31.23) (2026-03-20)
+
+
+### Bug Fixes
+
+* **deps:** bump flatted from 3.2.7 to 3.4.2 ([#1712](https://github.com/forcedotcom/source-deploy-retrieve/issues/1712)) ([bd2e758](https://github.com/forcedotcom/source-deploy-retrieve/commit/bd2e7580e57339615e13aa40899e626f5b604330))
+
+
+
 ## [12.31.22](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.21...12.31.22) (2026-03-18)
 
 

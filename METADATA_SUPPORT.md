@@ -794,16 +794,16 @@ v67 introduces the following new types.  Here's their current level of support
 |:---|:---|:---|
 |AdminSuccessSettings|✅||
 |AiPlannerVoiceAvatarDef|❌|Not supported, but support could be added|
-|CnfgItemAttrDef|❌|Not supported, but support could be added|
-|CnfgItemAttrPcklstValDef|❌|Not supported, but support could be added|
-|CnfgItemAttrPicklistDef|❌|Not supported, but support could be added|
-|CnfgItemAttrSetAttr|❌|Not supported, but support could be added|
-|CnfgItemAttrSetDef|❌|Not supported, but support could be added|
-|CnfgItemTypeAttrRelDef|❌|Not supported, but support could be added|
-|CnfgItemTypeDef|❌|Not supported, but support could be added|
-|CnfgItemTypeRelationDef|❌|Not supported, but support could be added|
+|CnfgItemAttrDef|✅||
+|CnfgItemAttrPcklstValDef|✅||
+|CnfgItemAttrPicklistDef|✅||
+|CnfgItemAttrSetAttr|✅||
+|CnfgItemAttrSetDef|✅||
+|CnfgItemTypeAttrRelDef|✅||
+|CnfgItemTypeDef|✅||
+|CnfgItemTypeRelationDef|✅||
 |CnfgMgmtCiSourceDef|❌|Not supported, but support could be added|
-|CnfgMgmtRelationTypeDef|❌|Not supported, but support could be added|
+|CnfgMgmtRelationTypeDef|✅||
 |ConversationGuidanceSettings|✅||
 |DataMapperDefinition|✅||
 |DealInsightsSettings|✅||

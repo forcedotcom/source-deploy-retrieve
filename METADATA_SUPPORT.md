@@ -811,8 +811,10 @@ v67 introduces the following new types.  Here's their current level of support
 |DelegateAccessDef|❌|Not supported, but support could be added|
 |DelegateAccsDataSetObj|❌|Not supported, but support could be added|
 |EvidenceMgmtSettings|✅||
+|ExtlClntAppOauthSecuritySettings|✅||
 |FlexcardDefinition|✅||
 |FlowValueMap|✅||
+|InsBillingConfig|❌|Not supported, but support could be added|
 |InsPlcyLimitConsumptionRule|❌|Not supported, but support could be added|
 |IntegratedPlanDefinition|❌|Not supported, but support could be added|
 |IntegrationProcdDefinition|✅||

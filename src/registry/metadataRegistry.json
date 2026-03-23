@@ -586,8 +586,9 @@
     "cnfgItemTypeAttrRelDef": "cnfgitemtypeattrreldef",
     "cnfgItemTypeDef": "cnfgitemtypedef",
     "cnfgItemTypeRelationDef": "cnfgitemtyperelationdef",
+    "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
     "cnfgMgmtCiSourceDef": "cnfgmgmtcisourcedef",
-    "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef"
+    "meetingPlaybookDefinition": "meetingplaybookdefinition"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5236,6 +5237,14 @@
       "name": "CnfgMgmtRelationTypeDef",
       "suffix": "cnfgMgmtRelationTypeDef",
       "directoryName": "cnfgMgmtRelationTypeDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "meetingplaybookdefinition": {
+      "id": "meetingplaybookdefinition",
+      "name": "MeetingPlaybookDefinition",
+      "suffix": "meetingPlaybookDefinition",
+      "directoryName": "meetingPlaybookDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     }

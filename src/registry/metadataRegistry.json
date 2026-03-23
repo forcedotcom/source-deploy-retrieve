@@ -587,7 +587,7 @@
     "cnfgItemTypeDef": "cnfgitemtypedef",
     "cnfgItemTypeRelationDef": "cnfgitemtyperelationdef",
     "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
-    "meetingPlaybookDefinition": "meetingplaybookdefinition"
+    "meetingPlaybookDefinition": "meetingplaybookdefinition",
     "cnfgMgmtCiSourceDef": "cnfgmgmtcisourcedef",
   },
   "types": {

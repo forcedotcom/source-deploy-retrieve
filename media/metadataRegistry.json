@@ -586,6 +586,7 @@
     "cnfgItemTypeAttrRelDef": "cnfgitemtypeattrreldef",
     "cnfgItemTypeDef": "cnfgitemtypedef",
     "cnfgItemTypeRelationDef": "cnfgitemtyperelationdef",
+    "cnfgMgmtCiSourceDef": "cnfgmgmtcisourcedef",
     "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef"
   },
   "types": {
@@ -5219,6 +5220,14 @@
       "name": "CnfgItemTypeRelationDef",
       "suffix": "cnfgItemTypeRelationDef",
       "directoryName": "cnfgItemTypeRelationDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgmgmtcisourcedef": {
+      "id": "cnfgmgmtcisourcedef",
+      "name": "CnfgMgmtCiSourceDef",
+      "suffix": "cnfgMgmtCiSourceDef",
+      "directoryName": "cnfgMgmtCiSourceDefs",
       "inFolder": false,
       "strictDirectoryName": false
     },

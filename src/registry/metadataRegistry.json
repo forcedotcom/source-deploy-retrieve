@@ -587,8 +587,8 @@
     "cnfgItemTypeDef": "cnfgitemtypedef",
     "cnfgItemTypeRelationDef": "cnfgitemtyperelationdef",
     "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
-    "meetingPlaybookDefinition": "meetingplaybookdefinition"
-    "cnfgMgmtCiSourceDef": "cnfgmgmtcisourcedef",
+    "meetingPlaybookDefinition": "meetingplaybookdefinition",
+    "cnfgMgmtCiSourceDef": "cnfgmgmtcisourcedef"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5247,5 +5247,6 @@
       "directoryName": "meetingPlaybookDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
+    }
   }
 }

@@ -33,6 +33,8 @@ import {
   ComponentStatus,
   DeployMessage,
   FileResponse,
+  FileResponseFailure,
+  FileResponseSuccess,
   MetadataApiDeployOptions as ApiOptions,
   MetadataApiDeployStatus,
   MetadataTransferResult,
@@ -42,8 +44,11 @@ import {
   getDeployMessages,
   getState,
   isComponentNotFoundWarningMessage,
+  isWebApplicationInternalPath,
   toKey,
+  webAppResourceFullNameToFilePath,
 } from './deployMessages';
+import { parseDeployDiagnostic } from './diagnosticUtil';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -463,13 +468,24 @@ const warnIfUnmatchedServerResult =
     [...messageMap.keys()].flatMap((key) => {
       const [type, fullName] = key.split('#');
 
+      // WebApplicationResource messages are already handled by the parent WebApplication component
+      const consumedByWebApp =
+        type === 'WebApplicationResource' &&
+        fr.some((c) => c.type === 'WebApplication' && fullName.startsWith(`${c.fullName}/`));
+
       if (
+        !consumedByWebApp &&
         !fr.find((c) => c.type === type && c.fullName === fullName) &&
         !['package.xml', 'destructiveChanges.xml', 'destructiveChangesPost.xml', 'destructiveChangesPre.xml'].includes(
           fullName
         )
       ) {
         const deployMessage = messageMap.get(key)!.at(0)!;
+
+        // Don't warn for deleted components - not found in the component set (pre-destructiveChanges)
+        if (deployMessage.deleted === 'true' || deployMessage.deleted === true) {
+          return;
+        }
 
         // warn that this component is found in server response, but not in component set
         void Lifecycle.getInstance().emitWarning(
@@ -506,9 +522,83 @@ const buildFileResponsesFromComponentSet =
   (response: MetadataApiDeployStatus): FileResponse[] => {
     const responseMessages = getDeployMessages(response);
 
-    const fileResponses = (cs.getSourceComponents().toArray() ?? [])
-      .flatMap((deployedComponent) =>
-        createResponses(cs.projectDirectory)(
+    const fileResponses: FileResponse[] = (cs.getSourceComponents().toArray() ?? [])
+      .flatMap((deployedComponent): FileResponse[] => {
+        // WebApplication bundles get per-file status via WebApplicationResource messages
+        if (
+          deployedComponent.type.name === 'WebApplication' &&
+          deployedComponent.content &&
+          Array.from(responseMessages.entries()).some(
+            ([key]) => key.startsWith('WebApplicationResource#') && key.includes(`${deployedComponent.fullName}/`)
+          )
+        ) {
+          const base = {
+            fullName: deployedComponent.fullName,
+            type: deployedComponent.type.name,
+          } as const;
+          const bundleMessages = responseMessages.get(toKey(deployedComponent)) ?? [];
+          const bundleState = bundleMessages[0] ? getState(bundleMessages[0]) : undefined;
+
+          const perFileResponses = Array.from(responseMessages.entries())
+            .filter(
+              ([key, msgs]) =>
+                key.startsWith('WebApplicationResource#') &&
+                key.includes(`${deployedComponent.fullName}/`) &&
+                msgs.length > 0
+            )
+            .flatMap(([, msgs]): FileResponse[] =>
+              msgs
+                .filter((msg) => !isWebApplicationInternalPath(msg.fullName))
+                .map((msg): FileResponse => {
+                  const state = getState(msg);
+                  const filePath = webAppResourceFullNameToFilePath(
+                    deployedComponent.content!,
+                    deployedComponent.fullName,
+                    msg.fullName
+                  );
+                  const resolvedPath =
+                    cs.projectDirectory &&
+                    process.cwd() !== cs.projectDirectory &&
+                    !filePath.startsWith(cs.projectDirectory)
+                      ? join(cs.projectDirectory, filePath)
+                      : filePath;
+                  if (state === ComponentStatus.Failed) {
+                    return {
+                      ...base,
+                      state,
+                      filePath: resolvedPath,
+                      ...parseDeployDiagnostic(deployedComponent, msg),
+                    } satisfies FileResponseFailure;
+                  }
+                  return {
+                    ...base,
+                    state,
+                    filePath: resolvedPath,
+                  } satisfies FileResponseSuccess;
+                })
+            );
+
+          // The parent .webapplication-meta.xml gets the bundle-level state
+          const parentResponses: FileResponse[] =
+            deployedComponent.xml && bundleState !== undefined && bundleState !== ComponentStatus.Failed
+              ? [
+                  {
+                    ...base,
+                    state: bundleState,
+                    filePath:
+                      cs.projectDirectory &&
+                      process.cwd() !== cs.projectDirectory &&
+                      !deployedComponent.xml.startsWith(cs.projectDirectory)
+                        ? join(cs.projectDirectory, deployedComponent.xml)
+                        : deployedComponent.xml,
+                  } satisfies FileResponseSuccess,
+                ]
+              : [];
+
+          return [...perFileResponses, ...parentResponses];
+        }
+
+        return createResponses(cs.projectDirectory)(
           deployedComponent,
           responseMessages.get(toKey(deployedComponent)) ?? []
         ).concat(
@@ -518,8 +608,8 @@ const buildFileResponsesFromComponentSet =
                 return childMessages ? createResponses(cs.projectDirectory)(child, childMessages) : [];
               })
             : []
-        )
-      )
+        );
+      })
       .concat(deleteNotFoundToFileResponses(cs)(responseMessages));
 
     if (cs.size) {

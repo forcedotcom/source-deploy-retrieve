@@ -497,6 +497,187 @@ describe('ComponentSetBuilder', () => {
           expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(expectedComps);
           expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
         });
+
+        it('should create ComponentSet from Bot without name (Bot vs Bot:)', async () => {
+          // This tests the fix for the issue where 'sf project retrieve start -m Bot'
+          // would throw "entity of type 'Bot' named '' cannot be found"
+          // The fix ensures that when no bot name is provided, it treats it as Bot:*
+
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(botComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['Bot'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          const compSet = await ComponentSetBuilder.build(options);
+          expect(fromConnectionStub.callCount).to.equal(0);
+          expect(fromSourceStub.callCount).to.equal(1);
+          const fromSourceArg = fromSourceStub.firstCall.firstArg;
+          expect(fromSourceArg).to.have.deep.property('fsPaths', [packageDir1]);
+          expect(fromSourceArg).to.have.property('include');
+          // Should be treated as Bot:* (wildcard)
+          const expectedComps = ['bot#*'];
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(expectedComps);
+          expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
+        });
+      });
+
+      describe('Generic metadata type without name', () => {
+        const packageDir1 = path.resolve('force-app');
+
+        it('should create ComponentSet from ApexClass without name', async () => {
+          // This tests that the fix is generic for all metadata types
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(apexClassComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['ApexClass'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          const compSet = await ComponentSetBuilder.build(options);
+          expect(fromSourceStub.callCount).to.equal(1);
+          const fromSourceArg = fromSourceStub.firstCall.firstArg;
+          expect(fromSourceArg).to.have.property('include');
+          // Should be treated as ApexClass:* (wildcard)
+          const expectedComps = ['apexclass#*'];
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(expectedComps);
+          expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
+        });
+
+        it('should create ComponentSet from ApexClass: (with colon, no name)', async () => {
+          // This tests that Type: (with empty name) is treated as Type:* for all types
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(apexClassComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['ApexClass:'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          const compSet = await ComponentSetBuilder.build(options);
+          expect(fromSourceStub.callCount).to.equal(1);
+          const fromSourceArg = fromSourceStub.firstCall.firstArg;
+          expect(fromSourceArg).to.have.property('include');
+          // Should be treated as ApexClass:* (wildcard)
+          const expectedComps = ['apexclass#*'];
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(expectedComps);
+          expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
+        });
+      });
+
+      describe('BotVersion handling', () => {
+        const packageDir1 = path.resolve('force-app');
+        const botComponent = {
+          type: 'Bot',
+          fullName: 'UPDotSA',
+          xml: 'UPDotSA.bot-meta.xml',
+        };
+
+        it('should create ComponentSet from specific BotVersion (v1)', async () => {
+          // This tests the fix for retrieving a specific bot version
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(botComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['BotVersion:UPDotSA.v1'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          const compSet = await ComponentSetBuilder.build(options);
+          expect(fromConnectionStub.callCount).to.equal(0);
+          expect(fromSourceStub.callCount).to.equal(1);
+          const fromSourceArg = fromSourceStub.firstCall.firstArg;
+          expect(fromSourceArg).to.have.deep.property('fsPaths', [packageDir1]);
+          expect(fromSourceArg).to.have.property('include');
+          // Should convert to Bot:UPDotSA
+          const expectedComps = ['bot#UPDotSA'];
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(expectedComps);
+          // Check that botVersionFilters was set correctly
+          expect(compSet.botVersionFilters).to.deep.equal([{ botName: 'UPDotSA', versionFilter: 1 }]);
+        });
+
+        it('should create ComponentSet from specific BotVersion (v3)', async () => {
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(botComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['BotVersion:UPDotSA.v3'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          const compSet = await ComponentSetBuilder.build(options);
+          expect(fromSourceStub.callCount).to.equal(1);
+          // Check that botVersionFilters was set correctly for v3
+          expect(compSet.botVersionFilters).to.deep.equal([{ botName: 'UPDotSA', versionFilter: 3 }]);
+        });
+
+        it('should create ComponentSet from BotVersion with wildcard versions (BotName.*)', async () => {
+          // BotVersion:BotName.* should retrieve all versions of that bot
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(botComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['BotVersion:UPDotSA.*'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          const compSet = await ComponentSetBuilder.build(options);
+          expect(fromSourceStub.callCount).to.equal(1);
+          const expectedComps = ['bot#UPDotSA'];
+          const fromSourceArg = fromSourceStub.firstCall.firstArg;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(expectedComps);
+          // Check that botVersionFilters was set to 'all'
+          expect(compSet.botVersionFilters).to.deep.equal([{ botName: 'UPDotSA', versionFilter: 'all' }]);
+        });
+
+        it('should convert BotVersion:* to Bot:*', async () => {
+          // BotVersion:* is not directly supported, should convert to Bot:*
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(botComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['BotVersion:*'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          const compSet = await ComponentSetBuilder.build(options);
+          expect(fromSourceStub.callCount).to.equal(1);
+          const fromSourceArg = fromSourceStub.firstCall.firstArg;
+          // Should convert to Bot:*
+          const expectedComps = ['bot#*'];
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(expectedComps);
+          expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
+        });
       });
     });
 

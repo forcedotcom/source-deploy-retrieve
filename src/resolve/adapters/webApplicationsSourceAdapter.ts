@@ -18,15 +18,20 @@ import { Messages } from '@salesforce/core/messages';
 import { SfError } from '@salesforce/core/sfError';
 import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
+import { NodeFSTreeContainer } from '../treeContainers';
 import { baseName } from '../../utils/path';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
+import { validateWebApplicationJson } from './webApplicationValidation';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
+/**
+ * Source adapter for WebApplication bundles.
+ *
+ * webapplication.json is optional; validated on deploy, skipped on retrieve.
+ */
 export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
-  // Enforces WebApplication bundle requirements for source/deploy while staying
-  // compatible with metadata-only retrievals.
   protected populate(
     trigger: SourcePath,
     component?: SourceComponent,
@@ -47,6 +52,7 @@ export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
       );
     }
 
+    // Ensure the component always points at the canonical meta xml.
     const resolvedSource =
       source.xml && source.xml === expectedXmlPath
         ? source
@@ -63,27 +69,14 @@ export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
             this.forceIgnore
           );
 
-    if (isResolvingSource) {
+    // Validate only on real filesystem; ZipTreeContainer (retrieve) doesn't support readFileSync.
+    if (isResolvingSource && this.tree instanceof NodeFSTreeContainer) {
       const descriptorPath = join(contentPath, 'webapplication.json');
-      const xmlFileName = `${appName}.webapplication-meta.xml`;
-      const contentEntries = (this.tree.readDirectory(contentPath) ?? []).filter(
-        (entry) => entry !== xmlFileName && entry !== 'webapplication.json'
-      );
-      if (contentEntries.length === 0) {
-        // For deploy/source, we expect at least one non-metadata content file (e.g. index.html).
-        throw new SfError(
-          messages.getMessage('error_expected_source_files', [contentPath, this.type.name]),
-          'ExpectedSourceFilesError'
-        );
-      }
-      if (!this.tree.exists(descriptorPath)) {
-        throw new SfError(
-          messages.getMessage('error_expected_source_files', [descriptorPath, this.type.name]),
-          'ExpectedSourceFilesError'
-        );
-      }
-      if (this.forceIgnore.denies(descriptorPath)) {
-        throw messages.createError('noSourceIgnore', [this.type.name, descriptorPath]);
+      const hasDescriptor = this.tree.exists(descriptorPath) && !this.forceIgnore.denies(descriptorPath);
+
+      if (hasDescriptor) {
+        const raw = this.tree.readFileSync(descriptorPath);
+        validateWebApplicationJson(raw, descriptorPath, contentPath, this.tree);
       }
     }
 

@@ -211,6 +211,7 @@
     "dataKitObjectTemplate": "datakitobjecttemplate",
     "dataObjectBuildOrgTemplate": "dataobjectbuildorgtemplate",
     "dataPackageKitDefinition": "datapackagekitdefinition",
+    "mktDatalakeSrcKeyQualifier": "mktdatalakesrckeyqualifier",
     "dataPipeline": "datapipeline",
     "dataSource": "externaldatasource",
     "dataSourceBundleDefinition": "datasourcebundledefinition",
@@ -459,7 +460,7 @@
     "salesAgreementSetting": "salesagreementsettings",
     "samlssoconfig": "samlssoconfig",
     "scf": "scontrol",
-    "schedulingObjective": "schedulingobjective",
+    "SchedulingObjective": "schedulingobjective",
     "schedulingRule": "schedulingrule",
     "scoreCategory": "scorecategory",
     "searchCustomization": "searchcustomization",
@@ -569,6 +570,7 @@
     "dataMapperDefinition": "datamapperdefinition",
     "integrationProcdDefinition": "integrationprocddefinition",
     "omniscriptDefinition": "omniscriptdefinition",
+    "procedurePlanDefinition": "procedureplandefinition",
     "computeExtension": "computeextension",
     "dataObjectSearchIndexConf": "dataobjectsearchindexconf",
     "lightningOutApp": "lightningoutapp",
@@ -581,6 +583,17 @@
     "TelemetryActionDefinition": "telemetryactiondefinition",
     "TelemetryActionDefStep": "telemetryactiondefstep",
     "TelemetryActnDefStepAttr": "telemetryactndefstepattr"
+    "cnfgItemAttrDef": "cnfgitemattrdef",
+    "cnfgItemAttrPcklstValDef": "cnfgitemattrpcklstvaldef",
+    "cnfgItemAttrPicklistDef": "cnfgitemattrpicklistdef",
+    "cnfgItemAttrSetAttr": "cnfgitemattrsetattr",
+    "cnfgItemAttrSetDef": "cnfgitemattrsetdef",
+    "cnfgItemTypeAttrRelDef": "cnfgitemtypeattrreldef",
+    "cnfgItemTypeDef": "cnfgitemtypedef",
+    "cnfgItemTypeRelationDef": "cnfgitemtyperelationdef",
+    "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
+    "cnfgMgmtCiSourceDef": "cnfgmgmtcisourcedef",
+    "meetingPlaybookDefinition": "meetingplaybookdefinition"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -1817,6 +1830,13 @@
       "name": "DataObjectBuildOrgTemplate",
       "strictDirectoryName": false,
       "suffix": "dataObjectBuildOrgTemplate"
+    },
+    "mktdatalakesrckeyqualifier": {
+      "directoryName": "mktDatalakeSrcKeyQualifier",
+      "id": "mktdatalakesrckeyqualifier",
+      "name": "MktDatalakeSrcKeyQualifier",
+      "strictDirectoryName": false,
+      "suffix": "mktDatalakeSrcKeyQualifier"
     },
     "datapackagekitdefinition": {
       "directoryName": "dataPackageKitDefinitions",
@@ -4058,7 +4078,7 @@
       "inFolder": false,
       "name": "SchedulingObjective",
       "strictDirectoryName": false,
-      "suffix": "schedulingObjective"
+      "suffix": "SchedulingObjective"
     },
     "schedulingrule": {
       "directoryName": "SchedulingRules",
@@ -5129,6 +5149,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "procedureplandefinition": {
+      "id": "procedureplandefinition",
+      "name": "ProcedurePlanDefinition",
+      "suffix": "procedurePlanDefinition",
+      "directoryName": "procedurePlanDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "flexcarddefinition": {
       "id": "flexcarddefinition",
       "name": "FlexcardDefinition",
@@ -5137,6 +5165,7 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+
     "telemetrydefinition": {
       "id": "telemetrydefinition",
       "name": "TelemetryDefinition",
@@ -5174,6 +5203,92 @@
       "name": "TelemetryActnDefStepAttr",
       "suffix": "TelemetryActnDefStepAttr",
       "directoryName": "TelemetryActnDefStepAttrs",
+
+    "cnfgitemattrdef": {
+      "id": "cnfgitemattrdef",
+      "name": "CnfgItemAttrDef",
+      "suffix": "cnfgItemAttrDef",
+      "directoryName": "cnfgItemAttrDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemattrpcklstvaldef": {
+      "id": "cnfgitemattrpcklstvaldef",
+      "name": "CnfgItemAttrPcklstValDef",
+      "suffix": "cnfgItemAttrPcklstValDef",
+      "directoryName": "cnfgItemAttrPcklstValDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemattrpicklistdef": {
+      "id": "cnfgitemattrpicklistdef",
+      "name": "CnfgItemAttrPicklistDef",
+      "suffix": "cnfgItemAttrPicklistDef",
+      "directoryName": "cnfgItemAttrPicklistDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemattrsetattr": {
+      "id": "cnfgitemattrsetattr",
+      "name": "CnfgItemAttrSetAttr",
+      "suffix": "cnfgItemAttrSetAttr",
+      "directoryName": "cnfgItemAttrSetAttrs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemattrsetdef": {
+      "id": "cnfgitemattrsetdef",
+      "name": "CnfgItemAttrSetDef",
+      "suffix": "cnfgItemAttrSetDef",
+      "directoryName": "cnfgItemAttrSetDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemtypeattrreldef": {
+      "id": "cnfgitemtypeattrreldef",
+      "name": "CnfgItemTypeAttrRelDef",
+      "suffix": "cnfgItemTypeAttrRelDef",
+      "directoryName": "cnfgItemTypeAttrRelDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemtypedef": {
+      "id": "cnfgitemtypedef",
+      "name": "CnfgItemTypeDef",
+      "suffix": "cnfgItemTypeDef",
+      "directoryName": "cnfgItemTypeDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemtyperelationdef": {
+      "id": "cnfgitemtyperelationdef",
+      "name": "CnfgItemTypeRelationDef",
+      "suffix": "cnfgItemTypeRelationDef",
+      "directoryName": "cnfgItemTypeRelationDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgmgmtcisourcedef": {
+      "id": "cnfgmgmtcisourcedef",
+      "name": "CnfgMgmtCiSourceDef",
+      "suffix": "cnfgMgmtCiSourceDef",
+      "directoryName": "cnfgMgmtCiSourceDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgmgmtrelationtypedef": {
+      "id": "cnfgmgmtrelationtypedef",
+      "name": "CnfgMgmtRelationTypeDef",
+      "suffix": "cnfgMgmtRelationTypeDef",
+      "directoryName": "cnfgMgmtRelationTypeDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "meetingplaybookdefinition": {
+      "id": "meetingplaybookdefinition",
+      "name": "MeetingPlaybookDefinition",
+      "suffix": "meetingPlaybookDefinition",
+      "directoryName": "meetingPlaybookDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     }

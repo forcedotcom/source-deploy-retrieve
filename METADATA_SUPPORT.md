@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v66 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 717/771 supported metadata types.
+Currently, there are 720/773 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -425,6 +425,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |IndustriesUnifiedInventorySettings|✅||
 |IndustriesUnifiedPromotionsSettings|✅||
 |IndustriesUsageSettings|✅||
+|IndustriesVectorSearchSettings|✅||
 |InsPlcyCoverageSpecConfig|❌|Not supported, but support could be added|
 |InsPlcyLineOfBusConfig|❌|Not supported, but support could be added|
 |InsPolicyLifecycleConfig|❌|Not supported, but support could be added|
@@ -587,7 +588,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PrivacySettings|✅||
 |PrmCoreSettings|✅||
 |ProcedureOutputResolution|❌|Not supported, but support could be added (but not for tracking)|
-|ProcedurePlanDefinition|❌|Not supported, but support could be added (but not for tracking)|
+|ProcedurePlanDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |ProcessFlowMigration|✅||
 |ProductAttrDisplayConfig|✅||
 |ProductAttributeSet|✅||
@@ -765,6 +766,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |WaveXmd|✅||
 |Web3Settings|✅||
 |WebApplication|✅||
+|WebApplicationSettings|✅||
 |WebLink|✅||
 |WebStoreBundle|✅||
 |WebStoreTemplate|✅||
@@ -791,6 +793,17 @@ v67 introduces the following new types.  Here's their current level of support
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
 |AdminSuccessSettings|✅||
+|AiPlannerVoiceAvatarDef|❌|Not supported, but support could be added|
+|CnfgItemAttrDef|✅||
+|CnfgItemAttrPcklstValDef|✅||
+|CnfgItemAttrPicklistDef|✅||
+|CnfgItemAttrSetAttr|✅||
+|CnfgItemAttrSetDef|✅||
+|CnfgItemTypeAttrRelDef|✅||
+|CnfgItemTypeDef|✅||
+|CnfgItemTypeRelationDef|✅||
+|CnfgMgmtCiSourceDef|✅||
+|CnfgMgmtRelationTypeDef|✅||
 |ConversationGuidanceSettings|✅||
 |DataMapperDefinition|✅||
 |DealInsightsSettings|✅||
@@ -798,22 +811,29 @@ v67 introduces the following new types.  Here's their current level of support
 |DelegateAccessDef|❌|Not supported, but support could be added|
 |DelegateAccsDataSetObj|❌|Not supported, but support could be added|
 |EvidenceMgmtSettings|✅||
+|ExtlClntAppOauthSecuritySettings|✅||
 |FlexcardDefinition|✅||
 |FlowValueMap|✅||
-|IndustriesVectorSearchSettings|✅||
+|InsBillingConfig|❌|Not supported, but support could be added|
+|InsPlcyLimitConsumptionRule|❌|Not supported, but support could be added|
+|IntegratedPlanDefinition|❌|Not supported, but support could be added|
 |IntegrationProcdDefinition|✅||
 |LaborCostOptimCrewMgmtSettings|✅||
-|MeetingPlaybookDefinition|❌|Not supported, but support could be added|
+|MeetingPlaybookDefinition|✅||
 |OmniscriptDefinition|✅||
 |OrchestrationPlanCtxMapping|❌|Not supported, but support could be added|
 |PlanningMeasureDef|❌|Not supported, but support could be added|
 |PlanningMeasureGroup|❌|Not supported, but support could be added|
-|PlatformEventMigrationConfig|❌|Not supported, but support could be added|
+|PlatformEventMigration|❌|Not supported, but support could be added|
 |SelfSvcPortalTopic|❌|Not supported, but support could be added|
 |ServiceIssueManagementSettings|✅||
 |ServiceItsmChangeManagementSettings|✅||
+|TelemetryActionDefStep|❌|Not supported, but support could be added|
+|TelemetryActionDefinition|❌|Not supported, but support could be added|
+|TelemetryActnDefStepAttr|❌|Not supported, but support could be added|
+|TelemetryDefinition|❌|Not supported, but support could be added|
+|TelemetryDefinitionVersion|❌|Not supported, but support could be added|
 |UnifiedSalesIntelligenceEngagementInsightsSettings|✅||
-|WebApplicationSettings|✅||
 
 ## Additional Types
 
@@ -836,6 +856,7 @@ v67 introduces the following new types.  Here's their current level of support
 - CustomExperience
 - CustomLabel
 - CustomFieldTranslation
+- MktDatalakeSrcKeyQualifier
 - DataPipeline
 - DynamicTrigger
 - EmbeddedServiceFieldService

@@ -1,3 +1,73 @@
+## [12.31.24](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.23...12.31.24) (2026-03-20)
+
+
+
+## [12.31.23](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.22...12.31.23) (2026-03-20)
+
+
+### Bug Fixes
+
+* **deps:** bump flatted from 3.2.7 to 3.4.2 ([#1712](https://github.com/forcedotcom/source-deploy-retrieve/issues/1712)) ([bd2e758](https://github.com/forcedotcom/source-deploy-retrieve/commit/bd2e7580e57339615e13aa40899e626f5b604330))
+
+
+
+## [12.31.22](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.21...12.31.22) (2026-03-18)
+
+
+### Bug Fixes
+
+* remove the prevention of the root-relative asset references ([#1708](https://github.com/forcedotcom/source-deploy-retrieve/issues/1708)) ([c196a8f](https://github.com/forcedotcom/source-deploy-retrieve/commit/c196a8f21161661255b6505090ef9558ffa9f357))
+
+
+
+## [12.31.21](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.20...12.31.21) (2026-03-11)
+
+
+
+## [12.31.20](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.19...12.31.20) (2026-03-11)
+
+
+### Bug Fixes
+
+* skip false warning for pre-destructive-W-21252087 ([#1690](https://github.com/forcedotcom/source-deploy-retrieve/issues/1690)) ([7b4a114](https://github.com/forcedotcom/source-deploy-retrieve/commit/7b4a1146422b2b5f56d8fdba0e95c7f2a26bb33c))
+
+
+
+## [12.31.19](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.18...12.31.19) (2026-03-09)
+
+
+### Bug Fixes
+
+* keep BV fields after parsing ([#1704](https://github.com/forcedotcom/source-deploy-retrieve/issues/1704)) ([2bdcb5b](https://github.com/forcedotcom/source-deploy-retrieve/commit/2bdcb5b05704fbdcb6190381991cf4791508e8ab))
+
+
+
+## [12.31.18](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.17...12.31.18) (2026-03-09)
+
+
+
+## [12.31.17](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.16...12.31.17) (2026-03-09)
+
+
+### Bug Fixes
+
+* update suffix of SO ([#1700](https://github.com/forcedotcom/source-deploy-retrieve/issues/1700)) ([257371e](https://github.com/forcedotcom/source-deploy-retrieve/commit/257371e1a7483cfccf8127f8587b217e15c60b1c))
+
+
+
+## [12.31.16](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.15...12.31.16) (2026-03-06)
+
+
+### Bug Fixes
+
+* add ProcedurePlanDefinition to metadata registry-W-21371522 ([#1692](https://github.com/forcedotcom/source-deploy-retrieve/issues/1692)) ([458b27c](https://github.com/forcedotcom/source-deploy-retrieve/commit/458b27c02f80e060029cc99691daca99b28393ff))
+
+
+
+## [12.31.15](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.14...12.31.15) (2026-03-05)
+
+
+
 ## [12.31.14](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.13...12.31.14) (2026-02-19)
 
 

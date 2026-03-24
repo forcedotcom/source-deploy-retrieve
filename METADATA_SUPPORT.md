@@ -793,6 +793,7 @@ v67 introduces the following new types.  Here's their current level of support
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
 |AdminSuccessSettings|✅||
+|AgenticCtxtDecorDefinition|❌|Not supported, but support could be added|
 |AiPlannerVoiceAvatarDef|❌|Not supported, but support could be added|
 |CnfgItemAttrDef|✅||
 |CnfgItemAttrPcklstValDef|✅||
@@ -814,6 +815,7 @@ v67 introduces the following new types.  Here's their current level of support
 |ExtlClntAppOauthSecuritySettings|✅||
 |FlexcardDefinition|✅||
 |FlowValueMap|✅||
+|GenOpAgentConfig|❌|Not supported, but support could be added|
 |InsBillingConfig|❌|Not supported, but support could be added|
 |InsPlcyLimitConsumptionRule|❌|Not supported, but support could be added|
 |IntegratedPlanDefinition|❌|Not supported, but support could be added|
@@ -828,11 +830,11 @@ v67 introduces the following new types.  Here's their current level of support
 |SelfSvcPortalTopic|❌|Not supported, but support could be added|
 |ServiceIssueManagementSettings|✅||
 |ServiceItsmChangeManagementSettings|✅||
-|TelemetryActionDefStep|❌|Not supported, but support could be added|
-|TelemetryActionDefinition|❌|Not supported, but support could be added|
-|TelemetryActnDefStepAttr|❌|Not supported, but support could be added|
-|TelemetryDefinition|❌|Not supported, but support could be added|
-|TelemetryDefinitionVersion|❌|Not supported, but support could be added|
+|TelemetryActionDefStep|✅||
+|TelemetryActionDefinition|✅||
+|TelemetryActnDefStepAttr|✅||
+|TelemetryDefinition|✅||
+|TelemetryDefinitionVersion|✅||
 |UnifiedSalesIntelligenceEngagementInsightsSettings|✅||
 
 ## Additional Types

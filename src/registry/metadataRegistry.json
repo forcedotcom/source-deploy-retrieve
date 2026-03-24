@@ -582,7 +582,7 @@
     "TelemetryDefinitionVersion": "telemetrydefinitionversion",
     "TelemetryActionDefinition": "telemetryactiondefinition",
     "TelemetryActionDefStep": "telemetryactiondefstep",
-    "TelemetryActnDefStepAttr": "telemetryactndefstepattr"
+    "TelemetryActnDefStepAttr": "telemetryactndefstepattr",
     "cnfgItemAttrDef": "cnfgitemattrdef",
     "cnfgItemAttrPcklstValDef": "cnfgitemattrpcklstvaldef",
     "cnfgItemAttrPicklistDef": "cnfgitemattrpicklistdef",
@@ -5203,7 +5203,9 @@
       "name": "TelemetryActnDefStepAttr",
       "suffix": "TelemetryActnDefStepAttr",
       "directoryName": "TelemetryActnDefStepAttrs",
-
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "cnfgitemattrdef": {
       "id": "cnfgitemattrdef",
       "name": "CnfgItemAttrDef",

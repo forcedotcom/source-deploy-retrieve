@@ -1,3 +1,12 @@
+## [12.31.30](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.29...12.31.30) (2026-03-26)
+
+
+### Bug Fixes
+
+* **deps:** bump yaml from 2.8.1 to 2.8.3 ([#1718](https://github.com/forcedotcom/source-deploy-retrieve/issues/1718)) ([87295ae](https://github.com/forcedotcom/source-deploy-retrieve/commit/87295ae42fa2d0c974cc8d9a3f8f1d07587db07e))
+
+
+
 ## [12.31.29](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.28...12.31.29) (2026-03-26)
 
 

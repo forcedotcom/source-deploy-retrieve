@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774532628078,
+  "lastUpdate": 1774533136087,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -95657,6 +95657,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 20758,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4689959282b62367bf3329af5d165032b62cb9b3",
+          "message": "fix(deps): bump basic-ftp from 5.0.3 to 5.2.0\n\nBumps [basic-ftp](https://github.com/patrickjuchli/basic-ftp) from 5.0.3 to 5.2.0.\n- [Release notes](https://github.com/patrickjuchli/basic-ftp/releases)\n- [Changelog](https://github.com/patrickjuchli/basic-ftp/blob/master/CHANGELOG.md)\n- [Commits](https://github.com/patrickjuchli/basic-ftp/compare/v5.0.3...v5.2.0)\n\n---\nupdated-dependencies:\n- dependency-name: basic-ftp\n  dependency-version: 5.2.0\n  dependency-type: indirect\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-03-26T13:35:46Z",
+          "tree_id": "feb17a626463388be5333d87a2614a7bf0b70fea",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/4689959282b62367bf3329af5d165032b62cb9b3"
+        },
+        "date": 1774533123350,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 579,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4320,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3876,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 7238,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 909,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 10930,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10529,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 10711,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1626,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 22341,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 27826,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 23385,
             "unit": "ms"
           }
         ]

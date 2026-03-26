@@ -1,3 +1,12 @@
+## [12.31.29](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.28...12.31.29) (2026-03-26)
+
+
+### Bug Fixes
+
+* **deps:** bump proxy-agent from 6.4.0 to 6.5.0 ([#1465](https://github.com/forcedotcom/source-deploy-retrieve/issues/1465)) ([cd7f8ed](https://github.com/forcedotcom/source-deploy-retrieve/commit/cd7f8ed1583720e474852dc2062b92e5d8d3f38b))
+
+
+
 ## [12.31.28](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.27...12.31.28) (2026-03-26)
 
 

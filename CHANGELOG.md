@@ -1,3 +1,12 @@
+## [12.31.28](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.27...12.31.28) (2026-03-26)
+
+
+### Bug Fixes
+
+* **deps:** bump lodash from 4.17.21 to 4.17.23 ([#1674](https://github.com/forcedotcom/source-deploy-retrieve/issues/1674)) ([da4b78f](https://github.com/forcedotcom/source-deploy-retrieve/commit/da4b78f7e0de2faa03ecef77026b7cc36f09c851))
+
+
+
 ## [12.31.27](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.26...12.31.27) (2026-03-26)
 
 

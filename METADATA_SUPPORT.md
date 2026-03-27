@@ -800,10 +800,10 @@ v67 introduces the following new types.  Here's their current level of support
 |CnfgItemAttrPicklistDef|✅||
 |CnfgItemAttrSetAttr|✅||
 |CnfgItemAttrSetDef|✅||
+|CnfgItemSourceDefinition|❌|Not supported, but support could be added|
 |CnfgItemTypeAttrRelDef|✅||
 |CnfgItemTypeDef|✅||
 |CnfgItemTypeRelationDef|✅||
-|CnfgMgmtCiSourceDef|✅||
 |CnfgMgmtRelationTypeDef|✅||
 |ConversationGuidanceSettings|✅||
 |DataMapperDefinition|✅||
@@ -906,3 +906,4 @@ v67 introduces the following new types.  Here's their current level of support
 - XOrgHub
 - RuleLibraryDefinition
 - LightningOutApp
+- CnfgMgmtCiSourceDef

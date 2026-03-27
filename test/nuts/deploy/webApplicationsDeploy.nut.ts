@@ -95,7 +95,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
 
   it('initial deploy returns per-file Created status', async () => {
     const appName = `NutDeploy${Date.now()}`;
-    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'webapplications', appName);
+    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'uiBundles', appName);
     const distDir = path.join(appDir, 'dist');
     fs.mkdirSync(distDir, { recursive: true });
 
@@ -126,7 +126,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
 
   it('re-deploy with modified + new files returns Changed and Created', async () => {
     const appName = `NutRedeploy${Date.now()}`;
-    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'webapplications', appName);
+    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'uiBundles', appName);
     const distDir = path.join(appDir, 'dist');
     fs.mkdirSync(distDir, { recursive: true });
 
@@ -150,7 +150,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
 
   it('deleted file reports Deleted status, not Changed', async () => {
     const appName = `NutDelete${Date.now()}`;
-    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'webapplications', appName);
+    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'uiBundles', appName);
     const distDir = path.join(appDir, 'dist');
     fs.mkdirSync(distDir, { recursive: true });
 
@@ -176,7 +176,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
 
   it('unchanged re-deploy reports all files as Unchanged', async () => {
     const appName = `NutUnchanged${Date.now()}`;
-    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'webapplications', appName);
+    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'uiBundles', appName);
     const distDir = path.join(appDir, 'dist');
     fs.mkdirSync(distDir, { recursive: true });
 
@@ -200,7 +200,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
 
   it('retrieve round-trip returns per-file results and matches deployed content', async () => {
     const appName = `NutRetrieve${Date.now()}`;
-    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'webapplications', appName);
+    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'uiBundles', appName);
     const distDir = path.join(appDir, 'dist');
     fs.mkdirSync(distDir, { recursive: true });
 

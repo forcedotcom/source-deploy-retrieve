@@ -1336,7 +1336,7 @@ describe('MetadataApiDeploy', () => {
       });
 
       describe('WebApplication per-file FileResponses', () => {
-        const bundlePath = join('path', 'to', 'webapplications', 'MyApp');
+        const bundlePath = join('path', 'to', 'uiBundles', 'MyApp');
         const webAppProps = {
           name: 'MyApp',
           type: registry.types.webapplication,

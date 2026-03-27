@@ -72,7 +72,7 @@
     "waveTemplates": "wavetemplatebundle",
     "appTemplates": "appframeworktemplatebundle",
     "lightningTypes": "lightningtypebundle",
-    "webapplications": "webapplication"
+    "uiBundles": "webapplication"
   },
   "suffixes": {
     "Canvas": "canvasmetadata",
@@ -4698,7 +4698,7 @@
       "suffix": "xmd"
     },
     "webapplication": {
-      "directoryName": "webapplications",
+      "directoryName": "uiBundles",
       "id": "webapplication",
       "inFolder": false,
       "name": "WebApplication",

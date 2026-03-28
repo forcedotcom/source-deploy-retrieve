@@ -693,7 +693,7 @@ describe('WebApplicationsSourceAdapter', () => {
       writeFileSync(join(appDir, 'ui-bundle.json'), '{"unclosed');
       const fsTree = new NodeFSTreeContainer();
       const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, fsTree);
-      assert.throws(() => a.getComponent(appDir), SfError, /uibundle\.json/);
+      assert.throws(() => a.getComponent(appDir), SfError, /ui-bundle\.json/);
     });
 
     it('should skip when ui-bundle.json is absent', () => {

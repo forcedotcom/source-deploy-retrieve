@@ -529,7 +529,7 @@ function validateFileExistence(
 
     if (!tree.exists(outputDirPath) || !tree.isDirectory(outputDirPath)) {
       throw createFileError(msgs.getMessage('webapp_dir_not_found', [outputDir, outputDirPath]), [
-        `Create the directory "${outputDir}" in your web application bundle, or change outputDir to an existing directory.`,
+        `Create the directory "${outputDir}" in your UI bundle, or change outputDir to an existing directory.`,
       ]);
     }
 

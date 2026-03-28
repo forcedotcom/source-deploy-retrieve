@@ -60,7 +60,7 @@ async function deployAndWait(sourceDir: string, targetOrg: string): Promise<Depl
 
 function writeMetaXml(appDir: string, appName: string): void {
   fs.writeFileSync(
-    path.join(appDir, `${appName}.webapplication-meta.xml`),
+    path.join(appDir, `${appName}.uibundle-meta.xml`),
     [
       '<?xml version="1.0" encoding="UTF-8"?>',
       '<WebApplication xmlns="http://soap.sforce.com/2006/04/metadata">',
@@ -95,12 +95,12 @@ describe('WebApplication deploy NUTs (real org)', () => {
 
   it('initial deploy returns per-file Created status', async () => {
     const appName = `NutDeploy${Date.now()}`;
-    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'webapplications', appName);
+    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'uiBundles', appName);
     const distDir = path.join(appDir, 'dist');
     fs.mkdirSync(distDir, { recursive: true });
 
     writeMetaXml(appDir, appName);
-    fs.writeFileSync(path.join(appDir, 'webapplication.json'), JSON.stringify({ outputDir: 'dist' }));
+    fs.writeFileSync(path.join(appDir, 'ui-bundle.json'), JSON.stringify({ outputDir: 'dist' }));
     fs.writeFileSync(path.join(distDir, 'index.html'), '<html><body>Hello</body></html>');
     fs.writeFileSync(path.join(distDir, 'app.js'), 'console.log("init");');
 
@@ -115,7 +115,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     expect(appJsFile, 'app.js should be in deploy results').to.exist;
     expect(appJsFile!.state).to.equal('Created');
 
-    const metaFile = files.find((f) => f.filePath.endsWith('.webapplication-meta.xml'));
+    const metaFile = files.find((f) => f.filePath.endsWith('.uibundle-meta.xml'));
     expect(metaFile, 'meta xml should be in deploy results').to.exist;
 
     const internalFiles = files.filter(
@@ -126,12 +126,12 @@ describe('WebApplication deploy NUTs (real org)', () => {
 
   it('re-deploy with modified + new files returns Changed and Created', async () => {
     const appName = `NutRedeploy${Date.now()}`;
-    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'webapplications', appName);
+    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'uiBundles', appName);
     const distDir = path.join(appDir, 'dist');
     fs.mkdirSync(distDir, { recursive: true });
 
     writeMetaXml(appDir, appName);
-    fs.writeFileSync(path.join(appDir, 'webapplication.json'), JSON.stringify({ outputDir: 'dist' }));
+    fs.writeFileSync(path.join(appDir, 'ui-bundle.json'), JSON.stringify({ outputDir: 'dist' }));
     fs.writeFileSync(path.join(distDir, 'index.html'), '<html><body>v1</body></html>');
 
     await deployAndWait(appDir, targetOrg);
@@ -150,12 +150,12 @@ describe('WebApplication deploy NUTs (real org)', () => {
 
   it('deleted file reports Deleted status, not Changed', async () => {
     const appName = `NutDelete${Date.now()}`;
-    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'webapplications', appName);
+    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'uiBundles', appName);
     const distDir = path.join(appDir, 'dist');
     fs.mkdirSync(distDir, { recursive: true });
 
     writeMetaXml(appDir, appName);
-    fs.writeFileSync(path.join(appDir, 'webapplication.json'), JSON.stringify({ outputDir: 'dist' }));
+    fs.writeFileSync(path.join(appDir, 'ui-bundle.json'), JSON.stringify({ outputDir: 'dist' }));
     fs.writeFileSync(path.join(distDir, 'index.html'), '<html><body>keep</body></html>');
     fs.writeFileSync(path.join(distDir, 'remove-me.js'), 'console.log("will be deleted");');
 
@@ -176,12 +176,12 @@ describe('WebApplication deploy NUTs (real org)', () => {
 
   it('unchanged re-deploy reports all files as Unchanged', async () => {
     const appName = `NutUnchanged${Date.now()}`;
-    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'webapplications', appName);
+    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'uiBundles', appName);
     const distDir = path.join(appDir, 'dist');
     fs.mkdirSync(distDir, { recursive: true });
 
     writeMetaXml(appDir, appName);
-    fs.writeFileSync(path.join(appDir, 'webapplication.json'), JSON.stringify({ outputDir: 'dist' }));
+    fs.writeFileSync(path.join(appDir, 'ui-bundle.json'), JSON.stringify({ outputDir: 'dist' }));
     fs.writeFileSync(path.join(distDir, 'index.html'), '<html><body>static</body></html>');
     fs.writeFileSync(path.join(distDir, 'app.js'), 'console.log("static");');
 
@@ -191,7 +191,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     expect(files.length, 'deploy should return file results').to.be.greaterThan(0);
 
     const contentFiles = files.filter(
-      (f) => !f.filePath.endsWith('.webapplication-meta.xml') && !f.filePath.endsWith('webapplication.json')
+      (f) => !f.filePath.endsWith('.uibundle-meta.xml') && !f.filePath.endsWith('ui-bundle.json')
     );
     for (const f of contentFiles) {
       expect(f.state, `${f.filePath} should be Unchanged`).to.equal('Unchanged');
@@ -200,7 +200,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
 
   it('retrieve round-trip returns per-file results and matches deployed content', async () => {
     const appName = `NutRetrieve${Date.now()}`;
-    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'webapplications', appName);
+    const appDir = path.join(projectDir, 'force-app', 'main', 'default', 'uiBundles', appName);
     const distDir = path.join(appDir, 'dist');
     fs.mkdirSync(distDir, { recursive: true });
 
@@ -208,7 +208,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     const jsContent = 'console.log("retrieve");';
 
     writeMetaXml(appDir, appName);
-    fs.writeFileSync(path.join(appDir, 'webapplication.json'), JSON.stringify({ outputDir: 'dist' }));
+    fs.writeFileSync(path.join(appDir, 'ui-bundle.json'), JSON.stringify({ outputDir: 'dist' }));
     fs.writeFileSync(path.join(distDir, 'index.html'), htmlContent);
     fs.writeFileSync(path.join(distDir, 'app.js'), jsContent);
 

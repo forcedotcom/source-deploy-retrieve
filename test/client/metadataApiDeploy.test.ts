@@ -1336,17 +1336,17 @@ describe('MetadataApiDeploy', () => {
       });
 
       describe('WebApplication per-file FileResponses', () => {
-        const bundlePath = join('path', 'to', 'webapplications', 'MyApp');
+        const bundlePath = join('path', 'to', 'uiBundles', 'MyApp');
         const webAppProps = {
           name: 'MyApp',
-          type: registry.types.webapplication,
-          xml: join(bundlePath, 'MyApp.webapplication-meta.xml'),
+          type: registry.types.uibundle,
+          xml: join(bundlePath, 'MyApp.uibundle-meta.xml'),
           content: bundlePath,
         };
         const webAppVirtualDirs = [
           {
             dirPath: bundlePath,
-            children: ['MyApp.webapplication-meta.xml', 'webapplication.json', 'dist'],
+            children: ['MyApp.uibundle-meta.xml', 'ui-bundle.json', 'dist'],
           },
           {
             dirPath: join(bundlePath, 'dist'),
@@ -1364,8 +1364,8 @@ describe('MetadataApiDeploy', () => {
             deleted: 'false',
             success: 'true',
             fullName: 'MyApp',
-            componentType: 'WebApplication',
-            fileName: 'webapplications/MyApp.webapplication-meta.xml',
+            componentType: 'UIBundle',
+            fileName: 'webapplications/MyApp.uibundle-meta.xml',
             ...overrides,
           } as DeployMessage);
 
@@ -1401,27 +1401,27 @@ describe('MetadataApiDeploy', () => {
           expect(responses).to.deep.equalInAnyOrder([
             {
               fullName: 'MyApp',
-              type: 'WebApplication',
+              type: 'UIBundle',
               state: ComponentStatus.Created,
               filePath: join(bundlePath, 'dist', 'index.html'),
             },
             {
               fullName: 'MyApp',
-              type: 'WebApplication',
+              type: 'UIBundle',
               state: ComponentStatus.Changed,
               filePath: join(bundlePath, 'dist', 'app.js'),
             },
             {
               fullName: 'MyApp',
-              type: 'WebApplication',
+              type: 'UIBundle',
               state: ComponentStatus.Unchanged,
               filePath: join(bundlePath, 'dist', 'styles.css'),
             },
             {
               fullName: 'MyApp',
-              type: 'WebApplication',
+              type: 'UIBundle',
               state: ComponentStatus.Changed,
-              filePath: join(bundlePath, 'MyApp.webapplication-meta.xml'),
+              filePath: join(bundlePath, 'MyApp.uibundle-meta.xml'),
             },
           ] as FileResponse[]);
         });
@@ -1443,7 +1443,7 @@ describe('MetadataApiDeploy', () => {
 
           const responses = result.getFileResponses();
 
-          const metaResponse = responses.find((r) => r.filePath === join(bundlePath, 'MyApp.webapplication-meta.xml'));
+          const metaResponse = responses.find((r) => r.filePath === join(bundlePath, 'MyApp.uibundle-meta.xml'));
           expect(metaResponse).to.exist;
           expect(metaResponse!.state).to.equal(ComponentStatus.Changed);
 
@@ -1545,6 +1545,31 @@ describe('MetadataApiDeploy', () => {
                 parentMessage(),
                 resourceMessage('dist/index.html'),
                 resourceMessage('dist/app.js'),
+              ] as DeployMessage[],
+            },
+          };
+          const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+          result.getFileResponses();
+
+          expect(warnSpy.called).to.be.false;
+
+          warnSpy.restore();
+          emitSpy.restore();
+        });
+
+        it('should NOT warn for consumed UIBundleResource messages', () => {
+          const warnSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emitWarning');
+          const emitSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emit');
+
+          const component = makeWebAppComponent();
+          const deployedSet = new ComponentSet([component]);
+          const apiStatus: Partial<MetadataApiDeployStatus> = {
+            details: {
+              componentSuccesses: [
+                parentMessage(),
+                resourceMessage('dist/index.html', { componentType: 'UIBundleResource' }),
+                resourceMessage('dist/app.js', { componentType: 'UIBundleResource' }),
               ] as DeployMessage[],
             },
           };

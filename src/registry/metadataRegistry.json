@@ -529,7 +529,7 @@
     "wds": "wavedataset",
     "webStoreBundle": "webstorebundle",
     "webStoreTemplate": "webstoretemplate",
-    "webapplication": "webapplication",
+    "uibundle": "webapplication",
     "workflowFlowAutomation": "workflowflowautomation",
     "weblink": "custompageweblink",
     "wlens": "wavelens",
@@ -4701,8 +4701,8 @@
       "directoryName": "uiBundles",
       "id": "webapplication",
       "inFolder": false,
-      "name": "WebApplication",
-      "suffix": "webapplication",
+      "name": "UIBundle",
+      "suffix": "uibundle",
       "strategies": {
         "adapter": "webApplications"
       },

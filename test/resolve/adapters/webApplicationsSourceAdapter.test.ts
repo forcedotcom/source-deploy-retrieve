@@ -36,7 +36,7 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 const BASE_PATH = join('path', 'to', registry.types.webapplication.directoryName);
 const APP_NAME = 'Zenith';
 const APP_PATH = join(BASE_PATH, APP_NAME);
-const META_FILE = join(APP_PATH, `${APP_NAME}.webapplication-meta.xml`);
+const META_FILE = join(APP_PATH, `${APP_NAME}.uibundle-meta.xml`);
 const JSON_FILE = join(APP_PATH, 'webapplication.json');
 const CONTENT_FILE = join(APP_PATH, 'src', 'index.html');
 
@@ -58,7 +58,7 @@ function buildTree(
   const outputDirs = options?.outputDirStructure ?? [{ dirPath: outputDirPath, children: outputDirFiles }];
 
   const appChildren: Array<string | { name: string; data: Buffer }> = [
-    `${APP_NAME}.webapplication-meta.xml`,
+    `${APP_NAME}.uibundle-meta.xml`,
     { name: 'webapplication.json', data: Buffer.from(jsonData) },
     ...(includeOutputDir ? [outputDir] : []),
   ];
@@ -118,7 +118,7 @@ describe('WebApplicationsSourceAdapter', () => {
       forceIgnore,
       noXmlTree
     );
-    const expectedXmlPath = join(APP_PATH, `${APP_NAME}.webapplication-meta.xml`);
+    const expectedXmlPath = join(APP_PATH, `${APP_NAME}.uibundle-meta.xml`);
     assert.throws(
       () => noXmlAdapter.getComponent(APP_PATH),
       SfError,
@@ -140,7 +140,7 @@ describe('WebApplicationsSourceAdapter', () => {
 
   it('should succeed when webapplication.json is absent (file-based routing)', () => {
     const vfs: VirtualDirectory[] = [
-      { dirPath: APP_PATH, children: [`${APP_NAME}.webapplication-meta.xml`, 'src'] },
+      { dirPath: APP_PATH, children: [`${APP_NAME}.uibundle-meta.xml`, 'src'] },
       { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
     ];
     const noJsonTree = new VirtualTreeContainer(vfs);
@@ -209,11 +209,7 @@ describe('WebApplicationsSourceAdapter', () => {
         const vfs: VirtualDirectory[] = [
           {
             dirPath: APP_PATH,
-            children: [
-              `${APP_NAME}.webapplication-meta.xml`,
-              { name: 'webapplication.json', data: Buffer.from('') },
-              'src',
-            ],
+            children: [`${APP_NAME}.uibundle-meta.xml`, { name: 'webapplication.json', data: Buffer.from('') }, 'src'],
           },
           { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
         ];
@@ -436,7 +432,7 @@ describe('WebApplicationsSourceAdapter', () => {
           {
             dirPath: APP_PATH,
             children: [
-              `${APP_NAME}.webapplication-meta.xml`,
+              `${APP_NAME}.uibundle-meta.xml`,
               {
                 name: 'webapplication.json',
                 data: Buffer.from(JSON.stringify({ routing: { fallback: 'index.html' } })),
@@ -457,7 +453,7 @@ describe('WebApplicationsSourceAdapter', () => {
           {
             dirPath: APP_PATH,
             children: [
-              `${APP_NAME}.webapplication-meta.xml`,
+              `${APP_NAME}.uibundle-meta.xml`,
               {
                 name: 'webapplication.json',
                 data: Buffer.from(JSON.stringify({ routing: { fallback: 'missing.html' } })),
@@ -477,7 +473,7 @@ describe('WebApplicationsSourceAdapter', () => {
           {
             dirPath: APP_PATH,
             children: [
-              `${APP_NAME}.webapplication-meta.xml`,
+              `${APP_NAME}.uibundle-meta.xml`,
               {
                 name: 'webapplication.json',
                 data: Buffer.from(JSON.stringify({ routing: { rewrites: [{ rewrite: 'index.html' }] } })),
@@ -498,7 +494,7 @@ describe('WebApplicationsSourceAdapter', () => {
           {
             dirPath: APP_PATH,
             children: [
-              `${APP_NAME}.webapplication-meta.xml`,
+              `${APP_NAME}.uibundle-meta.xml`,
               {
                 name: 'webapplication.json',
                 data: Buffer.from(JSON.stringify({ routing: { rewrites: [{ rewrite: 'missing.html' }] } })),
@@ -621,11 +617,7 @@ describe('WebApplicationsSourceAdapter', () => {
         const vfs: VirtualDirectory[] = [
           {
             dirPath: APP_PATH,
-            children: [
-              `${APP_NAME}.webapplication-meta.xml`,
-              { name: 'webapplication.json', data: Buffer.from('') },
-              'src',
-            ],
+            children: [`${APP_NAME}.uibundle-meta.xml`, { name: 'webapplication.json', data: Buffer.from('') }, 'src'],
           },
           { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
         ];
@@ -641,11 +633,7 @@ describe('WebApplicationsSourceAdapter', () => {
       const vfs: VirtualDirectory[] = [
         {
           dirPath: APP_PATH,
-          children: [
-            `${APP_NAME}.webapplication-meta.xml`,
-            { name: 'webapplication.json', data: Buffer.from('') },
-            'src',
-          ],
+          children: [`${APP_NAME}.uibundle-meta.xml`, { name: 'webapplication.json', data: Buffer.from('') }, 'src'],
         },
         { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
       ];
@@ -677,7 +665,7 @@ describe('WebApplicationsSourceAdapter', () => {
       appDir = join(webappsDir, 'TestApp');
       mkdirSync(appDir, { recursive: true });
       mkdirSync(join(appDir, 'dist'), { recursive: true });
-      writeFileSync(join(appDir, 'TestApp.webapplication-meta.xml'), '<WebApplication/>');
+      writeFileSync(join(appDir, 'TestApp.uibundle-meta.xml'), '<WebApplication/>');
       writeFileSync(join(appDir, 'dist', 'index.html'), '<html/>');
     });
 
@@ -719,13 +707,13 @@ describe('WebApplicationsSourceAdapter', () => {
   describe('app name case', () => {
     const buildAdapterWithAppName = (appName: string) => {
       const appPath = join(BASE_PATH, appName);
-      const metaFile = join(appPath, `${appName}.webapplication-meta.xml`);
+      const metaFile = join(appPath, `${appName}.uibundle-meta.xml`);
       const config = { outputDir: 'src', routing: { trailingSlash: 'auto', fallback: 'index.html' } };
       const vfs: VirtualDirectory[] = [
         {
           dirPath: appPath,
           children: [
-            `${appName}.webapplication-meta.xml`,
+            `${appName}.uibundle-meta.xml`,
             { name: 'webapplication.json', data: Buffer.from(JSON.stringify(config)) },
             'src',
           ],

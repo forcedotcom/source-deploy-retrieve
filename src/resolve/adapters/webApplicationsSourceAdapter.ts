@@ -44,7 +44,7 @@ export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
 
     const contentPath = source.content;
     const appName = baseName(contentPath);
-    const expectedXmlPath = join(contentPath, `${appName}.webapplication-meta.xml`);
+    const expectedXmlPath = join(contentPath, `${appName}.uibundle-meta.xml`);
     if (!this.tree.exists(expectedXmlPath)) {
       throw new SfError(
         messages.getMessage('error_expected_source_files', [expectedXmlPath, this.type.name]),

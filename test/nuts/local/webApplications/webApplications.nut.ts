@@ -52,7 +52,7 @@ describe('webApplications local e2e', () => {
 
     expect(zipBuffer, 'zipBuffer should be defined').to.be.instanceOf(Buffer);
     const zip = await JSZip.loadAsync(zipBuffer as Buffer);
-    expect(zip.file('uiBundles/HappyApp/HappyApp.webapplication-meta.xml')).to.exist;
+    expect(zip.file('uiBundles/HappyApp/HappyApp.uibundle-meta.xml')).to.exist;
     expect(zip.file('uiBundles/HappyApp/webapplication.json')).to.exist;
     expect(zip.file('uiBundles/HappyApp/src/index.html')).to.exist;
   });
@@ -78,7 +78,7 @@ describe('webApplications local e2e', () => {
     const cs = await ComponentSetBuilder.build({ sourcepath: [path.join(projectDir, 'force-app')] });
     const components = cs.getSourceComponents().toArray();
     expect(components).to.have.lengthOf(1);
-    expect(components[0].type.name).to.equal('WebApplication');
+    expect(components[0].type.name).to.equal('UIBundle');
     expect(components[0].fullName).to.equal('HappyApp');
     const contentFiles = components[0].walkContent().map((p) => path.basename(p));
     expect(contentFiles).to.include('index.html');
@@ -130,13 +130,13 @@ describe('webApplications local e2e', () => {
     });
     const tree = await ZipTreeContainer.create(metadataOnlyZip);
     const resolver = new MetadataResolver(new RegistryAccess(), tree);
-    const xmlPath = path.join('uiBundles', 'HappyApp', 'HappyApp.webapplication-meta.xml');
+    const xmlPath = path.join('uiBundles', 'HappyApp', 'HappyApp.uibundle-meta.xml');
 
     // webapplication.json is optional and ZipTreeContainer skips validation,
     // so a zip with only the meta XML resolves without error.
     const components = resolver.getComponentsFromPath(xmlPath);
     expect(components).to.have.lengthOf(1);
-    expect(components[0].type.name).to.equal('WebApplication');
+    expect(components[0].type.name).to.equal('UIBundle');
     expect(components[0].fullName).to.equal('HappyApp');
   });
 });

@@ -471,7 +471,7 @@ const warnIfUnmatchedServerResult =
       // WebApplicationResource messages are already handled by the parent WebApplication component
       const consumedByWebApp =
         type === 'WebApplicationResource' &&
-        fr.some((c) => c.type === 'WebApplication' && fullName.startsWith(`${c.fullName}/`));
+        fr.some((c) => c.type === 'UIBundle' && fullName.startsWith(`${c.fullName}/`));
 
       if (
         !consumedByWebApp &&
@@ -526,7 +526,7 @@ const buildFileResponsesFromComponentSet =
       .flatMap((deployedComponent): FileResponse[] => {
         // WebApplication bundles get per-file status via WebApplicationResource messages
         if (
-          deployedComponent.type.name === 'WebApplication' &&
+          deployedComponent.type.name === 'UIBundle' &&
           deployedComponent.content &&
           Array.from(responseMessages.entries()).some(
             ([key]) => key.startsWith('WebApplicationResource#') && key.includes(`${deployedComponent.fullName}/`)
@@ -578,7 +578,7 @@ const buildFileResponsesFromComponentSet =
                 })
             );
 
-          // The parent .webapplication-meta.xml gets the bundle-level state
+          // The parent .uibundle-meta.xml gets the bundle-level state
           const parentResponses: FileResponse[] =
             deployedComponent.xml && bundleState !== undefined && bundleState !== ComponentStatus.Failed
               ? [

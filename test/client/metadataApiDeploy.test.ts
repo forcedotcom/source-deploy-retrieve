@@ -1340,13 +1340,13 @@ describe('MetadataApiDeploy', () => {
         const webAppProps = {
           name: 'MyApp',
           type: registry.types.webapplication,
-          xml: join(bundlePath, 'MyApp.webapplication-meta.xml'),
+          xml: join(bundlePath, 'MyApp.uibundle-meta.xml'),
           content: bundlePath,
         };
         const webAppVirtualDirs = [
           {
             dirPath: bundlePath,
-            children: ['MyApp.webapplication-meta.xml', 'webapplication.json', 'dist'],
+            children: ['MyApp.uibundle-meta.xml', 'webapplication.json', 'dist'],
           },
           {
             dirPath: join(bundlePath, 'dist'),
@@ -1364,8 +1364,8 @@ describe('MetadataApiDeploy', () => {
             deleted: 'false',
             success: 'true',
             fullName: 'MyApp',
-            componentType: 'WebApplication',
-            fileName: 'webapplications/MyApp.webapplication-meta.xml',
+            componentType: 'UIBundle',
+            fileName: 'webapplications/MyApp.uibundle-meta.xml',
             ...overrides,
           } as DeployMessage);
 
@@ -1401,27 +1401,27 @@ describe('MetadataApiDeploy', () => {
           expect(responses).to.deep.equalInAnyOrder([
             {
               fullName: 'MyApp',
-              type: 'WebApplication',
+              type: 'UIBundle',
               state: ComponentStatus.Created,
               filePath: join(bundlePath, 'dist', 'index.html'),
             },
             {
               fullName: 'MyApp',
-              type: 'WebApplication',
+              type: 'UIBundle',
               state: ComponentStatus.Changed,
               filePath: join(bundlePath, 'dist', 'app.js'),
             },
             {
               fullName: 'MyApp',
-              type: 'WebApplication',
+              type: 'UIBundle',
               state: ComponentStatus.Unchanged,
               filePath: join(bundlePath, 'dist', 'styles.css'),
             },
             {
               fullName: 'MyApp',
-              type: 'WebApplication',
+              type: 'UIBundle',
               state: ComponentStatus.Changed,
-              filePath: join(bundlePath, 'MyApp.webapplication-meta.xml'),
+              filePath: join(bundlePath, 'MyApp.uibundle-meta.xml'),
             },
           ] as FileResponse[]);
         });
@@ -1443,7 +1443,7 @@ describe('MetadataApiDeploy', () => {
 
           const responses = result.getFileResponses();
 
-          const metaResponse = responses.find((r) => r.filePath === join(bundlePath, 'MyApp.webapplication-meta.xml'));
+          const metaResponse = responses.find((r) => r.filePath === join(bundlePath, 'MyApp.uibundle-meta.xml'));
           expect(metaResponse).to.exist;
           expect(metaResponse!.state).to.equal(ComponentStatus.Changed);
 

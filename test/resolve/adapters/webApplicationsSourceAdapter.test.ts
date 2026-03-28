@@ -37,10 +37,10 @@ const BASE_PATH = join('path', 'to', registry.types.uibundle.directoryName);
 const APP_NAME = 'Zenith';
 const APP_PATH = join(BASE_PATH, APP_NAME);
 const META_FILE = join(APP_PATH, `${APP_NAME}.uibundle-meta.xml`);
-const JSON_FILE = join(APP_PATH, 'uibundle.json');
+const JSON_FILE = join(APP_PATH, 'ui-bundle.json');
 const CONTENT_FILE = join(APP_PATH, 'src', 'index.html');
 
-/** Helper: builds a VirtualTreeContainer with uibundle.json and optional outputDir files. */
+/** Helper: builds a VirtualTreeContainer with ui-bundle.json and optional outputDir files. */
 function buildTree(
   jsonContent: object | string,
   options?: {
@@ -59,7 +59,7 @@ function buildTree(
 
   const appChildren: Array<string | { name: string; data: Buffer }> = [
     `${APP_NAME}.uibundle-meta.xml`,
-    { name: 'uibundle.json', data: Buffer.from(jsonData) },
+    { name: 'ui-bundle.json', data: Buffer.from(jsonData) },
     ...(includeOutputDir ? [outputDir] : []),
   ];
 
@@ -107,7 +107,7 @@ describe('WebApplicationsSourceAdapter', () => {
     const noXmlVfs: VirtualDirectory[] = [
       {
         dirPath: APP_PATH,
-        children: [{ name: 'uibundle.json', data: Buffer.from(JSON.stringify({ outputDir: 'src' })) }, 'src'],
+        children: [{ name: 'ui-bundle.json', data: Buffer.from(JSON.stringify({ outputDir: 'src' })) }, 'src'],
       },
       { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
     ];
@@ -138,7 +138,7 @@ describe('WebApplicationsSourceAdapter', () => {
     expect(comp).to.not.be.undefined;
   });
 
-  it('should succeed when uibundle.json is absent (file-based routing)', () => {
+  it('should succeed when ui-bundle.json is absent (file-based routing)', () => {
     const vfs: VirtualDirectory[] = [
       { dirPath: APP_PATH, children: [`${APP_NAME}.uibundle-meta.xml`, 'src'] },
       { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
@@ -155,7 +155,7 @@ describe('WebApplicationsSourceAdapter', () => {
     expect(comp!.name).to.equal(APP_NAME);
   });
 
-  it('should allow missing uibundle.json when resolving metadata', () => {
+  it('should allow missing ui-bundle.json when resolving metadata', () => {
     const metadataTree = VirtualTreeContainer.fromFilePaths([META_FILE]);
     const metadataAdapter = new WebApplicationsSourceAdapter(
       registry.types.uibundle,
@@ -177,7 +177,7 @@ describe('WebApplicationsSourceAdapter', () => {
     expect(metadataAdapter.getComponent(META_FILE, false)).to.deep.equal(expectedMetadataComponent);
   });
 
-  it('should succeed when uibundle.json is forceignored (skip validation, treat as absent)', () => {
+  it('should succeed when ui-bundle.json is forceignored (skip validation, treat as absent)', () => {
     const testUtil = new RegistryTestUtil();
     const fi = testUtil.stubForceIgnore({
       seed: APP_PATH,
@@ -191,7 +191,7 @@ describe('WebApplicationsSourceAdapter', () => {
     testUtil.restore();
   });
 
-  describe('uibundle.json validation (VirtualTreeContainer — validation skipped)', () => {
+  describe('ui-bundle.json validation (VirtualTreeContainer — validation skipped)', () => {
     const expectValidationSkipped = (jsonContent: object | string, options?: Parameters<typeof buildTree>[1]) => {
       const t = buildTree(jsonContent, options);
       const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, t);
@@ -209,7 +209,7 @@ describe('WebApplicationsSourceAdapter', () => {
         const vfs: VirtualDirectory[] = [
           {
             dirPath: APP_PATH,
-            children: [`${APP_NAME}.uibundle-meta.xml`, { name: 'uibundle.json', data: Buffer.from('') }, 'src'],
+            children: [`${APP_NAME}.uibundle-meta.xml`, { name: 'ui-bundle.json', data: Buffer.from('') }, 'src'],
           },
           { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
         ];
@@ -434,7 +434,7 @@ describe('WebApplicationsSourceAdapter', () => {
             children: [
               `${APP_NAME}.uibundle-meta.xml`,
               {
-                name: 'uibundle.json',
+                name: 'ui-bundle.json',
                 data: Buffer.from(JSON.stringify({ routing: { fallback: 'index.html' } })),
               },
               'src',
@@ -455,7 +455,7 @@ describe('WebApplicationsSourceAdapter', () => {
             children: [
               `${APP_NAME}.uibundle-meta.xml`,
               {
-                name: 'uibundle.json',
+                name: 'ui-bundle.json',
                 data: Buffer.from(JSON.stringify({ routing: { fallback: 'missing.html' } })),
               },
               'src',
@@ -475,7 +475,7 @@ describe('WebApplicationsSourceAdapter', () => {
             children: [
               `${APP_NAME}.uibundle-meta.xml`,
               {
-                name: 'uibundle.json',
+                name: 'ui-bundle.json',
                 data: Buffer.from(JSON.stringify({ routing: { rewrites: [{ rewrite: 'index.html' }] } })),
               },
               'src',
@@ -496,7 +496,7 @@ describe('WebApplicationsSourceAdapter', () => {
             children: [
               `${APP_NAME}.uibundle-meta.xml`,
               {
-                name: 'uibundle.json',
+                name: 'ui-bundle.json',
                 data: Buffer.from(JSON.stringify({ routing: { rewrites: [{ rewrite: 'missing.html' }] } })),
               },
               'src',
@@ -511,7 +511,7 @@ describe('WebApplicationsSourceAdapter', () => {
     });
 
     describe('Size Limit', () => {
-      it('uibundle.json over 100 KB - skipped', () => {
+      it('ui-bundle.json over 100 KB - skipped', () => {
         const filler = Array.from({ length: 2000 }, (_, i) => ({
           source: `/${'a'.repeat(20)}${i}`,
           headers: [{ key: 'X-Pad', value: 'x'.repeat(30) }],
@@ -521,7 +521,7 @@ describe('WebApplicationsSourceAdapter', () => {
         expectValidationSkipped(oversized);
       });
 
-      it('allows uibundle.json just under 100 KB', () => {
+      it('allows ui-bundle.json just under 100 KB', () => {
         const filler = Array.from({ length: 800 }, (_, i) => ({
           source: `/${i}`,
           headers: [{ key: 'X-Pad', value: 'x'.repeat(50) }],
@@ -613,11 +613,11 @@ describe('WebApplicationsSourceAdapter', () => {
         }
       });
 
-      it('empty uibundle.json does not throw with VirtualTreeContainer', () => {
+      it('empty ui-bundle.json does not throw with VirtualTreeContainer', () => {
         const vfs: VirtualDirectory[] = [
           {
             dirPath: APP_PATH,
-            children: [`${APP_NAME}.uibundle-meta.xml`, { name: 'uibundle.json', data: Buffer.from('') }, 'src'],
+            children: [`${APP_NAME}.uibundle-meta.xml`, { name: 'ui-bundle.json', data: Buffer.from('') }, 'src'],
           },
           { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
         ];
@@ -629,11 +629,11 @@ describe('WebApplicationsSourceAdapter', () => {
   });
 
   describe('VirtualTreeContainer skips validation', () => {
-    it('empty uibundle.json resolves successfully', () => {
+    it('empty ui-bundle.json resolves successfully', () => {
       const vfs: VirtualDirectory[] = [
         {
           dirPath: APP_PATH,
-          children: [`${APP_NAME}.uibundle-meta.xml`, { name: 'uibundle.json', data: Buffer.from('') }, 'src'],
+          children: [`${APP_NAME}.uibundle-meta.xml`, { name: 'ui-bundle.json', data: Buffer.from('') }, 'src'],
         },
         { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
       ];
@@ -674,7 +674,7 @@ describe('WebApplicationsSourceAdapter', () => {
     });
 
     it('should validate and succeed for valid content', () => {
-      writeFileSync(join(appDir, 'uibundle.json'), JSON.stringify({ outputDir: 'dist' }));
+      writeFileSync(join(appDir, 'ui-bundle.json'), JSON.stringify({ outputDir: 'dist' }));
       const fsTree = new NodeFSTreeContainer();
       const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, fsTree);
       const comp = a.getComponent(appDir);
@@ -683,20 +683,20 @@ describe('WebApplicationsSourceAdapter', () => {
     });
 
     it('should throw for empty file', () => {
-      writeFileSync(join(appDir, 'uibundle.json'), '');
+      writeFileSync(join(appDir, 'ui-bundle.json'), '');
       const fsTree = new NodeFSTreeContainer();
       const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, fsTree);
       assert.throws(() => a.getComponent(appDir), SfError, /must not be empty/);
     });
 
     it('should throw for invalid JSON', () => {
-      writeFileSync(join(appDir, 'uibundle.json'), '{"unclosed');
+      writeFileSync(join(appDir, 'ui-bundle.json'), '{"unclosed');
       const fsTree = new NodeFSTreeContainer();
       const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, fsTree);
       assert.throws(() => a.getComponent(appDir), SfError, /uibundle\.json/);
     });
 
-    it('should skip when uibundle.json is absent', () => {
+    it('should skip when ui-bundle.json is absent', () => {
       const fsTree = new NodeFSTreeContainer();
       const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, fsTree);
       const comp = a.getComponent(appDir);
@@ -714,7 +714,7 @@ describe('WebApplicationsSourceAdapter', () => {
           dirPath: appPath,
           children: [
             `${appName}.uibundle-meta.xml`,
-            { name: 'uibundle.json', data: Buffer.from(JSON.stringify(config)) },
+            { name: 'ui-bundle.json', data: Buffer.from(JSON.stringify(config)) },
             'src',
           ],
         },

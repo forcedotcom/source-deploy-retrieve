@@ -1346,7 +1346,7 @@ describe('MetadataApiDeploy', () => {
         const webAppVirtualDirs = [
           {
             dirPath: bundlePath,
-            children: ['MyApp.uibundle-meta.xml', 'uibundle.json', 'dist'],
+            children: ['MyApp.uibundle-meta.xml', 'ui-bundle.json', 'dist'],
           },
           {
             dirPath: join(bundlePath, 'dist'),

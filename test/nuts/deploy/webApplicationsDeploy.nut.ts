@@ -100,7 +100,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     fs.mkdirSync(distDir, { recursive: true });
 
     writeMetaXml(appDir, appName);
-    fs.writeFileSync(path.join(appDir, 'uibundle.json'), JSON.stringify({ outputDir: 'dist' }));
+    fs.writeFileSync(path.join(appDir, 'ui-bundle.json'), JSON.stringify({ outputDir: 'dist' }));
     fs.writeFileSync(path.join(distDir, 'index.html'), '<html><body>Hello</body></html>');
     fs.writeFileSync(path.join(distDir, 'app.js'), 'console.log("init");');
 
@@ -131,7 +131,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     fs.mkdirSync(distDir, { recursive: true });
 
     writeMetaXml(appDir, appName);
-    fs.writeFileSync(path.join(appDir, 'uibundle.json'), JSON.stringify({ outputDir: 'dist' }));
+    fs.writeFileSync(path.join(appDir, 'ui-bundle.json'), JSON.stringify({ outputDir: 'dist' }));
     fs.writeFileSync(path.join(distDir, 'index.html'), '<html><body>v1</body></html>');
 
     await deployAndWait(appDir, targetOrg);
@@ -155,7 +155,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     fs.mkdirSync(distDir, { recursive: true });
 
     writeMetaXml(appDir, appName);
-    fs.writeFileSync(path.join(appDir, 'uibundle.json'), JSON.stringify({ outputDir: 'dist' }));
+    fs.writeFileSync(path.join(appDir, 'ui-bundle.json'), JSON.stringify({ outputDir: 'dist' }));
     fs.writeFileSync(path.join(distDir, 'index.html'), '<html><body>keep</body></html>');
     fs.writeFileSync(path.join(distDir, 'remove-me.js'), 'console.log("will be deleted");');
 
@@ -181,7 +181,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     fs.mkdirSync(distDir, { recursive: true });
 
     writeMetaXml(appDir, appName);
-    fs.writeFileSync(path.join(appDir, 'uibundle.json'), JSON.stringify({ outputDir: 'dist' }));
+    fs.writeFileSync(path.join(appDir, 'ui-bundle.json'), JSON.stringify({ outputDir: 'dist' }));
     fs.writeFileSync(path.join(distDir, 'index.html'), '<html><body>static</body></html>');
     fs.writeFileSync(path.join(distDir, 'app.js'), 'console.log("static");');
 
@@ -191,7 +191,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     expect(files.length, 'deploy should return file results').to.be.greaterThan(0);
 
     const contentFiles = files.filter(
-      (f) => !f.filePath.endsWith('.uibundle-meta.xml') && !f.filePath.endsWith('uibundle.json')
+      (f) => !f.filePath.endsWith('.uibundle-meta.xml') && !f.filePath.endsWith('ui-bundle.json')
     );
     for (const f of contentFiles) {
       expect(f.state, `${f.filePath} should be Unchanged`).to.equal('Unchanged');
@@ -208,7 +208,7 @@ describe('WebApplication deploy NUTs (real org)', () => {
     const jsContent = 'console.log("retrieve");';
 
     writeMetaXml(appDir, appName);
-    fs.writeFileSync(path.join(appDir, 'uibundle.json'), JSON.stringify({ outputDir: 'dist' }));
+    fs.writeFileSync(path.join(appDir, 'ui-bundle.json'), JSON.stringify({ outputDir: 'dist' }));
     fs.writeFileSync(path.join(distDir, 'index.html'), htmlContent);
     fs.writeFileSync(path.join(distDir, 'app.js'), jsContent);
 

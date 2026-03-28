@@ -385,13 +385,13 @@ Source Adapter for WebApplication metadata types. This metadata type is a bundle
 webapplications/
 ├── MyApp/
 |   ├── MyApp.uibundle-meta.xml
-|   ├── uibundle.json
+|   ├── ui-bundle.json
 |   └── dist/
 |       ├── index.html
 |       └── assets/
 ```
 
-The metadata XML file that ends with with "uibundle-meta.xml" belongs to the WebApplication MD type. The `uibundle.json` descriptor configures the deployable content (e.g. `outputDir` pointing to `dist`). For deploy/source, the adapter requires at least one non-metadata content file (e.g. `index.html`) in addition to the XML and descriptor.
+The metadata XML file that ends with with "uibundle-meta.xml" belongs to the WebApplication MD type. The `ui-bundle.json` descriptor configures the deployable content (e.g. `outputDir` pointing to `dist`). For deploy/source, the adapter requires at least one non-metadata content file (e.g. `index.html`) in addition to the XML and descriptor.
 
 ### The `matchingContentAdapter`
 

@@ -29,7 +29,7 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 /**
  * Source adapter for WebApplication bundles.
  *
- * uibundle.json is optional; validated on deploy, skipped on retrieve.
+ * ui-bundle.json is optional; validated on deploy, skipped on retrieve.
  */
 export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
   protected populate(
@@ -71,7 +71,7 @@ export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
 
     // Validate only on real filesystem; ZipTreeContainer (retrieve) doesn't support readFileSync.
     if (isResolvingSource && this.tree instanceof NodeFSTreeContainer) {
-      const descriptorPath = join(contentPath, 'uibundle.json');
+      const descriptorPath = join(contentPath, 'ui-bundle.json');
       const hasDescriptor = this.tree.exists(descriptorPath) && !this.forceIgnore.denies(descriptorPath);
 
       if (hasDescriptor) {

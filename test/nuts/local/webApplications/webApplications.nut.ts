@@ -53,7 +53,7 @@ describe('webApplications local e2e', () => {
     expect(zipBuffer, 'zipBuffer should be defined').to.be.instanceOf(Buffer);
     const zip = await JSZip.loadAsync(zipBuffer as Buffer);
     expect(zip.file('uiBundles/HappyApp/HappyApp.uibundle-meta.xml')).to.exist;
-    expect(zip.file('uiBundles/HappyApp/uibundle.json')).to.exist;
+    expect(zip.file('uiBundles/HappyApp/ui-bundle.json')).to.exist;
     expect(zip.file('uiBundles/HappyApp/src/index.html')).to.exist;
   });
 
@@ -84,10 +84,10 @@ describe('webApplications local e2e', () => {
     expect(contentFiles).to.include('index.html');
     expect(contentFiles).to.include('app.js');
     expect(contentFiles).to.include('styles.css');
-    expect(contentFiles).to.include('uibundle.json');
+    expect(contentFiles).to.include('ui-bundle.json');
   });
 
-  it('throws when uibundle.json is invalid (NodeFSTreeContainer validation)', async () => {
+  it('throws when ui-bundle.json is invalid (NodeFSTreeContainer validation)', async () => {
     const descriptorPath = path.join(
       projectDir,
       'force-app',
@@ -95,7 +95,7 @@ describe('webApplications local e2e', () => {
       'default',
       'uiBundles',
       'HappyApp',
-      'uibundle.json'
+      'ui-bundle.json'
     );
     const original = fs.readFileSync(descriptorPath, 'utf8');
     try {
@@ -120,7 +120,7 @@ describe('webApplications local e2e', () => {
     expect(zipBuffer, 'zipBuffer should be defined').to.be.instanceOf(Buffer);
 
     const zip = await JSZip.loadAsync(zipBuffer as Buffer);
-    zip.remove('uiBundles/HappyApp/uibundle.json');
+    zip.remove('uiBundles/HappyApp/ui-bundle.json');
     zip.remove('uiBundles/HappyApp/src/index.html');
 
     const metadataOnlyZip = await zip.generateAsync({
@@ -132,7 +132,7 @@ describe('webApplications local e2e', () => {
     const resolver = new MetadataResolver(new RegistryAccess(), tree);
     const xmlPath = path.join('uiBundles', 'HappyApp', 'HappyApp.uibundle-meta.xml');
 
-    // uibundle.json is optional and ZipTreeContainer skips validation,
+    // ui-bundle.json is optional and ZipTreeContainer skips validation,
     // so a zip with only the meta XML resolves without error.
     const components = resolver.getComponentsFromPath(xmlPath);
     expect(components).to.have.lengthOf(1);

@@ -146,7 +146,7 @@ function createFileError(message: string, actions?: string[]): SfError {
   return new SfError(message, 'ExpectedSourceFilesError', actions);
 }
 
-/** Validate uibundle.json contents. Checks structure first, then schema, then file existence. */
+/** Validate ui-bundle.json contents. Checks structure first, then schema, then file existence. */
 export function validateWebApplicationJson(
   raw: Buffer,
   descriptorPath: string,
@@ -205,7 +205,7 @@ export function validateWebApplicationJson(
     const list = disallowed.map((k) => `'${k}'`).join(', ');
     const word = disallowed.length === 1 ? 'property' : 'properties';
     throw createConfigError(msgs.getMessage('webapp_unknown_props', [word, list, 'outputDir, routing, headers']), [
-      `Remove ${list} from uibundle.json.`,
+      `Remove ${list} from ui-bundle.json.`,
     ]);
   }
 

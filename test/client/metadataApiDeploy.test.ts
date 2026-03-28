@@ -1339,14 +1339,14 @@ describe('MetadataApiDeploy', () => {
         const bundlePath = join('path', 'to', 'uiBundles', 'MyApp');
         const webAppProps = {
           name: 'MyApp',
-          type: registry.types.webapplication,
+          type: registry.types.uibundle,
           xml: join(bundlePath, 'MyApp.uibundle-meta.xml'),
           content: bundlePath,
         };
         const webAppVirtualDirs = [
           {
             dirPath: bundlePath,
-            children: ['MyApp.uibundle-meta.xml', 'webapplication.json', 'dist'],
+            children: ['MyApp.uibundle-meta.xml', 'uibundle.json', 'dist'],
           },
           {
             dirPath: join(bundlePath, 'dist'),
@@ -1545,6 +1545,31 @@ describe('MetadataApiDeploy', () => {
                 parentMessage(),
                 resourceMessage('dist/index.html'),
                 resourceMessage('dist/app.js'),
+              ] as DeployMessage[],
+            },
+          };
+          const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+          result.getFileResponses();
+
+          expect(warnSpy.called).to.be.false;
+
+          warnSpy.restore();
+          emitSpy.restore();
+        });
+
+        it('should NOT warn for consumed UIBundleResource messages', () => {
+          const warnSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emitWarning');
+          const emitSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emit');
+
+          const component = makeWebAppComponent();
+          const deployedSet = new ComponentSet([component]);
+          const apiStatus: Partial<MetadataApiDeployStatus> = {
+            details: {
+              componentSuccesses: [
+                parentMessage(),
+                resourceMessage('dist/index.html', { componentType: 'UIBundleResource' }),
+                resourceMessage('dist/app.js', { componentType: 'UIBundleResource' }),
               ] as DeployMessage[],
             },
           };

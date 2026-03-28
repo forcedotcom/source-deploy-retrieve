@@ -470,7 +470,7 @@ const warnIfUnmatchedServerResult =
 
       // WebApplicationResource messages are already handled by the parent WebApplication component
       const consumedByWebApp =
-        type === 'WebApplicationResource' &&
+        (type === 'WebApplicationResource' || type === 'UIBundleResource') &&
         fr.some((c) => c.type === 'UIBundle' && fullName.startsWith(`${c.fullName}/`));
 
       if (

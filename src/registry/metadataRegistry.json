@@ -72,7 +72,7 @@
     "waveTemplates": "wavetemplatebundle",
     "appTemplates": "appframeworktemplatebundle",
     "lightningTypes": "lightningtypebundle",
-    "uiBundles": "webapplication"
+    "uiBundles": "uibundle"
   },
   "suffixes": {
     "Canvas": "canvasmetadata",
@@ -529,7 +529,7 @@
     "wds": "wavedataset",
     "webStoreBundle": "webstorebundle",
     "webStoreTemplate": "webstoretemplate",
-    "uibundle": "webapplication",
+    "uibundle": "uibundle",
     "workflowFlowAutomation": "workflowflowautomation",
     "weblink": "custompageweblink",
     "wlens": "wavelens",
@@ -4697,9 +4697,9 @@
       "name": "WaveXmd",
       "suffix": "xmd"
     },
-    "webapplication": {
+    "uibundle": {
       "directoryName": "uiBundles",
-      "id": "webapplication",
+      "id": "uibundle",
       "inFolder": false,
       "name": "UIBundle",
       "suffix": "uibundle",

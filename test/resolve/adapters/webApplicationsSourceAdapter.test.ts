@@ -33,14 +33,14 @@ import { RegistryTestUtil } from '../registryTestUtil';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
-const BASE_PATH = join('path', 'to', registry.types.webapplication.directoryName);
+const BASE_PATH = join('path', 'to', registry.types.uibundle.directoryName);
 const APP_NAME = 'Zenith';
 const APP_PATH = join(BASE_PATH, APP_NAME);
 const META_FILE = join(APP_PATH, `${APP_NAME}.uibundle-meta.xml`);
-const JSON_FILE = join(APP_PATH, 'webapplication.json');
+const JSON_FILE = join(APP_PATH, 'uibundle.json');
 const CONTENT_FILE = join(APP_PATH, 'src', 'index.html');
 
-/** Helper: builds a VirtualTreeContainer with webapplication.json and optional outputDir files. */
+/** Helper: builds a VirtualTreeContainer with uibundle.json and optional outputDir files. */
 function buildTree(
   jsonContent: object | string,
   options?: {
@@ -59,7 +59,7 @@ function buildTree(
 
   const appChildren: Array<string | { name: string; data: Buffer }> = [
     `${APP_NAME}.uibundle-meta.xml`,
-    { name: 'webapplication.json', data: Buffer.from(jsonData) },
+    { name: 'uibundle.json', data: Buffer.from(jsonData) },
     ...(includeOutputDir ? [outputDir] : []),
   ];
 
@@ -74,12 +74,12 @@ describe('WebApplicationsSourceAdapter', () => {
   const registryAccess = new RegistryAccess();
   const forceIgnore = new ForceIgnore();
   const tree = buildTree({ outputDir: 'src' });
-  const adapter = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, tree);
+  const adapter = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, tree);
 
   const expectedComponent = new SourceComponent(
     {
       name: APP_NAME,
-      type: registry.types.webapplication,
+      type: registry.types.uibundle,
       content: APP_PATH,
       xml: META_FILE,
     },
@@ -107,13 +107,13 @@ describe('WebApplicationsSourceAdapter', () => {
     const noXmlVfs: VirtualDirectory[] = [
       {
         dirPath: APP_PATH,
-        children: [{ name: 'webapplication.json', data: Buffer.from(JSON.stringify({ outputDir: 'src' })) }, 'src'],
+        children: [{ name: 'uibundle.json', data: Buffer.from(JSON.stringify({ outputDir: 'src' })) }, 'src'],
       },
       { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
     ];
     const noXmlTree = new VirtualTreeContainer(noXmlVfs);
     const noXmlAdapter = new WebApplicationsSourceAdapter(
-      registry.types.webapplication,
+      registry.types.uibundle,
       registryAccess,
       forceIgnore,
       noXmlTree
@@ -122,14 +122,14 @@ describe('WebApplicationsSourceAdapter', () => {
     assert.throws(
       () => noXmlAdapter.getComponent(APP_PATH),
       SfError,
-      messages.getMessage('error_expected_source_files', [expectedXmlPath, registry.types.webapplication.name])
+      messages.getMessage('error_expected_source_files', [expectedXmlPath, registry.types.uibundle.name])
     );
   });
 
   it('should skip outputDir validation for VirtualTreeContainer (content files missing)', () => {
     const noContentTree = buildTree({ outputDir: 'dist' }, { outputDir: 'dist', includeOutputDir: false });
     const noContentAdapter = new WebApplicationsSourceAdapter(
-      registry.types.webapplication,
+      registry.types.uibundle,
       registryAccess,
       forceIgnore,
       noContentTree
@@ -138,14 +138,14 @@ describe('WebApplicationsSourceAdapter', () => {
     expect(comp).to.not.be.undefined;
   });
 
-  it('should succeed when webapplication.json is absent (file-based routing)', () => {
+  it('should succeed when uibundle.json is absent (file-based routing)', () => {
     const vfs: VirtualDirectory[] = [
       { dirPath: APP_PATH, children: [`${APP_NAME}.uibundle-meta.xml`, 'src'] },
       { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
     ];
     const noJsonTree = new VirtualTreeContainer(vfs);
     const noJsonAdapter = new WebApplicationsSourceAdapter(
-      registry.types.webapplication,
+      registry.types.uibundle,
       registryAccess,
       forceIgnore,
       noJsonTree
@@ -155,10 +155,10 @@ describe('WebApplicationsSourceAdapter', () => {
     expect(comp!.name).to.equal(APP_NAME);
   });
 
-  it('should allow missing webapplication.json when resolving metadata', () => {
+  it('should allow missing uibundle.json when resolving metadata', () => {
     const metadataTree = VirtualTreeContainer.fromFilePaths([META_FILE]);
     const metadataAdapter = new WebApplicationsSourceAdapter(
-      registry.types.webapplication,
+      registry.types.uibundle,
       registryAccess,
       forceIgnore,
       metadataTree
@@ -166,7 +166,7 @@ describe('WebApplicationsSourceAdapter', () => {
     const expectedMetadataComponent = new SourceComponent(
       {
         name: APP_NAME,
-        type: registry.types.webapplication,
+        type: registry.types.uibundle,
         content: APP_PATH,
         xml: META_FILE,
       },
@@ -177,13 +177,13 @@ describe('WebApplicationsSourceAdapter', () => {
     expect(metadataAdapter.getComponent(META_FILE, false)).to.deep.equal(expectedMetadataComponent);
   });
 
-  it('should succeed when webapplication.json is forceignored (skip validation, treat as absent)', () => {
+  it('should succeed when uibundle.json is forceignored (skip validation, treat as absent)', () => {
     const testUtil = new RegistryTestUtil();
     const fi = testUtil.stubForceIgnore({
       seed: APP_PATH,
       deny: [JSON_FILE],
     });
-    const ignoredAdapter = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, fi, tree);
+    const ignoredAdapter = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, fi, tree);
 
     const comp = ignoredAdapter.getComponent(APP_PATH);
     expect(comp).to.not.be.undefined;
@@ -191,16 +191,16 @@ describe('WebApplicationsSourceAdapter', () => {
     testUtil.restore();
   });
 
-  describe('webapplication.json validation (VirtualTreeContainer — validation skipped)', () => {
+  describe('uibundle.json validation (VirtualTreeContainer — validation skipped)', () => {
     const expectValidationSkipped = (jsonContent: object | string, options?: Parameters<typeof buildTree>[1]) => {
       const t = buildTree(jsonContent, options);
-      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+      const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, t);
       expect(a.getComponent(APP_PATH)).to.not.be.undefined;
     };
 
     const expectPass = (jsonContent: object, options?: Parameters<typeof buildTree>[1]) => {
       const t = buildTree(jsonContent, options);
-      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+      const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, t);
       expect(a.getComponent(APP_PATH)).to.not.be.undefined;
     };
 
@@ -209,12 +209,12 @@ describe('WebApplicationsSourceAdapter', () => {
         const vfs: VirtualDirectory[] = [
           {
             dirPath: APP_PATH,
-            children: [`${APP_NAME}.uibundle-meta.xml`, { name: 'webapplication.json', data: Buffer.from('') }, 'src'],
+            children: [`${APP_NAME}.uibundle-meta.xml`, { name: 'uibundle.json', data: Buffer.from('') }, 'src'],
           },
           { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
         ];
         const t = new VirtualTreeContainer(vfs);
-        const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+        const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, t);
         expect(a.getComponent(APP_PATH)).to.not.be.undefined;
       });
 
@@ -434,7 +434,7 @@ describe('WebApplicationsSourceAdapter', () => {
             children: [
               `${APP_NAME}.uibundle-meta.xml`,
               {
-                name: 'webapplication.json',
+                name: 'uibundle.json',
                 data: Buffer.from(JSON.stringify({ routing: { fallback: 'index.html' } })),
               },
               'src',
@@ -444,7 +444,7 @@ describe('WebApplicationsSourceAdapter', () => {
           { dirPath: join(APP_PATH, 'src'), children: ['app.js'] },
         ];
         const t = new VirtualTreeContainer(vfs);
-        const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+        const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, t);
         expect(a.getComponent(APP_PATH)).to.not.be.undefined;
       });
 
@@ -455,7 +455,7 @@ describe('WebApplicationsSourceAdapter', () => {
             children: [
               `${APP_NAME}.uibundle-meta.xml`,
               {
-                name: 'webapplication.json',
+                name: 'uibundle.json',
                 data: Buffer.from(JSON.stringify({ routing: { fallback: 'missing.html' } })),
               },
               'src',
@@ -464,7 +464,7 @@ describe('WebApplicationsSourceAdapter', () => {
           { dirPath: join(APP_PATH, 'src'), children: ['other.html'] },
         ];
         const t = new VirtualTreeContainer(vfs);
-        const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+        const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, t);
         expect(a.getComponent(APP_PATH)).to.not.be.undefined;
       });
 
@@ -475,7 +475,7 @@ describe('WebApplicationsSourceAdapter', () => {
             children: [
               `${APP_NAME}.uibundle-meta.xml`,
               {
-                name: 'webapplication.json',
+                name: 'uibundle.json',
                 data: Buffer.from(JSON.stringify({ routing: { rewrites: [{ rewrite: 'index.html' }] } })),
               },
               'src',
@@ -485,7 +485,7 @@ describe('WebApplicationsSourceAdapter', () => {
           { dirPath: join(APP_PATH, 'src'), children: ['app.js'] },
         ];
         const t = new VirtualTreeContainer(vfs);
-        const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+        const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, t);
         expect(a.getComponent(APP_PATH)).to.not.be.undefined;
       });
 
@@ -496,7 +496,7 @@ describe('WebApplicationsSourceAdapter', () => {
             children: [
               `${APP_NAME}.uibundle-meta.xml`,
               {
-                name: 'webapplication.json',
+                name: 'uibundle.json',
                 data: Buffer.from(JSON.stringify({ routing: { rewrites: [{ rewrite: 'missing.html' }] } })),
               },
               'src',
@@ -505,13 +505,13 @@ describe('WebApplicationsSourceAdapter', () => {
           { dirPath: join(APP_PATH, 'src'), children: ['other.html'] },
         ];
         const t = new VirtualTreeContainer(vfs);
-        const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+        const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, t);
         expect(a.getComponent(APP_PATH)).to.not.be.undefined;
       });
     });
 
     describe('Size Limit', () => {
-      it('webapplication.json over 100 KB - skipped', () => {
+      it('uibundle.json over 100 KB - skipped', () => {
         const filler = Array.from({ length: 2000 }, (_, i) => ({
           source: `/${'a'.repeat(20)}${i}`,
           headers: [{ key: 'X-Pad', value: 'x'.repeat(30) }],
@@ -521,7 +521,7 @@ describe('WebApplicationsSourceAdapter', () => {
         expectValidationSkipped(oversized);
       });
 
-      it('allows webapplication.json just under 100 KB', () => {
+      it('allows uibundle.json just under 100 KB', () => {
         const filler = Array.from({ length: 800 }, (_, i) => ({
           source: `/${i}`,
           headers: [{ key: 'X-Pad', value: 'x'.repeat(50) }],
@@ -608,49 +608,49 @@ describe('WebApplicationsSourceAdapter', () => {
         ];
         for (const { input, options } of cases) {
           const t = buildTree(input, options);
-          const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+          const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, t);
           expect(() => a.getComponent(APP_PATH)).to.not.throw();
         }
       });
 
-      it('empty webapplication.json does not throw with VirtualTreeContainer', () => {
+      it('empty uibundle.json does not throw with VirtualTreeContainer', () => {
         const vfs: VirtualDirectory[] = [
           {
             dirPath: APP_PATH,
-            children: [`${APP_NAME}.uibundle-meta.xml`, { name: 'webapplication.json', data: Buffer.from('') }, 'src'],
+            children: [`${APP_NAME}.uibundle-meta.xml`, { name: 'uibundle.json', data: Buffer.from('') }, 'src'],
           },
           { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
         ];
         const t = new VirtualTreeContainer(vfs);
-        const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+        const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, t);
         expect(() => a.getComponent(APP_PATH)).to.not.throw();
       });
     });
   });
 
   describe('VirtualTreeContainer skips validation', () => {
-    it('empty webapplication.json resolves successfully', () => {
+    it('empty uibundle.json resolves successfully', () => {
       const vfs: VirtualDirectory[] = [
         {
           dirPath: APP_PATH,
-          children: [`${APP_NAME}.uibundle-meta.xml`, { name: 'webapplication.json', data: Buffer.from('') }, 'src'],
+          children: [`${APP_NAME}.uibundle-meta.xml`, { name: 'uibundle.json', data: Buffer.from('') }, 'src'],
         },
         { dirPath: join(APP_PATH, 'src'), children: ['index.html'] },
       ];
       const t = new VirtualTreeContainer(vfs);
-      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+      const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, t);
       expect(a.getComponent(APP_PATH)).to.not.be.undefined;
     });
 
     it('invalid JSON resolves successfully', () => {
       const t = buildTree('{"unclosed');
-      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+      const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, t);
       expect(a.getComponent(APP_PATH)).to.not.be.undefined;
     });
 
     it('path traversal content resolves successfully', () => {
       const t = buildTree({ outputDir: '../../../etc' }, { includeOutputDir: false });
-      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t);
+      const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, t);
       expect(a.getComponent(APP_PATH)).to.not.be.undefined;
     });
   });
@@ -661,7 +661,7 @@ describe('WebApplicationsSourceAdapter', () => {
 
     beforeEach(() => {
       tmpDir = mkdtempSync(join(tmpdir(), 'webapp-test-'));
-      const webappsDir = join(tmpDir, registry.types.webapplication.directoryName);
+      const webappsDir = join(tmpDir, registry.types.uibundle.directoryName);
       appDir = join(webappsDir, 'TestApp');
       mkdirSync(appDir, { recursive: true });
       mkdirSync(join(appDir, 'dist'), { recursive: true });
@@ -674,31 +674,31 @@ describe('WebApplicationsSourceAdapter', () => {
     });
 
     it('should validate and succeed for valid content', () => {
-      writeFileSync(join(appDir, 'webapplication.json'), JSON.stringify({ outputDir: 'dist' }));
+      writeFileSync(join(appDir, 'uibundle.json'), JSON.stringify({ outputDir: 'dist' }));
       const fsTree = new NodeFSTreeContainer();
-      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, fsTree);
+      const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, fsTree);
       const comp = a.getComponent(appDir);
       expect(comp).to.not.be.undefined;
       expect(comp!.name).to.equal('TestApp');
     });
 
     it('should throw for empty file', () => {
-      writeFileSync(join(appDir, 'webapplication.json'), '');
+      writeFileSync(join(appDir, 'uibundle.json'), '');
       const fsTree = new NodeFSTreeContainer();
-      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, fsTree);
+      const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, fsTree);
       assert.throws(() => a.getComponent(appDir), SfError, /must not be empty/);
     });
 
     it('should throw for invalid JSON', () => {
-      writeFileSync(join(appDir, 'webapplication.json'), '{"unclosed');
+      writeFileSync(join(appDir, 'uibundle.json'), '{"unclosed');
       const fsTree = new NodeFSTreeContainer();
-      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, fsTree);
-      assert.throws(() => a.getComponent(appDir), SfError, /webapplication\.json/);
+      const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, fsTree);
+      assert.throws(() => a.getComponent(appDir), SfError, /uibundle\.json/);
     });
 
-    it('should skip when webapplication.json is absent', () => {
+    it('should skip when uibundle.json is absent', () => {
       const fsTree = new NodeFSTreeContainer();
-      const a = new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, fsTree);
+      const a = new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, fsTree);
       const comp = a.getComponent(appDir);
       expect(comp).to.not.be.undefined;
     });
@@ -714,7 +714,7 @@ describe('WebApplicationsSourceAdapter', () => {
           dirPath: appPath,
           children: [
             `${appName}.uibundle-meta.xml`,
-            { name: 'webapplication.json', data: Buffer.from(JSON.stringify(config)) },
+            { name: 'uibundle.json', data: Buffer.from(JSON.stringify(config)) },
             'src',
           ],
         },
@@ -722,7 +722,7 @@ describe('WebApplicationsSourceAdapter', () => {
       ];
       const t = new VirtualTreeContainer(vfs);
       return {
-        adapter: new WebApplicationsSourceAdapter(registry.types.webapplication, registryAccess, forceIgnore, t),
+        adapter: new WebApplicationsSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, t),
         appPath,
         metaFile,
       };

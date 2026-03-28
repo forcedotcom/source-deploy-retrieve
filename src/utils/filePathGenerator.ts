@@ -126,7 +126,7 @@ export const filePathsFromMetadataComponent = (
       ['LightningTypeBundle', [join(packageDirWithTypeDir, `${fullName}${sep}schema.json`)]],
       ['ContentTypeBundle', [join(packageDirWithTypeDir, `${fullName}${sep}schema.json`)]],
       ['WaveTemplateBundle', [join(packageDirWithTypeDir, `${fullName}${sep}template-info.json`)]],
-      // webapplication.json is optional, so only the meta XML is a guaranteed file path.
+      // uibundle.json is optional, so only the meta XML is a guaranteed file path.
       ['UIBundle', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.uibundle${META_XML_SUFFIX}`)]],
       ['LightningComponentBundle', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.js${META_XML_SUFFIX}`)]],
       ['AuraDefinitionBundle', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.cmp${META_XML_SUFFIX}`)]],

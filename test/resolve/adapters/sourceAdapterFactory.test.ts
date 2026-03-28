@@ -85,7 +85,7 @@ describe('SourceAdapterFactory', () => {
   });
 
   it('Should return WebApplicationsSourceAdapter for webApplications AdapterId', () => {
-    const type = registry.types.webapplication;
+    const type = registry.types.uibundle;
     const adapter = factory.getAdapter(type);
     expect(adapter).to.deep.equal(new WebApplicationsSourceAdapter(type, registryAccess, undefined, tree));
   });

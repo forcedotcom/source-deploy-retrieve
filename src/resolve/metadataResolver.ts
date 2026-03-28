@@ -31,6 +31,10 @@ import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
+// Pre-compile regex patterns for performance
+const CLOSE_META_SUFFIX_PATTERN = /.+\.([^.-]+)(?:-.*)?\.xml/;
+const FOLDER_META_XML_PATTERN = /(.+)-meta\.xml/;
+
 /**
  * Resolver for metadata type and component objects.
  *
@@ -88,17 +92,26 @@ export class MetadataResolver {
       return components;
     }
 
-    for (const fsPath of this.tree
-      .readDirectory(dir)
-      .map(fnJoin(dir))
-      // this method isn't truly recursive, we need to sort directories before files so we look as far down as possible
-      // before finding the parent and returning only it - by sorting, we make it as recursive as possible
-      .sort(this.sortDirsFirst)) {
+    // Cache directory status before sorting to avoid repeated I/O calls
+    const entries = this.tree.readDirectory(dir).map(fnJoin(dir));
+    const dirStatusCache = new Map(entries.map((p) => [p, this.tree.isDirectory(p)]));
+    const sortDirsFirstCached = (a: string, b: string): number => {
+      const aIsDir = dirStatusCache.get(a);
+      const bIsDir = dirStatusCache.get(b);
+      if (aIsDir && bIsDir) return 0;
+      if (aIsDir && !bIsDir) return -1;
+      return 1;
+    };
+
+    // this method isn't truly recursive, we need to sort directories before files so we look as far down as possible
+    // before finding the parent and returning only it - by sorting, we make it as recursive as possible
+    for (const fsPath of entries.sort(sortDirsFirstCached)) {
       if (ignore.has(fsPath)) {
         continue;
       }
 
-      if (this.tree.isDirectory(fsPath)) {
+      // Use cached directory status to avoid redundant I/O
+      if (dirStatusCache.get(fsPath)) {
         if (resolveDirectoryAsComponent(this.registry)(this.tree)(fsPath)) {
           // Filter out empty directories to prevent deployment issues
           if (this.tree.readDirectory(fsPath).length === 0) {
@@ -139,15 +152,6 @@ export class MetadataResolver {
     return components.concat(dirQueue.flatMap((d) => this.getComponentsFromPathRecursive(d, inclusiveFilter)));
   }
 
-  private sortDirsFirst = (a: string, b: string): number => {
-    if (this.tree.isDirectory(a) && this.tree.isDirectory(b)) {
-      return 0;
-    } else if (this.tree.isDirectory(a) && !this.tree.isDirectory(b)) {
-      return -1;
-    } else {
-      return 1;
-    }
-  };
   private resolveComponent(fsPath: string, isResolvingSource: boolean): SourceComponent | undefined {
     if (this.forceIgnore?.denies(fsPath)) {
       // don't resolve the component if the path is denied
@@ -269,7 +273,7 @@ const getSuggestionsForUnresolvedTypes =
     const metaSuffix = parsedMetaXml?.suffix;
     // Finds close matches for meta suffixes
     // Examples: https://regex101.com/r/vbRjwy/1
-    const closeMetaSuffix = new RegExp(/.+\.([^.-]+)(?:-.*)?\.xml/).exec(basename(fsPath));
+    const closeMetaSuffix = CLOSE_META_SUFFIX_PATTERN.exec(basename(fsPath));
 
     let guesses;
 
@@ -314,17 +318,19 @@ const parseAsFolderMetadataXml =
   (registry: RegistryAccess) =>
   (fsPath: string): string | undefined => {
     let folderName: string | undefined;
-    const match = new RegExp(/(.+)-meta\.xml/).exec(basename(fsPath));
+    const match = FOLDER_META_XML_PATTERN.exec(basename(fsPath));
     if (match && !match[1].includes('.')) {
       const parts = fsPath.split(sep);
       if (parts.length > 1) {
         const folderContentTypesDirs = getFolderContentTypeDirNames(registry);
         // check if the path contains a folder content name as a directory
-        const pathWithoutFile = parts.slice(0, -1);
+        const pathWithoutFileSet = new Set(parts.slice(0, -1));
         folderContentTypesDirs.some((dirName) => {
-          if (pathWithoutFile.includes(dirName)) {
+          if (pathWithoutFileSet.has(dirName)) {
             folderName = dirName;
+            return true; // exit early when found
           }
+          return false;
         });
       }
     }
@@ -416,11 +422,12 @@ const resolveTypeFromStrictFolder =
   (registry: RegistryAccess) =>
   (fsPath: string): MetadataType | undefined => {
     const pathParts = fsPath.split(sep);
+    const pathPartsSet = new Set(pathParts);
     // first, filter out types that don't appear in the path
     // then iterate using for/of to allow for early break
     return registry
       .getStrictFolderTypes()
-      .filter(pathIncludesDirName(pathParts)) // the type's directory is in the path
+      .filter(pathIncludesDirName(pathPartsSet)) // the type's directory is in the path
       .filter(folderTypeFilter(fsPath))
       .find(
         (type) =>
@@ -470,9 +477,9 @@ const folderTypeFilter =
     !type.inFolder || parentName(fsPath) !== type.directoryName;
 
 const pathIncludesDirName =
-  (parts: string[]) =>
+  (parts: Set<string>) =>
   (type: MetadataType): boolean =>
-    parts.includes(type.directoryName);
+    parts.has(type.directoryName);
 /**
  * Any metadata xml file (-meta.xml) is potentially a root metadata file.
  *

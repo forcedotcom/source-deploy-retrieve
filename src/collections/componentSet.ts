@@ -459,14 +459,20 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     const typeMap = new Map<string, Set<string>>();
 
-    [...components.entries()].map(([key, cmpMap]) => {
+    // Optimize: use direct iteration instead of spreading arrays
+    for (const [key, cmpMap] of components.entries()) {
       const [typeId, fullName] = splitOnFirstDelimiter(key);
       const type = this.registry.getTypeByName(typeId);
 
+      // Cache components list to avoid repeated array conversions
+      const componentsList = cmpMap ? Array.from(cmpMap.values()) : [];
+
       // Add children
-      [...(cmpMap?.values() ?? [])]
-        .flatMap((c) => c.getChildren())
-        .map((child) => addToTypeMap({ typeMap, type: child.type, fullName: child.fullName, destructiveType }));
+      for (const c of componentsList) {
+        for (const child of c.getChildren()) {
+          addToTypeMap({ typeMap, type: child.type, fullName: child.fullName, destructiveType });
+        }
+      }
 
       // logic: if this is a decomposed type not being retrieved, skip its inclusion in the manifest if the parent is "empty"
       if (
@@ -476,9 +482,10 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         Object.values(type.children?.types ?? {}).some((t) => t.unaddressableWithoutParent !== true) &&
         Object.values(type.children?.types ?? {}).some((t) => t.isAddressable !== false)
       ) {
-        const parentComp = [...(cmpMap?.values() ?? [])].find((c) => c.fullName === fullName);
+        // Reuse cached componentsList
+        const parentComp = componentsList.find((c) => c.fullName === fullName);
         if (parentComp?.xml && !objectHasSomeRealValues(type)(parentComp.parseXmlSync())) {
-          return;
+          continue;
         }
       }
 
@@ -488,7 +495,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         fullName: constructFullName(this.registry, type, fullName),
         destructiveType,
       });
-    });
+    }
 
     const typeMembers = Array.from(typeMap.entries())
       .map(([typeName, members]) => ({ members: [...members].sort(), name: typeName }))

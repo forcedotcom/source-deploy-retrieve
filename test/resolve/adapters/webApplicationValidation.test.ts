@@ -22,8 +22,8 @@ import {
   isWebApplicationConfig,
 } from '../../../src/resolve/adapters/webApplicationValidation';
 
-const CONTENT_PATH = join('force-app', 'main', 'default', 'webapplications', 'MyApp');
-const DESCRIPTOR_PATH = join(CONTENT_PATH, 'webapplication.json');
+const CONTENT_PATH = join('force-app', 'main', 'default', 'uiBundles', 'MyApp');
+const DESCRIPTOR_PATH = join(CONTENT_PATH, 'ui-bundle.json');
 
 /** Build a tree where outputDir exists and has at least one file. */
 function treeWith(extra: Record<string, string> = {}): VirtualTreeContainer {

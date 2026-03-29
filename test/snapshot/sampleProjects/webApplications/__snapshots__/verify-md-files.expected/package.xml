@@ -2,7 +2,7 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>SnapApp</members>
-        <name>WebApplication</name>
+        <name>UIBundle</name>
     </types>
     <version>66.0</version>
 </Package>

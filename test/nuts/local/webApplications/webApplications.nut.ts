@@ -105,7 +105,7 @@ describe('webApplications local e2e', () => {
         await ComponentSetBuilder.build({ sourcepath: [path.join(projectDir, 'force-app')] });
       } catch (err) {
         threw = true;
-        expect((err as Error).message).to.match(/uibundle\.json/);
+        expect((err as Error).message).to.match(/ui-bundle\.json/);
       }
       expect(threw, 'expected ComponentSetBuilder.build to throw').to.be.true;
     } finally {

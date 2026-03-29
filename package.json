@@ -28,7 +28,7 @@
     "@salesforce/core": "^8.27.1",
     "@salesforce/kit": "^3.2.4",
     "@salesforce/ts-types": "^2.0.12",
-    "@salesforce/types": "^1.6.0",
+    "@salesforce/types": "^1.7.1",
     "fast-levenshtein": "^3.0.0",
     "fast-xml-parser": "^5.5.9",
     "got": "^11.8.6",

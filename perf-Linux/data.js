@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774756187122,
+  "lastUpdate": 1774878797252,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -102021,6 +102021,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 10619,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "deepu.mungamuri94@gmail.com",
+            "name": "Deepu Mungamuri",
+            "username": "deepu-mungamuri94"
+          },
+          "committer": {
+            "email": "deepu.mungamuri94@gmail.com",
+            "name": "Deepu Mungamuri",
+            "username": "deepu-mungamuri94"
+          },
+          "distinct": true,
+          "id": "cf3f924a32c52d16692475c87871f14cb737ede0",
+          "message": "fix: rename uibundle.json fixture files to ui-bundle.json\n\nRenames the remaining test fixture files that were missed in the\nwebApplications → UIBundle rename, fixing the 3 failing NUT tests.\nAlso updates the error message regex in the NUT test to match the\nnew filename.\n\nMade-with: Cursor",
+          "timestamp": "2026-03-29T18:55:31+05:30",
+          "tree_id": "9b755ee250e1bdf2f8b738fc6e82c7855f1b6987",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/cf3f924a32c52d16692475c87871f14cb737ede0"
+        },
+        "date": 1774878786261,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 244,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2419,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2764,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 3365,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 437,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 6046,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7813,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 5991,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 799,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 10564,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 14546,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 10828,
             "unit": "ms"
           }
         ]

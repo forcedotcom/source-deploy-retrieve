@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774879150930,
+  "lastUpdate": 1774880946033,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -96749,6 +96749,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 24427,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "deepu.mungamuri94@gmail.com",
+            "name": "Deepu Mungamuri",
+            "username": "deepu-mungamuri94"
+          },
+          "committer": {
+            "email": "deepu.mungamuri94@gmail.com",
+            "name": "Deepu Mungamuri",
+            "username": "deepu-mungamuri94"
+          },
+          "distinct": true,
+          "id": "cf3f924a32c52d16692475c87871f14cb737ede0",
+          "message": "fix: rename uibundle.json fixture files to ui-bundle.json\n\nRenames the remaining test fixture files that were missed in the\nwebApplications → UIBundle rename, fixing the 3 failing NUT tests.\nAlso updates the error message regex in the NUT test to match the\nnew filename.\n\nMade-with: Cursor",
+          "timestamp": "2026-03-29T18:55:31+05:30",
+          "tree_id": "9b755ee250e1bdf2f8b738fc6e82c7855f1b6987",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/cf3f924a32c52d16692475c87871f14cb737ede0"
+        },
+        "date": 1774880931823,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 644,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 3844,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 4016,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 6527,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 910,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 10437,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10247,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 10283,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1580,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 24120,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 29518,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 19257,
             "unit": "ms"
           }
         ]

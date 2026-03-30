@@ -26,15 +26,15 @@ import {
   ZipTreeContainer,
 } from '../../../../src';
 
-describe('webApplications local e2e', () => {
+describe('uiBundles local e2e', () => {
   let session: TestSession;
   let projectDir: string;
 
   before(async () => {
     session = await TestSession.create({
       project: {
-        name: 'webApplicationsNut',
-        sourceDir: path.join('test', 'nuts', 'local', 'webApplications', 'testProj'),
+        name: 'uiBundlesNut',
+        sourceDir: path.join('test', 'nuts', 'local', 'uiBundles', 'testProj'),
       },
       devhubAuthStrategy: 'NONE',
     });
@@ -57,7 +57,7 @@ describe('webApplications local e2e', () => {
     expect(zip.file('uiBundles/HappyApp/src/index.html')).to.exist;
   });
 
-  it('converts WebApplication with multiple content files to metadata zip', async () => {
+  it('converts UIBundle with multiple content files to metadata zip', async () => {
     const converter = new MetadataConverter();
     const cs = await ComponentSetBuilder.build({ sourcepath: [path.join(projectDir, 'force-app')] });
     const { zipBuffer } = await converter.convert(cs, 'metadata', { type: 'zip' });
@@ -74,7 +74,7 @@ describe('webApplications local e2e', () => {
     }
   });
 
-  it('resolves WebApplication with multiple content files from source', async () => {
+  it('resolves UIBundle with multiple content files from source', async () => {
     const cs = await ComponentSetBuilder.build({ sourcepath: [path.join(projectDir, 'force-app')] });
     const components = cs.getSourceComponents().toArray();
     expect(components).to.have.lengthOf(1);
@@ -113,7 +113,7 @@ describe('webApplications local e2e', () => {
     }
   });
 
-  it('resolves metadata-only zip for WebApplication (retrieve path skips validation)', async () => {
+  it('resolves metadata-only zip for UIBundle (retrieve path skips validation)', async () => {
     const converter = new MetadataConverter();
     const cs = await ComponentSetBuilder.build({ sourcepath: [path.join(projectDir, 'force-app')] });
     const { zipBuffer } = await converter.convert(cs, 'metadata', { type: 'zip' });

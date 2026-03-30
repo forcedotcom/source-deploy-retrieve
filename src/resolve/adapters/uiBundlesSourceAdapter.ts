@@ -21,17 +21,17 @@ import { SourceComponent } from '../sourceComponent';
 import { NodeFSTreeContainer } from '../treeContainers';
 import { baseName } from '../../utils/path';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
-import { validateWebApplicationJson } from './webApplicationValidation';
+import { validateUiBundleJson } from './uiBundleValidation';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 /**
- * Source adapter for WebApplication bundles.
+ * Source adapter for UiBundle bundles.
  *
  * ui-bundle.json is optional; validated on deploy, skipped on retrieve.
  */
-export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
+export class UiBundlesSourceAdapter extends BundleSourceAdapter {
   protected populate(
     trigger: SourcePath,
     component?: SourceComponent,
@@ -76,7 +76,7 @@ export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
 
       if (hasDescriptor) {
         const raw = this.tree.readFileSync(descriptorPath);
-        validateWebApplicationJson(raw, descriptorPath, contentPath, this.tree);
+        validateUiBundleJson(raw, descriptorPath, contentPath, this.tree);
       }
     }
 

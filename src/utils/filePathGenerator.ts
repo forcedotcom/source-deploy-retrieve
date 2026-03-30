@@ -119,8 +119,8 @@ export const filePathsFromMetadataComponent = (
     ];
   }
 
-  // lwc, aura, waveTemplate, experiencePropertyType, lightningTypeBundle, contentTypeBundle, webApplications
-  if (type.strategies?.adapter === 'bundle' || type.strategies?.adapter === 'webApplications') {
+  // lwc, aura, waveTemplate, experiencePropertyType, lightningTypeBundle, contentTypeBundle, uiBundles
+  if (type.strategies?.adapter === 'bundle' || type.strategies?.adapter === 'uiBundles') {
     const mappings = new Map<string, string[]>([
       ['ExperiencePropertyTypeBundle', [join(packageDirWithTypeDir, `${fullName}${sep}schema.json`)]],
       ['LightningTypeBundle', [join(packageDirWithTypeDir, `${fullName}${sep}schema.json`)]],

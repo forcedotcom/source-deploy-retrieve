@@ -72,7 +72,7 @@ function writeMetaXml(appDir: string, appName: string): void {
   );
 }
 
-describe('WebApplication deploy NUTs (real org)', () => {
+describe('UIBundle deploy NUTs (real org)', () => {
   let session: TestSession;
   let projectDir: string;
   let targetOrg: string;
@@ -80,8 +80,8 @@ describe('WebApplication deploy NUTs (real org)', () => {
   before(async () => {
     session = await TestSession.create({
       project: {
-        name: 'webAppDeployNut',
-        sourceDir: path.join('test', 'nuts', 'local', 'webApplications', 'testProj'),
+        name: 'uiBundleDeployNut',
+        sourceDir: path.join('test', 'nuts', 'local', 'uiBundles', 'testProj'),
       },
       devhubAuthStrategy: 'AUTH_URL',
     });

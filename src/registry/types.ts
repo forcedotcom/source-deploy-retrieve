@@ -156,7 +156,7 @@ export type MetadataType = {
       | 'bundle'
       | 'default'
       | 'partiallyDecomposed'
-      | 'webApplications';
+      | 'uiBundles';
     transformer?:
       | 'decomposed'
       | 'staticResource'

@@ -376,7 +376,7 @@ describe('generating virtual tree from component name/type', () => {
       runTest(testData.bundleWave);
     });
 
-    it('webApplications', () => {
+    it('uiBundles', () => {
       runTest(testData.bundleUIBundles);
     });
 

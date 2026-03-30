@@ -4704,7 +4704,7 @@
       "name": "UIBundle",
       "suffix": "uibundle",
       "strategies": {
-        "adapter": "webApplications"
+        "adapter": "uiBundles"
       },
       "strictDirectoryName": true,
       "supportsPartialDelete": true

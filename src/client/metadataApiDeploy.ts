@@ -44,9 +44,9 @@ import {
   getDeployMessages,
   getState,
   isComponentNotFoundWarningMessage,
-  isWebApplicationInternalPath,
+  isUiBundleInternalPath,
   toKey,
-  webAppResourceFullNameToFilePath,
+  uiBundleResourceFullNameToFilePath,
 } from './deployMessages';
 import { parseDeployDiagnostic } from './diagnosticUtil';
 
@@ -548,10 +548,10 @@ const buildFileResponsesFromComponentSet =
             )
             .flatMap(([, msgs]): FileResponse[] =>
               msgs
-                .filter((msg) => !isWebApplicationInternalPath(msg.fullName))
+                .filter((msg) => !isUiBundleInternalPath(msg.fullName))
                 .map((msg): FileResponse => {
                   const state = getState(msg);
-                  const filePath = webAppResourceFullNameToFilePath(
+                  const filePath = uiBundleResourceFullNameToFilePath(
                     deployedComponent.content!,
                     deployedComponent.fullName,
                     msg.fullName

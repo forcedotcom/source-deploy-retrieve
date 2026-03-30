@@ -375,7 +375,7 @@ The "\_meta.json" files are child metadata files of DigitalExperienceBundle belo
 corresponding folder are the contents to the DigitalExperience metadata. So, in case of DigitalExperience the metadata file is a JSON file
 and not an XML file.
 
-### The `webApplicationsSourceAdapter`
+### The `uiBundlesSourceAdapter`
 
 Source Adapter for UIBundle metadata types. This metadata type is a bundled type that extends `BundleSourceAdapter` to enforce bundle requirements for source/deploy while staying compatible with metadata-only retrievals.
 

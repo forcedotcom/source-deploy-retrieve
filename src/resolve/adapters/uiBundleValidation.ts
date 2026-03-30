@@ -73,7 +73,7 @@ const ROUTING_ALLOWED = new Set(['rewrites', 'redirects', 'fallback', 'trailingS
 const TRAILING_SLASH_VALUES = new Set(['always', 'never', 'auto']);
 const REDIRECT_STATUS_CODES = new Set([301, 302, 307, 308]);
 const MAX_RECURSION_DEPTH = 20;
-const MAX_WEBAPPLICATION_JSON_BYTES = 102_400; // 100 KB
+const MAX_UI_BUNDLE_JSON_BYTES = 102_400; // 100 KB
 
 // Matches ".." as a standalone path segment.
 const DOT_DOT_SEGMENT = /(?:^|[/\\])\.\.[/\\]|(?:^|[/\\])\.\.$/;
@@ -121,7 +121,7 @@ function containsPathTraversal(value: string): string | undefined {
 function assertSafePath(value: string, configKey: string): void {
   const reason = containsPathTraversal(value);
   if (reason) {
-    throw createConfigError(msgs.getMessage('webapp_path_unsafe', [configKey, value, reason]), [
+    throw createConfigError(msgs.getMessage('ui_bundle_path_unsafe', [configKey, value, reason]), [
       `Fix "${value}": use relative paths with forward slashes only, no special characters.`,
     ]);
   }
@@ -154,25 +154,25 @@ export function validateUiBundleJson(
   tree: TreeContainer
 ): void {
   if (!raw || raw.length === 0) {
-    throw createConfigError(msgs.getMessage('webapp_empty_file', [descriptorPath]), [
-      msgs.getMessage('webapp_empty_file.actions'),
+    throw createConfigError(msgs.getMessage('ui_bundle_empty_file', [descriptorPath]), [
+      msgs.getMessage('ui_bundle_empty_file.actions'),
     ]);
   }
 
-  if (raw.length > MAX_WEBAPPLICATION_JSON_BYTES) {
+  if (raw.length > MAX_UI_BUNDLE_JSON_BYTES) {
     throw createConfigError(
-      msgs.getMessage('webapp_size_exceeded', [
-        String(MAX_WEBAPPLICATION_JSON_BYTES / 1024),
+      msgs.getMessage('ui_bundle_size_exceeded', [
+        String(MAX_UI_BUNDLE_JSON_BYTES / 1024),
         (raw.length / 1024).toFixed(1),
       ]),
-      [msgs.getMessage('webapp_size_exceeded.actions')]
+      [msgs.getMessage('ui_bundle_size_exceeded.actions')]
     );
   }
 
   const trimmed = raw.toString('utf8').trim();
   if (trimmed.length === 0) {
-    throw createConfigError(msgs.getMessage('webapp_whitespace_only', [descriptorPath]), [
-      msgs.getMessage('webapp_whitespace_only.actions'),
+    throw createConfigError(msgs.getMessage('ui_bundle_whitespace_only', [descriptorPath]), [
+      msgs.getMessage('ui_bundle_whitespace_only.actions'),
     ]);
   }
 
@@ -181,14 +181,14 @@ export function validateUiBundleJson(
     config = JSON.parse(trimmed) as unknown;
   } catch (e) {
     const detail = e instanceof Error ? e.message : String(e);
-    throw createConfigError(msgs.getMessage('webapp_invalid_json', [detail]), [
-      msgs.getMessage('webapp_invalid_json.actions'),
+    throw createConfigError(msgs.getMessage('ui_bundle_invalid_json', [detail]), [
+      msgs.getMessage('ui_bundle_invalid_json.actions'),
     ]);
   }
 
   if (!isUiBundleConfig(config)) {
-    throw createConfigError(msgs.getMessage('webapp_not_object', [describeType(config)]), [
-      msgs.getMessage('webapp_not_object.actions'),
+    throw createConfigError(msgs.getMessage('ui_bundle_not_object', [describeType(config)]), [
+      msgs.getMessage('ui_bundle_not_object.actions'),
     ]);
   }
 
@@ -196,7 +196,9 @@ export function validateUiBundleJson(
   const keys = Object.keys(rawObj);
 
   if (keys.length === 0) {
-    throw createConfigError(msgs.getMessage('webapp_empty_object'), [msgs.getMessage('webapp_empty_object.actions')]);
+    throw createConfigError(msgs.getMessage('ui_bundle_empty_object'), [
+      msgs.getMessage('ui_bundle_empty_object.actions'),
+    ]);
   }
 
   // Report all unknown properties at once.
@@ -204,7 +206,7 @@ export function validateUiBundleJson(
   if (disallowed.length > 0) {
     const list = disallowed.map((k) => `'${k}'`).join(', ');
     const word = disallowed.length === 1 ? 'property' : 'properties';
-    throw createConfigError(msgs.getMessage('webapp_unknown_props', [word, list, 'outputDir, routing, headers']), [
+    throw createConfigError(msgs.getMessage('ui_bundle_unknown_props', [word, list, 'outputDir, routing, headers']), [
       `Remove ${list} from ui-bundle.json.`,
     ]);
   }
@@ -229,13 +231,14 @@ export function validateUiBundleJson(
 
 function validateOutputDir(value: unknown): string {
   if (typeof value !== 'string') {
-    throw createConfigError(msgs.getMessage('webapp_type_mismatch', ['outputDir', 'a string', describeType(value)]), [
-      'Set outputDir to a directory path like "dist" or "build".',
-    ]);
+    throw createConfigError(
+      msgs.getMessage('ui_bundle_type_mismatch', ['outputDir', 'a string', describeType(value)]),
+      ['Set outputDir to a directory path like "dist" or "build".']
+    );
   }
   const stripped = stripLeadingSep(value);
   if (stripped.length === 0) {
-    throw createConfigError(msgs.getMessage('webapp_empty_value', ['outputDir']), [
+    throw createConfigError(msgs.getMessage('ui_bundle_empty_value', ['outputDir']), [
       'Provide a directory name, e.g. "dist".',
     ]);
   }
@@ -245,7 +248,7 @@ function validateOutputDir(value: unknown): string {
 
 function validateRouting(value: unknown): void {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-    throw createConfigError(msgs.getMessage('webapp_type_mismatch', ['routing', 'an object', describeType(value)]), [
+    throw createConfigError(msgs.getMessage('ui_bundle_type_mismatch', ['routing', 'an object', describeType(value)]), [
       'Set routing to an object, e.g. { "trailingSlash": "auto" }.',
     ]);
   }
@@ -253,7 +256,7 @@ function validateRouting(value: unknown): void {
   const routingKeys = Object.keys(routing);
 
   if (routingKeys.length === 0) {
-    throw createConfigError(msgs.getMessage('webapp_min_items', ['routing', 'property']), [
+    throw createConfigError(msgs.getMessage('ui_bundle_min_items', ['routing', 'property']), [
       'Add a routing property: rewrites, redirects, fallback, trailingSlash, or fileBasedRouting.',
     ]);
   }
@@ -263,7 +266,7 @@ function validateRouting(value: unknown): void {
     const list = unknownRouting.map((k) => `'${k}'`).join(', ');
     const word = unknownRouting.length === 1 ? 'property' : 'properties';
     throw createConfigError(
-      msgs.getMessage('webapp_unknown_props', [
+      msgs.getMessage('ui_bundle_unknown_props', [
         word,
         list,
         'rewrites, redirects, fallback, trailingSlash, fileBasedRouting',
@@ -278,7 +281,7 @@ function validateRouting(value: unknown): void {
 
   if (routing.fileBasedRouting !== undefined && typeof routing.fileBasedRouting !== 'boolean') {
     throw createConfigError(
-      msgs.getMessage('webapp_type_mismatch', [
+      msgs.getMessage('ui_bundle_type_mismatch', [
         'routing.fileBasedRouting',
         'a boolean',
         describeType(routing.fileBasedRouting),
@@ -302,12 +305,12 @@ function validateRouting(value: unknown): void {
 function validateTrailingSlash(value: unknown): void {
   if (typeof value !== 'string') {
     throw createConfigError(
-      msgs.getMessage('webapp_type_mismatch', ['routing.trailingSlash', 'a string', describeType(value)])
+      msgs.getMessage('ui_bundle_type_mismatch', ['routing.trailingSlash', 'a string', describeType(value)])
     );
   }
   if (!TRAILING_SLASH_VALUES.has(value)) {
     throw createConfigError(
-      msgs.getMessage('webapp_invalid_enum', ['routing.trailingSlash', 'always, never, auto', value])
+      msgs.getMessage('ui_bundle_invalid_enum', ['routing.trailingSlash', 'always, never, auto', value])
     );
   }
 }
@@ -315,12 +318,12 @@ function validateTrailingSlash(value: unknown): void {
 function validateFallback(value: unknown): void {
   if (typeof value !== 'string') {
     throw createConfigError(
-      msgs.getMessage('webapp_type_mismatch', ['routing.fallback', 'a string', describeType(value)])
+      msgs.getMessage('ui_bundle_type_mismatch', ['routing.fallback', 'a string', describeType(value)])
     );
   }
   const stripped = stripLeadingSep(value);
   if (stripped.length === 0) {
-    throw createConfigError(msgs.getMessage('webapp_empty_value', ['routing.fallback']), [
+    throw createConfigError(msgs.getMessage('ui_bundle_empty_value', ['routing.fallback']), [
       'Provide a file path like "index.html".',
     ]);
   }
@@ -330,11 +333,11 @@ function validateFallback(value: unknown): void {
 function validateRewritesList(value: unknown): void {
   if (!Array.isArray(value)) {
     throw createConfigError(
-      msgs.getMessage('webapp_type_mismatch', ['routing.rewrites', 'an array', describeType(value)])
+      msgs.getMessage('ui_bundle_type_mismatch', ['routing.rewrites', 'an array', describeType(value)])
     );
   }
   if (value.length === 0) {
-    throw createConfigError(msgs.getMessage('webapp_min_items', ['routing.rewrites', 'item']), [
+    throw createConfigError(msgs.getMessage('ui_bundle_min_items', ['routing.rewrites', 'item']), [
       'Add a rewrite entry or remove the empty rewrites array.',
     ]);
   }
@@ -346,11 +349,11 @@ function validateRewritesList(value: unknown): void {
 function validateRedirectsList(value: unknown): void {
   if (!Array.isArray(value)) {
     throw createConfigError(
-      msgs.getMessage('webapp_type_mismatch', ['routing.redirects', 'an array', describeType(value)])
+      msgs.getMessage('ui_bundle_type_mismatch', ['routing.redirects', 'an array', describeType(value)])
     );
   }
   if (value.length === 0) {
-    throw createConfigError(msgs.getMessage('webapp_min_items', ['routing.redirects', 'item']), [
+    throw createConfigError(msgs.getMessage('ui_bundle_min_items', ['routing.redirects', 'item']), [
       'Add a redirect entry or remove the empty redirects array.',
     ]);
   }
@@ -361,10 +364,10 @@ function validateRedirectsList(value: unknown): void {
 
 function validateHeaders(value: unknown): void {
   if (!Array.isArray(value)) {
-    throw createConfigError(msgs.getMessage('webapp_type_mismatch', ['headers', 'an array', describeType(value)]));
+    throw createConfigError(msgs.getMessage('ui_bundle_type_mismatch', ['headers', 'an array', describeType(value)]));
   }
   if (value.length === 0) {
-    throw createConfigError(msgs.getMessage('webapp_min_items', ['headers', 'item']), [
+    throw createConfigError(msgs.getMessage('ui_bundle_min_items', ['headers', 'item']), [
       'Add a header entry or remove the empty headers array.',
     ]);
   }
@@ -376,28 +379,28 @@ function validateHeaders(value: unknown): void {
 function validateRewriteItem(item: unknown, i: number): void {
   const key = `routing.rewrites[${i}]`;
   if (typeof item !== 'object' || item === null || Array.isArray(item)) {
-    throw createConfigError(msgs.getMessage('webapp_type_mismatch', [key, 'an object', describeType(item)]));
+    throw createConfigError(msgs.getMessage('ui_bundle_type_mismatch', [key, 'an object', describeType(item)]));
   }
   const obj = item as Record<string, unknown>;
   if (Object.keys(obj).length === 0) {
-    throw createConfigError(msgs.getMessage('webapp_min_items', [key, 'property']), [
+    throw createConfigError(msgs.getMessage('ui_bundle_min_items', [key, 'property']), [
       'Add route and/or rewrite to this entry.',
     ]);
   }
   const unknown = Object.keys(obj).filter((k) => k !== 'route' && k !== 'rewrite');
   if (unknown.length > 0) {
-    throw createConfigError(msgs.getMessage('webapp_unknown_prop', [key, unknown[0], 'route, rewrite']));
+    throw createConfigError(msgs.getMessage('ui_bundle_unknown_prop', [key, unknown[0], 'route, rewrite']));
   }
   if (obj.route !== undefined && (typeof obj.route !== 'string' || obj.route.length === 0)) {
-    throw createConfigError(msgs.getMessage('webapp_non_empty_string', [`${key}.route`]));
+    throw createConfigError(msgs.getMessage('ui_bundle_non_empty_string', [`${key}.route`]));
   }
   if (obj.rewrite !== undefined) {
     if (typeof obj.rewrite !== 'string' || obj.rewrite.length === 0) {
-      throw createConfigError(msgs.getMessage('webapp_non_empty_string', [`${key}.rewrite`]));
+      throw createConfigError(msgs.getMessage('ui_bundle_non_empty_string', [`${key}.rewrite`]));
     }
     const strippedRewrite = stripLeadingSep(obj.rewrite);
     if (strippedRewrite.length === 0) {
-      throw createConfigError(msgs.getMessage('webapp_empty_value', [`${key}.rewrite`]), [
+      throw createConfigError(msgs.getMessage('ui_bundle_empty_value', [`${key}.rewrite`]), [
         'Provide a file path like "index.html".',
       ]);
     }
@@ -408,28 +411,30 @@ function validateRewriteItem(item: unknown, i: number): void {
 function validateRedirectItem(item: unknown, i: number): void {
   const key = `routing.redirects[${i}]`;
   if (typeof item !== 'object' || item === null || Array.isArray(item)) {
-    throw createConfigError(msgs.getMessage('webapp_type_mismatch', [key, 'an object', describeType(item)]));
+    throw createConfigError(msgs.getMessage('ui_bundle_type_mismatch', [key, 'an object', describeType(item)]));
   }
   const obj = item as Record<string, unknown>;
   if (Object.keys(obj).length === 0) {
-    throw createConfigError(msgs.getMessage('webapp_min_items', [key, 'property']), [
+    throw createConfigError(msgs.getMessage('ui_bundle_min_items', [key, 'property']), [
       'Add route, redirect, and/or statusCode to this entry.',
     ]);
   }
   const unknown = Object.keys(obj).filter((k) => k !== 'route' && k !== 'redirect' && k !== 'statusCode');
   if (unknown.length > 0) {
-    throw createConfigError(msgs.getMessage('webapp_unknown_prop', [key, unknown[0], 'route, redirect, statusCode']));
+    throw createConfigError(
+      msgs.getMessage('ui_bundle_unknown_prop', [key, unknown[0], 'route, redirect, statusCode'])
+    );
   }
   if (obj.route !== undefined && (typeof obj.route !== 'string' || obj.route.length === 0)) {
-    throw createConfigError(msgs.getMessage('webapp_non_empty_string', [`${key}.route`]));
+    throw createConfigError(msgs.getMessage('ui_bundle_non_empty_string', [`${key}.route`]));
   }
   if (obj.redirect !== undefined && (typeof obj.redirect !== 'string' || obj.redirect.length === 0)) {
-    throw createConfigError(msgs.getMessage('webapp_non_empty_string', [`${key}.redirect`]));
+    throw createConfigError(msgs.getMessage('ui_bundle_non_empty_string', [`${key}.redirect`]));
   }
   if (obj.statusCode !== undefined) {
     if (!Number.isInteger(obj.statusCode) || !REDIRECT_STATUS_CODES.has(obj.statusCode as number)) {
       throw createConfigError(
-        msgs.getMessage('webapp_invalid_enum', [
+        msgs.getMessage('ui_bundle_invalid_enum', [
           `${key}.statusCode`,
           '301, 302, 307, 308',
           JSON.stringify(obj.statusCode),
@@ -442,29 +447,29 @@ function validateRedirectItem(item: unknown, i: number): void {
 function validateHeaderItem(item: unknown, i: number): void {
   const key = `headers[${i}]`;
   if (typeof item !== 'object' || item === null || Array.isArray(item)) {
-    throw createConfigError(msgs.getMessage('webapp_type_mismatch', [key, 'an object', describeType(item)]));
+    throw createConfigError(msgs.getMessage('ui_bundle_type_mismatch', [key, 'an object', describeType(item)]));
   }
   const obj = item as Record<string, unknown>;
   if (Object.keys(obj).length === 0) {
-    throw createConfigError(msgs.getMessage('webapp_min_items', [key, 'property']), [
+    throw createConfigError(msgs.getMessage('ui_bundle_min_items', [key, 'property']), [
       'Add source and/or headers to this entry.',
     ]);
   }
   const unknown = Object.keys(obj).filter((k) => k !== 'source' && k !== 'headers');
   if (unknown.length > 0) {
-    throw createConfigError(msgs.getMessage('webapp_unknown_prop', [key, unknown[0], 'source, headers']));
+    throw createConfigError(msgs.getMessage('ui_bundle_unknown_prop', [key, unknown[0], 'source, headers']));
   }
   if (obj.source !== undefined && (typeof obj.source !== 'string' || obj.source.length === 0)) {
-    throw createConfigError(msgs.getMessage('webapp_non_empty_string', [`${key}.source`]));
+    throw createConfigError(msgs.getMessage('ui_bundle_non_empty_string', [`${key}.source`]));
   }
   if (obj.headers !== undefined) {
     if (!Array.isArray(obj.headers)) {
       throw createConfigError(
-        msgs.getMessage('webapp_type_mismatch', [`${key}.headers`, 'an array', describeType(obj.headers)])
+        msgs.getMessage('ui_bundle_type_mismatch', [`${key}.headers`, 'an array', describeType(obj.headers)])
       );
     }
     if (obj.headers.length === 0) {
-      throw createConfigError(msgs.getMessage('webapp_min_items', [`${key}.headers`, 'item']), [
+      throw createConfigError(msgs.getMessage('ui_bundle_min_items', [`${key}.headers`, 'item']), [
         'Add a { "key": "...", "value": "..." } entry or remove the empty array.',
       ]);
     }
@@ -477,23 +482,23 @@ function validateHeaderItem(item: unknown, i: number): void {
 function validateHeaderKeyValue(item: unknown, i: number, j: number): void {
   const key = `headers[${i}].headers[${j}]`;
   if (typeof item !== 'object' || item === null || Array.isArray(item)) {
-    throw createConfigError(msgs.getMessage('webapp_type_mismatch', [key, 'an object', describeType(item)]));
+    throw createConfigError(msgs.getMessage('ui_bundle_type_mismatch', [key, 'an object', describeType(item)]));
   }
   const obj = item as Record<string, unknown>;
   if (Object.keys(obj).length === 0) {
-    throw createConfigError(msgs.getMessage('webapp_min_items', [key, 'property']), [
+    throw createConfigError(msgs.getMessage('ui_bundle_min_items', [key, 'property']), [
       'Add key and/or value to this header entry.',
     ]);
   }
   const unknown = Object.keys(obj).filter((k) => k !== 'key' && k !== 'value');
   if (unknown.length > 0) {
-    throw createConfigError(msgs.getMessage('webapp_unknown_prop', [key, unknown[0], 'key, value']));
+    throw createConfigError(msgs.getMessage('ui_bundle_unknown_prop', [key, unknown[0], 'key, value']));
   }
   if (obj.key !== undefined && (typeof obj.key !== 'string' || obj.key.length === 0)) {
-    throw createConfigError(msgs.getMessage('webapp_non_empty_string', [`${key}.key`]));
+    throw createConfigError(msgs.getMessage('ui_bundle_non_empty_string', [`${key}.key`]));
   }
   if (obj.value !== undefined && (typeof obj.value !== 'string' || obj.value.length === 0)) {
-    throw createConfigError(msgs.getMessage('webapp_non_empty_string', [`${key}.value`]));
+    throw createConfigError(msgs.getMessage('ui_bundle_non_empty_string', [`${key}.value`]));
   }
 }
 
@@ -502,7 +507,7 @@ function assertNoTraversal(resolvedPath: string, parentDir: string, configKey: s
   const normalizedResolved = resolve(resolvedPath);
   const normalizedParent = resolve(parentDir) + sep;
   if (!normalizedResolved.startsWith(normalizedParent) && normalizedResolved !== resolve(parentDir)) {
-    throw createConfigError(msgs.getMessage('webapp_path_traversal', [configKey, rawValue]), [
+    throw createConfigError(msgs.getMessage('ui_bundle_path_traversal', [configKey, rawValue]), [
       `Remove ".." segments from "${rawValue}". Paths must stay within the bundle directory.`,
     ]);
   }
@@ -522,13 +527,13 @@ function validateFileExistence(
     assertNoTraversal(outputDirPath, contentPath, 'outputDir', outputDir);
 
     if (resolve(outputDirPath) === resolve(contentPath)) {
-      throw createConfigError(msgs.getMessage('webapp_outputdir_is_root', [outputDir]), [
-        msgs.getMessage('webapp_outputdir_is_root.actions'),
+      throw createConfigError(msgs.getMessage('ui_bundle_outputdir_is_root', [outputDir]), [
+        msgs.getMessage('ui_bundle_outputdir_is_root.actions'),
       ]);
     }
 
     if (!tree.exists(outputDirPath) || !tree.isDirectory(outputDirPath)) {
-      throw createFileError(msgs.getMessage('webapp_dir_not_found', [outputDir, outputDirPath]), [
+      throw createFileError(msgs.getMessage('ui_bundle_dir_not_found', [outputDir, outputDirPath]), [
         `Create the directory "${outputDir}" in your UI bundle, or change outputDir to an existing directory.`,
       ]);
     }
@@ -554,7 +559,7 @@ function validateFileExistence(
     };
 
     if (!hasFileUnder(outputDirPath)) {
-      throw createFileError(msgs.getMessage('webapp_dir_empty', [outputDir]), [
+      throw createFileError(msgs.getMessage('ui_bundle_dir_empty', [outputDir]), [
         `Add files to "${outputDir}", e.g. an index.html.`,
       ]);
     }
@@ -571,7 +576,7 @@ function validateFileExistence(
     assertNoTraversal(fallbackPath, basePath, 'routing.fallback', routing.fallback);
     if (!tree.exists(fallbackPath)) {
       throw createFileError(
-        msgs.getMessage('webapp_file_not_found', ['routing.fallback', routing.fallback, fallbackPath]),
+        msgs.getMessage('ui_bundle_file_not_found', ['routing.fallback', routing.fallback, fallbackPath]),
         [`Create the file "${stripped}" inside "${baseLabel}", or update the fallback path.`]
       );
     }
@@ -586,7 +591,7 @@ function validateFileExistence(
         assertNoTraversal(rewritePath, basePath, `routing.rewrites[${i}].rewrite`, target);
         if (!tree.exists(rewritePath)) {
           throw createFileError(
-            msgs.getMessage('webapp_file_not_found', [`routing.rewrites[${i}].rewrite`, target, rewritePath]),
+            msgs.getMessage('ui_bundle_file_not_found', [`routing.rewrites[${i}].rewrite`, target, rewritePath]),
             [`Create the file "${stripped}" inside "${baseLabel}", or update the rewrite path.`]
           );
         }

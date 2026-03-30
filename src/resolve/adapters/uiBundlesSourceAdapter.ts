@@ -21,17 +21,17 @@ import { SourceComponent } from '../sourceComponent';
 import { NodeFSTreeContainer } from '../treeContainers';
 import { baseName } from '../../utils/path';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
-import { validateWebApplicationJson } from './webApplicationValidation';
+import { validateUiBundleJson } from './uiBundleValidation';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 /**
- * Source adapter for WebApplication bundles.
+ * Source adapter for UiBundle bundles.
  *
- * webapplication.json is optional; validated on deploy, skipped on retrieve.
+ * ui-bundle.json is optional; validated on deploy, skipped on retrieve.
  */
-export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
+export class UiBundlesSourceAdapter extends BundleSourceAdapter {
   protected populate(
     trigger: SourcePath,
     component?: SourceComponent,
@@ -44,7 +44,7 @@ export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
 
     const contentPath = source.content;
     const appName = baseName(contentPath);
-    const expectedXmlPath = join(contentPath, `${appName}.webapplication-meta.xml`);
+    const expectedXmlPath = join(contentPath, `${appName}.uibundle-meta.xml`);
     if (!this.tree.exists(expectedXmlPath)) {
       throw new SfError(
         messages.getMessage('error_expected_source_files', [expectedXmlPath, this.type.name]),
@@ -71,12 +71,12 @@ export class WebApplicationsSourceAdapter extends BundleSourceAdapter {
 
     // Validate only on real filesystem; ZipTreeContainer (retrieve) doesn't support readFileSync.
     if (isResolvingSource && this.tree instanceof NodeFSTreeContainer) {
-      const descriptorPath = join(contentPath, 'webapplication.json');
+      const descriptorPath = join(contentPath, 'ui-bundle.json');
       const hasDescriptor = this.tree.exists(descriptorPath) && !this.forceIgnore.denies(descriptorPath);
 
       if (hasDescriptor) {
         const raw = this.tree.readFileSync(descriptorPath);
-        validateWebApplicationJson(raw, descriptorPath, contentPath, this.tree);
+        validateUiBundleJson(raw, descriptorPath, contentPath, this.tree);
       }
     }
 

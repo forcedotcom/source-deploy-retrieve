@@ -18,10 +18,10 @@ import { assert, expect, config } from 'chai';
 import { ComponentStatus, DeployMessage } from '../../src';
 import {
   getState,
-  isWebApplicationInternalPath,
-  isWebApplicationResourceMessage,
-  webAppResourceFullNameToFilePath,
-  WEB_APP_RESOURCE_TYPE,
+  isUiBundleInternalPath,
+  isUiBundleResourceMessage,
+  uiBundleResourceFullNameToFilePath,
+  UI_BUNDLE_RESOURCE_TYPE,
 } from '../../src/client/deployMessages';
 
 config.truncateThreshold = 0;
@@ -40,89 +40,89 @@ function createDeployMessage(overrides: Partial<DeployMessage>): DeployMessage {
 }
 
 describe('deployMessages', () => {
-  describe('WEB_APP_RESOURCE_TYPE', () => {
+  describe('UI_BUNDLE_RESOURCE_TYPE', () => {
     it('should equal "WebApplicationResource"', () => {
-      expect(WEB_APP_RESOURCE_TYPE).to.equal('WebApplicationResource');
+      expect(UI_BUNDLE_RESOURCE_TYPE).to.equal('WebApplicationResource');
     });
   });
 
-  describe('isWebApplicationInternalPath', () => {
+  describe('isUiBundleInternalPath', () => {
     it('should return true for paths ending with webapplicationcontentindex.json', () => {
-      assert.isTrue(isWebApplicationInternalPath('MyApp/webapplicationcontentindex.json'));
+      assert.isTrue(isUiBundleInternalPath('MyApp/webapplicationcontentindex.json'));
     });
 
     it('should return true when path is exactly webapplicationcontentindex.json', () => {
-      assert.isTrue(isWebApplicationInternalPath('webapplicationcontentindex.json'));
+      assert.isTrue(isUiBundleInternalPath('webapplicationcontentindex.json'));
     });
 
     it('should return true for paths containing languageSettings', () => {
-      assert.isTrue(isWebApplicationInternalPath('MyApp/languageSettings'));
-      assert.isTrue(isWebApplicationInternalPath('MyApp/languageSettings/en.json'));
+      assert.isTrue(isUiBundleInternalPath('MyApp/languageSettings'));
+      assert.isTrue(isUiBundleInternalPath('MyApp/languageSettings/en.json'));
     });
 
     it('should return true for paths containing /languages/', () => {
-      assert.isTrue(isWebApplicationInternalPath('MyApp/languages/en.json'));
-      assert.isTrue(isWebApplicationInternalPath('/languages/fr.json'));
+      assert.isTrue(isUiBundleInternalPath('MyApp/languages/en.json'));
+      assert.isTrue(isUiBundleInternalPath('/languages/fr.json'));
     });
 
     it('should return false for normal content paths', () => {
-      assert.isFalse(isWebApplicationInternalPath('MyApp/dist/index.html'));
-      assert.isFalse(isWebApplicationInternalPath('MyApp/assets/logo.png'));
-      assert.isFalse(isWebApplicationInternalPath('MyApp/main.js'));
+      assert.isFalse(isUiBundleInternalPath('MyApp/dist/index.html'));
+      assert.isFalse(isUiBundleInternalPath('MyApp/assets/logo.png'));
+      assert.isFalse(isUiBundleInternalPath('MyApp/main.js'));
     });
 
     it('should return false for empty string', () => {
-      assert.isFalse(isWebApplicationInternalPath(''));
+      assert.isFalse(isUiBundleInternalPath(''));
     });
   });
 
-  describe('isWebApplicationResourceMessage', () => {
+  describe('isUiBundleResourceMessage', () => {
     it('should return true when componentType is WebApplicationResource', () => {
       const msg = createDeployMessage({ componentType: 'WebApplicationResource' });
-      assert.isTrue(isWebApplicationResourceMessage(msg));
+      assert.isTrue(isUiBundleResourceMessage(msg));
     });
 
     it('should return false when componentType is a different type', () => {
       const msg = createDeployMessage({ componentType: 'ApexClass' });
-      assert.isFalse(isWebApplicationResourceMessage(msg));
+      assert.isFalse(isUiBundleResourceMessage(msg));
     });
 
     it('should return false when componentType is undefined', () => {
       const msg = createDeployMessage({});
       delete msg.componentType;
-      assert.isFalse(isWebApplicationResourceMessage(msg));
+      assert.isFalse(isUiBundleResourceMessage(msg));
     });
 
     it('should return false when componentType is not a string', () => {
       // @ts-ignore - testing non-string componentType
       const msg = createDeployMessage({ componentType: 123 });
-      assert.isFalse(isWebApplicationResourceMessage(msg));
+      assert.isFalse(isUiBundleResourceMessage(msg));
     });
   });
 
-  describe('webAppResourceFullNameToFilePath', () => {
+  describe('uiBundleResourceFullNameToFilePath', () => {
     it('should strip the appFullName prefix and join with appContentPath', () => {
-      const result = webAppResourceFullNameToFilePath('/path/to/MyApp', 'MyApp', 'MyApp/dist/index.html');
+      const result = uiBundleResourceFullNameToFilePath('/path/to/MyApp', 'MyApp', 'MyApp/dist/index.html');
       expect(result).to.equal(join('/path/to/MyApp', 'dist', 'index.html'));
     });
 
     it('should handle nested paths correctly', () => {
-      const result = webAppResourceFullNameToFilePath('/project/apps/Site', 'Site', 'Site/assets/images/logo.png');
+      const result = uiBundleResourceFullNameToFilePath('/project/apps/Site', 'Site', 'Site/assets/images/logo.png');
       expect(result).to.equal(join('/project/apps/Site', 'assets', 'images', 'logo.png'));
     });
 
     it('should use resourceFullName as-is when it does not start with appFullName prefix', () => {
-      const result = webAppResourceFullNameToFilePath('/path/to/MyApp', 'MyApp', 'OtherApp/dist/index.html');
+      const result = uiBundleResourceFullNameToFilePath('/path/to/MyApp', 'MyApp', 'OtherApp/dist/index.html');
       expect(result).to.equal(join('/path/to/MyApp', 'OtherApp', 'dist', 'index.html'));
     });
 
     it('should handle resourceFullName equal to appFullName/ (empty relative path)', () => {
-      const result = webAppResourceFullNameToFilePath('/path/to/MyApp', 'MyApp', 'MyApp/');
+      const result = uiBundleResourceFullNameToFilePath('/path/to/MyApp', 'MyApp', 'MyApp/');
       expect(result).to.equal(join('/path/to/MyApp', ''));
     });
 
     it('should handle single-segment resourceFullName without prefix match', () => {
-      const result = webAppResourceFullNameToFilePath('/path/to/MyApp', 'MyApp', 'file.txt');
+      const result = uiBundleResourceFullNameToFilePath('/path/to/MyApp', 'MyApp', 'file.txt');
       expect(result).to.equal(join('/path/to/MyApp', 'file.txt'));
     });
   });

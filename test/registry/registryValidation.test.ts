@@ -293,7 +293,7 @@ describe('will run preset tests', () => {
                 'decomposed',
                 'partiallyDecomposed',
                 'digitalExperience',
-                'webApplications',
+                'uiBundles',
               ]).includes(type.strategies?.adapter);
             });
           });

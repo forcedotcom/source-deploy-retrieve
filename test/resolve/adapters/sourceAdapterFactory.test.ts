@@ -22,7 +22,7 @@ import {
   DefaultSourceAdapter,
   MatchingContentSourceAdapter,
   MixedContentSourceAdapter,
-  WebApplicationsSourceAdapter,
+  UiBundlesSourceAdapter,
 } from '../../../src/resolve/adapters';
 import { SourceAdapterFactory } from '../../../src/resolve/adapters/sourceAdapterFactory';
 import { DigitalExperienceSourceAdapter } from '../../../src/resolve/adapters';
@@ -84,10 +84,10 @@ describe('SourceAdapterFactory', () => {
     expect(childAdapter).to.deep.equal(new DigitalExperienceSourceAdapter(childType, registryAccess, undefined, tree));
   });
 
-  it('Should return WebApplicationsSourceAdapter for webApplications AdapterId', () => {
-    const type = registry.types.webapplication;
+  it('Should return UiBundlesSourceAdapter for uiBundles AdapterId', () => {
+    const type = registry.types.uibundle;
     const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(new WebApplicationsSourceAdapter(type, registryAccess, undefined, tree));
+    expect(adapter).to.deep.equal(new UiBundlesSourceAdapter(type, registryAccess, undefined, tree));
   });
 
   it('Should return BundleSourceAdapter for bundle AdapterId', () => {

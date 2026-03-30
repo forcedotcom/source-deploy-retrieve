@@ -27,8 +27,8 @@ import {
 // we don't want failing tests outputting over each other
 /* eslint-disable no-await-in-loop */
 
-describe('WebApplication snapshots', () => {
-  const testDir = path.join('test', 'snapshot', 'sampleProjects', 'webApplications');
+describe('UIBundle snapshots', () => {
+  const testDir = path.join('test', 'snapshot', 'sampleProjects', 'UIBundleSnapshot');
   let sourceFiles: string[];
   let mdFiles: string[];
 

@@ -588,11 +588,11 @@
     "cnfgItemAttrPicklistDef": "cnfgitemattrpicklistdef",
     "cnfgItemAttrSetAttr": "cnfgitemattrsetattr",
     "cnfgItemAttrSetDef": "cnfgitemattrsetdef",
+    "cnfgItemSourceDefinition": "cnfgitemsourcedefinition",
     "cnfgItemTypeAttrRelDef": "cnfgitemtypeattrreldef",
     "cnfgItemTypeDef": "cnfgitemtypedef",
     "cnfgItemTypeRelationDef": "cnfgitemtyperelationdef",
     "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
-    "cnfgMgmtCiSourceDef": "cnfgmgmtcisourcedef",
     "meetingPlaybookDefinition": "meetingplaybookdefinition"
   },
   "types": {
@@ -5222,6 +5222,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "cnfgitemsourcedefinition": {
+      "id": "cnfgitemsourcedefinition",
+      "name": "CnfgItemSourceDefinition",
+      "suffix": "cnfgItemSourceDefinition",
+      "directoryName": "cnfgItemSourceDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "cnfgitemattrpicklistdef": {
       "id": "cnfgitemattrpicklistdef",
       "name": "CnfgItemAttrPicklistDef",
@@ -5267,14 +5275,6 @@
       "name": "CnfgItemTypeRelationDef",
       "suffix": "cnfgItemTypeRelationDef",
       "directoryName": "cnfgItemTypeRelationDefs",
-      "inFolder": false,
-      "strictDirectoryName": false
-    },
-    "cnfgmgmtcisourcedef": {
-      "id": "cnfgmgmtcisourcedef",
-      "name": "CnfgMgmtCiSourceDef",
-      "suffix": "cnfgMgmtCiSourceDef",
-      "directoryName": "cnfgMgmtCiSourceDefs",
       "inFolder": false,
       "strictDirectoryName": false
     },

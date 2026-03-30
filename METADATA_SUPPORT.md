@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v66 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 720/773 supported metadata types.
+Currently, there are 719/773 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -765,7 +765,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |WaveTemplateBundle|✅||
 |WaveXmd|✅||
 |Web3Settings|✅||
-|WebApplication|✅||
+|WebApplication|❌|Not supported, but support could be added|
 |WebApplicationSettings|✅||
 |WebLink|✅||
 |WebStoreBundle|✅||
@@ -800,7 +800,7 @@ v67 introduces the following new types.  Here's their current level of support
 |CnfgItemAttrPicklistDef|✅||
 |CnfgItemAttrSetAttr|✅||
 |CnfgItemAttrSetDef|✅||
-|CnfgItemSourceDefinition|❌|Not supported, but support could be added|
+|CnfgItemSourceDefinition|✅||
 |CnfgItemTypeAttrRelDef|✅||
 |CnfgItemTypeDef|✅||
 |CnfgItemTypeRelationDef|✅||
@@ -901,9 +901,9 @@ v67 introduces the following new types.  Here's their current level of support
 - UiViewDefinition
 - UserProfileSearchScope
 - VisualizationPlugin
+- UIBundle
 - WorkflowFlowAutomation
 - WorkSkillRoutingAttribute
 - XOrgHub
 - RuleLibraryDefinition
 - LightningOutApp
-- CnfgMgmtCiSourceDef

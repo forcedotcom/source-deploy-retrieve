@@ -26,7 +26,7 @@ import { MatchingContentSourceAdapter } from './matchingContentSourceAdapter';
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { DefaultSourceAdapter } from './defaultSourceAdapter';
 import { DigitalExperienceSourceAdapter } from './digitalExperienceSourceAdapter';
-import { WebApplicationsSourceAdapter } from './webApplicationsSourceAdapter';
+import { UiBundlesSourceAdapter } from './uiBundlesSourceAdapter';
 import { PartialDecomposedAdapter } from './partialDecomposedAdapter';
 
 Messages.importMessagesDirectory(__dirname);
@@ -54,8 +54,8 @@ export class SourceAdapterFactory {
         return new MixedContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case 'digitalExperience':
         return new DigitalExperienceSourceAdapter(type, this.registry, forceIgnore, this.tree);
-      case 'webApplications':
-        return new WebApplicationsSourceAdapter(type, this.registry, forceIgnore, this.tree);
+      case 'uiBundles':
+        return new UiBundlesSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case 'partiallyDecomposed':
         return new PartialDecomposedAdapter(type, this.registry, forceIgnore, this.tree);
       case 'default':

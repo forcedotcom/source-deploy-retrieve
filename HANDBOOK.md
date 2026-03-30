@@ -377,21 +377,21 @@ and not an XML file.
 
 ### The `webApplicationsSourceAdapter`
 
-Source Adapter for WebApplication metadata types. This metadata type is a bundled type that extends `BundleSourceAdapter` to enforce bundle requirements for source/deploy while staying compatible with metadata-only retrievals.
+Source Adapter for UIBundle metadata types. This metadata type is a bundled type that extends `BundleSourceAdapter` to enforce bundle requirements for source/deploy while staying compatible with metadata-only retrievals.
 
 **Example Structure**:
 
 ```text
-webapplications/
+uiBundles/
 ├── MyApp/
-|   ├── MyApp.webapplication-meta.xml
-|   ├── webapplication.json
+|   ├── MyApp.uibundle-meta.xml
+|   ├── ui-bundle.json
 |   └── dist/
 |       ├── index.html
 |       └── assets/
 ```
 
-The metadata XML file that ends with with "webapplication-meta.xml" belongs to the WebApplication MD type. The `webapplication.json` descriptor configures the deployable content (e.g. `outputDir` pointing to `dist`). For deploy/source, the adapter requires at least one non-metadata content file (e.g. `index.html`) in addition to the XML and descriptor.
+The metadata XML file that ends with with "uibundle-meta.xml" belongs to the UIBundle MD type. The `ui-bundle.json` descriptor configures the deployable content (e.g. `outputDir` pointing to `dist`). For deploy/source, the adapter requires at least one non-metadata content file (e.g. `index.html`) in addition to the XML and descriptor.
 
 ### The `matchingContentAdapter`
 

@@ -147,19 +147,19 @@ export const getDeployMessages = (result: MetadataApiDeployStatus): Map<string, 
   return messageMap;
 };
 
-export const WEB_APP_RESOURCE_TYPE = 'WebApplicationResource';
+export const UI_BUNDLE_RESOURCE_TYPE = 'WebApplicationResource';
 
 /** Server-generated internal files that should not appear in per-file deploy results. */
-export const isWebApplicationInternalPath = (resourceFullName: string): boolean =>
+export const isUiBundleInternalPath = (resourceFullName: string): boolean =>
   resourceFullName.endsWith('webapplicationcontentindex.json') ||
   resourceFullName.includes('languageSettings') ||
   resourceFullName.includes('/languages/');
 
-export const isWebApplicationResourceMessage = (msg: DeployMessage): boolean =>
-  typeof msg.componentType === 'string' && msg.componentType === WEB_APP_RESOURCE_TYPE;
+export const isUiBundleResourceMessage = (msg: DeployMessage): boolean =>
+  typeof msg.componentType === 'string' && msg.componentType === UI_BUNDLE_RESOURCE_TYPE;
 
 /** Strips "AppName/" prefix from the resource fullName and joins with the local content path. */
-export const webAppResourceFullNameToFilePath = (
+export const uiBundleResourceFullNameToFilePath = (
   appContentPath: string,
   appFullName: string,
   resourceFullName: string

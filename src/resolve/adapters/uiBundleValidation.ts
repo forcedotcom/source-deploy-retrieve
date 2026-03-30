@@ -20,50 +20,50 @@ import type { TreeContainer } from '../treeContainers';
 import { SourcePath } from '../../common/types';
 
 Messages.importMessagesDirectory(__dirname);
-const msgs = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'webApplicationValidation');
+const msgs = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'uiBundleValidation');
 
 // Mirrors the server-side schema in WebApplicationFileProcessor.java.
 
 type TrailingSlash = 'always' | 'never' | 'auto';
 type RedirectStatusCode = 301 | 302 | 307 | 308;
 
-export type WebApplicationRewrite = {
+export type UiBundleRewrite = {
   route?: string;
   rewrite?: string;
 };
 
-export type WebApplicationRedirect = {
+export type UiBundleRedirect = {
   route?: string;
   redirect?: string;
   statusCode?: RedirectStatusCode;
 };
 
-export type WebApplicationHeaderKeyValue = {
+export type UiBundleHeaderKeyValue = {
   key?: string;
   value?: string;
 };
 
-export type WebApplicationHeaderRule = {
+export type UiBundleHeaderRule = {
   source?: string;
-  headers?: WebApplicationHeaderKeyValue[];
+  headers?: UiBundleHeaderKeyValue[];
 };
 
-export type WebApplicationRouting = {
-  rewrites?: WebApplicationRewrite[];
-  redirects?: WebApplicationRedirect[];
+export type UiBundleRouting = {
+  rewrites?: UiBundleRewrite[];
+  redirects?: UiBundleRedirect[];
   fallback?: string;
   trailingSlash?: TrailingSlash;
   fileBasedRouting?: boolean;
 };
 
-export type WebApplicationConfig = {
+export type UiBundleConfig = {
   outputDir?: string;
-  routing?: WebApplicationRouting;
-  headers?: WebApplicationHeaderRule[];
+  routing?: UiBundleRouting;
+  headers?: UiBundleHeaderRule[];
 };
 
 /** Basic shape check — use after field-level validation to narrow the type. */
-export function isWebApplicationConfig(value: unknown): value is WebApplicationConfig {
+export function isUiBundleConfig(value: unknown): value is UiBundleConfig {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
@@ -139,15 +139,15 @@ function describeType(value: unknown): string {
 }
 
 function createConfigError(message: string, actions?: string[]): SfError {
-  return new SfError(message, 'InvalidWebApplicationConfigError', actions);
+  return new SfError(message, 'InvalidUiBundleConfigError', actions);
 }
 
 function createFileError(message: string, actions?: string[]): SfError {
   return new SfError(message, 'ExpectedSourceFilesError', actions);
 }
 
-/** Validate webapplication.json contents. Checks structure first, then schema, then file existence. */
-export function validateWebApplicationJson(
+/** Validate ui-bundle.json contents. Checks structure first, then schema, then file existence. */
+export function validateUiBundleJson(
   raw: Buffer,
   descriptorPath: string,
   contentPath: SourcePath,
@@ -186,7 +186,7 @@ export function validateWebApplicationJson(
     ]);
   }
 
-  if (!isWebApplicationConfig(config)) {
+  if (!isUiBundleConfig(config)) {
     throw createConfigError(msgs.getMessage('webapp_not_object', [describeType(config)]), [
       msgs.getMessage('webapp_not_object.actions'),
     ]);
@@ -205,7 +205,7 @@ export function validateWebApplicationJson(
     const list = disallowed.map((k) => `'${k}'`).join(', ');
     const word = disallowed.length === 1 ? 'property' : 'properties';
     throw createConfigError(msgs.getMessage('webapp_unknown_props', [word, list, 'outputDir, routing, headers']), [
-      `Remove ${list} from webapplication.json.`,
+      `Remove ${list} from ui-bundle.json.`,
     ]);
   }
 
@@ -220,7 +220,7 @@ export function validateWebApplicationJson(
   }
 
   // Safe to cast after field-level checks pass.
-  const obj = rawObj as WebApplicationConfig;
+  const obj = rawObj as UiBundleConfig;
 
   if (outputDir ?? obj.routing) {
     validateFileExistence(obj, outputDir, contentPath, tree);
@@ -510,7 +510,7 @@ function assertNoTraversal(resolvedPath: string, parentDir: string, configKey: s
 
 /** Verify that referenced paths (outputDir, fallback, rewrite targets) actually exist. */
 function validateFileExistence(
-  obj: WebApplicationConfig,
+  obj: UiBundleConfig,
   outputDir: string | undefined,
   contentPath: SourcePath,
   tree: TreeContainer
@@ -529,7 +529,7 @@ function validateFileExistence(
 
     if (!tree.exists(outputDirPath) || !tree.isDirectory(outputDirPath)) {
       throw createFileError(msgs.getMessage('webapp_dir_not_found', [outputDir, outputDirPath]), [
-        `Create the directory "${outputDir}" in your web application bundle, or change outputDir to an existing directory.`,
+        `Create the directory "${outputDir}" in your UI bundle, or change outputDir to an existing directory.`,
       ]);
     }
 

@@ -251,6 +251,7 @@
     "ecaMobilePlcy": "extlclntappmobileconfigurablepolicies",
     "ecaNotifications": "extlclntappnotificationsettings",
     "ecaOauth": "extlclntappoauthsettings",
+    "ecaOauthSecurity": "extlclntappoauthsecuritysettings",
     "ecaOauthPlcy": "extlclntappoauthconfigurablepolicies",
     "ecaPlcy": "extlclntappconfigurablepolicies",
     "ecaSamlPlcy": "extlclntappsamlconfigurablepolicies",
@@ -2579,6 +2580,14 @@
       "name": "ExtlClntAppOauthSettings",
       "strictDirectoryName": false,
       "suffix": "ecaOauth"
+    },
+    "extlclntappoauthsecuritysettings": {
+      "directoryName": "extlClntAppOauthSecuritySettings",
+      "id": "extlclntappoauthsecuritysettings",
+      "inFolder": false,
+      "name": "ExtlClntAppOauthSecuritySettings",
+      "strictDirectoryName": false,
+      "suffix": "ecaOauthSecurity"
     },
     "extlclntappsamlconfigurablepolicies": {
       "directoryName": "extlClntAppSamlConfigurablePolicies",

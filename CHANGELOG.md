@@ -1,3 +1,12 @@
+## [12.32.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.32.0...12.32.1) (2026-03-30)
+
+
+### Bug Fixes
+
+* @W-21674925: refactor: rename WebApplication on-disk directory from webapplications to uiBundles  ([#1728](https://github.com/forcedotcom/source-deploy-retrieve/issues/1728)) ([21fb55a](https://github.com/forcedotcom/source-deploy-retrieve/commit/21fb55ab6f67093e1179a7baca94256ccfbefb5b))
+
+
+
 # [12.32.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.31...12.32.0) (2026-03-30)
 
 

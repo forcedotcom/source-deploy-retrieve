@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774893802400,
+  "lastUpdate": 1774900567323,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -102272,6 +102272,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 12272,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gary.chang@salesforce.com",
+            "name": "gary-chang",
+            "username": "garychangsf"
+          },
+          "committer": {
+            "email": "gary.chang@salesforce.com",
+            "name": "gary-chang",
+            "username": "garychangsf"
+          },
+          "distinct": true,
+          "id": "d6d4b1b6d2a9f23959353e27d910d616a59a26aa",
+          "message": "refactor: rename WebApplication on-disk directory from webapplications to uiBundles @W-21674925@\n\nAligns the SDR metadata registry and all test fixtures with the recent\nrename in plugin-templates (webapp → ui-bundle), where the user-facing\nfolder constant changed from webapplications to uiBundles.",
+          "timestamp": "2026-03-30T12:48:18-07:00",
+          "tree_id": "6f9657615e2e5a22c8155298daee2408f4a3e715",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/d6d4b1b6d2a9f23959353e27d910d616a59a26aa"
+        },
+        "date": 1774900556995,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 234,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2395,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2700,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 3286,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 441,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 5749,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7669,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 5642,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 770,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 10083,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 14088,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 10366,
             "unit": "ms"
           }
         ]

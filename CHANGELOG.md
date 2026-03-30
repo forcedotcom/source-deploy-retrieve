@@ -1,3 +1,12 @@
+# [12.32.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.31...12.32.0) (2026-03-30)
+
+
+### Features
+
+* add ExtlClntAppOauthSecuritySettings metadata support ([#1726](https://github.com/forcedotcom/source-deploy-retrieve/issues/1726)) ([c2670ad](https://github.com/forcedotcom/source-deploy-retrieve/commit/c2670ad1f3313e342b7c749fc31aef8d471df3ac))
+
+
+
 ## [12.31.31](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.31.30...12.31.31) (2026-03-29)
 
 

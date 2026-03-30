@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774886677841,
+  "lastUpdate": 1774893802400,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -102189,6 +102189,89 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 10699,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kw.kaiweiwu@gmail.com",
+            "name": "Kaiwei Wu",
+            "username": "Mikkiewwkw"
+          },
+          "committer": {
+            "email": "kaiweiwu@salesforce.com",
+            "name": "Kaiwei Wu"
+          },
+          "distinct": true,
+          "id": "12d97276df47ecf3ab3bf789d34692ed341a660d",
+          "message": "feat: add ExtlClntAppOauthSecuritySettings metadata support\n\nMade-with: Cursor",
+          "timestamp": "2026-03-30T09:47:45-07:00",
+          "tree_id": "8d8d855d264093a4c3fb6574d7772286928be9ae",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/12d97276df47ecf3ab3bf789d34692ed341a660d"
+        },
+        "date": 1774893791953,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 243,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2576,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 3212,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 3358,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 463,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 6543,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 9293,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 6747,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 869,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 11668,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 17682,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 12272,
             "unit": "ms"
           }
         ]

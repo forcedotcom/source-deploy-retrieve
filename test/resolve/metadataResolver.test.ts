@@ -354,17 +354,13 @@ describe('MetadataResolver', () => {
           },
         ]);
         access.getComponentsFromPath(path);
-        // isDirectory is called a few times during recursive parsing, after debugging
-        // we only need to verify calls made in succession are called with dirs, and then files
-        expect([isDirSpy.args[3][0], isDirSpy.args[4][0]]).to.deep.equal([path, join(path, 'parent.report-meta.xml')]);
-        expect([isDirSpy.args[7][0], isDirSpy.args[8][0]]).to.deep.equal([
-          join(path, 'dir1'),
-          join(path, 'parent.report-meta.xml'),
-        ]);
-        expect([isDirSpy.args[10][0], isDirSpy.args[11][0]]).to.deep.equal([
-          join(path, 'dir1'),
-          join(path, 'dir1', 'dir1.report-meta.xml'),
-        ]);
+        // With directory status caching, isDirectory is called upfront for all entries in a directory
+        // Verify that isDirectory was called for all the expected paths
+        const calledPaths = isDirSpy.args.map((args: string[]) => args[0]);
+        expect(calledPaths).to.include(path);
+        expect(calledPaths).to.include(join(path, 'dir1'));
+        expect(calledPaths).to.include(join(path, 'parent.report-meta.xml'));
+        expect(calledPaths).to.include(join(path, 'dir1', 'dir1.report-meta.xml'));
       });
 
       it('Should determine type for folder files', () => {

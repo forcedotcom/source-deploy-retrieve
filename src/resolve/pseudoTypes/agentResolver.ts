@@ -47,6 +47,9 @@ const getLogger = (): Logger => {
   return logger;
 };
 
+// Pre-compile regex for bot version parsing (performance optimization)
+const BOT_VERSION_PATTERN = /^(.+)_(\d+)$/;
+
 /**
  * Parses a bot name to extract version filtering information.
  * Supports patterns:
@@ -70,7 +73,7 @@ export function parseBotVersionFilter(botName: string): {
   }
 
   // Handle specific version pattern: BotName_<number>
-  const versionMatch = botName.match(/^(.+)_(\d+)$/);
+  const versionMatch = botName.match(BOT_VERSION_PATTERN);
   if (versionMatch) {
     const [, baseName, versionStr] = versionMatch;
     const versionNum = parseInt(versionStr, 10);

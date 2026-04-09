@@ -1,3 +1,12 @@
+## [12.32.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.32.2...12.32.3) (2026-04-09)
+
+
+### Bug Fixes
+
+* **deps:** bump basic-ftp from 5.2.0 to 5.2.1 ([#1733](https://github.com/forcedotcom/source-deploy-retrieve/issues/1733)) ([7b04e76](https://github.com/forcedotcom/source-deploy-retrieve/commit/7b04e760eee4c12dd6a493b90abd893f110e9876))
+
+
+
 ## [12.32.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.32.1...12.32.2) (2026-04-05)
 
 

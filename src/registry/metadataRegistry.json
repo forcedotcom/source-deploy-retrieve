@@ -569,6 +569,7 @@
     "ExternalStoragePrvdConfigSet": "externalstorageprvdconfig",
     "ruleLibraryDefinition": "rulelibrarydefinition",
     "dataMapperDefinition": "datamapperdefinition",
+    "dynamicUiCardDefinition": "dynamicuicarddefinition",
     "integrationProcdDefinition": "integrationprocddefinition",
     "omniscriptDefinition": "omniscriptdefinition",
     "procedurePlanDefinition": "procedureplandefinition",
@@ -5083,6 +5084,14 @@
       "name": "DataMapperDefinition",
       "suffix": "dataMapperDefinition",
       "directoryName": "dataMapperDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "dynamicuicarddefinition": {
+      "id": "dynamicuicarddefinition",
+      "name": "DynamicUiCardDefinition",
+      "suffix": "dynamicUiCardDefinition",
+      "directoryName": "dynamicUiCardDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     },

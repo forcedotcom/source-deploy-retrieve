@@ -1,3 +1,12 @@
+## [12.32.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.32.4...12.32.5) (2026-04-11)
+
+
+### Bug Fixes
+
+* proper directory ignoring W-21988477 ([#1737](https://github.com/forcedotcom/source-deploy-retrieve/issues/1737)) ([3ff0812](https://github.com/forcedotcom/source-deploy-retrieve/commit/3ff08122d4714a6ea259adb1f4e7e49f71682b8d)), closes [#1741](https://github.com/forcedotcom/source-deploy-retrieve/issues/1741)
+
+
+
 ## [12.32.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.32.3...12.32.4) (2026-04-11)
 
 

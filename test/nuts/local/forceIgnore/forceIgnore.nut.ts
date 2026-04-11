@@ -108,15 +108,12 @@ describe('ForceIgnore directory patterns (e2e)', () => {
       const tree = await ZipTreeContainer.create(buffer);
 
       // process.chdir so ForceIgnore.findAndCreate('unpackaged') walks up to
-      // session.project.dir and finds the .forceignore we just wrote.
-      // TestSession stubs process.cwd(); use realpath('.') so we restore the
-      // actual OS cwd after finally — otherwise real cwd stays inside the
-      // session dir and clean() deletes it, breaking later NUTs in the worker.
-      const origCwd = fs.realpathSync('.');
+      // session.project.dir and finds the .forceignore we just wrote
+      const origCwd = process.cwd();
       try {
         process.chdir(session.project.dir);
         const cs = ComponentSet.fromSource({ fsPaths: ['unpackaged'], tree });
-        expect(cs.getSourceComponents().toArray()).to.have.lengthOf(0);
+        expect(cs.getSourceComponents().toArray()).to.have.length(0);
       } finally {
         process.chdir(origCwd);
       }

@@ -125,17 +125,14 @@ export class ForceIgnore {
     try {
       const absoluteFsPath = isAbsolute(fsPath) ? fsPath : resolve(this.forceIgnoreDirectory, fsPath);
       const relativePath = relative(this.forceIgnoreDirectory, absoluteFsPath);
-      // Test both the plain path and the path with a trailing slash. The trailing-slash form
-      // is required for node-ignore to match directory-only patterns like `node_modules/`.
-      // node-ignore does no fs.stat, so callers must append `/` for directories:
+      // node-ignore requires callers to append `/` for directory-only patterns like `node_modules/`:
       // https://github.com/kaelzhang/node-ignore#2-filenames-and-dirnames
-      // For real directories on disk (statSync succeeds and isDirectory() is true) we also test
-      // the trailing-slash form. For files we skip it to avoid false positives where a file named
-      // e.g. `build` matches a directory-only `build/` pattern.
-      // When statSync throws (virtual/zip trees whose paths don't exist on disk) we assume
-      // directory, preserving correct behaviour for ZipTreeContainer / VirtualTreeContainer.
+      // Known files on disk skip the trailing-slash test to avoid false positives
+      // (e.g. a file named `build` matching `build/`).
+      // Virtual/zip tree paths that don't exist on disk are assumed to be potential directories.
       const res =
-        this.parser.ignores(relativePath) || (isDirectory(absoluteFsPath) && this.parser.ignores(`${relativePath}/`));
+        this.parser.ignores(relativePath) ||
+        (couldBeDirectory(absoluteFsPath) && this.parser.ignores(`${relativePath}/`));
       if (res) {
         Logger.childFromRoot('forceIgnore.denies').debug(
           `Ignoring '${fsPath}' because it matched .forceignore patterns.`
@@ -152,12 +149,11 @@ export class ForceIgnore {
   }
 }
 
-const isDirectory = (fsPath: string): boolean => {
+const couldBeDirectory = (fsPath: string): boolean => {
   try {
-    return statSync(fsPath).isDirectory();
+    return !statSync(fsPath).isFile();
   } catch {
-    // virtual/zip trees whose paths don't exist on disk — assume directory
-    // to preserve correct behaviour for ZipTreeContainer / VirtualTreeContainer
+    // virtual/zip trees whose paths don't exist on disk — assume it could be a directory
     return true;
   }
 };

@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import { dirname, isAbsolute, join, normalize, relative, resolve } from 'node:path';
 import * as os from 'node:os';
 import ignore, { Ignore } from 'ignore/index';
-import { readFileSync } from 'graceful-fs';
+import { readFileSync, statSync } from 'graceful-fs';
 import { Lifecycle } from '@salesforce/core/lifecycle';
 import { Logger } from '@salesforce/core/logger';
 import { SourcePath } from '../common/types';
 import { searchUp } from '../utils/fileSystemHandler';
 
+type FindCacheEntry = { mtimeMs: number; size: number; instance: ForceIgnore };
+
 export class ForceIgnore {
   public static readonly FILE_NAME = '.forceignore';
+
+  private static readonly findCache = new Map<string, FindCacheEntry>();
+  private static emptySingleton: ForceIgnore | undefined;
 
   private readonly parser?: Ignore;
   private readonly forceIgnoreDirectory?: string;
@@ -78,21 +83,59 @@ export class ForceIgnore {
    * `ForceIgnore` object based on the result. If there is no `.forceignore` file,
    * the returned `ForceIgnore` object will accept everything.
    *
+   * Parsed files are cached by absolute path and invalidated when `mtime` or `size` changes on disk.
+   *
    * @param seed Path to begin the `.forceignore` search from
    */
   public static findAndCreate(seed: SourcePath): ForceIgnore {
     const projectConfigPath = searchUp(seed, ForceIgnore.FILE_NAME);
-    return new ForceIgnore(projectConfigPath ? join(dirname(projectConfigPath), ForceIgnore.FILE_NAME) : '');
+    if (!projectConfigPath) {
+      ForceIgnore.emptySingleton ??= new ForceIgnore('');
+      return ForceIgnore.emptySingleton;
+    }
+
+    const absPath = normalize(projectConfigPath);
+    let mtimeMs: number;
+    let size: number;
+    try {
+      const st = statSync(absPath);
+      ({ mtimeMs, size } = st);
+    } catch {
+      return new ForceIgnore('');
+    }
+
+    const hit = ForceIgnore.findCache.get(absPath);
+    if (hit && hit.mtimeMs === mtimeMs && hit.size === size) {
+      return hit.instance;
+    }
+
+    const instance = new ForceIgnore(join(dirname(absPath), ForceIgnore.FILE_NAME));
+    ForceIgnore.findCache.set(absPath, { mtimeMs, size, instance });
+    return instance;
+  }
+
+  /** @internal clears module cache; for unit tests only */
+  public static clearCacheForTest(): void {
+    ForceIgnore.findCache.clear();
+    ForceIgnore.emptySingleton = undefined;
   }
 
   public denies(fsPath: SourcePath): boolean {
     if (!this.parser || !this.forceIgnoreDirectory) return false;
     try {
       const absoluteFsPath = isAbsolute(fsPath) ? fsPath : resolve(this.forceIgnoreDirectory, fsPath);
-      const res = this.parser.ignores(relative(this.forceIgnoreDirectory, absoluteFsPath));
+      const relativePath = relative(this.forceIgnoreDirectory, absoluteFsPath);
+      // node-ignore requires callers to append `/` for directory-only patterns like `node_modules/`:
+      // https://github.com/kaelzhang/node-ignore#2-filenames-and-dirnames
+      // Known files on disk skip the trailing-slash test to avoid false positives
+      // (e.g. a file named `build` matching `build/`).
+      // Virtual/zip tree paths that don't exist on disk are assumed to be potential directories.
+      const res =
+        this.parser.ignores(relativePath) ||
+        (couldBeDirectory(absoluteFsPath) && this.parser.ignores(`${relativePath}/`));
       if (res) {
         Logger.childFromRoot('forceIgnore.denies').debug(
-          `Ignoring file '${fsPath}' because it matched .forceignore patterns.`
+          `Ignoring '${fsPath}' because it matched .forceignore patterns.`
         );
       }
       return res;
@@ -102,12 +145,15 @@ export class ForceIgnore {
   }
 
   public accepts(fsPath: SourcePath): boolean {
-    if (!this.parser || !this.forceIgnoreDirectory) return true;
-    try {
-      const absoluteFsPath = isAbsolute(fsPath) ? fsPath : resolve(this.forceIgnoreDirectory, fsPath);
-      return !this.parser.ignores(relative(this.forceIgnoreDirectory, absoluteFsPath));
-    } catch (e) {
-      return true;
-    }
+    return !this.denies(fsPath);
   }
 }
+
+const couldBeDirectory = (fsPath: string): boolean => {
+  try {
+    return !statSync(fsPath).isFile();
+  } catch {
+    // virtual/zip trees whose paths don't exist on disk — assume it could be a directory
+    return true;
+  }
+};

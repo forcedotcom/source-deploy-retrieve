@@ -266,24 +266,31 @@ export class VirtualTreeContainer extends TreeContainer {
    * @returns VirtualTreeContainer
    */
   public static fromFilePaths(paths: string[]): VirtualTreeContainer {
-    // a map to reduce array iterations
-    const virtualDirectoryByFullPath = new Map<string, VirtualDirectory>();
-    paths
-      // defending against undefined being passed in.  The metadata API sometimes responds missing fileName
-      .filter(isString)
-      .map((filename) => {
-        const splits = filename.split(sep);
-        for (let i = 0; i < splits.length - 1; i++) {
-          const fullPathSoFar = splits.slice(0, i + 1).join(sep);
-          const existing = virtualDirectoryByFullPath.get(fullPathSoFar);
-          virtualDirectoryByFullPath.set(fullPathSoFar, {
-            dirPath: fullPathSoFar,
-            // only add to children if we don't already have it
-            children: Array.from(new Set(existing?.children ?? []).add(splits[i + 1])),
-          });
+    const childrenByDir = new Map<string, Set<string>>();
+    for (const filename of paths) {
+      if (!isString(filename)) {
+        continue;
+      }
+      const splits = filename.split(sep);
+      for (let i = 0; i < splits.length - 1; i++) {
+        // slice+join preserves the leading separator for absolute paths
+        // e.g. ['', 'home'].join('/') === '/home'
+        const dirPath = splits.slice(0, i + 1).join(sep);
+        let childSet = childrenByDir.get(dirPath);
+        if (!childSet) {
+          childSet = new Set<string>();
+          childrenByDir.set(dirPath, childSet);
         }
-      });
-    return new VirtualTreeContainer(Array.from(virtualDirectoryByFullPath.values()));
+        childSet.add(splits[i + 1]);
+      }
+    }
+
+    const virtualFs: VirtualDirectory[] = Array.from(childrenByDir.entries()).map(([dirPath, set]) => ({
+      dirPath,
+      children: Array.from(set),
+    }));
+
+    return new VirtualTreeContainer(virtualFs);
   }
 
   public isDirectory(fsPath: string): boolean {

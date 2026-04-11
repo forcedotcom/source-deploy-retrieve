@@ -15,7 +15,7 @@
  */
 /* eslint-disable class-methods-use-this */
 
-import { join } from 'node:path';
+import { join, resolve, sep } from 'node:path';
 import { Readable } from 'node:stream';
 import { Messages, SfError } from '@salesforce/core';
 import { assert, expect } from 'chai';
@@ -457,6 +457,64 @@ describe('Tree Containers', () => {
         const resolved = resolver.getComponentsFromPath('force-app');
         expect(resolved.length).to.equal(1);
         expect(resolved[0].type.name).to.equal('ApexClass');
+      });
+
+      it('builds parent directories for a single file path', () => {
+        const filePath = join('force-app', 'main', 'default', 'classes', 'Foo.cls');
+        const t = VirtualTreeContainer.fromFilePaths([filePath]);
+        expect(t.exists(filePath)).to.be.true;
+        expect(t.isDirectory(join('force-app', 'main', 'default', 'classes'))).to.be.true;
+        expect(t.readDirectory(join('force-app', 'main', 'default', 'classes'))).to.include.members(['Foo.cls']);
+      });
+
+      it('merges overlapping paths into shared directory entries', () => {
+        const base = join('force-app', 'main', 'default');
+        const a = join(base, 'classes', 'A.cls');
+        const b = join(base, 'triggers', 'T.trigger');
+        const t = VirtualTreeContainer.fromFilePaths([a, b]);
+        expect(t.exists(a)).to.be.true;
+        expect(t.exists(b)).to.be.true;
+        const rootChildren = t.readDirectory(base);
+        expect(rootChildren).to.include.members(['classes', 'triggers']);
+        expect(t.readDirectory(join(base, 'classes'))).to.deep.equal(['A.cls']);
+        expect(t.readDirectory(join(base, 'triggers'))).to.deep.equal(['T.trigger']);
+      });
+
+      it('deduplicates identical paths', () => {
+        const p = join('pkg', 'objects', 'Obj__c', 'Obj__c.object-meta.xml');
+        const t = VirtualTreeContainer.fromFilePaths([p, p, p]);
+        expect(t.exists(p)).to.be.true;
+        expect(t.readDirectory(join('pkg', 'objects', 'Obj__c'))).to.deep.equal(['Obj__c.object-meta.xml']);
+      });
+
+      it('handles a deep path', () => {
+        const parts = ['a', 'b', 'c', 'd', 'e', 'deep.txt'];
+        const filePath = join(...parts);
+        const t = VirtualTreeContainer.fromFilePaths([filePath]);
+        expect(t.exists(filePath)).to.be.true;
+        expect(t.isDirectory(join('a', 'b', 'c', 'd'))).to.be.true;
+        expect(t.readDirectory(join('a', 'b', 'c', 'd'))).to.deep.equal(['e']);
+      });
+
+      it('ignores non-string entries like the previous implementation', () => {
+        const p = join('x', 'y.txt');
+        const t = VirtualTreeContainer.fromFilePaths([p, undefined as unknown as string, null as unknown as string]);
+        expect(t.exists(p)).to.be.true;
+      });
+
+      it('produces no tree entries for a root-level filename (no parent segments)', () => {
+        const t = VirtualTreeContainer.fromFilePaths(['rootOnly.txt']);
+        expect(t.exists('rootOnly.txt')).to.be.false;
+        expect(() => t.readFileSync('rootOnly.txt')).to.throw();
+      });
+
+      it('handles absolute paths', () => {
+        const classesDir = resolve(sep, 'home', 'user', 'project', 'force-app', 'main', 'default', 'classes');
+        const abs = join(classesDir, 'Foo.cls-meta.xml');
+        const t = VirtualTreeContainer.fromFilePaths([abs]);
+        expect(t.exists(abs)).to.be.true;
+        expect(t.isDirectory(classesDir)).to.be.true;
+        expect(t.readDirectory(classesDir)).to.deep.equal(['Foo.cls-meta.xml']);
       });
     });
   });

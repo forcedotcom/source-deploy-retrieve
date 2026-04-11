@@ -75,6 +75,7 @@ export class MetadataResolver {
     return component ? [component] : [];
   }
 
+  // eslint-disable-next-line complexity
   private getComponentsFromPathRecursive(dir: string, inclusiveFilter?: ComponentSet): SourceComponent[] {
     const dirQueue: string[] = [];
     const components: SourceComponent[] = [];
@@ -88,12 +89,11 @@ export class MetadataResolver {
       return components;
     }
 
-    for (const fsPath of this.tree
-      .readDirectory(dir)
-      .map(fnJoin(dir))
-      // this method isn't truly recursive, we need to sort directories before files so we look as far down as possible
-      // before finding the parent and returning only it - by sorting, we make it as recursive as possible
-      .sort(this.sortDirsFirst)) {
+    const entries = this.tree.readDirectory(dir).map(fnJoin(dir));
+    const isDirByPath = new Map(entries.map((entry) => [entry, this.tree.isDirectory(entry)]));
+    // this method isn't truly recursive, we need to sort directories before files so we look as far down as possible
+    // before finding the parent and returning only it - by sorting, we make it as recursive as possible
+    for (const fsPath of entries.sort(directoriesFirst(isDirByPath))) {
       if (ignore.has(fsPath)) {
         continue;
       }
@@ -110,7 +110,9 @@ export class MetadataResolver {
             components.push(component);
             ignore.add(component.xml);
           }
-        } else {
+          // normally the preview commands expect to traverse ignored directories in order to provide a list of ignored files.
+          // we do NOT want to do this where react components can have very large dirs.
+        } else if (!(this.forceIgnore?.denies(fsPath) && fsPath.split(sep).includes('node_modules'))) {
           dirQueue.push(fsPath);
         }
       } else if (isMetadata(this.registry)(this.tree)(fsPath)) {
@@ -139,15 +141,6 @@ export class MetadataResolver {
     return components.concat(dirQueue.flatMap((d) => this.getComponentsFromPathRecursive(d, inclusiveFilter)));
   }
 
-  private sortDirsFirst = (a: string, b: string): number => {
-    if (this.tree.isDirectory(a) && this.tree.isDirectory(b)) {
-      return 0;
-    } else if (this.tree.isDirectory(a) && !this.tree.isDirectory(b)) {
-      return -1;
-    } else {
-      return 1;
-    }
-  };
   private resolveComponent(fsPath: string, isResolvingSource: boolean): SourceComponent | undefined {
     if (this.forceIgnore?.denies(fsPath)) {
       // don't resolve the component if the path is denied
@@ -479,3 +472,9 @@ const pathIncludesDirName =
  * @param fsPath File path of a potential metadata xml file
  */
 const parseAsRootMetadataXml = (fsPath: string): boolean => Boolean(parseMetadataXml(fsPath));
+
+/** Sort comparator that places directories before files. */
+const directoriesFirst =
+  (isDirByPath: Map<string, boolean>) =>
+  (a: string, b: string): number =>
+    isDirByPath.get(a) === isDirByPath.get(b) ? 0 : isDirByPath.get(a) ? -1 : 1;

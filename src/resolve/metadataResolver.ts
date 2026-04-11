@@ -75,12 +75,17 @@ export class MetadataResolver {
     return component ? [component] : [];
   }
 
+  // eslint-disable-next-line complexity
   private getComponentsFromPathRecursive(dir: string, inclusiveFilter?: ComponentSet): SourceComponent[] {
     const dirQueue: string[] = [];
     const components: SourceComponent[] = [];
     const ignore = new Set();
 
-    if (this.forceIgnore?.denies(dir)) {
+    // don't apply forceignore rules against dirs
+    // `forceignore.denies` will pass a relative path to node-ignore, e.g.
+    // `path/to/force-app` -> `force-app`, note that there's no trailing slash
+    // so node-ignore will treat it as a file.
+    if (!this.tree.isDirectory(dir) && this.forceIgnore?.denies(dir)) {
       return components;
     }
 
@@ -88,17 +93,7 @@ export class MetadataResolver {
     const isDirByPath = new Map(entries.map((entry) => [entry, this.tree.isDirectory(entry)]));
     // this method isn't truly recursive, we need to sort directories before files so we look as far down as possible
     // before finding the parent and returning only it - by sorting, we make it as recursive as possible
-    for (const fsPath of entries.sort((a, b) => {
-      const aDir = isDirByPath.get(a)!;
-      const bDir = isDirByPath.get(b)!;
-      if (aDir && bDir) {
-        return 0;
-      } else if (aDir && !bDir) {
-        return -1;
-      } else {
-        return 1;
-      }
-    })) {
+    for (const fsPath of entries.sort(directoriesFirst(isDirByPath))) {
       if (ignore.has(fsPath)) {
         continue;
       }
@@ -115,7 +110,9 @@ export class MetadataResolver {
             components.push(component);
             ignore.add(component.xml);
           }
-        } else if (!this.forceIgnore?.denies(fsPath)) {
+          // normally the preview commands expect to traverse ignored directories in order to provide a list of ignored files.
+          // we do NOT want to do this where react components can have very large dirs.
+        } else if (!(this.forceIgnore?.denies(fsPath) && fsPath.includes('node_modules'))) {
           dirQueue.push(fsPath);
         }
       } else if (isMetadata(this.registry)(this.tree)(fsPath)) {
@@ -475,3 +472,9 @@ const pathIncludesDirName =
  * @param fsPath File path of a potential metadata xml file
  */
 const parseAsRootMetadataXml = (fsPath: string): boolean => Boolean(parseMetadataXml(fsPath));
+
+/** Sort comparator that places directories before files. */
+const directoriesFirst =
+  (isDirByPath: Map<string, boolean>) =>
+  (a: string, b: string): number =>
+    isDirByPath.get(a) === isDirByPath.get(b) ? 0 : isDirByPath.get(a) ? -1 : 1;

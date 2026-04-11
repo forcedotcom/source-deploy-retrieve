@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { mkdirSync, mkdtempSync, statSync, unlinkSync, writeFileSync } from 'node:fs';
+import type { Stats } from 'node:fs';
 import { join } from 'node:path';
 import * as os from 'node:os';
 import { expect } from 'chai';
@@ -33,6 +35,7 @@ describe('ForceIgnore', () => {
   afterEach(() => {
     env.restore();
     Sinon.restore();
+    ForceIgnore.clearCacheForTest();
   });
 
   it('Should default to not ignoring a file if forceignore is not loaded', () => {
@@ -81,10 +84,109 @@ describe('ForceIgnore', () => {
   it('Should find a forceignore file from a given path', () => {
     const readStub = env.stub(fs, 'readFileSync');
     const searchStub = env.stub(fsUtil, 'searchUp');
+    env.stub(fs, 'statSync').returns({ mtimeMs: 99, size: 500 } as Stats);
     readStub.withArgs(forceIgnorePath).returns(testPattern);
     searchStub.withArgs(testPath, ForceIgnore.FILE_NAME).returns(forceIgnorePath);
     const forceIgnore = ForceIgnore.findAndCreate(testPath);
     expect(forceIgnore.accepts(testPath)).to.be.false;
+  });
+
+  describe('findAndCreate cache', () => {
+    it('reuses the same instance and reads .forceignore once when mtime/size unchanged', () => {
+      const tmp = mkdtempSync(join(os.tmpdir(), 'sdr-fi-cache-'));
+      const fiPath = join(tmp, ForceIgnore.FILE_NAME);
+      writeFileSync(fiPath, `${testPattern}\n`);
+      mkdirSync(join(tmp, 'pkg', 'classes'), { recursive: true });
+      const seedA = join(tmp, 'pkg', 'classes');
+      const seedB = join(tmp, 'pkg', 'classes', 'Foo.cls');
+      const readSpy = env.spy(fs, 'readFileSync');
+      const first = ForceIgnore.findAndCreate(seedA);
+      const second = ForceIgnore.findAndCreate(seedB);
+      expect(first).to.equal(second);
+      const readsForFi = readSpy
+        .getCalls()
+        .filter((c) => typeof c.args[0] === 'string' && c.args[0].endsWith(ForceIgnore.FILE_NAME));
+      expect(readsForFi.length).to.equal(1);
+    });
+
+    it('reloads when .forceignore mtime or size changes', () => {
+      const tmp = mkdtempSync(join(os.tmpdir(), 'sdr-fi-inv-'));
+      const fiPath = join(tmp, ForceIgnore.FILE_NAME);
+      writeFileSync(fiPath, '**/old/**\n');
+      mkdirSync(join(tmp, 'force-app'), { recursive: true });
+      const seed = join(tmp, 'force-app');
+      const readSpy = env.spy(fs, 'readFileSync');
+      ForceIgnore.findAndCreate(seed);
+      writeFileSync(fiPath, '**/new/**\n');
+      ForceIgnore.findAndCreate(seed);
+      const readsForFi = readSpy
+        .getCalls()
+        .filter((c) => typeof c.args[0] === 'string' && c.args[0].endsWith(ForceIgnore.FILE_NAME));
+      expect(readsForFi.length).to.equal(2);
+    });
+
+    it('cache hit: repeated findAndCreate keeps the same deny/accept behavior (no stale rules)', () => {
+      const tmp = mkdtempSync(join(os.tmpdir(), 'sdr-fi-cache-hit-'));
+      const fiPath = join(tmp, ForceIgnore.FILE_NAME);
+      const watched = join(tmp, 'cache-hit-marker.txt');
+      writeFileSync(fiPath, 'cache-hit-marker.txt\n');
+      mkdirSync(join(tmp, 'pkg'), { recursive: true });
+      const seed = join(tmp, 'pkg');
+
+      const a = ForceIgnore.findAndCreate(seed);
+      const b = ForceIgnore.findAndCreate(join(seed, 'nested'));
+      expect(a).to.equal(b);
+      expect(a.denies(watched)).to.be.true;
+      expect(b.denies(watched)).to.be.true;
+    });
+
+    it('after user edits .forceignore, reload applies new rules (not a stale cache)', () => {
+      const tmp = mkdtempSync(join(os.tmpdir(), 'sdr-fi-cache-edit-'));
+      const fiPath = join(tmp, ForceIgnore.FILE_NAME);
+      const watched = join(tmp, 'user-edit-marker.txt');
+      writeFileSync(fiPath, 'user-edit-marker.txt\n');
+      mkdirSync(join(tmp, 'force-app'), { recursive: true });
+      const seed = join(tmp, 'force-app');
+
+      const before = ForceIgnore.findAndCreate(seed);
+      expect(before.denies(watched)).to.be.true;
+
+      writeFileSync(fiPath, '# user cleared patterns\n');
+      const after = ForceIgnore.findAndCreate(seed);
+      expect(after).to.not.equal(before);
+      expect(after.denies(watched)).to.be.false;
+    });
+
+    it('after user removes .forceignore, findAndCreate stops denying paths (no file → empty rules)', () => {
+      const tmp = mkdtempSync(join(os.tmpdir(), 'sdr-fi-cache-rm-'));
+      const fiPath = join(tmp, ForceIgnore.FILE_NAME);
+      const watched = join(tmp, 'removed-rule.txt');
+      writeFileSync(fiPath, 'removed-rule.txt\n');
+      mkdirSync(join(tmp, 'src'), { recursive: true });
+      const seed = join(tmp, 'src');
+
+      const loaded = ForceIgnore.findAndCreate(seed);
+      expect(loaded.denies(watched)).to.be.true;
+
+      unlinkSync(fiPath);
+      const empty = ForceIgnore.findAndCreate(seed);
+      expect(empty.denies(watched)).to.be.false;
+    });
+
+    it('when user adds a new .forceignore, findAndCreate picks up rules (was accepting, now denies)', () => {
+      const tmp = mkdtempSync(join(os.tmpdir(), 'sdr-fi-cache-add-'));
+      mkdirSync(join(tmp, 'force-app'), { recursive: true });
+      const seed = join(tmp, 'force-app');
+      const watched = join(tmp, 'newly-ignored.txt');
+
+      const before = ForceIgnore.findAndCreate(seed);
+      expect(before.denies(watched)).to.be.false;
+
+      writeFileSync(join(tmp, ForceIgnore.FILE_NAME), 'newly-ignored.txt\n');
+      const after = ForceIgnore.findAndCreate(seed);
+      expect(after).to.not.equal(before);
+      expect(after.denies(watched)).to.be.true;
+    });
   });
 
   describe('directory-only patterns (trailing slash in .forceignore)', () => {
@@ -105,6 +207,33 @@ describe('ForceIgnore', () => {
     it('does not deny an unrelated path', () => {
       const fi = new ForceIgnore(forceIgnorePath);
       expect(fi.denies(join('some', 'node_modules_extra'))).to.be.false;
+    });
+  });
+
+  describe('directory-only pattern vs file path (trailing-slash OR false positive)', () => {
+    it('denies a regular file whose basename matches a directory-only rule (gitignore would not)', () => {
+      const tmp = mkdtempSync(join(os.tmpdir(), 'sdr-fi-buildfile-'));
+      const sfdxProject = {
+        name: 'falsePositiveProj',
+        namespace: '',
+        packageDirectories: [{ default: true, path: 'force-app' }],
+        sfdcLoginUrl: 'https://login.salesforce.com',
+        sourceApiVersion: '58.0',
+      };
+      writeFileSync(join(tmp, 'sfdx-project.json'), `${JSON.stringify(sfdxProject, null, 2)}\n`);
+      mkdirSync(join(tmp, 'force-app', 'main', 'default'), { recursive: true });
+      const filePath = join(tmp, 'force-app', 'main', 'default', 'build');
+      writeFileSync(filePath, '# build output placeholder\n');
+      expect(statSync(filePath).isFile()).to.be.true;
+
+      writeFileSync(join(tmp, ForceIgnore.FILE_NAME), 'build/\n');
+      const fi = new ForceIgnore(join(tmp, ForceIgnore.FILE_NAME));
+
+      // Gitignore / node-ignore: pattern `build/` applies only to directories named `build`.
+      // `ignores('force-app/main/default/build')` is false for a file at that path, but
+      // ForceIgnore also tests `.../build/`, which matches the directory-only pattern—so
+      // this file is incorrectly treated as ignored (false positive).
+      expect(fi.denies(filePath)).to.be.false;
     });
   });
 

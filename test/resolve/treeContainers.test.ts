@@ -15,7 +15,7 @@
  */
 /* eslint-disable class-methods-use-this */
 
-import { join } from 'node:path';
+import { join, resolve, sep } from 'node:path';
 import { Readable } from 'node:stream';
 import { Messages, SfError } from '@salesforce/core';
 import { assert, expect } from 'chai';
@@ -506,6 +506,15 @@ describe('Tree Containers', () => {
         const t = VirtualTreeContainer.fromFilePaths(['rootOnly.txt']);
         expect(t.exists('rootOnly.txt')).to.be.false;
         expect(() => t.readFileSync('rootOnly.txt')).to.throw();
+      });
+
+      it('handles absolute paths', () => {
+        const classesDir = resolve(sep, 'home', 'user', 'project', 'force-app', 'main', 'default', 'classes');
+        const abs = join(classesDir, 'Foo.cls-meta.xml');
+        const t = VirtualTreeContainer.fromFilePaths([abs]);
+        expect(t.exists(abs)).to.be.true;
+        expect(t.isDirectory(classesDir)).to.be.true;
+        expect(t.readDirectory(classesDir)).to.deep.equal(['Foo.cls-meta.xml']);
       });
     });
   });

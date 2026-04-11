@@ -272,22 +272,16 @@ export class VirtualTreeContainer extends TreeContainer {
         continue;
       }
       const splits = filename.split(sep);
-      if (splits.length <= 1) {
-        continue;
-      }
-
-      let currentDir = splits[0];
       for (let i = 0; i < splits.length - 1; i++) {
-        const childName = splits[i + 1];
-        let childSet = childrenByDir.get(currentDir);
+        // slice+join preserves the leading separator for absolute paths
+        // e.g. ['', 'home'].join('/') === '/home'
+        const dirPath = splits.slice(0, i + 1).join(sep);
+        let childSet = childrenByDir.get(dirPath);
         if (!childSet) {
           childSet = new Set<string>();
-          childrenByDir.set(currentDir, childSet);
+          childrenByDir.set(dirPath, childSet);
         }
-        childSet.add(childName);
-        if (i < splits.length - 2) {
-          currentDir = join(currentDir, childName);
-        }
+        childSet.add(splits[i + 1]);
       }
     }
 

@@ -112,7 +112,7 @@ export class MetadataResolver {
           }
           // normally the preview commands expect to traverse ignored directories in order to provide a list of ignored files.
           // we do NOT want to do this where react components can have very large dirs.
-        } else if (!(this.forceIgnore?.denies(fsPath) && fsPath.includes('node_modules'))) {
+        } else if (!(this.forceIgnore?.denies(fsPath) && fsPath.split(sep).includes('node_modules'))) {
           dirQueue.push(fsPath);
         }
       } else if (isMetadata(this.registry)(this.tree)(fsPath)) {

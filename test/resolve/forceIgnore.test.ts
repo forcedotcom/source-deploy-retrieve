@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
+import type { Stats } from 'node:fs';
 import { join } from 'node:path';
 import * as os from 'node:os';
 import { expect } from 'chai';
@@ -33,6 +35,7 @@ describe('ForceIgnore', () => {
   afterEach(() => {
     env.restore();
     Sinon.restore();
+    ForceIgnore.clearCacheForTest();
   });
 
   it('Should default to not ignoring a file if forceignore is not loaded', () => {
@@ -80,10 +83,46 @@ describe('ForceIgnore', () => {
   it('Should find a forceignore file from a given path', () => {
     const readStub = env.stub(fs, 'readFileSync');
     const searchStub = env.stub(fsUtil, 'searchUp');
+    env.stub(fs, 'statSync').returns({ mtimeMs: 99, size: 500 } as Stats);
     readStub.withArgs(forceIgnorePath).returns(testPattern);
     searchStub.withArgs(testPath, ForceIgnore.FILE_NAME).returns(forceIgnorePath);
     const forceIgnore = ForceIgnore.findAndCreate(testPath);
     expect(forceIgnore.accepts(testPath)).to.be.false;
+  });
+
+  describe('findAndCreate cache', () => {
+    it('reuses the same instance and reads .forceignore once when mtime/size unchanged', () => {
+      const tmp = mkdtempSync(join(os.tmpdir(), 'sdr-fi-cache-'));
+      const fiPath = join(tmp, ForceIgnore.FILE_NAME);
+      writeFileSync(fiPath, `${testPattern}\n`);
+      mkdirSync(join(tmp, 'pkg', 'classes'), { recursive: true });
+      const seedA = join(tmp, 'pkg', 'classes');
+      const seedB = join(tmp, 'pkg', 'classes', 'Foo.cls');
+      const readSpy = env.spy(fs, 'readFileSync');
+      const first = ForceIgnore.findAndCreate(seedA);
+      const second = ForceIgnore.findAndCreate(seedB);
+      expect(first).to.equal(second);
+      const readsForFi = readSpy
+        .getCalls()
+        .filter((c) => typeof c.args[0] === 'string' && c.args[0].endsWith(ForceIgnore.FILE_NAME));
+      expect(readsForFi.length).to.equal(1);
+    });
+
+    it('reloads when .forceignore mtime or size changes', () => {
+      const tmp = mkdtempSync(join(os.tmpdir(), 'sdr-fi-inv-'));
+      const fiPath = join(tmp, ForceIgnore.FILE_NAME);
+      writeFileSync(fiPath, '**/old/**\n');
+      mkdirSync(join(tmp, 'force-app'), { recursive: true });
+      const seed = join(tmp, 'force-app');
+      const readSpy = env.spy(fs, 'readFileSync');
+      ForceIgnore.findAndCreate(seed);
+      writeFileSync(fiPath, '**/new/**\n');
+      ForceIgnore.findAndCreate(seed);
+      const readsForFi = readSpy
+        .getCalls()
+        .filter((c) => typeof c.args[0] === 'string' && c.args[0].endsWith(ForceIgnore.FILE_NAME));
+      expect(readsForFi.length).to.equal(2);
+    });
   });
 
   it('Should handle forward slashes on windows', () => {

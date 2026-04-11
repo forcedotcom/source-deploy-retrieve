@@ -266,24 +266,37 @@ export class VirtualTreeContainer extends TreeContainer {
    * @returns VirtualTreeContainer
    */
   public static fromFilePaths(paths: string[]): VirtualTreeContainer {
-    // a map to reduce array iterations
-    const virtualDirectoryByFullPath = new Map<string, VirtualDirectory>();
-    paths
-      // defending against undefined being passed in.  The metadata API sometimes responds missing fileName
-      .filter(isString)
-      .map((filename) => {
-        const splits = filename.split(sep);
-        for (let i = 0; i < splits.length - 1; i++) {
-          const fullPathSoFar = splits.slice(0, i + 1).join(sep);
-          const existing = virtualDirectoryByFullPath.get(fullPathSoFar);
-          virtualDirectoryByFullPath.set(fullPathSoFar, {
-            dirPath: fullPathSoFar,
-            // only add to children if we don't already have it
-            children: Array.from(new Set(existing?.children ?? []).add(splits[i + 1])),
-          });
+    const childrenByDir = new Map<string, Set<string>>();
+    for (const filename of paths) {
+      if (!isString(filename)) {
+        continue;
+      }
+      const splits = filename.split(sep);
+      if (splits.length <= 1) {
+        continue;
+      }
+
+      let currentDir = splits[0];
+      for (let i = 0; i < splits.length - 1; i++) {
+        const childName = splits[i + 1];
+        let childSet = childrenByDir.get(currentDir);
+        if (!childSet) {
+          childSet = new Set<string>();
+          childrenByDir.set(currentDir, childSet);
         }
-      });
-    return new VirtualTreeContainer(Array.from(virtualDirectoryByFullPath.values()));
+        childSet.add(childName);
+        if (i < splits.length - 2) {
+          currentDir = join(currentDir, childName);
+        }
+      }
+    }
+
+    const virtualFs: VirtualDirectory[] = Array.from(childrenByDir.entries()).map(([dirPath, set]) => ({
+      dirPath,
+      children: Array.from(set),
+    }));
+
+    return new VirtualTreeContainer(virtualFs);
   }
 
   public isDirectory(fsPath: string): boolean {

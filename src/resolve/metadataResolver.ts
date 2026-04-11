@@ -80,11 +80,7 @@ export class MetadataResolver {
     const components: SourceComponent[] = [];
     const ignore = new Set();
 
-    // don't apply forceignore rules against dirs
-    // `forceignore.denies` will pass a relative path to node-ignore, e.g.
-    // `path/to/force-app` -> `force-app`, note that there's no trailing slash
-    // so node-ignore will treat it as a file.
-    if (!this.tree.isDirectory(dir) && this.forceIgnore?.denies(dir)) {
+    if (this.forceIgnore?.denies(dir)) {
       return components;
     }
 
@@ -110,7 +106,7 @@ export class MetadataResolver {
             components.push(component);
             ignore.add(component.xml);
           }
-        } else {
+        } else if (!this.forceIgnore?.denies(fsPath)) {
           dirQueue.push(fsPath);
         }
       } else if (isMetadata(this.registry)(this.tree)(fsPath)) {

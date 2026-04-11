@@ -89,10 +89,15 @@ export class ForceIgnore {
     if (!this.parser || !this.forceIgnoreDirectory) return false;
     try {
       const absoluteFsPath = isAbsolute(fsPath) ? fsPath : resolve(this.forceIgnoreDirectory, fsPath);
-      const res = this.parser.ignores(relative(this.forceIgnoreDirectory, absoluteFsPath));
+      const relativePath = relative(this.forceIgnoreDirectory, absoluteFsPath);
+      // Test both the plain path and the path with a trailing slash. The trailing-slash form
+      // is required for node-ignore to match directory-only patterns like `node_modules/`.
+      // Testing both means we correctly deny directories in virtual trees (e.g. ZipTreeContainer)
+      // where statSync is unavailable, without requiring callers to signal directory-ness.
+      const res = this.parser.ignores(relativePath) || this.parser.ignores(`${relativePath}/`);
       if (res) {
         Logger.childFromRoot('forceIgnore.denies').debug(
-          `Ignoring file '${fsPath}' because it matched .forceignore patterns.`
+          `Ignoring '${fsPath}' because it matched .forceignore patterns.`
         );
       }
       return res;
@@ -102,12 +107,6 @@ export class ForceIgnore {
   }
 
   public accepts(fsPath: SourcePath): boolean {
-    if (!this.parser || !this.forceIgnoreDirectory) return true;
-    try {
-      const absoluteFsPath = isAbsolute(fsPath) ? fsPath : resolve(this.forceIgnoreDirectory, fsPath);
-      return !this.parser.ignores(relative(this.forceIgnoreDirectory, absoluteFsPath));
-    } catch (e) {
-      return true;
-    }
+    return !this.denies(fsPath);
   }
 }

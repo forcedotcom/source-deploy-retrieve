@@ -48,8 +48,9 @@ describe('ForceIgnore', () => {
     const forceIgnore = new ForceIgnore(forceIgnorePath);
     expect(forceIgnore.accepts(testPath)).to.be.false;
     expect(forceIgnore.denies(testPath)).to.be.true;
-    expect(debugSpy.calledOnce).to.be.true;
-    expect(debugSpy.getCall(0).args[0]).to.match(/Ignoring file .+ because it matched .forceignore patterns./g);
+    // accepts() delegates to denies(), so debug fires once per call (twice total)
+    expect(debugSpy.callCount).to.equal(2);
+    expect(debugSpy.getCall(0).args[0]).to.match(/Ignoring .+ because it matched .forceignore patterns\./g);
   });
 
   it('windows separators no longer have any effect', () => {
@@ -86,6 +87,27 @@ describe('ForceIgnore', () => {
     expect(forceIgnore.accepts(testPath)).to.be.false;
   });
 
+  describe('directory-only patterns (trailing slash in .forceignore)', () => {
+    beforeEach(() => {
+      env.stub(fs, 'readFileSync').returns('node_modules/');
+    });
+
+    it('denies a path matching a trailing-slash pattern (real or virtual directory)', () => {
+      const fi = new ForceIgnore(forceIgnorePath);
+      expect(fi.denies(join('some', 'node_modules'))).to.be.true;
+    });
+
+    it('accepts returns false for a path matching a trailing-slash pattern', () => {
+      const fi = new ForceIgnore(forceIgnorePath);
+      expect(fi.accepts(join('some', 'node_modules'))).to.be.false;
+    });
+
+    it('does not deny an unrelated path', () => {
+      const fi = new ForceIgnore(forceIgnorePath);
+      expect(fi.denies(join('some', 'node_modules_extra'))).to.be.false;
+    });
+  });
+
   it('Should handle forward slashes on windows', () => {
     const readStub = env.stub(fs, 'readFileSync');
     readStub.withArgs(forceIgnorePath).returns('force-app/main/default/classes/');
@@ -94,11 +116,14 @@ describe('ForceIgnore', () => {
     expect(fi.parser, 'if constructor throws, parser is not defined').to.not.equal(undefined);
   });
 
-  it('Should have the correct default in the case the parsers are not initialized', () => {
+  it('Should deny a directory path matching a trailing-slash pattern', () => {
     const readStub = env.stub(fs, 'readFileSync');
     readStub.withArgs(forceIgnorePath).returns('force-app/main/default/classes/');
     const fi = new ForceIgnore(forceIgnorePath);
-    expect(fi.accepts(join('force-app', 'main', 'default', 'classes'))).to.be.true;
+    // Both the path and path+'/' are tested, so directory-only patterns match correctly
+    // even without filesystem access (virtual trees, zip containers, etc.)
+    expect(fi.accepts(join('force-app', 'main', 'default', 'classes'))).to.be.false;
+    expect(fi.denies(join('force-app', 'main', 'default', 'classes'))).to.be.true;
   });
 
   /**
@@ -118,6 +143,27 @@ describe('ForceIgnore', () => {
       const dotPath = join(root, '.xyz');
       expect(forceIgnore.accepts(dotPath)).to.be.false;
       expect(forceIgnore.denies(dotPath)).to.be.true;
+    });
+
+    it('Should NOT ignore .sf directory itself', () => {
+      expect(forceIgnore.accepts(join(root, '.sf'))).to.be.true;
+      expect(forceIgnore.denies(join(root, '.sf'))).to.be.false;
+    });
+
+    it('Should NOT ignore .sf/orgs directory itself', () => {
+      expect(forceIgnore.accepts(join(root, '.sf', 'orgs'))).to.be.true;
+      expect(forceIgnore.denies(join(root, '.sf', 'orgs'))).to.be.false;
+    });
+
+    it('Should NOT ignore .sf/orgs/<orgId> directory itself', () => {
+      // **/.sf/orgs/*/** requires a path component after the orgId, so the orgId dir itself is accepted
+      expect(forceIgnore.accepts(join(root, '.sf', 'orgs', '00D000000000000'))).to.be.true;
+      expect(forceIgnore.denies(join(root, '.sf', 'orgs', '00D000000000000'))).to.be.false;
+    });
+
+    it('Should ignore content inside .sf/orgs/<orgId> that is not remoteMetadata', () => {
+      expect(forceIgnore.accepts(join(root, '.sf', 'orgs', '00D000000000000', 'foo'))).to.be.false;
+      expect(forceIgnore.denies(join(root, '.sf', 'orgs', '00D000000000000', 'foo'))).to.be.true;
     });
 
     it('Should NOT ignore .sf/orgs/<orgId>/remoteMetadata', () => {

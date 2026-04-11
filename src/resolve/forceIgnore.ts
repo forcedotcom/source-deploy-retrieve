@@ -127,9 +127,15 @@ export class ForceIgnore {
       const relativePath = relative(this.forceIgnoreDirectory, absoluteFsPath);
       // Test both the plain path and the path with a trailing slash. The trailing-slash form
       // is required for node-ignore to match directory-only patterns like `node_modules/`.
-      // Testing both means we correctly deny directories in virtual trees (e.g. ZipTreeContainer)
-      // where statSync is unavailable, without requiring callers to signal directory-ness.
-      const res = this.parser.ignores(relativePath) || this.parser.ignores(`${relativePath}/`);
+      // node-ignore does no fs.stat, so callers must append `/` for directories:
+      // https://github.com/kaelzhang/node-ignore#2-filenames-and-dirnames
+      // For real directories on disk (statSync succeeds and isDirectory() is true) we also test
+      // the trailing-slash form. For files we skip it to avoid false positives where a file named
+      // e.g. `build` matches a directory-only `build/` pattern.
+      // When statSync throws (virtual/zip trees whose paths don't exist on disk) we assume
+      // directory, preserving correct behaviour for ZipTreeContainer / VirtualTreeContainer.
+      const res =
+        this.parser.ignores(relativePath) || (isDirectory(absoluteFsPath) && this.parser.ignores(`${relativePath}/`));
       if (res) {
         Logger.childFromRoot('forceIgnore.denies').debug(
           `Ignoring '${fsPath}' because it matched .forceignore patterns.`
@@ -145,3 +151,13 @@ export class ForceIgnore {
     return !this.denies(fsPath);
   }
 }
+
+const isDirectory = (fsPath: string): boolean => {
+  try {
+    return statSync(fsPath).isDirectory();
+  } catch {
+    // virtual/zip trees whose paths don't exist on disk — assume directory
+    // to preserve correct behaviour for ZipTreeContainer / VirtualTreeContainer
+    return true;
+  }
+};

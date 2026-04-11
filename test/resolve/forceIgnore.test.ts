@@ -211,7 +211,7 @@ describe('ForceIgnore', () => {
   });
 
   describe('directory-only pattern vs file path (trailing-slash OR false positive)', () => {
-    it.skip('denies a regular file whose basename matches a directory-only rule (gitignore would not)', () => {
+    it('denies a regular file whose basename matches a directory-only rule (gitignore would not)', () => {
       const tmp = mkdtempSync(join(os.tmpdir(), 'sdr-fi-buildfile-'));
       const sfdxProject = {
         name: 'falsePositiveProj',

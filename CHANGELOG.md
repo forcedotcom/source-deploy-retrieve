@@ -1,3 +1,12 @@
+## [12.32.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.32.6...12.32.7) (2026-04-12)
+
+
+### Bug Fixes
+
+* **deps:** bump minimatch from 9.0.7 to 9.0.9 ([#1722](https://github.com/forcedotcom/source-deploy-retrieve/issues/1722)) ([8686f26](https://github.com/forcedotcom/source-deploy-retrieve/commit/8686f261d42d8f5b12e70249fc08c1e903ed927f))
+
+
+
 ## [12.32.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.32.5...12.32.6) (2026-04-12)
 
 

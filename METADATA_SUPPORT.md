@@ -817,6 +817,7 @@ v67 introduces the following new types.  Here's their current level of support
 |FlexcardDefinition|✅||
 |FlowValueMap|✅||
 |GenOpAgentConfig|❌|Not supported, but support could be added|
+|IndustriesInsuranceSettings|✅||
 |InsBillingConfig|❌|Not supported, but support could be added|
 |InsPlcyLimitConsumptionRule|❌|Not supported, but support could be added|
 |IntegratedPlanDefinition|❌|Not supported, but support could be added|

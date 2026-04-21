@@ -119,6 +119,7 @@
     "aiAssistantTemplate": "aiassistanttemplate",
     "aiScoringModelDefVersion": "aiscoringmodeldefversion",
     "aiScoringModelDefinition": "aiscoringmodeldefinition",
+    "aiTestingDefinition": "aitestingdefinition",
     "aiUsecaseDefinitions": "aiusecasedefinition",
     "aiapplicationconfig": "aiapplicationconfig",
     "animationRule": "animationrule",
@@ -814,6 +815,14 @@
       "name": "AIScoringModelDefinition",
       "suffix": "aiScoringModelDefinition",
       "supportsWildcardAndName": true
+    },
+    "aitestingdefinition": {
+      "directoryName": "aiTestingDefinitions",
+      "id": "aitestingdefinition",
+      "inFolder": false,
+      "name": "AiTestingDefinition",
+      "strictDirectoryName": false,
+      "suffix": "aiTestingDefinition"
     },
     "aiusecasedefinition": {
       "directoryName": "aiUsecaseDefinitions",

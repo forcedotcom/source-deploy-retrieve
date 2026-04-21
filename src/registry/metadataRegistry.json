@@ -547,6 +547,7 @@
     "workflowSend": "workflowsend",
     "workflowTask": "workflowtask",
     "xmd": "wavexmd",
+    "xml": "emailservicesfunction",
     "policyRuleDefinition": "policyruledefinition",
     "policyRuleDefinitionSet": "policyruledefinitionset",
     "xorghub": "xorghub",

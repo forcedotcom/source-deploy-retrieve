@@ -548,6 +548,8 @@
     "workflowTask": "workflowtask",
     "xmd": "wavexmd",
     "xml": "emailservicesfunction",
+    "policyRuleDefinition": "policyruledefinition",
+    "policyRuleDefinitionSet": "policyruledefinitionset",
     "xorghub": "xorghub",
     "ecaPush": "extlclntapppushsettings",
     "ecaPushPlcy": "extlclntapppushconfigurablepolicies",
@@ -5192,7 +5194,6 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
-
     "telemetrydefinition": {
       "id": "telemetrydefinition",
       "name": "TelemetryDefinition",
@@ -5318,6 +5319,22 @@
       "name": "MeetingPlaybookDefinition",
       "suffix": "meetingPlaybookDefinition",
       "directoryName": "meetingPlaybookDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "policyruledefinition": {
+      "id": "policyruledefinition",
+      "name": "PolicyRuleDefinition",
+      "suffix": "policyRuleDefinition",
+      "directoryName": "policyRuleDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "policyruledefinitionset": {
+      "id": "policyruledefinitionset",
+      "name": "PolicyRuleDefinitionSet",
+      "suffix": "policyRuleDefinitionSet",
+      "directoryName": "policyRuleDefinitionSets",
       "inFolder": false,
       "strictDirectoryName": false
     }

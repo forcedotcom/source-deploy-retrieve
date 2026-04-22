@@ -115,6 +115,7 @@
     "advAcctForecastPeriodGroup": "advacctforecastperiodgroup",
     "affinityScoreDefinition": "affinityscoredefinition",
     "ai": "aiapplication",
+    "aiAgentScorerDefinition": "aiagentscorerdefinition",
     "aiAssistantTemplate": "aiassistanttemplate",
     "aiScoringModelDefVersion": "aiscoringmodeldefversion",
     "aiScoringModelDefinition": "aiscoringmodeldefinition",
@@ -762,6 +763,14 @@
       "name": "AIApplicationConfig",
       "strictDirectoryName": false,
       "suffix": "aiapplicationconfig"
+    },
+    "aiagentscorerdefinition": {
+      "directoryName": "aiAgentScorerDefinitions",
+      "id": "aiagentscorerdefinition",
+      "name": "AiAgentScorerDefinition",
+      "suffix": "aiAgentScorerDefinition",
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "aiassistanttemplate": {
       "directoryName": "aiAssistantTemplates",

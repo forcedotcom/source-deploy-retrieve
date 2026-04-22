@@ -14,4 +14,12 @@
         <label>CF in spanish</label>
         <name>customField__c</name>
     </fields>
+    <quickActions>
+        <label><!-- Test agent action --></label>
+        <name>Test_agent_action</name>
+        <quickActionParametersTranslation>
+            <name>User Utterance</name>
+            <value xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        </quickActionParametersTranslation>
+    </quickActions>
 </CustomObjectTranslation>

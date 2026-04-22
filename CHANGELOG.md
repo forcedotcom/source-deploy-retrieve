@@ -1,3 +1,12 @@
+# [12.34.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.33.0...12.34.0) (2026-04-22)
+
+
+### Features
+
+* add AiSurface and AiResponseFormat metadata types ([#1749](https://github.com/forcedotcom/source-deploy-retrieve/issues/1749)) ([32f2d79](https://github.com/forcedotcom/source-deploy-retrieve/commit/32f2d79a05a0b5bfe0027f5d9f3cde4711172b8b))
+
+
+
 # [12.33.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.32.9...12.33.0) (2026-04-22)
 
 

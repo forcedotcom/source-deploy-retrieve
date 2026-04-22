@@ -1,3 +1,12 @@
+# [12.33.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.32.9...12.33.0) (2026-04-22)
+
+
+### Features
+
+* @W-22168765: [CODA-MDAPI] Enable CLI for PolicyRuleDefinition and PolicyRuleDefinitionSet ([#1747](https://github.com/forcedotcom/source-deploy-retrieve/issues/1747)) ([95b7297](https://github.com/forcedotcom/source-deploy-retrieve/commit/95b72973f9af77bf45410b86198a095d10b282d2))
+
+
+
 ## [12.32.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.32.8...12.32.9) (2026-04-21)
 
 

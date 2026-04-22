@@ -117,8 +117,10 @@
     "ai": "aiapplication",
     "aiAgentScorerDefinition": "aiagentscorerdefinition",
     "aiAssistantTemplate": "aiassistanttemplate",
+    "aiResponseFormat": "airesponseformat",
     "aiScoringModelDefVersion": "aiscoringmodeldefversion",
     "aiScoringModelDefinition": "aiscoringmodeldefinition",
+    "aiSurface": "aisurface",
     "aiUsecaseDefinitions": "aiusecasedefinition",
     "aiapplicationconfig": "aiapplicationconfig",
     "animationRule": "animationrule",
@@ -791,6 +793,14 @@
       },
       "strictDirectoryName": true
     },
+    "airesponseformat": {
+      "directoryName": "aiResponseFormats",
+      "id": "airesponseformat",
+      "inFolder": false,
+      "name": "AiResponseFormat",
+      "suffix": "aiResponseFormat",
+      "strictDirectoryName": false
+    },
     "aiscoringmodeldefinition": {
       "children": {
         "directories": {
@@ -816,6 +826,14 @@
       "name": "AIScoringModelDefinition",
       "suffix": "aiScoringModelDefinition",
       "supportsWildcardAndName": true
+    },
+    "aisurface": {
+      "directoryName": "aiSurfaces",
+      "id": "aisurface",
+      "inFolder": false,
+      "name": "AiSurface",
+      "suffix": "aiSurface",
+      "strictDirectoryName": false
     },
     "aiusecasedefinition": {
       "directoryName": "aiUsecaseDefinitions",

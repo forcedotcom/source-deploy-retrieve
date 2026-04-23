@@ -791,60 +791,60 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 ## Next Release (v67)
 
-v67 introduces the following new types.  Here's their current level of support
+v67 introduces the following new types. Here's their current level of support
 
-|Metadata Type|Support|Notes|
-|:---|:---|:---|
-|AdminSuccessSettings|✅||
-|AgenticCtxtDecorDefinition|❌|Not supported, but support could be added|
-|AiPlannerVoiceAvatarDef|❌|Not supported, but support could be added|
-|CnfgItemAttrDef|✅||
-|CnfgItemAttrPcklstValDef|✅||
-|CnfgItemAttrPicklistDef|✅||
-|CnfgItemAttrSetAttr|✅||
-|CnfgItemAttrSetDef|✅||
-|CnfgItemSourceDefinition|✅||
-|CnfgItemTypeAttrRelDef|✅||
-|CnfgItemTypeDef|✅||
-|CnfgItemTypeRelationDef|✅||
-|CnfgMgmtRelationTypeDef|✅||
-|ConversationGuidanceSettings|✅||
-|DataMapperDefinition|✅||
-|DealInsightsSettings|✅||
-|DelegateAccessDataSet|❌|Not supported, but support could be added|
-|DelegateAccessDef|❌|Not supported, but support could be added|
-|DelegateAccsDataSetObj|❌|Not supported, but support could be added|
-|EvidenceMgmtSettings|✅||
-|ExtlClntAppOauthSecuritySettings|✅||
-|FlexcardDefinition|✅||
-|FlowValueMap|✅||
-|GenOpAgentConfig|❌|Not supported, but support could be added|
-|IndustriesInsuranceSettings|✅||
-|InsBillingConfig|❌|Not supported, but support could be added|
-|InsPlcyLimitConsumptionRule|❌|Not supported, but support could be added|
-|IntegratedPlanDefinition|❌|Not supported, but support could be added|
-|IntegrationProcdDefinition|✅||
-|LaborCostOptimCrewMgmtSettings|✅||
-|MeetingPlaybookDefinition|✅||
-|OmniscriptDefinition|✅||
-|OrchestrationPlanCtxMapping|❌|Not supported, but support could be added|
-|PlanningMeasureDef|❌|Not supported, but support could be added|
-|PlanningMeasureGroup|❌|Not supported, but support could be added|
-|PlatformEventMigration|❌|Not supported, but support could be added|
-|RebateAndAccrualMgmtAdvncdSettings|✅||
-|SelfSvcPortalTopic|❌|Not supported, but support could be added|
-|ServiceIssueManagementSettings|✅||
-|ServiceItsmChangeManagementSettings|✅||
-|TelemetryActionDefStep|✅||
-|TelemetryActionDefinition|✅||
-|TelemetryActnDefStepAttr|✅||
-|TelemetryDefinition|✅||
-|TelemetryDefinitionVersion|✅||
-|UnifiedSalesIntelligenceEngagementInsightsSettings|✅||
+| Metadata Type                                      | Support | Notes                                     |
+| :------------------------------------------------- | :------ | :---------------------------------------- |
+| AdminSuccessSettings                               | ✅      |                                           |
+| AgenticCtxtDecorDefinition                         | ❌      | Not supported, but support could be added |
+| AiPlannerVoiceAvatarDef                            | ❌      | Not supported, but support could be added |
+| CnfgItemAttrDef                                    | ✅      |                                           |
+| CnfgItemAttrPcklstValDef                           | ✅      |                                           |
+| CnfgItemAttrPicklistDef                            | ✅      |                                           |
+| CnfgItemAttrSetAttr                                | ✅      |                                           |
+| CnfgItemAttrSetDef                                 | ✅      |                                           |
+| CnfgItemSourceDefinition                           | ✅      |                                           |
+| CnfgItemTypeAttrRelDef                             | ✅      |                                           |
+| CnfgItemTypeDef                                    | ✅      |                                           |
+| CnfgItemTypeRelationDef                            | ✅      |                                           |
+| CnfgMgmtRelationTypeDef                            | ✅      |                                           |
+| ConversationGuidanceSettings                       | ✅      |                                           |
+| DataMapperDefinition                               | ✅      |                                           |
+| DealInsightsSettings                               | ✅      |                                           |
+| DelegateAccessDataSet                              | ❌      | Not supported, but support could be added |
+| DelegateAccessDef                                  | ❌      | Not supported, but support could be added |
+| DelegateAccsDataSetObj                             | ❌      | Not supported, but support could be added |
+| EvidenceMgmtSettings                               | ✅      |                                           |
+| ExtlClntAppOauthSecuritySettings                   | ✅      |                                           |
+| FlexcardDefinition                                 | ✅      |                                           |
+| FlowValueMap                                       | ✅      |                                           |
+| GenOpAgentConfig                                   | ❌      | Not supported, but support could be added |
+| IndustriesInsuranceSettings                        | ✅      |                                           |
+| InsBillingConfig                                   | ❌      | Not supported, but support could be added |
+| InsPlcyLimitConsumptionRule                        | ❌      | Not supported, but support could be added |
+| IntegratedPlanDefinition                           | ❌      | Not supported, but support could be added |
+| IntegrationProcdDefinition                         | ✅      |                                           |
+| LaborCostOptimCrewMgmtSettings                     | ✅      |                                           |
+| MeetingPlaybookDefinition                          | ✅      |                                           |
+| OmniscriptDefinition                               | ✅      |                                           |
+| OrchestrationPlanCtxMapping                        | ❌      | Not supported, but support could be added |
+| PlanningMeasureDef                                 | ❌      | Not supported, but support could be added |
+| PlanningMeasureGroup                               | ❌      | Not supported, but support could be added |
+| PlatformEventMigration                             | ❌      | Not supported, but support could be added |
+| RebateAndAccrualMgmtAdvncdSettings                 | ✅      |                                           |
+| SelfSvcPortalTopic                                 | ❌      | Not supported, but support could be added |
+| ServiceIssueManagementSettings                     | ✅      |                                           |
+| ServiceItsmChangeManagementSettings                | ✅      |                                           |
+| TelemetryActionDefStep                             | ✅      |                                           |
+| TelemetryActionDefinition                          | ✅      |                                           |
+| TelemetryActnDefStepAttr                           | ✅      |                                           |
+| TelemetryDefinition                                | ✅      |                                           |
+| TelemetryDefinitionVersion                         | ✅      |                                           |
+| UnifiedSalesIntelligenceEngagementInsightsSettings | ✅      |                                           |
 
 ## Additional Types
 
-> The following types are supported by this library but not in the coverage reports for either version.  These are typically
+> The following types are supported by this library but not in the coverage reports for either version. These are typically
 >
 > 1. types that have been removed from the metadata API but were supported in previous versions
 > 1. types that are available for pilots but not officially part of the metadata API (use with caution)

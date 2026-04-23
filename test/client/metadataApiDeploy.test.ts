@@ -1376,12 +1376,12 @@ describe('MetadataApiDeploy', () => {
             deleted: 'false',
             success: 'true',
             fullName: `MyApp/${relativePath}`,
-            componentType: 'WebApplicationResource',
-            fileName: `webapplications/MyApp/${relativePath}`,
+            componentType: 'UIBundleResource',
+            fileName: `uiBundles/MyApp/${relativePath}`,
             ...overrides,
           } as DeployMessage);
 
-        it('should build per-file responses for each WebApplicationResource message', () => {
+        it('should build per-file responses for each UIBundleResource message', () => {
           const component = makeWebAppComponent();
           const deployedSet = new ComponentSet([component]);
           const apiStatus: Partial<MetadataApiDeployStatus> = {
@@ -1476,7 +1476,7 @@ describe('MetadataApiDeploy', () => {
           expect(deletedFile!.state).to.equal(ComponentStatus.Deleted);
         });
 
-        it('should include error and problemType for failed WebApplicationResource messages', () => {
+        it('should include error and problemType for failed UIBundleResource messages', () => {
           const component = makeWebAppComponent();
           const deployedSet = new ComponentSet([component]);
           const problem = 'Invalid markup in index.html';
@@ -1492,8 +1492,8 @@ describe('MetadataApiDeploy', () => {
                 problem,
                 problemType,
                 fullName: 'MyApp/dist/index.html',
-                componentType: 'WebApplicationResource',
-                fileName: 'webapplications/MyApp/dist/index.html',
+                componentType: 'UIBundleResource',
+                fileName: 'uiBundles/MyApp/dist/index.html',
               } as DeployMessage,
             },
           };
@@ -1533,7 +1533,7 @@ describe('MetadataApiDeploy', () => {
           expect(filePaths).to.not.include(join(bundlePath, 'languages', 'en_US.json'));
         });
 
-        it('should NOT warn for consumed WebApplicationResource messages', () => {
+        it('should NOT warn for consumed UIBundleResource messages', () => {
           const warnSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emitWarning');
           const emitSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emit');
 

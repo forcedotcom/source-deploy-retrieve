@@ -588,6 +588,26 @@ describe('Streams', () => {
       expect(jsToXml.read().toString()).to.be.equal(expectedBody);
     });
 
+    it('should transform js with numeric character references (decimal and hex) to xml', () => {
+      const xmlObj = {
+        TestType: {
+          [XML_NS_KEY]: XML_NS_URL,
+          formula: 'LOWER(Name & &#39; &#39; & Name)',
+          description: 'Test&#160;with&#39;entities',
+          hexTest: '&#x27;&#xA0;',
+        },
+      };
+      const jsToXml = new streams.JsToXml(xmlObj);
+      let expectedBody = XML_DECL;
+      expectedBody += `<TestType xmlns="${XML_NS_URL}">\n`;
+      expectedBody += '    <formula>LOWER(Name &amp; &#39; &#39; &amp; Name)</formula>\n';
+      expectedBody += '    <description>Test&#160;with&#39;entities</description>\n';
+      expectedBody += '    <hexTest>&#x27;&#xA0;</hexTest>\n';
+      expectedBody += '</TestType>\n';
+
+      expect(jsToXml.read().toString()).to.be.equal(expectedBody);
+    });
+    
     it('should preserve boolean attribute values like xsi:nil="true"', () => {
       const xmlObj = {
         TestType: {

@@ -281,6 +281,7 @@ export class JsToXml extends Readable {
       format: true,
       indentBy: '    ',
       ignoreAttributes: false,
+      suppressBooleanAttributes: false,
       cdataPropName: '__cdata',
       commentPropName: XML_COMMENT_PROP_NAME,
     });

@@ -606,6 +606,20 @@ describe('Streams', () => {
       expectedBody += '</TestType>\n';
 
       expect(jsToXml.read().toString()).to.be.equal(expectedBody);
+    it('should preserve boolean attribute values like xsi:nil="true"', () => {
+      const xmlObj = {
+        TestType: {
+          [XML_NS_KEY]: XML_NS_URL,
+          quickActionParametersTranslation: {
+            name: 'User Utterance',
+            value: { '@_xsi:nil': 'true' },
+          },
+        },
+      };
+      const jsToXml = new streams.JsToXml(xmlObj);
+      const result = jsToXml.read().toString();
+      expect(result).to.include('xsi:nil="true"');
+      expect(result).to.not.include('xsi:nil>');
     });
 
     it('should transform js object with cdata to xml string', () => {

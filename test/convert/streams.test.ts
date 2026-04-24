@@ -606,6 +606,8 @@ describe('Streams', () => {
       expectedBody += '</TestType>\n';
 
       expect(jsToXml.read().toString()).to.be.equal(expectedBody);
+    });
+    
     it('should preserve boolean attribute values like xsi:nil="true"', () => {
       const xmlObj = {
         TestType: {

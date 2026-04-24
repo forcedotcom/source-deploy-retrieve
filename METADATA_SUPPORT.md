@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v66 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 725/776 supported metadata types.
+Currently, there are 727/776 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -49,9 +49,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | AiAuthoringBundle                            | ✅      |                                                                  |
 | AiEvaluationDefinition                       | ⚠️      | Supports deploy/retrieve but not source tracking                 |
 | AiPlannerVoiceDef                            | ❌      | Not supported, but support could be added (but not for tracking) |
-| AiResponseFormat                             | ❌      | Not supported, but support could be added (but not for tracking) |
+| AiResponseFormat                             | ⚠️      | Supports deploy/retrieve but not source tracking                 |
 | AiResponseFormatIstr                         | ❌      | Not supported, but support could be added (but not for tracking) |
-| AiSurface                                    | ❌      | Not supported, but support could be added (but not for tracking) |
+| AiSurface                                    | ⚠️      | Supports deploy/retrieve but not source tracking                 |
 | AiSurfaceInstruction                         | ❌      | Not supported, but support could be added (but not for tracking) |
 | AiTestingDefinition                          | ❌      | Not supported, but support could be added (but not for tracking) |
 | AnalyticSnapshot                             | ✅      |                                                                  |

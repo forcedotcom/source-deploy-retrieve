@@ -281,6 +281,7 @@ export class JsToXml extends Readable {
       format: true,
       indentBy: '    ',
       ignoreAttributes: false,
+      suppressBooleanAttributes: false,
       cdataPropName: '__cdata',
       commentPropName: XML_COMMENT_PROP_NAME,
     });
@@ -304,7 +305,11 @@ export const correctComments = (xml: string): string =>
  * You also can't use Builder.tagValueProcessor to use this function
  * because the escaping of `&` happens AFTER that is called.
  * */
-export const handleSpecialEntities = (xml: string): string => xml.replaceAll('&amp;#160;', '&#160;');
+export const handleSpecialEntities = (xml: string): string =>
+  // Handle all numeric character references (decimal and hexadecimal), not just &#160;
+  // This fixes double-escaping of entities like &#39; (single quote) in formulas
+  // See: https://github.com/forcedotcom/cli/issues/3543
+  xml.replace(/&amp;#(x?[\da-fA-F]+);/g, '&#$1;');
 
 /** discriminate between the shouldDelete and the regular WriteInfo */
 const isWriteInfoWithSource = (writeInfo: WriteInfo): writeInfo is WriteInfo & { source: Readable } =>

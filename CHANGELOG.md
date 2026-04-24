@@ -1,3 +1,11 @@
+## [12.34.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.34.1...12.34.2) (2026-04-24)
+
+### Bug Fixes
+
+- singularly encode @W-22199494@ ([#1752](https://github.com/forcedotcom/source-deploy-retrieve/issues/1752)) ([c1a7f44](https://github.com/forcedotcom/source-deploy-retrieve/commit/c1a7f445d9e59270ed8d87d1d0601dc4ec807e3e))
+
+## [12.34.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.34.0...12.34.1) (2026-04-23)
+
 # [12.34.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.33.0...12.34.0) (2026-04-22)
 
 ### Features

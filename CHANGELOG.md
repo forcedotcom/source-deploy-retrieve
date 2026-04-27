@@ -1,3 +1,12 @@
+## [12.34.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.34.4...12.34.5) (2026-04-27)
+
+
+### Bug Fixes
+
+* rename WebApplicationResource to UIBundleResource in deploy messages and tests ([#1751](https://github.com/forcedotcom/source-deploy-retrieve/issues/1751)) ([4a2f72c](https://github.com/forcedotcom/source-deploy-retrieve/commit/4a2f72c4796ac3c2476105e92abfb1b558a52dbe))
+
+
+
 ## [12.34.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.34.3...12.34.4) (2026-04-26)
 
 

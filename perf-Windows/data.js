@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777125558022,
+  "lastUpdate": 1777301740571,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -100444,6 +100444,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 22244,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "rkishan@salesforce.com",
+            "name": "Rahul Kishan Muralidharan",
+            "username": "rkishanm"
+          },
+          "committer": {
+            "email": "rkishan@salesforce.com",
+            "name": "Rahul Kishan Muralidharan",
+            "username": "rkishanm"
+          },
+          "distinct": true,
+          "id": "51477ddf9b42f2aec50bf40c310dbc1cfaf976d5",
+          "message": "fix: rename WebApplicationResource to UIBundleResource in deploy messages and tests",
+          "timestamp": "2026-04-23T16:33:36+05:30",
+          "tree_id": "d0c201b69e515530f0f14e702883107b25ffe575",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/51477ddf9b42f2aec50bf40c310dbc1cfaf976d5"
+        },
+        "date": 1777301726808,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 622,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4188,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3855,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 7788,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1132,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 13257,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10183,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 14019,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1811,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 23713,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 20489,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 25165,
             "unit": "ms"
           }
         ]

@@ -488,4 +488,40 @@ describe('executes replacements on a string', () => {
     expect(warnSpy.callCount).to.equal(0);
     warnSpy.restore();
   });
+
+  it('replaces a token that straddles a chunk boundary', async () => {
+    // Regression test for forcedotcom/cli#3461. The previous implementation
+    // ran each chunk through the regex independently, so a token that was
+    // split across chunks (e.g. `#SOME` + `_REPLACEMENT#`) would not be
+    // matched and would survive into the converted file.
+    const token = '#SOME_REPLACEMENT#';
+    const prefix = '<?xml version="1.0" encoding="UTF-8"?>\n<root><tag>';
+    const suffix = '</tag></root>\n';
+    const fullText = prefix + token + suffix;
+
+    // Split the input so the token is sliced in half across two chunks.
+    const splitAt = prefix.length + Math.floor(token.length / 2);
+    const chunk1 = fullText.slice(0, splitAt);
+    const chunk2 = fullText.slice(splitAt);
+
+    const stream = new ReplacementStream([
+      {
+        toReplace: stringToRegex(token),
+        replaceWith: 'REPLACED',
+        singleFile: true,
+        matchedFilename: 'straddle.xml',
+      },
+    ]);
+    const warnSpy = Sinon.spy(Lifecycle.getInstance(), 'emitWarning');
+    let result = '';
+    stream.on('data', (chunk) => {
+      result += chunk.toString();
+    });
+
+    await pipeline(Readable.from([chunk1, chunk2]), stream);
+
+    expect(result).to.equal(prefix + 'REPLACED' + suffix);
+    expect(warnSpy.callCount).to.equal(0);
+    warnSpy.restore();
+  });
 });

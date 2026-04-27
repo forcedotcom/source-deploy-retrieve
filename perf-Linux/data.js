@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777125183433,
+  "lastUpdate": 1777301367987,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -105716,6 +105716,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 8169,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "rkishan@salesforce.com",
+            "name": "Rahul Kishan Muralidharan",
+            "username": "rkishanm"
+          },
+          "committer": {
+            "email": "rkishan@salesforce.com",
+            "name": "Rahul Kishan Muralidharan",
+            "username": "rkishanm"
+          },
+          "distinct": true,
+          "id": "51477ddf9b42f2aec50bf40c310dbc1cfaf976d5",
+          "message": "fix: rename WebApplicationResource to UIBundleResource in deploy messages and tests",
+          "timestamp": "2026-04-23T16:33:36+05:30",
+          "tree_id": "d0c201b69e515530f0f14e702883107b25ffe575",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/51477ddf9b42f2aec50bf40c310dbc1cfaf976d5"
+        },
+        "date": 1777301355862,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 241,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2267,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2807,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 3196,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 491,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 5618,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7627,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 5775,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 862,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 9921,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 14023,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 10468,
             "unit": "ms"
           }
         ]

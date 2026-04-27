@@ -41,8 +41,8 @@ function createDeployMessage(overrides: Partial<DeployMessage>): DeployMessage {
 
 describe('deployMessages', () => {
   describe('UI_BUNDLE_RESOURCE_TYPE', () => {
-    it('should equal "WebApplicationResource"', () => {
-      expect(UI_BUNDLE_RESOURCE_TYPE).to.equal('WebApplicationResource');
+    it('should equal "UIBundleResource"', () => {
+      expect(UI_BUNDLE_RESOURCE_TYPE).to.equal('UIBundleResource');
     });
   });
 
@@ -77,8 +77,8 @@ describe('deployMessages', () => {
   });
 
   describe('isUiBundleResourceMessage', () => {
-    it('should return true when componentType is WebApplicationResource', () => {
-      const msg = createDeployMessage({ componentType: 'WebApplicationResource' });
+    it('should return true when componentType is UIBundleResource', () => {
+      const msg = createDeployMessage({ componentType: 'UIBundleResource' });
       assert.isTrue(isUiBundleResourceMessage(msg));
     });
 

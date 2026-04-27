@@ -468,9 +468,9 @@ const warnIfUnmatchedServerResult =
     [...messageMap.keys()].flatMap((key) => {
       const [type, fullName] = key.split('#');
 
-      // WebApplicationResource messages are already handled by the parent WebApplication component
+      // UIBundleResource messages are already handled by the parent UIBundle component
       const consumedByWebApp =
-        (type === 'WebApplicationResource' || type === 'UIBundleResource') &&
+        type === 'UIBundleResource' &&
         fr.some((c) => c.type === 'UIBundle' && fullName.startsWith(`${c.fullName}/`));
 
       if (
@@ -524,12 +524,12 @@ const buildFileResponsesFromComponentSet =
 
     const fileResponses: FileResponse[] = (cs.getSourceComponents().toArray() ?? [])
       .flatMap((deployedComponent): FileResponse[] => {
-        // WebApplication bundles get per-file status via WebApplicationResource messages
+        // UIBundle bundles get per-file status via UIBundleResource messages
         if (
           deployedComponent.type.name === 'UIBundle' &&
           deployedComponent.content &&
           Array.from(responseMessages.entries()).some(
-            ([key]) => key.startsWith('WebApplicationResource#') && key.includes(`${deployedComponent.fullName}/`)
+            ([key]) => key.startsWith('UIBundleResource#') && key.includes(`${deployedComponent.fullName}/`)
           )
         ) {
           const base = {
@@ -542,7 +542,7 @@ const buildFileResponsesFromComponentSet =
           const perFileResponses = Array.from(responseMessages.entries())
             .filter(
               ([key, msgs]) =>
-                key.startsWith('WebApplicationResource#') &&
+                key.startsWith('UIBundleResource#') &&
                 key.includes(`${deployedComponent.fullName}/`) &&
                 msgs.length > 0
             )

@@ -147,7 +147,7 @@ export const getDeployMessages = (result: MetadataApiDeployStatus): Map<string, 
   return messageMap;
 };
 
-export const UI_BUNDLE_RESOURCE_TYPE = 'WebApplicationResource';
+export const UI_BUNDLE_RESOURCE_TYPE = 'UIBundleResource';
 
 /** Server-generated internal files that should not appear in per-file deploy results. */
 export const isUiBundleInternalPath = (resourceFullName: string): boolean =>

@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "12.34.2",
+  "version": "12.34.5",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
   "author": "Salesforce",
@@ -25,12 +25,12 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^8.28.3",
+    "@salesforce/core": "^8.28.4",
     "@salesforce/kit": "^3.2.4",
     "@salesforce/ts-types": "^2.0.12",
     "@salesforce/types": "^1.6.0",
     "fast-levenshtein": "^3.0.0",
-    "fast-xml-parser": "^5.5.11",
+    "fast-xml-parser": "^5.7.2",
     "got": "^11.8.6",
     "graceful-fs": "^4.2.11",
     "ignore": "^5.3.2",

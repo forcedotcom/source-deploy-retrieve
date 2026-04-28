@@ -470,8 +470,7 @@ const warnIfUnmatchedServerResult =
 
       // UIBundleResource messages are already handled by the parent UIBundle component
       const consumedByWebApp =
-        type === 'UIBundleResource' &&
-        fr.some((c) => c.type === 'UIBundle' && fullName.startsWith(`${c.fullName}/`));
+        type === 'UIBundleResource' && fr.some((c) => c.type === 'UIBundle' && fullName.startsWith(`${c.fullName}/`));
 
       if (
         !consumedByWebApp &&
@@ -542,9 +541,7 @@ const buildFileResponsesFromComponentSet =
           const perFileResponses = Array.from(responseMessages.entries())
             .filter(
               ([key, msgs]) =>
-                key.startsWith('UIBundleResource#') &&
-                key.includes(`${deployedComponent.fullName}/`) &&
-                msgs.length > 0
+                key.startsWith('UIBundleResource#') && key.includes(`${deployedComponent.fullName}/`) && msgs.length > 0
             )
             .flatMap(([, msgs]): FileResponse[] =>
               msgs

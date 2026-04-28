@@ -121,6 +121,7 @@
     "aiScoringModelDefVersion": "aiscoringmodeldefversion",
     "aiScoringModelDefinition": "aiscoringmodeldefinition",
     "aiSurface": "aisurface",
+    "aiTestingDefinition": "aitestingdefinition",
     "aiUsecaseDefinitions": "aiusecasedefinition",
     "aiapplicationconfig": "aiapplicationconfig",
     "animationRule": "animationrule",
@@ -834,6 +835,14 @@
       "name": "AiSurface",
       "suffix": "aiSurface",
       "strictDirectoryName": false
+    },
+    "aitestingdefinition": {
+      "directoryName": "aiTestingDefinitions",
+      "id": "aitestingdefinition",
+      "inFolder": false,
+      "name": "AiTestingDefinition",
+      "strictDirectoryName": false,
+      "suffix": "aiTestingDefinition"
     },
     "aiusecasedefinition": {
       "directoryName": "aiUsecaseDefinitions",

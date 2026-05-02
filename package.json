@@ -38,7 +38,7 @@
     "mime": "2.6.0",
     "minimatch": "^9.0.9",
     "proxy-agent": "^6.5.0",
-    "yaml": "^2.8.3"
+    "yaml": "^2.8.4"
   },
   "devDependencies": {
     "@jsforce/jsforce-node": "^3.10.14",

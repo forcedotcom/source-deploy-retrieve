@@ -1,3 +1,12 @@
+## [12.35.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.35.0...12.35.1) (2026-05-03)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 8.28.4 to 8.29.0 ([#1759](https://github.com/forcedotcom/source-deploy-retrieve/issues/1759)) ([438fc87](https://github.com/forcedotcom/source-deploy-retrieve/commit/438fc875c07d5cf200b21ea80e7941be814ee4c3))
+
+
+
 # [12.35.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.34.5...12.35.0) (2026-04-28)
 
 

@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1778116647735,
+  "lastUpdate": 1778126632861,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -106220,6 +106220,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 10839,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "93748f99410cd63d251b81e12374264aad39d9b0",
+          "message": "fix(deps): bump basic-ftp from 5.3.0 to 5.3.1\n\nBumps [basic-ftp](https://github.com/patrickjuchli/basic-ftp) from 5.3.0 to 5.3.1.\n- [Release notes](https://github.com/patrickjuchli/basic-ftp/releases)\n- [Changelog](https://github.com/patrickjuchli/basic-ftp/blob/master/CHANGELOG.md)\n- [Commits](https://github.com/patrickjuchli/basic-ftp/compare/v5.3.0...v5.3.1)\n\n---\nupdated-dependencies:\n- dependency-name: basic-ftp\n  dependency-version: 5.3.1\n  dependency-type: indirect\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-05-07T04:01:31Z",
+          "tree_id": "c7989bd501c0b97824aebde34e9297f98493d817",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/93748f99410cd63d251b81e12374264aad39d9b0"
+        },
+        "date": 1778126621484,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 244,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2365,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2433,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 3356,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 477,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 5704,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7463,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 5836,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 850,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 10203,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 13785,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 10863,
             "unit": "ms"
           }
         ]

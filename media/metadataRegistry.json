@@ -13,7 +13,6 @@
     "escalationrule": "escalationrules",
     "extdatatranfieldtemplate": "extdatatranobjecttemplate",
     "fieldset": "customobject",
-    "fieldmappingconfigitem": "fieldmappingconfig",
     "formsection": "form",
     "index": "customobject",
     "listview": "customobject",
@@ -295,7 +294,6 @@
     "featureParameterInteger": "featureparameterinteger",
     "feedFilter": "customfeedfilter",
     "fieldMappingConfig": "fieldmappingconfig",
-    "fieldMappingConfigItem": "fieldmappingconfigitem",
     "fieldServiceMobileExtension": "fieldservicemobileextension",
     "fieldSrcTrgtRelationship": "fieldsrctrgtrelationship",
     "fieldTranslation": "customfieldtranslation",
@@ -2674,24 +2672,6 @@
       "suffix": "featureParameterInteger"
     },
     "fieldmappingconfig": {
-      "children": {
-        "directories": {
-          "fieldMappingConfigItems": "fieldmappingconfigitem"
-        },
-        "suffixes": {
-          "fieldMappingConfigItem": "fieldmappingconfigitem"
-        },
-        "types": {
-          "fieldmappingconfigitem": {
-            "directoryName": "fieldMappingConfigItems",
-            "id": "fieldmappingconfigitem",
-            "name": "FieldMappingConfigItem",
-            "suffix": "fieldMappingConfigItem",
-            "uniqueIdElement": "processType",
-            "xmlElementName": "fieldMappingConfigItems"
-          }
-        }
-      },
       "directoryName": "fieldMappingConfigs",
       "id": "fieldmappingconfig",
       "inFolder": false,

@@ -1,3 +1,12 @@
+## [12.35.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.35.4...12.35.5) (2026-05-08)
+
+
+### Bug Fixes
+
+* remove fieldMappingConfigItem child per platform-cli team recommendation ([#1757](https://github.com/forcedotcom/source-deploy-retrieve/issues/1757)) ([aa34adb](https://github.com/forcedotcom/source-deploy-retrieve/commit/aa34adbcf1e38d201c90a7ac867f6fc105053d85))
+
+
+
 ## [12.35.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.35.3...12.35.4) (2026-05-07)
 
 

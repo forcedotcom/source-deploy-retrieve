@@ -874,7 +874,6 @@ v67 introduces the following new types.  Here's their current level of support
 - extDataTranFieldTemplate
 - ExtlClntAppSampleConfigurablePolicies
 - ExtlClntAppSampleSettings
-- FieldMappingConfigItem
 - Form
 - FormSection
 - GenAiPlanner

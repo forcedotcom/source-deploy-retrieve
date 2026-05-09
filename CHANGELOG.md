@@ -1,3 +1,12 @@
+## [12.35.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.35.5...12.35.6) (2026-05-09)
+
+
+### Bug Fixes
+
+* **deps:** bump fast-xml-builder from 1.1.5 to 1.2.0 ([#1764](https://github.com/forcedotcom/source-deploy-retrieve/issues/1764)) ([44bd6b9](https://github.com/forcedotcom/source-deploy-retrieve/commit/44bd6b9c763f7d151979be24630ecc42cd53ed5f))
+
+
+
 ## [12.35.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.35.4...12.35.5) (2026-05-08)
 
 

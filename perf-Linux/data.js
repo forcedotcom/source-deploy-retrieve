@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779544449716,
+  "lastUpdate": 1779820152161,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -107396,6 +107396,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 10250,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "spurthi.gade@salesforce.com",
+            "name": "spurthi-gade",
+            "username": "Spurthigade"
+          },
+          "committer": {
+            "email": "spurthigade@gmail.com",
+            "name": "spurthi-gade",
+            "username": "Spurthigade"
+          },
+          "distinct": true,
+          "id": "459f7bd439e11d1d8d4d8c942cb1b830c736b054",
+          "message": "feat: add CnfgItemTypeIdentFieldMap and CnfgItemTypeIdentRule to metadata registry\n\nRegister CnfgItemTypeIdentFieldMap and CnfgItemTypeIdentRule as packageable\nmetadata types in metadataRegistry.json, following the same pattern as the\nother CMDB entities.\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>",
+          "timestamp": "2026-05-25T18:04:46+05:30",
+          "tree_id": "3a07d4f58262c490b45976d462e4d57ccd9ba55f",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/459f7bd439e11d1d8d4d8c942cb1b830c736b054"
+        },
+        "date": 1779820140594,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 232,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2144,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2548,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 3088,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 483,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 5543,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7474,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 5716,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 868,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 10019,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 13992,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 10360,
             "unit": "ms"
           }
         ]

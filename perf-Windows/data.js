@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779544820506,
+  "lastUpdate": 1779820526311,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -102124,6 +102124,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 20593,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "spurthi.gade@salesforce.com",
+            "name": "spurthi-gade",
+            "username": "Spurthigade"
+          },
+          "committer": {
+            "email": "spurthigade@gmail.com",
+            "name": "spurthi-gade",
+            "username": "Spurthigade"
+          },
+          "distinct": true,
+          "id": "459f7bd439e11d1d8d4d8c942cb1b830c736b054",
+          "message": "feat: add CnfgItemTypeIdentFieldMap and CnfgItemTypeIdentRule to metadata registry\n\nRegister CnfgItemTypeIdentFieldMap and CnfgItemTypeIdentRule as packageable\nmetadata types in metadataRegistry.json, following the same pattern as the\nother CMDB entities.\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>",
+          "timestamp": "2026-05-25T18:04:46+05:30",
+          "tree_id": "3a07d4f58262c490b45976d462e4d57ccd9ba55f",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/459f7bd439e11d1d8d4d8c942cb1b830c736b054"
+        },
+        "date": 1779820512586,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 621,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 3805,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3806,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 6756,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1017,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 12958,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 12683,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 10767,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1609,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 18902,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 24155,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 22993,
             "unit": "ms"
           }
         ]

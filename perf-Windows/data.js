@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779821194321,
+  "lastUpdate": 1779899447742,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -102292,6 +102292,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 18778,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "spurthigade@gmail.com",
+            "name": "spurthi-gade",
+            "username": "Spurthigade"
+          },
+          "committer": {
+            "email": "spurthigade@gmail.com",
+            "name": "spurthi-gade",
+            "username": "Spurthigade"
+          },
+          "distinct": true,
+          "id": "f8784f13b354a0c53d01369075cd26a7a171c68a",
+          "message": "Merge remote-tracking branch 'origin/main' into t/itsm-kadamba/enablepackage",
+          "timestamp": "2026-05-27T10:19:57+05:30",
+          "tree_id": "ca7af2e83bcca49ba9dac29f9076b239b0d926bc",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/f8784f13b354a0c53d01369075cd26a7a171c68a"
+        },
+        "date": 1779899431432,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 599,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 3731,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3469,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 6410,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 819,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 10187,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10121,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 10511,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1484,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 20108,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 19294,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 19555,
             "unit": "ms"
           }
         ]

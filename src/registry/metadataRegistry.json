@@ -597,6 +597,8 @@
     "cnfgItemSourceDefinition": "cnfgitemsourcedefinition",
     "cnfgItemTypeAttrRelDef": "cnfgitemtypeattrreldef",
     "cnfgItemTypeDef": "cnfgitemtypedef",
+    "cnfgItemTypeIdentFieldMap": "cnfgitemtypeidentfieldmap",
+    "cnfgItemTypeIdentRule": "cnfgitemtypeidentrule",
     "cnfgItemTypeRelationDef": "cnfgitemtyperelationdef",
     "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
     "meetingPlaybookDefinition": "meetingplaybookdefinition"
@@ -5294,6 +5296,22 @@
       "name": "CnfgItemTypeAttrRelDef",
       "suffix": "cnfgItemTypeAttrRelDef",
       "directoryName": "cnfgItemTypeAttrRelDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemtypeidentfieldmap": {
+      "id": "cnfgitemtypeidentfieldmap",
+      "name": "CnfgItemTypeIdentFieldMap",
+      "suffix": "cnfgItemTypeIdentFieldMap",
+      "directoryName": "cnfgItemTypeIdentFieldMaps",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cnfgitemtypeidentrule": {
+      "id": "cnfgitemtypeidentrule",
+      "name": "CnfgItemTypeIdentRule",
+      "suffix": "cnfgItemTypeIdentRule",
+      "directoryName": "cnfgItemTypeIdentRules",
       "inFolder": false,
       "strictDirectoryName": false
     },

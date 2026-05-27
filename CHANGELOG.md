@@ -1,3 +1,12 @@
+# [12.36.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.35.10...12.36.0) (2026-05-27)
+
+
+### Features
+
+* add CnfgItemTypeIdentFieldMap and CnfgItemTypeIdentRule to metadata registry ([#1775](https://github.com/forcedotcom/source-deploy-retrieve/issues/1775)) ([d0839e3](https://github.com/forcedotcom/source-deploy-retrieve/commit/d0839e3d8beaea329d4db2c128337b6ff3e7fde5))
+
+
+
 ## [12.35.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.35.9...12.35.10) (2026-05-17)
 
 

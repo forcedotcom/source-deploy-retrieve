@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779820842494,
+  "lastUpdate": 1779898992656,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -107564,6 +107564,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 10752,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "spurthigade@gmail.com",
+            "name": "spurthi-gade",
+            "username": "Spurthigade"
+          },
+          "committer": {
+            "email": "spurthigade@gmail.com",
+            "name": "spurthi-gade",
+            "username": "Spurthigade"
+          },
+          "distinct": true,
+          "id": "f8784f13b354a0c53d01369075cd26a7a171c68a",
+          "message": "Merge remote-tracking branch 'origin/main' into t/itsm-kadamba/enablepackage",
+          "timestamp": "2026-05-27T10:19:57+05:30",
+          "tree_id": "ca7af2e83bcca49ba9dac29f9076b239b0d926bc",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/f8784f13b354a0c53d01369075cd26a7a171c68a"
+        },
+        "date": 1779898980136,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 244,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2414,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2693,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 3248,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 489,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 5926,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7496,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 5970,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 869,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 10472,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 13740,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 10990,
             "unit": "ms"
           }
         ]

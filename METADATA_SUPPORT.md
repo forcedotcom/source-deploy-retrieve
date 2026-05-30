@@ -831,6 +831,7 @@ v67 introduces the following new types.  Here's their current level of support
 |PlanningMeasureDef|❌|Not supported, but support could be added|
 |PlanningMeasureGroup|❌|Not supported, but support could be added|
 |PlatformEventMigration|❌|Not supported, but support could be added|
+|QualityManagementSettings|✅||
 |RebateAndAccrualMgmtAdvncdSettings|✅||
 |SelfSvcPortalTopic|❌|Not supported, but support could be added|
 |ServiceIssueManagementSettings|✅||

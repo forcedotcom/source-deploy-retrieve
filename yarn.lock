@@ -810,10 +810,10 @@
   resolved "https://registry.yarnpkg.com/@salesforce/ts-types/-/ts-types-2.0.12.tgz#60420622812a7ec7e46d220667bc29b42dc247ff"
   integrity sha512-BIJyduJC18Kc8z+arUm5AZ9VkPRyw1KKAm+Tk+9LT99eOzhNilyfKzhZ4t+tG2lIGgnJpmytZfVDZ0e2kFul8g==
 
-"@salesforce/types@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/types/-/types-1.6.0.tgz#926515ce3f6b16c8efe2afcc86475001d419c6cc"
-  integrity sha512-UHk1L3QRaa3WfIqQn5RLmcZmxErXvpFPUteLLgIxlFLrxhcKevvEwkMJF2xNIHpfT4Xj7PcYvqtrRYapX4Pp+A==
+"@salesforce/types@^1.7.3":
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/@salesforce/types/-/types-1.7.3.tgz#e670a92439a183a219bab81a3ae596d79b9fd589"
+  integrity sha512-6rzz2njJ4IEL9q1TgM4cEUPbiKcrQmKlTk5Ki6q7m5c6spYkbbA5jPxX3/8F9Ux5UKu0r9QCKAfZ33b88lq1PA==
 
 "@shikijs/core@1.11.1":
   version "1.11.1"

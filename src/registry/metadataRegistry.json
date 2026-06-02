@@ -601,7 +601,8 @@
     "cnfgItemTypeIdentRule": "cnfgitemtypeidentrule",
     "cnfgItemTypeRelationDef": "cnfgitemtyperelationdef",
     "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
-    "meetingPlaybookDefinition": "meetingplaybookdefinition"
+    "meetingPlaybookDefinition": "meetingplaybookdefinition",
+    "scopingRule": "scopingrule"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4069,7 +4070,8 @@
       "id": "restrictionrule",
       "name": "RestrictionRule",
       "strictDirectoryName": true,
-      "suffix": "rule"
+      "suffix": "rule",
+      "inFolder": false
     },
     "retrievalsummarydefinition": {
       "directoryName": "RetrievalSummaryDefinitions",
@@ -5362,6 +5364,13 @@
       "directoryName": "policyRuleDefinitionSets",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "scopingrule": {
+      "directoryName": "scopingRules",
+      "id": "scopingrule",
+      "inFolder": false,
+      "name": "ScopingRule",
+      "suffix": "scopingRule"
     }
   }
 }

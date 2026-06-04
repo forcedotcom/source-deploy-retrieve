@@ -1,3 +1,12 @@
+## [12.36.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.36.1...12.36.2) (2026-06-04)
+
+
+### Bug Fixes
+
+* Add HouseholdNamingConfig (264) to the registry ([#1780](https://github.com/forcedotcom/source-deploy-retrieve/issues/1780)) ([4d7f3cb](https://github.com/forcedotcom/source-deploy-retrieve/commit/4d7f3cb98e93420cdbd430323fd3114067e715bf))
+
+
+
 ## [12.36.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.36.0...12.36.1) (2026-05-31)
 
 

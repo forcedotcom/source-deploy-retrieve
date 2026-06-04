@@ -330,6 +330,7 @@
     "group": "group",
     "homePageComponent": "homepagecomponent",
     "homePageLayout": "homepagelayout",
+    "householdNamingConfig": "householdnamingconfig",
     "icon": "icon",
     "iframeWhiteListUrlSettings": "iframewhitelisturlsettings",
     "inboundCertificate": "inboundcertificate",
@@ -2966,6 +2967,14 @@
       "name": "HomePageLayout",
       "strictDirectoryName": false,
       "suffix": "homePageLayout"
+    },
+    "householdnamingconfig": {
+      "directoryName": "householdNamingConfigs",
+      "id": "householdnamingconfig",
+      "inFolder": false,
+      "name": "HouseholdNamingConfig",
+      "strictDirectoryName": false,
+      "suffix": "householdNamingConfig"
     },
     "icon": {
       "directoryName": "icons",

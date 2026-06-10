@@ -848,6 +848,7 @@ v68 introduces the following new types.  Here's their current level of support
 |DCOpportunityScoringSettings|✅||
 |DebugLevel|❌|Not supported, but support could be added|
 |DynamicUiCardDefinition|✅||
+|HelpSettings|✅||
 |HouseholdNamingConfig|✅||
 |IdpConfiguration|❌|Not supported, but support could be added (but not for tracking)|
 |IndustriesRepossessionSettings|✅||

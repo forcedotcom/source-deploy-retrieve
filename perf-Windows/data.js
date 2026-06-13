@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780211618491,
+  "lastUpdate": 1781313311408,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -102544,6 +102544,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 21208,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "124855a24fcdbdcd2b07df86f859a58ea1e35643",
+          "message": "chore(dev-deps): bump esbuild from 0.28.0 to 0.28.1\n\nBumps [esbuild](https://github.com/evanw/esbuild) from 0.28.0 to 0.28.1.\n- [Release notes](https://github.com/evanw/esbuild/releases)\n- [Changelog](https://github.com/evanw/esbuild/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/evanw/esbuild/compare/v0.28.0...v0.28.1)\n\n---\nupdated-dependencies:\n- dependency-name: esbuild\n  dependency-version: 0.28.1\n  dependency-type: direct:development\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-06-13T01:07:05Z",
+          "tree_id": "aa5c8412345c32add007bd234b49698fceff2e26",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/124855a24fcdbdcd2b07df86f859a58ea1e35643"
+        },
+        "date": 1781313296097,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 599,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4348,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 4371,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 8184,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1041,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 11175,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10303,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 11090,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1937,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 25604,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 27777,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 20559,
             "unit": "ms"
           }
         ]

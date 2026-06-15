@@ -182,6 +182,16 @@ const testData = {
       },
     ],
   },
+  bundleFragment: {
+    fullName: 'myFragment',
+    typeName: 'FragmentBundle',
+    expectedFilePaths: [getFilePath('fragments/myFragment/fragment.json')],
+    expectedComponents: [
+      {
+        content: getFilePath('fragments/myFragment'),
+      },
+    ],
+  },
   nonDecomposedExplicit: {
     fullName: 'CustomLabels',
     typeName: 'CustomLabels',

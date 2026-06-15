@@ -71,7 +71,8 @@
     "waveTemplates": "wavetemplatebundle",
     "appTemplates": "appframeworktemplatebundle",
     "lightningTypes": "lightningtypebundle",
-    "uiBundles": "uibundle"
+    "uiBundles": "uibundle",
+    "fragments": "fragmentbundle"
   },
   "suffixes": {
     "Canvas": "canvasmetadata",
@@ -5371,6 +5372,18 @@
       "directoryName": "policyRuleDefinitionSets",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "fragmentbundle": {
+      "id": "fragmentbundle",
+      "name": "FragmentBundle",
+      "directoryName": "fragments",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "bundle"
+      },
+      "supportsPartialDelete": true,
+      "metaFileSuffix": "fragment.json"
     }
   }
 }

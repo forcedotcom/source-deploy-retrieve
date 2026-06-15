@@ -266,6 +266,16 @@ describe('MetadataResolver', () => {
         expect(mdResolver.getComponentsFromPath(path)).to.deep.equal([expectedComponent]);
       });
 
+      it('Should determine type for FragmentBundle content file', () => {
+        const fragmentPath = join('unpackaged', 'fragments', 'myFragment', 'fragment.json');
+        const treeContainer = VirtualTreeContainer.fromFilePaths([fragmentPath]);
+        const mdResolver = new MetadataResolver(undefined, treeContainer);
+        const components = mdResolver.getComponentsFromPath(fragmentPath);
+        expect(components).to.have.lengthOf(1);
+        expect(components[0].type.name).to.equal('FragmentBundle');
+        expect(components[0].name).to.equal('myFragment');
+      });
+
       it('Should determine type for path of mixed content type', () => {
         const path = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[1];
         const access = testUtil.createMetadataResolver([

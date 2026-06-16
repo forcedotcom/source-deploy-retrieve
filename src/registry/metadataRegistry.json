@@ -5160,7 +5160,7 @@
       "id": "lightningoutapp",
       "name": "LightningOutApp",
       "suffix": "lightningOutApp",
-      "directoryName": "lightningOutApp",
+      "directoryName": "lightningOutApps",
       "inFolder": false,
       "strictDirectoryName": false
     },

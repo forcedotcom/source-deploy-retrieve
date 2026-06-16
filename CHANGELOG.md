@@ -1,3 +1,12 @@
+## [12.36.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.36.2...12.36.3) (2026-06-16)
+
+
+### Bug Fixes
+
+* **registry:** correct lightningOutApp directoryName to plural ([#1785](https://github.com/forcedotcom/source-deploy-retrieve/issues/1785)) ([7cc546a](https://github.com/forcedotcom/source-deploy-retrieve/commit/7cc546a5727728d8363d993a02f3dc5b4d1d5707))
+
+
+
 ## [12.36.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.36.1...12.36.2) (2026-06-04)
 
 

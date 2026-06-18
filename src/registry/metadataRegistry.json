@@ -152,6 +152,7 @@
     "blacklistedConsumer": "blacklistedconsumer",
     "bot": "bot",
     "botBlock": "botblock",
+    "botBlockVersion": "botblockversion",
     "botTemplate": "bottemplate",
     "botVersion": "botversion",
     "brandingSet": "brandingset",
@@ -1197,6 +1198,14 @@
       "name": "BotBlock",
       "strictDirectoryName": true,
       "suffix": "botBlock"
+    },
+    "botblockversion": {
+      "id": "botblockversion",
+      "name": "BotBlockVersion",
+      "suffix": "botBlockVersion",
+      "directoryName": "botBlockVersions",
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "bottemplate": {
       "directoryName": "botTemplates",

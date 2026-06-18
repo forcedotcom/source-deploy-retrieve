@@ -22,12 +22,14 @@ import { createSandbox } from 'sinon';
 import {
   ComponentSet,
   MetadataResolver,
+  presetMap,
   registry,
   RegistryAccess,
   SourceComponent,
   VirtualDirectory,
   VirtualTreeContainer,
 } from '../../src';
+import { getEffectiveRegistry } from '../../src/registry/variants';
 import {
   bundle,
   decomposedtoplevel,
@@ -1042,6 +1044,32 @@ describe('MetadataResolver', () => {
       // Should only return the non-empty component
       expect(components).to.have.length(1);
       expect(components[0].name).to.equal('myComponent');
+    });
+  });
+
+  describe('decomposeExternalServiceRegistrationBeta preset', () => {
+    const esrRegistry = new RegistryAccess(
+      getEffectiveRegistry({ presets: [presetMap.get('decomposeExternalServiceRegistrationBeta')!] })
+    );
+
+    it('should not resolve a .yaml file outside externalServiceRegistrations as ExternalServiceRegistration', () => {
+      const yamlPath = join('force-app', 'main', 'default', 'customMetadata', 'stateTransition', 'transitions.yaml');
+      const tree = VirtualTreeContainer.fromFilePaths([yamlPath]);
+      const resolver = new MetadataResolver(esrRegistry, tree, false);
+
+      expect(() => resolver.getComponentsFromPath(yamlPath)).to.throw('Could not infer a metadata type');
+    });
+
+    it('should resolve a .yaml file inside externalServiceRegistrations as ExternalServiceRegistration', () => {
+      const esrDir = join('force-app', 'main', 'default', 'externalServiceRegistrations');
+      const yamlPath = join(esrDir, 'MyService.yaml');
+      const metaPath = join(esrDir, 'MyService.externalServiceRegistration-meta.xml');
+      const tree = VirtualTreeContainer.fromFilePaths([yamlPath, metaPath]);
+      const resolver = new MetadataResolver(esrRegistry, tree, false);
+
+      const components = resolver.getComponentsFromPath(yamlPath);
+      expect(components).to.have.lengthOf(1);
+      expect(components[0].type.name).to.equal('ExternalServiceRegistration');
     });
   });
 });

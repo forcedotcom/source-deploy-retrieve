@@ -11,6 +11,7 @@
             "id": "yaml",
             "isAddressable": false,
             "name": "OAS Yaml Schema",
+            "strictDirectoryName": true,
             "suffix": "yaml",
             "xmlElementName": "schema"
           }

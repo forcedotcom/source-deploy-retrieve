@@ -123,6 +123,7 @@
     "aiTestingDefinition": "aitestingdefinition",
     "aiUsecaseDefinitions": "aiusecasedefinition",
     "aiapplicationconfig": "aiapplicationconfig",
+    "analyticsDatasetDefinition": "analyticsdatasetdefinition",
     "animationRule": "animationrule",
     "app": "customapplication",
     "appMenu": "appmenu",
@@ -852,6 +853,14 @@
       "name": "AIUsecaseDefinition",
       "strictDirectoryName": false,
       "suffix": "aiUsecaseDefinitions"
+    },
+    "analyticsdatasetdefinition": {
+      "id": "analyticsdatasetdefinition",
+      "name": "AnalyticsDatasetDefinition",
+      "suffix": "analyticsDatasetDefinition",
+      "directoryName": "analyticsDatasetDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "analyticsnapshot": {
       "directoryName": "analyticSnapshots",

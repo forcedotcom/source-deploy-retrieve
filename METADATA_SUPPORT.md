@@ -848,6 +848,7 @@ v68 introduces the following new types.  Here's their current level of support
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
 |AcademicRole|❌|Not supported, but support could be added|
+|AgentforcePlatformTracingSettings|✅||
 |BotEmailDefinition|❌|Not supported, but support could be added|
 |CnfgItemTypeIdentFieldMap|✅||
 |CnfgItemTypeIdentRule|✅||
@@ -871,6 +872,7 @@ v68 introduces the following new types.  Here's their current level of support
 |ServiceItamSettings|✅||
 |StatisticalDealInsightsSettings|✅||
 |TelephonyProvider|❌|Not supported, but support could be added|
+|TransactableMarketplacePrivateOfferSettings|✅||
 |TrustedTelephonyProvider|❌|Not supported, but support could be added|
 |WinProbabilityScoringSetup|❌|Not supported, but support could be added|
 

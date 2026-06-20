@@ -847,12 +847,12 @@ v68 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
-|AcademicRole|❌|Not supported, but support could be added|
 |AgentforcePlatformTracingSettings|✅||
 |BotEmailDefinition|❌|Not supported, but support could be added|
 |CnfgItemTypeIdentFieldMap|✅||
 |CnfgItemTypeIdentRule|✅||
 |ContentWorkspace|❌|Not supported, but support could be added|
+|ContentWorkspacePermission|❌|Not supported, but support could be added|
 |DCOpportunityScoringSettings|✅||
 |DebugLevel|❌|Not supported, but support could be added|
 |DynamicUiCardDefinition|✅||

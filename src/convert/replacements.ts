@@ -55,37 +55,46 @@ export class ReplacementStream extends Transform {
   private readonly foundReplacements = new Set<string>();
   private readonly allReplacements: MarkedReplacement[];
   private readonly lifecycleInstance = Lifecycle.getInstance();
+  private readonly chunks: Buffer[] = [];
 
   public constructor(private readonly replacements: MarkedReplacement[]) {
     super({ objectMode: true });
     this.allReplacements = replacements;
   }
 
-  public async _transform(
-    chunk: Buffer,
-    encoding: string,
-    callback: (error?: Error, data?: Buffer) => void
-  ): Promise<void> {
-    let error: Error | undefined;
-    const { output, found } = await replacementIterations(chunk.toString(), this.replacements);
-    for (const foundKey of found) {
-      this.foundReplacements.add(foundKey);
-    }
-    callback(error, Buffer.from(output));
+  public _transform(chunk: Buffer | string, encoding: string, callback: (error?: Error, data?: Buffer) => void): void {
+    // Buffer the whole file before running replacements. Running per-chunk
+    // missed any token that straddled a chunk boundary, leaving the original
+    // token in the output (forcedotcom/cli#3461). Metadata files are bounded
+    // in size, so the memory cost is negligible compared to the correctness
+    // win.
+    this.chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    callback();
   }
 
   public async _flush(callback: (error?: Error) => void): Promise<void> {
-    // At the end of the stream, emit warnings for replacements not found
-    for (const replacement of this.allReplacements) {
-      const key = replacement.toReplace.toString();
-      if (replacement.singleFile && !this.foundReplacements.has(key)) {
-        // eslint-disable-next-line no-await-in-loop
-        await this.lifecycleInstance.emitWarning(
-          `Your sfdx-project.json specifies that ${key} should be replaced in ${replacement.matchedFilename}, but it was not found.`
-        );
+    try {
+      const input = Buffer.concat(this.chunks).toString();
+      const { output, found } = await replacementIterations(input, this.replacements);
+      for (const foundKey of found) {
+        this.foundReplacements.add(foundKey);
       }
+      this.push(Buffer.from(output));
+
+      // At the end of the stream, emit warnings for replacements not found
+      for (const replacement of this.allReplacements) {
+        const key = replacement.toReplace.toString();
+        if (replacement.singleFile && !this.foundReplacements.has(key)) {
+          // eslint-disable-next-line no-await-in-loop
+          await this.lifecycleInstance.emitWarning(
+            `Your sfdx-project.json specifies that ${key} should be replaced in ${replacement.matchedFilename}, but it was not found.`
+          );
+        }
+      }
+      callback();
+    } catch (e) {
+      callback(e instanceof Error ? e : new Error(String(e)));
     }
-    callback();
   }
 }
 

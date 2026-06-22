@@ -1,3 +1,12 @@
+## [12.36.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.36.4...12.36.5) (2026-06-22)
+
+
+### Bug Fixes
+
+* replacements splitted between chunks W-20635868 ([#1699](https://github.com/forcedotcom/source-deploy-retrieve/issues/1699)) ([9b91dd0](https://github.com/forcedotcom/source-deploy-retrieve/commit/9b91dd0265302144e72ba70b6701437c42c74ec8))
+
+
+
 ## [12.36.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.36.3...12.36.4) (2026-06-22)
 
 

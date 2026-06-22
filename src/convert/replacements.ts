@@ -69,7 +69,7 @@ export class ReplacementStream extends Transform {
   ): Promise<void> {
     const combined = this.leftover + chunk.toString();
     const lastNewlineIndex = combined.lastIndexOf('\n');
-    const safeLength = lastNewlineIndex === -1 ? combined.length : lastNewlineIndex + 1;
+    const safeLength = lastNewlineIndex === -1 ? 0 : lastNewlineIndex + 1;
 
     this.leftover = combined.slice(safeLength);
 

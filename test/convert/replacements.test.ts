@@ -488,4 +488,110 @@ describe('executes replacements on a string', () => {
     expect(warnSpy.callCount).to.equal(0);
     warnSpy.restore();
   });
+
+  describe('replacements split between chunks', () => {
+    class ChunkedReadable extends Readable {
+      private pos = 0;
+
+      public constructor(private readonly text: string, private readonly chunkLen: number) {
+        super();
+      }
+
+      public _read() {
+        if (this.pos >= this.text.length) {
+          this.push(null);
+          return;
+        }
+        const end = Math.min(this.pos + this.chunkLen, this.text.length);
+        this.push(this.text.slice(this.pos, end));
+        this.pos = end;
+      }
+    }
+
+    it('handles a replacement token split across two chunks', async () => {
+      const input = 'line1\nREPLACE_ME\nline3\n';
+      // chunk size 10 splits "REPLACE_ME" across chunks: "line1\nREPL" | "ACE_ME\nlin" | "e3\n"
+      const stream = new ReplacementStream([
+        { toReplace: /REPLACE_ME/g, replaceWith: 'DONE', singleFile: true, matchedFilename: 'test.txt' },
+      ]);
+      let result = '';
+      stream.on('data', (chunk: Buffer) => {
+        result += chunk.toString();
+      });
+      await pipeline(new ChunkedReadable(input, 10), stream);
+      expect(result).to.equal('line1\nDONE\nline3\n');
+    });
+
+    it('handles replacement at the end of input with no trailing newline', async () => {
+      const input = 'line1\nREPLACE_ME';
+      const stream = new ReplacementStream([
+        { toReplace: /REPLACE_ME/g, replaceWith: 'DONE', singleFile: true, matchedFilename: 'test.txt' },
+      ]);
+      let result = '';
+      stream.on('data', (chunk: Buffer) => {
+        result += chunk.toString();
+      });
+      await pipeline(new ChunkedReadable(input, 10), stream);
+      expect(result).to.equal('line1\nDONE');
+    });
+
+    it('handles multiple replacements split across many small chunks', async () => {
+      const input = 'aaa TOKEN_1 bbb\nccc TOKEN_2 ddd\neee TOKEN_3 fff\n';
+      const stream = new ReplacementStream([
+        { toReplace: /TOKEN_1/g, replaceWith: 'X1', singleFile: false, matchedFilename: 'test.txt' },
+        { toReplace: /TOKEN_2/g, replaceWith: 'X2', singleFile: false, matchedFilename: 'test.txt' },
+        { toReplace: /TOKEN_3/g, replaceWith: 'X3', singleFile: false, matchedFilename: 'test.txt' },
+      ]);
+      let result = '';
+      stream.on('data', (chunk: Buffer) => {
+        result += chunk.toString();
+      });
+      await pipeline(new ChunkedReadable(input, 7), stream);
+      expect(result).to.equal('aaa X1 bbb\nccc X2 ddd\neee X3 fff\n');
+    });
+
+    it('handles input with no newlines at all', async () => {
+      const input = 'REPLACE_ME_HERE';
+      const stream = new ReplacementStream([
+        { toReplace: /REPLACE_ME_HERE/g, replaceWith: 'DONE', singleFile: true, matchedFilename: 'test.txt' },
+      ]);
+      let result = '';
+      stream.on('data', (chunk: Buffer) => {
+        result += chunk.toString();
+      });
+      await pipeline(new ChunkedReadable(input, 5), stream);
+      expect(result).to.equal('DONE');
+    });
+
+    it('handles CRLF line endings with split chunks', async () => {
+      const input = 'line1\r\nREPLACE_ME\r\nline3\r\n';
+      const stream = new ReplacementStream([
+        { toReplace: /REPLACE_ME/g, replaceWith: 'DONE', singleFile: true, matchedFilename: 'test.txt' },
+      ]);
+      let result = '';
+      stream.on('data', (chunk: Buffer) => {
+        result += chunk.toString();
+      });
+      await pipeline(new ChunkedReadable(input, 10), stream);
+      expect(result).to.equal('line1\r\nDONE\r\nline3\r\n');
+    });
+
+    it('handles regex replacement spanning a chunk boundary', async () => {
+      const input = 'before\n__VERSION__=1.2.3\nafter\n';
+      const stream = new ReplacementStream([
+        {
+          toReplace: /__VERSION__=[\d.]+/g,
+          replaceWith: '__VERSION__=9.9.9',
+          singleFile: true,
+          matchedFilename: 'test.txt',
+        },
+      ]);
+      let result = '';
+      stream.on('data', (chunk: Buffer) => {
+        result += chunk.toString();
+      });
+      await pipeline(new ChunkedReadable(input, 12), stream);
+      expect(result).to.equal('before\n__VERSION__=9.9.9\nafter\n');
+    });
+  });
 });

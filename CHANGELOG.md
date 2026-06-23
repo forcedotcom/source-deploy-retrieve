@@ -1,3 +1,12 @@
+## [12.36.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.36.5...12.36.6) (2026-06-23)
+
+
+### Bug Fixes
+
+* **deps:** bump @babel/core from 7.25.2 to 7.29.7 ([#1792](https://github.com/forcedotcom/source-deploy-retrieve/issues/1792)) ([af1fea8](https://github.com/forcedotcom/source-deploy-retrieve/commit/af1fea865968eef07a1bfb003540f67cd8a2ae35))
+
+
+
 ## [12.36.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.36.4...12.36.5) (2026-06-22)
 
 

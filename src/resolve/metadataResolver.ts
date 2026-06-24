@@ -357,7 +357,7 @@ const resolveType =
       // It is likely that the metadata file is misspelled or has the wrong suffix.
       // A common occurrence is that a misspelled metadata file will fall back to
       // `EmailServicesFunction` because that is the default for the `.xml` suffix
-      if (resolvedType?.strictDirectoryName === true) {
+      if (resolvedType?.strictDirectoryName === true && !fsPath.split(sep).includes(resolvedType.directoryName)) {
         resolvedType = undefined;
       }
     }

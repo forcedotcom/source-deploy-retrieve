@@ -1,3 +1,12 @@
+## [12.36.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.36.6...12.36.7) (2026-06-24)
+
+
+### Bug Fixes
+
+* restrict yaml suffix resolution to externalServiceRegistrations directory @W-20424423@ ([#1790](https://github.com/forcedotcom/source-deploy-retrieve/issues/1790)) ([ee5feb3](https://github.com/forcedotcom/source-deploy-retrieve/commit/ee5feb327ab4805298c1cb631b386bb0ea48aecd))
+
+
+
 ## [12.36.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.36.5...12.36.6) (2026-06-23)
 
 

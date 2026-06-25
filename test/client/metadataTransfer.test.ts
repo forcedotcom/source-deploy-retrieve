@@ -468,14 +468,51 @@ describe('MetadataTransfer', () => {
   });
 
   describe('calculatePollingFrequency', () => {
-    it('0 => 1000', () => {
-      expect(calculatePollingFrequency(0)).to.equal(1000);
+    describe('component count fallback (no zipSize)', () => {
+      it('0 => 1000', () => {
+        expect(calculatePollingFrequency(0)).to.equal(1000);
+      });
+      it('10 => 1000 (minimum floor)', () => {
+        expect(calculatePollingFrequency(10)).to.equal(1000);
+      });
+      it('1000 => 1000', () => {
+        expect(calculatePollingFrequency(1000)).to.equal(1000);
+      });
+      it('2520 => 2520 (scales with component count above 1000)', () => {
+        expect(calculatePollingFrequency(2520)).to.equal(2520);
+      });
+      it('caps at 10000ms for very large component counts', () => {
+        expect(calculatePollingFrequency(35_000)).to.equal(10_000);
+      });
     });
-    it('10 => 100', () => {
-      expect(calculatePollingFrequency(10)).to.equal(100);
-    });
-    it('2520 => 2520', () => {
-      expect(calculatePollingFrequency(2520)).to.equal(2520);
+    describe('zipSize-based frequency', () => {
+      it('small zip (<= 1MB) falls through to component count', () => {
+        expect(calculatePollingFrequency(5, 500_000)).to.equal(1000);
+      });
+      it('zip at exactly 1MB falls through to component count', () => {
+        expect(calculatePollingFrequency(5, 1_000_000)).to.equal(1000);
+      });
+      it('zip just over 1MB uses zip-based frequency => 2000ms', () => {
+        expect(calculatePollingFrequency(5, 1_000_001)).to.equal(2000);
+      });
+      it('medium zip (<= 5MB) => 2000ms', () => {
+        expect(calculatePollingFrequency(5, 3_000_000)).to.equal(2000);
+      });
+      it('large zip (<= 15MB) => 5000ms', () => {
+        expect(calculatePollingFrequency(5, 10_000_000)).to.equal(5000);
+      });
+      it('very large zip (> 15MB) => 10000ms', () => {
+        expect(calculatePollingFrequency(5, 20_000_000)).to.equal(10_000);
+      });
+      it('zipSize takes priority over component count when > 1MB', () => {
+        expect(calculatePollingFrequency(10_000, 10_000_000)).to.equal(5000);
+      });
+      it('zipSize of 0 falls through to component count', () => {
+        expect(calculatePollingFrequency(5, 0)).to.equal(1000);
+      });
+      it('undefined zipSize falls through to component count', () => {
+        expect(calculatePollingFrequency(5, undefined)).to.equal(1000);
+      });
     });
   });
 
@@ -621,6 +658,20 @@ describe('MetadataTransfer', () => {
         );
         expect(result.timeout.seconds).to.deep.equal(Duration.minutes(20).seconds);
         expect(result.frequency.milliseconds).to.deep.equal(125);
+      });
+    });
+    describe('zipSize parameter', () => {
+      it('uses zip-based frequency when zipSize > 1MB and no explicit frequency', () => {
+        const result = normalizePollingInputs({}, undefined, 5, 3_000_000);
+        expect(result.frequency).to.deep.equal(Duration.milliseconds(2000));
+      });
+      it('explicit frequency in options overrides zip-based frequency', () => {
+        const result = normalizePollingInputs({ frequency: Duration.milliseconds(500) }, undefined, 5, 10_000_000);
+        expect(result.frequency.milliseconds).to.equal(500);
+      });
+      it('explicit frequency as number overrides zip-based frequency', () => {
+        const result = normalizePollingInputs(750, undefined, 5, 10_000_000);
+        expect(result.frequency).to.deep.equal(Duration.milliseconds(750));
       });
     });
   });

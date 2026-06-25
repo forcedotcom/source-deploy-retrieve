@@ -89,7 +89,7 @@ export abstract class MetadataTransfer<
 
   /**
    * Poll for the status of the metadata transfer request.
-   * Default frequency is 100 ms.
+   * Default frequency is 1000ms minimum, scaling with deploy size (zip bytes or component count).
    * Default timeout is 60 minutes.
    *
    * @param options Polling options; frequency, timeout, polling function.
@@ -98,7 +98,7 @@ export abstract class MetadataTransfer<
   public async pollStatus(options?: Partial<PollingClient.Options>): Promise<Result>;
   /**
    * Poll for the status of the metadata transfer request.
-   * Default frequency is based on the number of SourceComponents, n, in the transfer, it ranges from 100ms -> n
+   * Default frequency is 1000ms minimum, scaling with deploy size (zip bytes or component count, capped at 10s).
    * Default timeout is 60 minutes.
    *
    * @param frequency Polling frequency in milliseconds.
@@ -110,7 +110,12 @@ export abstract class MetadataTransfer<
     frequencyOrOptions?: number | Partial<PollingClient.Options>,
     timeout?: number
   ): Promise<Result | undefined> {
-    const normalizedOptions = normalizePollingInputs(frequencyOrOptions, timeout, sizeOfComponentSet(this.components));
+    const normalizedOptions = normalizePollingInputs(
+      frequencyOrOptions,
+      timeout,
+      sizeOfComponentSet(this.components),
+      this.getZipSize()
+    );
     // Initialize error retry tracking
     this.consecutiveErrorRetries = 0;
     this.errorRetryLimit = calculateErrorRetryLimit(this.logger);
@@ -202,6 +207,11 @@ export abstract class MetadataTransfer<
 
   public onError(subscriber: (result: Error) => void): void {
     this.event.on('error', subscriber);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  protected getZipSize(): number | undefined {
+    return undefined;
   }
 
   protected async maybeSaveTempDirectory(target: SfdxFileFormat, cs?: ComponentSet): Promise<void> {
@@ -367,10 +377,11 @@ const getConnectionNoHigherThanOrgAllows = async (conn: Connection, requestedVer
 export const normalizePollingInputs = (
   frequencyOrOptions?: number | Partial<PollingClient.Options>,
   timeout?: number,
-  componentSetSize = 0
+  componentSetSize = 0,
+  zipSize?: number
 ): Pick<PollingClient.Options, 'frequency' | 'timeout'> => {
   let pollingOptions: Pick<PollingClient.Options, 'frequency' | 'timeout'> = {
-    frequency: Duration.milliseconds(calculatePollingFrequency(componentSetSize)),
+    frequency: Duration.milliseconds(calculatePollingFrequency(componentSetSize, zipSize)),
     timeout: Duration.minutes(60),
   };
   if (isNumber(frequencyOrOptions)) {
@@ -383,7 +394,7 @@ export const normalizePollingInputs = (
   }
   // from the overloaded methods, there's a possibility frequency/timeout isn't set
   // guarantee frequency and timeout are set
-  pollingOptions.frequency ??= Duration.milliseconds(calculatePollingFrequency(componentSetSize));
+  pollingOptions.frequency ??= Duration.milliseconds(calculatePollingFrequency(componentSetSize, zipSize));
   pollingOptions.timeout ??= Duration.minutes(60);
 
   return pollingOptions;
@@ -392,21 +403,25 @@ export const normalizePollingInputs = (
 /** yeah, there's a size property on CS.  But we want the actual number of source components */
 const sizeOfComponentSet = (cs?: ComponentSet): number => cs?.getSourceComponents().toArray().length ?? 0;
 
-/** based on the size of the components, pick a reasonable polling frequency */
-export const calculatePollingFrequency = (size: number): number => {
-  if (size === 0) {
-    // no component set size is possible for retrieve
-    return 1000;
-  } else if (size <= 10) {
-    return 100;
-  } else if (size <= 50) {
-    return 250;
-  } else if (size <= 100) {
-    return 500;
-  } else if (size <= 1000) {
+/** based on the size of the deploy (zip bytes for large deploys, component count for small ones), pick a reasonable polling frequency */
+export const calculatePollingFrequency = (componentCount: number, zipSize?: number): number => {
+  // Use zip size only for large payloads where component count alone underestimates deploy time
+  if (zipSize !== undefined && zipSize > 1_000_000) {
+    const ONE_MB = 1_000_000;
+    if (zipSize <= 5 * ONE_MB) {
+      return 2000;
+    } else if (zipSize <= 15 * ONE_MB) {
+      return 5000;
+    } else {
+      // large deploys (15MB+ up to 39MB limit) — poll every 10s
+      return 10_000;
+    }
+  }
+
+  if (componentCount <= 1000) {
     return 1000;
   } else {
-    return size;
+    return Math.min(componentCount, 10_000);
   }
 };
 

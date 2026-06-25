@@ -861,6 +861,7 @@ v68 introduces the following new types.  Here's their current level of support
 |IdpConfiguration|❌|Not supported, but support could be added (but not for tracking)|
 |IndustriesRepossessionSettings|✅||
 |InvMgmtForUnusableQtySettings|✅||
+|LightningOutApp|✅||
 |MarketingHierarchyGroupDef|❌|Not supported, but support could be added|
 |MarketingHierarchyNodeDef|❌|Not supported, but support could be added|
 |MktPlanningOpsSettings|✅||
@@ -943,4 +944,3 @@ v68 introduces the following new types.  Here's their current level of support
 - WorkSkillRoutingAttribute
 - XOrgHub
 - RuleLibraryDefinition
-- LightningOutApp

@@ -16,7 +16,8 @@
 import { join, resolve, sep } from 'node:path';
 import { Messages } from '@salesforce/core/messages';
 import { SfError } from '@salesforce/core/sfError';
-import type { TreeContainer } from '../treeContainers';
+import { NodeFSTreeContainer, type TreeContainer } from '../treeContainers';
+import type { ForceIgnore } from '../forceIgnore';
 import { SourcePath } from '../../common/types';
 
 Messages.importMessagesDirectory(__dirname);
@@ -144,6 +145,25 @@ function createConfigError(message: string, actions?: string[]): SfError {
 
 function createFileError(message: string, actions?: string[]): SfError {
   return new SfError(message, 'ExpectedSourceFilesError', actions);
+}
+
+/** Validate a UI bundle's `ui-bundle.json` descriptor (if present) at deploy time. Only runs against a real filesystem. */
+export function validateUiBundleForDeploy(
+  contentPath: SourcePath,
+  tree: TreeContainer,
+  forceIgnore: ForceIgnore
+): void {
+  if (!(tree instanceof NodeFSTreeContainer)) {
+    return;
+  }
+
+  const descriptorPath = join(contentPath, 'ui-bundle.json');
+  if (!tree.exists(descriptorPath) || forceIgnore.denies(descriptorPath)) {
+    return;
+  }
+
+  const raw = tree.readFileSync(descriptorPath);
+  validateUiBundleJson(raw, descriptorPath, contentPath, tree);
 }
 
 /** Validate ui-bundle.json contents. Checks structure first, then schema, then file existence. */

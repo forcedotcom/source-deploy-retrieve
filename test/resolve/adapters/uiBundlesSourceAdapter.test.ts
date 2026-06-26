@@ -645,7 +645,7 @@ describe('UiBundlesSourceAdapter', () => {
     });
   });
 
-  describe('NodeFSTreeContainer runs validation', () => {
+  describe('NodeFSTreeContainer resolution does not validate descriptor contents', () => {
     let tmpDir: string;
     let appDir: string;
 
@@ -663,7 +663,7 @@ describe('UiBundlesSourceAdapter', () => {
       rmSync(tmpDir, { recursive: true, force: true });
     });
 
-    it('should validate and succeed for valid content', () => {
+    it('should resolve for valid content', () => {
       writeFileSync(join(appDir, 'ui-bundle.json'), JSON.stringify({ outputDir: 'dist' }));
       const fsTree = new NodeFSTreeContainer();
       const a = new UiBundlesSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, fsTree);
@@ -672,21 +672,29 @@ describe('UiBundlesSourceAdapter', () => {
       expect(comp!.name).to.equal('TestApp');
     });
 
-    it('should throw for empty file', () => {
+    it('should resolve (not throw) for empty descriptor file', () => {
       writeFileSync(join(appDir, 'ui-bundle.json'), '');
       const fsTree = new NodeFSTreeContainer();
       const a = new UiBundlesSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, fsTree);
-      assert.throws(() => a.getComponent(appDir), SfError, /must not be empty/);
+      expect(() => a.getComponent(appDir)).to.not.throw();
     });
 
-    it('should throw for invalid JSON', () => {
+    it('should resolve (not throw) for invalid JSON descriptor', () => {
       writeFileSync(join(appDir, 'ui-bundle.json'), '{"unclosed');
       const fsTree = new NodeFSTreeContainer();
       const a = new UiBundlesSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, fsTree);
-      assert.throws(() => a.getComponent(appDir), SfError, /ui-bundle\.json/);
+      expect(() => a.getComponent(appDir)).to.not.throw();
     });
 
-    it('should skip when ui-bundle.json is absent', () => {
+    it('should resolve (not throw) when outputDir directory is missing', () => {
+      rmSync(join(appDir, 'dist'), { recursive: true, force: true });
+      writeFileSync(join(appDir, 'ui-bundle.json'), JSON.stringify({ outputDir: 'dist' }));
+      const fsTree = new NodeFSTreeContainer();
+      const a = new UiBundlesSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, fsTree);
+      expect(() => a.getComponent(appDir)).to.not.throw();
+    });
+
+    it('should resolve when ui-bundle.json is absent', () => {
       const fsTree = new NodeFSTreeContainer();
       const a = new UiBundlesSourceAdapter(registry.types.uibundle, registryAccess, forceIgnore, fsTree);
       const comp = a.getComponent(appDir);

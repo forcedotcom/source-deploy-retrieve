@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 import { join } from 'node:path';
-import { ensureString, getString, JsonMap } from '@salesforce/ts-types';
+import { ensureArray } from '@salesforce/kit';
+import { ensureString, get, getString, JsonMap } from '@salesforce/ts-types';
 import { SfProject } from '@salesforce/core/project';
 import { getXmlElement } from '../../utils/decomposed';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../common/constants';
@@ -159,37 +160,32 @@ export class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDe
   }
 
   /**
-   * Populate the mergeMap with all the children of all the local components
+   * Populate the mergeMap with all the children of all the local components.
+   * Parses each parent file once and extracts child entries directly rather than
+   * re-parsing the parent for every child.
    */
   private async initMergeMap(allComponentsOfType: SourceComponent[]): Promise<void> {
-    // A function we can parallelize since we have to parseXml for each local file
-    const getMappedChildren = async (component: SourceComponent): Promise<Map<string, JsonMap>> => {
-      const results = await Promise.all(
-        component.getChildren().map(async (child): Promise<[string, JsonMap]> => {
-          const childXml = await child.parseXml();
-          return [
-            getString(
-              childXml,
-              ensureString(child.type.uniqueIdElement),
-              `No uniqueIdElement exists in the registry for ${child.type.name}`
-            ),
-            childXml,
-          ];
-        })
-      );
-      return new Map(results);
-    };
-
-    const result = await Promise.all(
-      allComponentsOfType.map(
-        async (c): Promise<[string, Map<string, JsonMap>]> => [
-          ensureString(c.xml, `Missing xml file for ${c.type.name}`),
-          await getMappedChildren(c),
-        ]
-      )
-    );
-
-    this.mergeMap = new Map(result);
+    for (const component of allComponentsOfType) {
+      const xmlPath = ensureString(component.xml, `Missing xml file for ${component.type.name}`);
+      // eslint-disable-next-line no-await-in-loop
+      const parentXml = await component.parseXml();
+      const childMap = new Map<string, JsonMap>();
+      const xmlElement = getXmlElement(component.type);
+      const childrenXml = ensureArray(get(parentXml, `${component.type.name}.${xmlElement}`)) as JsonMap[];
+      if (!component.type.children) {
+        this.mergeMap.set(xmlPath, childMap);
+        continue;
+      }
+      const [childTypeId] = Object.keys(component.type.children.types);
+      const uniqueIdElement = ensureString(component.type.children.types[childTypeId].uniqueIdElement);
+      for (const childXml of childrenXml) {
+        const childName = getString(childXml, uniqueIdElement);
+        if (childName) {
+          childMap.set(childName, childXml);
+        }
+      }
+      this.mergeMap.set(xmlPath, childMap);
+    }
   }
 }
 

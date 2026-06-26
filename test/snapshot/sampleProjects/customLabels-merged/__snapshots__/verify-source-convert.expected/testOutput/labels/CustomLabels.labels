@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>OnlyInPkg1_Alpha</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Alpha label only in pkg1</shortDescription>
+        <value>alpha value from pkg1</value>
+    </labels>
+    <labels>
+        <fullName>OnlyInPkg1_Beta</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Beta label only in pkg1</shortDescription>
+        <value>beta value from pkg1</value>
+    </labels>
+    <labels>
+        <fullName>OnlyInPkg2_Delta</fullName>
+        <categories>pkg2only</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Delta label only in pkg2</shortDescription>
+        <value>delta value from pkg2</value>
+    </labels>
+    <labels>
+        <fullName>OnlyInPkg2_Gamma</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gamma label only in pkg2</shortDescription>
+        <value>gamma value from pkg2</value>
+    </labels>
+    <labels>
+        <fullName>OnlyInPkg3_Epsilon</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Epsilon label only in pkg3</shortDescription>
+        <value>epsilon value from pkg3</value>
+    </labels>
+    <labels>
+        <fullName>OnlyInPkg3_Zeta</fullName>
+        <categories>pkg3only</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Zeta label only in pkg3</shortDescription>
+        <value>zeta value from pkg3</value>
+    </labels>
+    <labels>
+        <fullName>SharedLabel_One</fullName>
+        <categories>shared</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Shared label one</shortDescription>
+        <value>shared one value</value>
+    </labels>
+    <labels>
+        <fullName>SharedLabel_Two</fullName>
+        <categories>shared</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Shared label two</shortDescription>
+        <value>shared two value</value>
+    </labels>
+</CustomLabels>

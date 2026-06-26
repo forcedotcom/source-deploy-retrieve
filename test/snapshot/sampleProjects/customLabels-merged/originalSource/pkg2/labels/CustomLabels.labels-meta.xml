@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>SharedLabel_One</fullName>
+        <categories>shared</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Shared label one</shortDescription>
+        <value>shared one value</value>
+    </labels>
+    <labels>
+        <fullName>SharedLabel_Two</fullName>
+        <categories>shared</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Shared label two</shortDescription>
+        <value>shared two value</value>
+    </labels>
+    <labels>
+        <fullName>OnlyInPkg2_Gamma</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gamma label only in pkg2</shortDescription>
+        <value>gamma value from pkg2</value>
+    </labels>
+    <labels>
+        <fullName>OnlyInPkg2_Delta</fullName>
+        <categories>pkg2only</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Delta label only in pkg2</shortDescription>
+        <value>delta value from pkg2</value>
+    </labels>
+</CustomLabels>

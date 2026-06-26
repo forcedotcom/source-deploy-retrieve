@@ -848,6 +848,8 @@ v68 introduces the following new types.  Here's their current level of support
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
 |AgentforcePlatformTracingSettings|✅||
+|AiAgentDefinition|❌|Not supported, but support could be added|
+|AiAgentDefinitionVersion|❌|Not supported, but support could be added|
 |BotEmailDefinition|❌|Not supported, but support could be added|
 |CnfgItemTypeIdentFieldMap|✅||
 |CnfgItemTypeIdentRule|✅||
@@ -862,6 +864,7 @@ v68 introduces the following new types.  Here's their current level of support
 |IndustriesRepossessionSettings|✅||
 |InvMgmtForUnusableQtySettings|✅||
 |LightningOutApp|✅||
+|MCETransformationsSettings|✅||
 |MarketingHierarchyGroupDef|❌|Not supported, but support could be added|
 |MarketingHierarchyNodeDef|❌|Not supported, but support could be added|
 |MktPlanningOpsSettings|✅||

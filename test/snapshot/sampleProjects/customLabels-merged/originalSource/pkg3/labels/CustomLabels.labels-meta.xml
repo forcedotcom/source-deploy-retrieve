@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>SharedLabel_One</fullName>
+        <categories>shared</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Shared label one</shortDescription>
+        <value>shared one value</value>
+    </labels>
+    <labels>
+        <fullName>SharedLabel_Two</fullName>
+        <categories>shared,overridden</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Shared label two (pkg3 override)</shortDescription>
+        <value>shared two OVERRIDDEN in pkg3</value>
+    </labels>
+    <labels>
+        <fullName>OnlyInPkg3_Epsilon</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Epsilon label only in pkg3</shortDescription>
+        <value>epsilon value from pkg3</value>
+    </labels>
+    <labels>
+        <fullName>OnlyInPkg3_Zeta</fullName>
+        <categories>pkg3only</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Zeta label only in pkg3</shortDescription>
+        <value>zeta value from pkg3</value>
+    </labels>
+</CustomLabels>

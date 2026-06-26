@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>OnlyInPkg1_Alpha</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Alpha label only in pkg1</shortDescription>
+        <value>alpha value from pkg1</value>
+    </labels>
+    <labels>
+        <fullName>OnlyInPkg1_Beta</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Beta label only in pkg1</shortDescription>
+        <value>beta value from pkg1</value>
+    </labels>
+</CustomLabels>

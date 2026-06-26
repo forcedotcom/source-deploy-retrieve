@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>OnlyInPkg1_Alpha</members>
+        <members>OnlyInPkg1_Beta</members>
+        <members>OnlyInPkg2_Delta</members>
+        <members>OnlyInPkg2_Gamma</members>
+        <members>OnlyInPkg3_Epsilon</members>
+        <members>OnlyInPkg3_Zeta</members>
+        <members>SharedLabel_One</members>
+        <members>SharedLabel_Two</members>
+        <name>CustomLabel</name>
+    </types>
+    <types>
+        <members>CustomLabels</members>
+        <name>CustomLabels</name>
+    </types>
+    <version>59.0</version>
+</Package>

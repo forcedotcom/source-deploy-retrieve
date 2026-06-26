@@ -87,7 +87,7 @@ describe('uiBundles local e2e', () => {
     expect(contentFiles).to.include('ui-bundle.json');
   });
 
-  it('throws when ui-bundle.json is invalid (NodeFSTreeContainer validation)', async () => {
+  it('resolves but fails to deploy-convert when ui-bundle.json is invalid', async () => {
     const descriptorPath = path.join(
       projectDir,
       'force-app',
@@ -100,16 +100,46 @@ describe('uiBundles local e2e', () => {
     const original = fs.readFileSync(descriptorPath, 'utf8');
     try {
       fs.writeFileSync(descriptorPath, '{"unclosed');
+
+      const cs = await ComponentSetBuilder.build({ sourcepath: [path.join(projectDir, 'force-app')] });
+      expect(cs.getSourceComponents().toArray()).to.have.lengthOf(1);
+
+      const converter = new MetadataConverter();
       let threw = false;
       try {
-        await ComponentSetBuilder.build({ sourcepath: [path.join(projectDir, 'force-app')] });
+        await converter.convert(cs, 'metadata', { type: 'zip' });
       } catch (err) {
         threw = true;
         expect((err as Error).message).to.match(/ui-bundle\.json/);
       }
-      expect(threw, 'expected ComponentSetBuilder.build to throw').to.be.true;
+      expect(threw, 'expected convert to metadata to throw').to.be.true;
     } finally {
       fs.writeFileSync(descriptorPath, original);
+    }
+  });
+
+  it('deploy-converting one bundle ignores an unbuilt sibling bundle (forcedotcom/cli#3576)', async () => {
+    const uiBundlesDir = path.join(projectDir, 'force-app', 'main', 'default', 'uiBundles');
+    const siblingDir = path.join(uiBundlesDir, 'UnbuiltApp');
+    fs.mkdirSync(siblingDir, { recursive: true });
+    fs.writeFileSync(path.join(siblingDir, 'UnbuiltApp.uibundle-meta.xml'), '<UIBundle/>');
+    fs.writeFileSync(path.join(siblingDir, 'ui-bundle.json'), JSON.stringify({ outputDir: 'dist' }));
+    fs.mkdirSync(path.join(siblingDir, 'src'), { recursive: true });
+    fs.writeFileSync(path.join(siblingDir, 'src', 'index.html'), '<html/>');
+
+    try {
+      const cs = await ComponentSetBuilder.build({ sourcepath: [path.join(projectDir, 'force-app')] });
+      expect(cs.getSourceComponents().toArray()).to.have.lengthOf(2);
+
+      const scoped = await ComponentSetBuilder.build({
+        sourcepath: [path.join(uiBundlesDir, 'HappyApp')],
+      });
+      const { zipBuffer } = await new MetadataConverter().convert(scoped, 'metadata', { type: 'zip' });
+      const zip = await JSZip.loadAsync(zipBuffer as Buffer);
+      expect(zip.file('uiBundles/HappyApp/HappyApp.uibundle-meta.xml')).to.exist;
+      expect(zip.file('uiBundles/UnbuiltApp/UnbuiltApp.uibundle-meta.xml')).to.be.null;
+    } finally {
+      fs.rmSync(siblingDir, { recursive: true, force: true });
     }
   });
 

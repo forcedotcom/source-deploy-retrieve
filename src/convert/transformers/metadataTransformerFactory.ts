@@ -25,6 +25,7 @@ import { NonDecomposedMetadataTransformer } from './nonDecomposedMetadataTransfo
 import { LabelMetadataTransformer, LabelsMetadataTransformer } from './decomposeLabelsTransformer';
 import { DecomposedPermissionSetTransformer } from './decomposedPermissionSetTransformer';
 import { DecomposeExternalServiceRegistrationTransformer } from './decomposeExternalServiceRegistrationTransformer';
+import { UiBundleMetadataTransformer } from './uiBundleMetadataTransformer';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -57,6 +58,8 @@ export class MetadataTransformerFactory {
           : new LabelMetadataTransformer(this.registry, this.context);
       case 'decomposeExternalServiceRegistration':
         return new DecomposeExternalServiceRegistrationTransformer(this.registry, this.context);
+      case 'uiBundle':
+        return new UiBundleMetadataTransformer(this.registry, this.context);
       default:
         throw messages.createError('error_missing_transformer', [type.name, transformerId]);
     }

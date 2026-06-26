@@ -18,10 +18,8 @@ import { Messages } from '@salesforce/core/messages';
 import { SfError } from '@salesforce/core/sfError';
 import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
-import { NodeFSTreeContainer } from '../treeContainers';
 import { baseName } from '../../utils/path';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
-import { validateUiBundleJson } from './uiBundleValidation';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -29,14 +27,11 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 /**
  * Source adapter for UiBundle bundles.
  *
- * ui-bundle.json is optional; validated on deploy, skipped on retrieve.
+ * ui-bundle.json is optional; its contents are validated at deploy time by the UiBundle
+ * metadata transformer, not during resolution.
  */
 export class UiBundlesSourceAdapter extends BundleSourceAdapter {
-  protected populate(
-    trigger: SourcePath,
-    component?: SourceComponent,
-    isResolvingSource = true
-  ): SourceComponent | undefined {
+  protected populate(trigger: SourcePath, component?: SourceComponent): SourceComponent | undefined {
     const source = super.populate(trigger, component);
     if (!source?.content) {
       return source;
@@ -53,33 +48,19 @@ export class UiBundlesSourceAdapter extends BundleSourceAdapter {
     }
 
     // Ensure the component always points at the canonical meta xml.
-    const resolvedSource =
-      source.xml && source.xml === expectedXmlPath
-        ? source
-        : new SourceComponent(
-            {
-              name: appName,
-              type: source.type,
-              content: source.content,
-              xml: expectedXmlPath,
-              parent: source.parent,
-              parentType: source.parentType,
-            },
-            this.tree,
-            this.forceIgnore
-          );
-
-    // Validate only on real filesystem; ZipTreeContainer (retrieve) doesn't support readFileSync.
-    if (isResolvingSource && this.tree instanceof NodeFSTreeContainer) {
-      const descriptorPath = join(contentPath, 'ui-bundle.json');
-      const hasDescriptor = this.tree.exists(descriptorPath) && !this.forceIgnore.denies(descriptorPath);
-
-      if (hasDescriptor) {
-        const raw = this.tree.readFileSync(descriptorPath);
-        validateUiBundleJson(raw, descriptorPath, contentPath, this.tree);
-      }
-    }
-
-    return resolvedSource;
+    return source.xml && source.xml === expectedXmlPath
+      ? source
+      : new SourceComponent(
+          {
+            name: appName,
+            type: source.type,
+            content: source.content,
+            xml: expectedXmlPath,
+            parent: source.parent,
+            parentType: source.parentType,
+          },
+          this.tree,
+          this.forceIgnore
+        );
   }
 }

@@ -4743,7 +4743,8 @@
       "name": "UIBundle",
       "suffix": "uibundle",
       "strategies": {
-        "adapter": "uiBundles"
+        "adapter": "uiBundles",
+        "transformer": "uiBundle"
       },
       "strictDirectoryName": true,
       "supportsPartialDelete": true

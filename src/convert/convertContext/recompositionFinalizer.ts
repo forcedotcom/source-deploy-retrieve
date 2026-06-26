@@ -86,7 +86,7 @@ type ChildWithXml = {
 const recompose =
   (cache: XmlCache) =>
   async (stateValue: RecompositionStateValueWithParent): Promise<JsonMap> => {
-    const childComponents = stateValue.children?.toArray() ?? [];
+    const childComponents = deduplicateChildren(stateValue.children?.toArray() ?? []);
 
     // RecompositionState combines all labels metadata files into 1 component containing
     // all the children.  This checks for multiple parent components and gets the xml
@@ -109,15 +109,15 @@ const recompose =
       await getXmlFromCache(cache)(stateValue.component);
     }
 
-    const childXmls = await Promise.all(
-      childComponents.filter(ensureMetadataComponentWithParent).map(
-        async (child): Promise<ChildWithXml> => ({
-          cmp: child,
-          xmlContents: await getXmlFromCache(cache)(child),
-          groupName: getXmlElement(child.type),
-        })
-      )
-    );
+    const childXmls: ChildWithXml[] = [];
+    for (const child of childComponents.filter(ensureMetadataComponentWithParent)) {
+      childXmls.push({
+        cmp: child,
+        // eslint-disable-next-line no-await-in-loop
+        xmlContents: await getXmlFromCache(cache)(child),
+        groupName: getXmlElement(child.type),
+      });
+    }
 
     const parentXmlContents = {
       [XML_NS_KEY]: XML_NS_URL,
@@ -190,6 +190,22 @@ const toSortedGroups = (items: ChildWithXml[]): JsonMap => {
         .map((i) => i.xmlContents),
     ])
   );
+};
+
+/**
+ * When multiple package directories contain the same nonDecomposed parent (e.g. CustomLabels),
+ * children from each copy get added to the same recomposition state entry. These are distinct
+ * SourceComponent instances (different xml paths) but represent the same logical metadata member.
+ * Deduplicate by type+fullName, keeping the first occurrence.
+ */
+const deduplicateChildren = (children: MetadataComponent[]): MetadataComponent[] => {
+  const seen = new Set<string>();
+  return children.filter((child) => {
+    const key = `${child.type.name}#${child.fullName}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 };
 
 /** wrapper around the xml cache.  Handles the nonDecomposed "parse from parent" optimization */

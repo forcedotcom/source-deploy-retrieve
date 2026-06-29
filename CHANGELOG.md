@@ -1,3 +1,12 @@
+## [12.36.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.36.8...12.36.9) (2026-06-29)
+
+
+### Bug Fixes
+
+* improve polling frequency calculation @W-21321719@ @W-20866522@ ([#1794](https://github.com/forcedotcom/source-deploy-retrieve/issues/1794)) ([9cc09ea](https://github.com/forcedotcom/source-deploy-retrieve/commit/9cc09ea1d84918edc3cb002d24229e0a641e59ab))
+
+
+
 ## [12.36.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.36.7...12.36.8) (2026-06-28)
 
 

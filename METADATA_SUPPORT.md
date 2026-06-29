@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v67 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 763/828 supported metadata types.
+Currently, there are 764/829 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -783,6 +783,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |TmshtLaborCostOptimAiSettings|✅||
 |TopicsForObjects|✅||
 |TrailheadSettings|✅||
+|TransactableMarketplacePrivateOfferSettings|✅||
 |TransactionProcessingType|⚠️|Supports deploy/retrieve but not source tracking|
 |TransactionSecurityPolicy|✅||
 |Translations|✅||
@@ -860,7 +861,7 @@ v68 introduces the following new types.  Here's their current level of support
 |DynamicUiCardDefinition|✅||
 |HelpSettings|✅||
 |HouseholdNamingConfig|✅||
-|IdpConfiguration|❌|Not supported, but support could be added (but not for tracking)|
+|IdpConfiguration|⚠️|Supports deploy/retrieve but not source tracking|
 |IndustriesRepossessionSettings|✅||
 |InvMgmtForUnusableQtySettings|✅||
 |LightningOutApp|✅||
@@ -876,7 +877,6 @@ v68 introduces the following new types.  Here's their current level of support
 |ServiceItamSettings|✅||
 |StatisticalDealInsightsSettings|✅||
 |TelephonyProvider|❌|Not supported, but support could be added|
-|TransactableMarketplacePrivateOfferSettings|✅||
 |TrustedTelephonyProvider|❌|Not supported, but support could be added|
 |WinProbabilityScoringSetup|❌|Not supported, but support could be added|
 

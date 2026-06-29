@@ -117,7 +117,7 @@ describe('ForceIgnore', () => {
       const seed = join(tmp, 'force-app');
       const readSpy = env.spy(fs, 'readFileSync');
       ForceIgnore.findAndCreate(seed);
-      writeFileSync(fiPath, '**/new/**\n');
+      writeFileSync(fiPath, '**/new_pattern/**\n');
       ForceIgnore.findAndCreate(seed);
       const readsForFi = readSpy
         .getCalls()

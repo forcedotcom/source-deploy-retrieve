@@ -602,7 +602,8 @@
     "cnfgItemTypeIdentRule": "cnfgitemtypeidentrule",
     "cnfgItemTypeRelationDef": "cnfgitemtyperelationdef",
     "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
-    "meetingPlaybookDefinition": "meetingplaybookdefinition"
+    "meetingPlaybookDefinition": "meetingplaybookdefinition",
+    "idpConfiguration": "idpconfiguration"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5369,6 +5370,14 @@
       "name": "PolicyRuleDefinitionSet",
       "suffix": "policyRuleDefinitionSet",
       "directoryName": "policyRuleDefinitionSets",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "idpconfiguration": {
+      "id": "idpconfiguration",
+      "name": "IdpConfiguration",
+      "suffix": "idpConfiguration",
+      "directoryName": "idpConfigurations",
       "inFolder": false,
       "strictDirectoryName": false
     }

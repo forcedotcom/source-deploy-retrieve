@@ -71,7 +71,8 @@
     "waveTemplates": "wavetemplatebundle",
     "appTemplates": "appframeworktemplatebundle",
     "lightningTypes": "lightningtypebundle",
-    "uiBundles": "uibundle"
+    "uiBundles": "uibundle",
+    "uiWidgets": "uiwidgetbundle"
   },
   "suffixes": {
     "Canvas": "canvasmetadata",
@@ -534,6 +535,7 @@
     "webStoreBundle": "webstorebundle",
     "webStoreTemplate": "webstoretemplate",
     "uibundle": "uibundle",
+    "uiwidget": "uiwidgetbundle",
     "workflowFlowAutomation": "workflowflowautomation",
     "weblink": "custompageweblink",
     "wlens": "wavelens",
@@ -5380,6 +5382,18 @@
       "directoryName": "idpConfigurations",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "uiwidgetbundle": {
+      "id": "uiwidgetbundle",
+      "name": "UiWidgetBundle",
+      "suffix": "uiwidget",
+      "directoryName": "uiWidgets",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "bundle"
+      },
+      "supportsPartialDelete": true
     }
   }
 }

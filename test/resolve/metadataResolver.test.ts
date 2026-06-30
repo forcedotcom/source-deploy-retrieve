@@ -268,6 +268,26 @@ describe('MetadataResolver', () => {
         expect(mdResolver.getComponentsFromPath(path)).to.deep.equal([expectedComponent]);
       });
 
+      it('Should determine type for UiWidgetBundle content file', () => {
+        const widgetPath = join('unpackaged', 'uiWidgets', 'myWidget', 'myWidget.json');
+        const treeContainer = VirtualTreeContainer.fromFilePaths([widgetPath]);
+        const mdResolver = new MetadataResolver(undefined, treeContainer);
+        const components = mdResolver.getComponentsFromPath(widgetPath);
+        expect(components).to.have.lengthOf(1);
+        expect(components[0].type.name).to.equal('UiWidgetBundle');
+        expect(components[0].name).to.equal('myWidget');
+      });
+
+      it('Should determine type for UiWidgetBundle optional schema file', () => {
+        const schemaPath = join('unpackaged', 'uiWidgets', 'myWidget', 'schema.json');
+        const treeContainer = VirtualTreeContainer.fromFilePaths([schemaPath]);
+        const mdResolver = new MetadataResolver(undefined, treeContainer);
+        const components = mdResolver.getComponentsFromPath(schemaPath);
+        expect(components).to.have.lengthOf(1);
+        expect(components[0].type.name).to.equal('UiWidgetBundle');
+        expect(components[0].name).to.equal('myWidget');
+      });
+
       it('Should determine type for path of mixed content type', () => {
         const path = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[1];
         const access = testUtil.createMetadataResolver([

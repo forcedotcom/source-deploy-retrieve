@@ -182,6 +182,19 @@ const testData = {
       },
     ],
   },
+  bundleUiWidget: {
+    fullName: 'myWidget',
+    typeName: 'UiWidgetBundle',
+    expectedFilePaths: [
+      getFilePath('uiWidgets/myWidget/myWidget.uiwidget-meta.xml'),
+      getFilePath('uiWidgets/myWidget/myWidget.json'),
+    ],
+    expectedComponents: [
+      {
+        xml: getFilePath('uiWidgets/myWidget/myWidget.uiwidget-meta.xml'),
+      },
+    ],
+  },
   nonDecomposedExplicit: {
     fullName: 'CustomLabels',
     typeName: 'CustomLabels',
@@ -382,6 +395,10 @@ describe('generating virtual tree from component name/type', () => {
 
     it('appFrameworkTemplate', () => {
       runTest(testData.bundleAppTemplates);
+    });
+
+    it('uiWidget', () => {
+      runTest(testData.bundleUiWidget);
     });
   });
 

@@ -535,7 +535,6 @@
     "webStoreBundle": "webstorebundle",
     "webStoreTemplate": "webstoretemplate",
     "uibundle": "uibundle",
-    "uiwidget": "uiwidgetbundle",
     "workflowFlowAutomation": "workflowflowautomation",
     "weblink": "custompageweblink",
     "wlens": "wavelens",
@@ -5386,10 +5385,10 @@
     "uiwidgetbundle": {
       "id": "uiwidgetbundle",
       "name": "UiWidgetBundle",
-      "suffix": "uiwidget",
       "directoryName": "uiWidgets",
       "inFolder": false,
       "strictDirectoryName": true,
+      "metaFileSuffix": "uiwidget-meta.xml",
       "strategies": {
         "adapter": "bundle"
       },

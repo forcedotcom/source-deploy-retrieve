@@ -146,6 +146,14 @@ export const filePathsFromMetadataComponent = (
         'AiAuthoringBundle',
         [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.aiAuthoringBundle${META_XML_SUFFIX}`)],
       ],
+      // schema.json is optional, so only the meta XML and the content JSON are guaranteed file paths.
+      [
+        'UiWidgetBundle',
+        [
+          join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.uiwidget${META_XML_SUFFIX}`),
+          join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.json`),
+        ],
+      ],
     ]);
 
     const matched = mappings.get(type.name);

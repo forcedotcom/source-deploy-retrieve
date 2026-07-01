@@ -795,7 +795,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |UiFormatSpecificationSet|✅||
 |UiPlugin|✅||
 |UiPreviewMessageTabDef|✅||
-|UiWidgetBundle|✅||
 |UnifiedSalesIntelligenceSettings|✅||
 |UserAccessPolicy|✅||
 |UserAuthCertificate|✅||
@@ -850,8 +849,6 @@ v68 introduces the following new types.  Here's their current level of support
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
 |AgentforcePlatformTracingSettings|✅||
-|AiAgentDefinition|❌|Not supported, but support could be added|
-|AiAgentDefinitionVersion|❌|Not supported, but support could be added|
 |BotEmailDefinition|❌|Not supported, but support could be added|
 |CnfgItemTypeIdentFieldMap|✅||
 |CnfgItemTypeIdentRule|✅||
@@ -948,3 +945,4 @@ v68 introduces the following new types.  Here's their current level of support
 - WorkSkillRoutingAttribute
 - XOrgHub
 - RuleLibraryDefinition
+- UiWidgetBundle

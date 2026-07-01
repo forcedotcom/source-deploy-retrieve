@@ -1,3 +1,12 @@
+# [12.37.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.36.9...12.37.0) (2026-07-01)
+
+
+### Features
+
+* @W-23020460@ - add support for UiWidgetBundle metadata ([#1799](https://github.com/forcedotcom/source-deploy-retrieve/issues/1799)) ([99297ab](https://github.com/forcedotcom/source-deploy-retrieve/commit/99297abba9c33bd8ddf186e754408a6a38d3840a))
+
+
+
 ## [12.36.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.36.8...12.36.9) (2026-06-29)
 
 

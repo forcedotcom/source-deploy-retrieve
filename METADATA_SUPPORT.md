@@ -860,6 +860,7 @@ v68 introduces the following new types.  Here's their current level of support
 |HelpSettings|✅||
 |HouseholdNamingConfig|✅||
 |IdpConfiguration|⚠️|Supports deploy/retrieve but not source tracking|
+|IndustriesMfgAdvnOrderSettings|✅||
 |IndustriesRepossessionSettings|✅||
 |InvMgmtForUnusableQtySettings|✅||
 |LightningOutApp|✅||

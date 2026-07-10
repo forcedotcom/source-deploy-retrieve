@@ -863,6 +863,7 @@ v68 introduces the following new types.  Here's their current level of support
 |HelpSettings|✅||
 |HouseholdNamingConfig|✅||
 |IdpConfiguration|⚠️|Supports deploy/retrieve but not source tracking|
+|IndustriesMaczPricingSettings|✅||
 |IndustriesMfgAdvnOrderSettings|✅||
 |IndustriesRepossessionSettings|✅||
 |InvMgmtForUnusableQtySettings|✅||
@@ -875,6 +876,7 @@ v68 introduces the following new types.  Here's their current level of support
 |PlanningDimensionDef|❌|Not supported, but support could be added|
 |RecLifecyclCompanCpblDef|❌|Not supported, but support could be added|
 |RecLifecyclCompanDef|❌|Not supported, but support could be added|
+|SalesPlanDataSource|❌|Not supported, but support could be added|
 |ScndTelephPrvdOtbdDtl|❌|Not supported, but support could be added|
 |SecondaryTelephonyProvider|❌|Not supported, but support could be added|
 |ServiceItamSettings|✅||

@@ -41,7 +41,7 @@
     "yaml": "^2.9.0"
   },
   "devDependencies": {
-    "@jsforce/jsforce-node": "^3.10.16",
+    "@jsforce/jsforce-node": "^3.10.19",
     "@salesforce/cli-plugins-testkit": "^5.3.58",
     "@salesforce/dev-scripts": "^11.0.4",
     "@types/deep-equal-in-any-order": "^1.0.1",

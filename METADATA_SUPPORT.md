@@ -873,6 +873,11 @@ v68 introduces the following new types.  Here's their current level of support
 |MarketingHierarchyGroupNodeDef|❌|Not supported, but support could be added|
 |MarketingHierarchyNodeDef|❌|Not supported, but support could be added|
 |MktPlanningOpsSettings|✅||
+|MobilePublisherAppConfig|❌|Not supported, but support could be added|
+|MobilePublisherAppVersion|❌|Not supported, but support could be added|
+|MobilePublisherDelegateDistributionAccount|❌|Not supported, but support could be added|
+|MobilePublisherPrivateDistributionAccount|❌|Not supported, but support could be added|
+|MobilePublisherProject|❌|Not supported, but support could be added|
 |PlanningDimensionDef|❌|Not supported, but support could be added|
 |RecLifecyclCompanCpblDef|❌|Not supported, but support could be added|
 |RecLifecyclCompanDef|❌|Not supported, but support could be added|

@@ -855,6 +855,7 @@ v68 introduces the following new types.  Here's their current level of support
 |BotEmailDefinition|❌|Not supported, but support could be added|
 |CnfgItemTypeIdentFieldMap|✅||
 |CnfgItemTypeIdentRule|✅||
+|CnfgMgmtDataBndl|❌|Not supported, but support could be added|
 |ContentWorkspace|❌|Not supported, but support could be added|
 |ContentWorkspacePermission|❌|Not supported, but support could be added|
 |DCOpportunityScoringSettings|✅||

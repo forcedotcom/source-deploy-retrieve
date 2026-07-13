@@ -1,3 +1,12 @@
+## [12.37.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.37.1...12.37.2) (2026-07-13)
+
+
+### Bug Fixes
+
+* validate UIBundle ui-bundle.json at deploy time, not resolution @W-23232523@ ([#1796](https://github.com/forcedotcom/source-deploy-retrieve/issues/1796)) ([b53af06](https://github.com/forcedotcom/source-deploy-retrieve/commit/b53af06cab85add2eaefb7d8ee03c7fa4413071a)), closes [forcedotcom/cli#3576](https://github.com/forcedotcom/cli/issues/3576)
+
+
+
 ## [12.37.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.37.0...12.37.1) (2026-07-05)
 
 

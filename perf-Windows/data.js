@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783778422303,
+  "lastUpdate": 1783956028282,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -104392,6 +104392,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 22783,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "bpbuch@gmail.com",
+            "name": "Brian Buchanan",
+            "username": "bpbuch"
+          },
+          "committer": {
+            "email": "bpbuch@gmail.com",
+            "name": "Brian Buchanan",
+            "username": "bpbuch"
+          },
+          "distinct": true,
+          "id": "738c83b88f279a20a392ad2c3db80df24fb45c90",
+          "message": "fix: validate UIBundle ui-bundle.json at deploy time, not resolution\n\nScoped deploys (-d / -m) failed when an unrelated sibling UIBundle in the\nproject had no built outputDir. Validation ran during full-project source\nresolution, so any single unbuilt bundle blocked every deploy.\n\nMove ui-bundle.json validation out of UiBundlesSourceAdapter.populate and\ninto a new UiBundleMetadataTransformer.toMetadataFormat, which only runs for\nthe components actually being deployed. Resolution keeps the structural\nmeta-xml check.\n\nFixes forcedotcom/cli#3576",
+          "timestamp": "2026-06-26T17:07:06-04:00",
+          "tree_id": "02866c9be423fed6349b945e90a0f2f6fd16ed97",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/738c83b88f279a20a392ad2c3db80df24fb45c90"
+        },
+        "date": 1783956014377,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 529,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 3736,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3797,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 6494,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 836,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 10823,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10282,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 10075,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1575,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 18931,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 18636,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 19291,
             "unit": "ms"
           }
         ]

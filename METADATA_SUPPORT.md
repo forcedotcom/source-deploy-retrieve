@@ -857,11 +857,13 @@ v68 introduces the following new types.  Here's their current level of support
 |CnfgItemTypeIdentFieldMap|✅||
 |CnfgItemTypeIdentRule|✅||
 |CnfgMgmtDataBndl|❌|Not supported, but support could be added|
+|CnfgMgmtItemFieldMap|❌|Not supported, but support could be added|
 |ContentWorkspace|❌|Not supported, but support could be added|
 |ContentWorkspacePermission|❌|Not supported, but support could be added|
 |DCOpportunityScoringSettings|✅||
 |DebugLevel|❌|Not supported, but support could be added|
 |DynamicUiCardDefinition|✅||
+|EMATokenExchangeRegistration|❌|Not supported, but support could be added|
 |HelpSettings|✅||
 |HouseholdNamingConfig|✅||
 |IdpConfiguration|⚠️|Supports deploy/retrieve but not source tracking|
@@ -874,6 +876,7 @@ v68 introduces the following new types.  Here's their current level of support
 |MarketingHierarchyGroupDef|❌|Not supported, but support could be added|
 |MarketingHierarchyGroupNodeDef|❌|Not supported, but support could be added|
 |MarketingHierarchyNodeDef|❌|Not supported, but support could be added|
+|MissionforceSettings|✅||
 |MktPlanningOpsSettings|✅||
 |MobilePublisherAppConfig|❌|Not supported, but support could be added|
 |MobilePublisherAppVersion|❌|Not supported, but support could be added|
@@ -884,6 +887,7 @@ v68 introduces the following new types.  Here's their current level of support
 |RecLifecyclCompanCpblDef|❌|Not supported, but support could be added|
 |RecLifecyclCompanDef|❌|Not supported, but support could be added|
 |ReferralIntakeConfiguration|❌|Not supported, but support could be added|
+|ReferralManagementSettings|✅||
 |SalesPlanDataSource|❌|Not supported, but support could be added|
 |ScndTelephPrvdOtbdDtl|❌|Not supported, but support could be added|
 |SecondaryTelephonyProvider|❌|Not supported, but support could be added|

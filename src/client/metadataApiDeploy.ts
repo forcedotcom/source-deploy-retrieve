@@ -193,6 +193,10 @@ export class MetadataApiDeploy extends MetadataTransfer<
     await connection.metadata.cancelDeploy(this.id);
   }
 
+  protected getZipSize(): number | undefined {
+    return this.zipSize;
+  }
+
   protected async pre(): Promise<AsyncResult> {
     const LifecycleInstance = Lifecycle.getInstance();
     const connection = await this.getConnection();

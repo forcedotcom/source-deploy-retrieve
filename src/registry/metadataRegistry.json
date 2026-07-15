@@ -71,7 +71,8 @@
     "waveTemplates": "wavetemplatebundle",
     "appTemplates": "appframeworktemplatebundle",
     "lightningTypes": "lightningtypebundle",
-    "uiBundles": "uibundle"
+    "uiBundles": "uibundle",
+    "uiWidgets": "uiwidgetbundle"
   },
   "suffixes": {
     "Canvas": "canvasmetadata",
@@ -602,7 +603,8 @@
     "cnfgItemTypeIdentRule": "cnfgitemtypeidentrule",
     "cnfgItemTypeRelationDef": "cnfgitemtyperelationdef",
     "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
-    "meetingPlaybookDefinition": "meetingplaybookdefinition"
+    "meetingPlaybookDefinition": "meetingplaybookdefinition",
+    "idpConfiguration": "idpconfiguration"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4743,7 +4745,8 @@
       "name": "UIBundle",
       "suffix": "uibundle",
       "strategies": {
-        "adapter": "uiBundles"
+        "adapter": "uiBundles",
+        "transformer": "uiBundle"
       },
       "strictDirectoryName": true,
       "supportsPartialDelete": true
@@ -5371,6 +5374,26 @@
       "directoryName": "policyRuleDefinitionSets",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "idpconfiguration": {
+      "id": "idpconfiguration",
+      "name": "IdpConfiguration",
+      "suffix": "idpConfiguration",
+      "directoryName": "idpConfigurations",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "uiwidgetbundle": {
+      "id": "uiwidgetbundle",
+      "name": "UiWidgetBundle",
+      "directoryName": "uiWidgets",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "metaFileSuffix": "uiwidget-meta.xml",
+      "strategies": {
+        "adapter": "bundle"
+      },
+      "supportsPartialDelete": true
     }
   }
 }

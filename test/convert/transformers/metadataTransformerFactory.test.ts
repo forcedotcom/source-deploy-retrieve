@@ -23,6 +23,7 @@ import { DecomposedMetadataTransformer } from '../../../src/convert/transformers
 import { NonDecomposedMetadataTransformer } from '../../../src/convert/transformers/nonDecomposedMetadataTransformer';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
 import { StaticResourceMetadataTransformer } from '../../../src/convert/transformers/staticResourceMetadataTransformer';
+import { UiBundleMetadataTransformer } from '../../../src/convert/transformers/uiBundleMetadataTransformer';
 import { matchingContentFile, mixedContentSingleFile } from '../../mock';
 import { DECOMPOSED_COMPONENT } from '../../mock/type-constants/customObjectConstant';
 import { COMPONENT_1 } from '../../mock/type-constants/customlabelsConstant';
@@ -59,6 +60,17 @@ describe('MetadataTransformerFactory', () => {
     const component = mixedContentSingleFile.COMPONENT;
     const factory = new MetadataTransformerFactory(registryAccess);
     expect(factory.getTransformer(component)).to.deep.equal(new StaticResourceMetadataTransformer());
+  });
+
+  it('should return UiBundleMetadataTransformer', () => {
+    const component = new SourceComponent({
+      name: 'MyApp',
+      type: registry.types.uibundle,
+      xml: 'MyApp.uibundle-meta.xml',
+    });
+    const context = new ConvertContext();
+    const factory = new MetadataTransformerFactory(registryAccess, context);
+    expect(factory.getTransformer(component)).to.deep.equal(new UiBundleMetadataTransformer(registryAccess, context));
   });
 
   it('should return transformer that maps to parent type of a component', () => {

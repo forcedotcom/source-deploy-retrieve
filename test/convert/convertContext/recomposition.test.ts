@@ -285,5 +285,110 @@ describe('Recomposition', () => {
         expect(readFileSpy.callCount, 'readFile() should only be called twice').to.equal(0);
       });
     });
+
+    describe('should deduplicate children from multiple packages with the same labels', () => {
+      const customLabelsType = new RegistryAccess().getTypeByName('CustomLabels');
+      const labelsFileName = 'CustomLabels.labels-meta.xml';
+      const projectDir = join(process.cwd(), 'dedup-project');
+      const packageDir1 = join(projectDir, 'pkg1');
+      const packageDir2 = join(projectDir, 'pkg2');
+      const packageDir3 = join(projectDir, 'pkg3');
+      const dir1Labels = join(packageDir1, 'labels');
+      const dir2Labels = join(packageDir2, 'labels');
+      const dir3Labels = join(packageDir3, 'labels');
+      const parentXmlPath1 = join(dir1Labels, labelsFileName);
+      const parentXmlPath2 = join(dir2Labels, labelsFileName);
+      const parentXmlPath3 = join(dir3Labels, labelsFileName);
+
+      // Same labels in all 3 packages
+      const sharedLabelXmls = [
+        { fullName: 'SharedLabel_1', shortDescription: 'shared 1', value: 'value 1' },
+        { fullName: 'SharedLabel_2', shortDescription: 'shared 2', value: 'value 2' },
+        { fullName: 'SharedLabel_3', shortDescription: 'shared 3', value: 'value 3' },
+      ];
+
+      const labelsXml = {
+        [customLabelsType.name]: {
+          [XML_NS_KEY]: XML_NS_URL,
+          [customLabelsType.directoryName]: sharedLabelXmls,
+        },
+      };
+
+      const vDir: VirtualDirectory[] = [
+        { dirPath: projectDir, children: ['pkg1', 'pkg2', 'pkg3'] },
+        { dirPath: packageDir1, children: ['labels'] },
+        { dirPath: packageDir2, children: ['labels'] },
+        { dirPath: packageDir3, children: ['labels'] },
+        {
+          dirPath: dir1Labels,
+          children: [
+            {
+              name: labelsFileName,
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+              data: Buffer.from(new JsToXml(labelsXml).read().toString()),
+            },
+          ],
+        },
+        {
+          dirPath: dir2Labels,
+          children: [
+            {
+              name: labelsFileName,
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+              data: Buffer.from(new JsToXml(labelsXml).read().toString()),
+            },
+          ],
+        },
+        {
+          dirPath: dir3Labels,
+          children: [
+            {
+              name: labelsFileName,
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+              data: Buffer.from(new JsToXml(labelsXml).read().toString()),
+            },
+          ],
+        },
+      ];
+      const virtualTree = new VirtualTreeContainer(vDir);
+      const parent1 = new SourceComponent(
+        { name: customLabelsType.name, type: customLabelsType, xml: parentXmlPath1 },
+        virtualTree
+      );
+      const parent2 = new SourceComponent(
+        { name: customLabelsType.name, type: customLabelsType, xml: parentXmlPath2 },
+        virtualTree
+      );
+      const parent3 = new SourceComponent(
+        { name: customLabelsType.name, type: customLabelsType, xml: parentXmlPath3 },
+        virtualTree
+      );
+
+      it('produces only unique labels when the same labels exist in multiple packages', async () => {
+        const context = new ConvertContext();
+        const compSet = new ComponentSet();
+
+        // Add children from all 3 packages — simulates multi-package resolution
+        parent1.getChildren().forEach((child) => compSet.add(child));
+        parent2.getChildren().forEach((child) => compSet.add(child));
+        parent3.getChildren().forEach((child) => compSet.add(child));
+
+        context.recomposition.transactionState.set(parent1.fullName, {
+          component: parent1,
+          children: compSet,
+        });
+
+        const result = await context.recomposition.finalize();
+
+        expect(result).to.have.lengthOf(1);
+        const output = result[0];
+        const xml = output.writeInfos[0].source as JsToXml;
+        const content = xml.read().toString();
+
+        // Should have exactly 3 labels, not 9 (3 packages × 3 labels)
+        const labelCount = (content.match(/<fullName>/g) ?? []).length;
+        expect(labelCount).to.equal(3);
+      });
+    });
   });
 });

@@ -816,6 +816,10 @@ const constructFullName = (registry: RegistryAccess, type: MetadataType, fullNam
   // a "/" so the metadata API can identify it as a folder.
   ['DashboardFolder', 'ReportFolder', 'EmailTemplateFolder'].includes(type.name) && !fullName.endsWith('/')
     ? `${fullName}/`
+    : // TagSet nests recursively by parent-set identity. inFolder stores it on disk as A/B/C, but the
+    // metadata API contract for TagSet fullNames is dot-separated (A.B.C), so translate on the way out.
+    type.name === 'TagSet'
+    ? fullName.replace(/\//g, '.')
     : registry.getParentType(type.name)?.strategies?.recomposition === 'startEmpty' && fullName.includes('.')
     ? // they're reassembled like CustomLabels.MyLabel
       fullName.split('.')[1]

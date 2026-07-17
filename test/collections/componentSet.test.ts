@@ -944,6 +944,20 @@ describe('ComponentSet', () => {
       ]);
     });
 
+    it('should translate a recursively-foldered TagSet path to a dot-separated member', async () => {
+      // On disk, nested tag sets are stored as folders (tagSet/A/B/C.tagSet), so the resolved
+      // fullName is slash-separated. The TagSet metadata API contract is dot-separated.
+      const member = { fullName: 'DataGovernanceTags/CustomTags__as/CustomTagsChild1__as', type: 'TagSet' };
+      const set = new ComponentSet([member], registryAccess);
+
+      expect((await set.getObject()).Package.types).to.deep.equal([
+        {
+          name: 'TagSet',
+          members: ['DataGovernanceTags.CustomTags__as.CustomTagsChild1__as'],
+        },
+      ]);
+    });
+
     it('should include required child types as defined in the registry', async () => {
       const set = new ComponentSet([MATCHING_RULES_COMPONENT]);
       expect((await set.getObject()).Package.types).to.deep.equal([

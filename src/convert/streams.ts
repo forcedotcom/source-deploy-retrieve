@@ -293,6 +293,7 @@ export class JsToXml extends Readable {
       commentPropName: XML_COMMENT_PROP_NAME,
     });
     const builtXml = String(builder.build(this.xmlObject));
+    // release reference so GC can reclaim the (potentially large) JSON tree
     this.xmlObject = undefined;
     const xmlContent = correctComments(XML_DECL.concat(handleSpecialEntities(builtXml)));
     this.push(xmlContent);

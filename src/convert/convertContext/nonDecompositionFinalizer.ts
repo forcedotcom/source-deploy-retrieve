@@ -165,10 +165,11 @@ export class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDe
    * re-parsing the parent for every child.
    */
   private async initMergeMap(allComponentsOfType: SourceComponent[]): Promise<void> {
-    for (const component of allComponentsOfType) {
+    const parsedComponents = await Promise.all(allComponentsOfType.map((c) => c.parseXml()));
+    for (let i = 0; i < allComponentsOfType.length; i++) {
+      const component = allComponentsOfType[i];
       const xmlPath = ensureString(component.xml, `Missing xml file for ${component.type.name}`);
-      // eslint-disable-next-line no-await-in-loop
-      const parentXml = await component.parseXml();
+      const parentXml = parsedComponents[i];
       const childMap = new Map<string, JsonMap>();
       const xmlElement = getXmlElement(component.type);
       const childrenXml = ensureArray(get(parentXml, `${component.type.name}.${xmlElement}`)) as JsonMap[];

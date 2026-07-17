@@ -109,15 +109,15 @@ const recompose =
       await getXmlFromCache(cache)(stateValue.component);
     }
 
-    const childXmls = await Promise.all(
-      childComponents.filter(ensureMetadataComponentWithParent).map(
-        async (child): Promise<ChildWithXml> => ({
-          cmp: child,
-          xmlContents: await getXmlFromCache(cache)(child),
-          groupName: getXmlElement(child.type),
-        })
-      )
-    );
+    const childXmls: ChildWithXml[] = [];
+    for (const child of childComponents.filter(ensureMetadataComponentWithParent)) {
+      childXmls.push({
+        cmp: child,
+        // eslint-disable-next-line no-await-in-loop
+        xmlContents: await getXmlFromCache(cache)(child),
+        groupName: getXmlElement(child.type),
+      });
+    }
 
     const parentXmlContents = {
       [XML_NS_KEY]: XML_NS_URL,

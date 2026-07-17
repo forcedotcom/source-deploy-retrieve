@@ -661,7 +661,7 @@
     node-fetch "^2.6.1"
     xml2js "^0.6.2"
 
-"@jsforce/jsforce-node@^3.10.16", "@jsforce/jsforce-node@^3.10.17":
+"@jsforce/jsforce-node@^3.10.17", "@jsforce/jsforce-node@^3.10.19":
   version "3.10.19"
   resolved "https://registry.yarnpkg.com/@jsforce/jsforce-node/-/jsforce-node-3.10.19.tgz#ccbc539c12f4f7dff9cfdcc6cfb8f07bd840f731"
   integrity sha512-k7i2Tntu1fLvkMtRcKDFU64/Fr2M692ECtbwIGX6hcOh5mj+jrMa1tlvcdwffxAMl+lPYCXnY2bjErxWmP84zA==
@@ -798,10 +798,10 @@
     ts-retry-promise "^0.8.1"
     zod "^4.1.12"
 
-"@salesforce/core@^8.32.2":
-  version "8.32.2"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-8.32.2.tgz#faa4d7525cebb7c46e6b576d6fb4c0624592d779"
-  integrity sha512-IenGtnr68o1Pg8WDA5XUDeuqTmdCbAyLCAU1hdbIcqM3kyEfvyaHgou0/KfEx6EokCxJ4MZFJ6MmjL8dY53XGQ==
+"@salesforce/core@^8.32.4":
+  version "8.32.4"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-8.32.4.tgz#9936ffdeaf528541ff892404d21e6417d574c460"
+  integrity sha512-0p/nQ24nfPGD0ERp/NHAccgo+66+rDx6c9M88wItDYAMu9+CHcW+FHOLNDAAUsYwinHHVsqVSL8Eyag7gvitqA==
   dependencies:
     "@jsforce/jsforce-node" "^3.10.17"
     "@salesforce/kit" "^3.2.4"

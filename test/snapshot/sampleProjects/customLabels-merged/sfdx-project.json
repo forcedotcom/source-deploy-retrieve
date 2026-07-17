@@ -1,0 +1,17 @@
+{
+  "name": "customLabelsMergedProject",
+  "namespace": "",
+  "packageDirectories": [
+    {
+      "default": true,
+      "path": "pkg1"
+    },
+    {
+      "path": "pkg2"
+    },
+    {
+      "path": "pkg3"
+    }
+  ],
+  "sourceApiVersion": "59.0"
+}

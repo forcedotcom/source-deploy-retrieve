@@ -272,11 +272,18 @@ export class ZipWriter extends ComponentWriter {
  * even though it's not beneficial in the typical way a stream is.
  */
 export class JsToXml extends Readable {
-  public constructor(private xmlObject: JsonMap) {
+  private xmlObject: JsonMap | undefined;
+
+  public constructor(xmlObject: JsonMap) {
     super();
+    this.xmlObject = xmlObject;
   }
 
   public _read(): void {
+    if (!this.xmlObject) {
+      this.push(null);
+      return;
+    }
     const builder = new XMLBuilder({
       format: true,
       indentBy: '    ',
@@ -286,6 +293,8 @@ export class JsToXml extends Readable {
       commentPropName: XML_COMMENT_PROP_NAME,
     });
     const builtXml = String(builder.build(this.xmlObject));
+    // release reference so GC can reclaim the (potentially large) JSON tree
+    this.xmlObject = undefined;
     const xmlContent = correctComments(XML_DECL.concat(handleSpecialEntities(builtXml)));
     this.push(xmlContent);
     this.push(null);

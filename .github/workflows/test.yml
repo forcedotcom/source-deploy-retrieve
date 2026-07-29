@@ -57,7 +57,7 @@ jobs:
       command: ${{matrix.command}}
       preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
       postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
-      preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
+      preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve; yarn add @salesforce/core@^9.0.0 @salesforce/kit@^4.0.0 @salesforce/ts-types@^3.0.0'
       os: ${{matrix.os}}
       useCache: false
     secrets: inherit

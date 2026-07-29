@@ -22,12 +22,12 @@
     "messages"
   ],
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^8.32.4",
-    "@salesforce/kit": "^3.2.4",
-    "@salesforce/ts-types": "^2.0.12",
+    "@salesforce/core": "^9.0.0",
+    "@salesforce/kit": "^4.0.0",
+    "@salesforce/ts-types": "^3.0.0",
     "@salesforce/types": "^1.6.0",
     "fast-levenshtein": "^3.0.0",
     "fast-xml-parser": "^5.7.3",

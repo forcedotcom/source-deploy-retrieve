@@ -604,7 +604,8 @@
     "cnfgItemTypeRelationDef": "cnfgitemtyperelationdef",
     "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
     "meetingPlaybookDefinition": "meetingplaybookdefinition",
-    "idpConfiguration": "idpconfiguration"
+    "idpConfiguration": "idpconfiguration",
+    "tagSet": "tagset"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5394,6 +5395,15 @@
         "adapter": "bundle"
       },
       "supportsPartialDelete": true
+    },
+    "tagset": {
+      "id": "tagset",
+      "name": "TagSet",
+      "suffix": "tagSet",
+      "directoryName": "tagSet",
+      "inFolder": true,
+      "strictDirectoryName": false,
+      "supportsWildcardAndName": true
     }
   }
 }

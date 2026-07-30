@@ -132,10 +132,18 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       for (const filePath of Object.keys(srZip.files)) {
         const zipObj = srZip.file(filePath);
         if (zipObj && !zipObj.dir) {
-          const path = join(baseContentPath, filePath);
-          const fullDest = isAbsolute(path)
-            ? path
-            : join(this.defaultDirectory ?? component.getPackageRelativePath('', 'source'), path);
+          const baseDestinationPath = isAbsolute(baseContentPath)
+            ? baseContentPath
+            : join(this.defaultDirectory ?? component.getPackageRelativePath('', 'source'), baseContentPath);
+          const fullDest = join(baseDestinationPath, filePath);
+          const relativeDest = relative(baseDestinationPath, fullDest);
+          if (relativeDest.startsWith('..') || isAbsolute(relativeDest)) {
+            throw messages.createError('error_static_resource_attempting_zip_slip', [
+              filePath,
+              component.name,
+              baseDestinationPath,
+            ]);
+          }
           pipelinePromises.push(this.pipeline(new Readable().wrap(zipObj.nodeStream()), fullDest));
         }
       }

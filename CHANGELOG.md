@@ -1,3 +1,12 @@
+## [13.0.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.0.0...13.0.1) (2026-07-31)
+
+
+### Bug Fixes
+
+* resolved zip-slip vulnerability (W-23558165) ([#1812](https://github.com/forcedotcom/source-deploy-retrieve/issues/1812)) ([0264f5a](https://github.com/forcedotcom/source-deploy-retrieve/commit/0264f5acdf46001cb126a929aabe7965b7259f7d))
+
+
+
 # [13.0.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.37.2...13.0.0) (2026-07-29)
 
 

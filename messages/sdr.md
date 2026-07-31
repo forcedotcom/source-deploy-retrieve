@@ -109,6 +109,10 @@ No source-backed components present in the package.
 
 No components in the package to retrieve.
 
+# error_static_resource_attempting_zip_slip
+
+Entry '%s' in static resource '%s' resolves to a location outside the extraction directory ('%s').
+
 # error_static_resource_expected_archive_type
 
 A StaticResource directory must have a content type of application/zip or application/jar - found %s for %s.

@@ -352,6 +352,30 @@ describe('StaticResourceMetadataTransformer', () => {
       expect(await transformer.toSourceFormat({ component })).to.deep.equalInAnyOrder(expectedInfos);
     });
 
+    it('blocks static resources attempting zip-slip attack', async () => {
+      assert(typeof transformer.defaultDirectory === 'string');
+
+      const component = mixedContentSingleFile.COMPONENT;
+      const { xml } = component;
+      assert(xml);
+      env.stub(component, 'parseXml').resolves({
+        StaticResource: {
+          contentType: 'application/zip',
+        },
+      });
+
+      const filePath = join('..', '..', '..', 'b', 'c.css');
+      const testZip = new JSZip().file(filePath, 'malicious css content');
+      env.stub(JSZip, 'loadAsync').resolves(testZip);
+
+      try {
+        void (await transformer.toSourceFormat({ component }));
+        assert.fail('SHOULD HAVE THROWN ERROR');
+      } catch (error) {
+        expect((error as Error).message).to.include('resolves to a location outside the extraction directory');
+      }
+    });
+
     it('should merge output with merge component when content is archive', async () => {
       const root = join('path', 'to', 'another', 'mixedSingleFiles');
       const component = mixedContentSingleFile.COMPONENT;

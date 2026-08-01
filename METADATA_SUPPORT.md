@@ -345,6 +345,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExtDataTranFieldTemplate|❌|Not supported, but support could be added|
 |ExtDataTranObjectTemplate|✅||
 |ExternalAIModel|✅||
+|ExternalAiAgentSetup|❌|Not supported, but support could be added|
 |ExternalAuthIdentityProvider|✅||
 |ExternalClientAppSettings|✅||
 |ExternalClientApplication|✅||
@@ -521,7 +522,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |MailMergeSettings|✅||
 |ManagedContentType|⚠️|Supports deploy/retrieve but not source tracking|
 |ManagedEventSubscription|✅||
-|ManagedExternalClientAppAuthorization|❌|Not supported, but support could be added|
 |ManagedTopics|✅||
 |MapReportSettings|✅||
 |MapsAndLocationSettings|✅||

@@ -422,6 +422,7 @@
     "pipelineInspMetricConfig": "pipelineinspmetricconfig",
     "platformEventChannel": "platformeventchannel",
     "platformEventChannelMember": "platformeventchannelmember",
+    "platformEventMigration": "platformeventmigration",
     "platformEventSubscriberConfig": "platformeventsubscriberconfig",
     "policy": "appointmentassignmentpolicy",
     "portal": "portal",
@@ -3778,6 +3779,14 @@
       "name": "PlatformEventChannelMember",
       "strictDirectoryName": false,
       "suffix": "platformEventChannelMember"
+    },
+    "platformeventmigration": {
+      "id": "platformeventmigration",
+      "name": "PlatformEventMigration",
+      "suffix": "platformEventMigration",
+      "directoryName": "platformEventMigrations",
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "platformeventsubscriberconfig": {
       "directoryName": "PlatformEventSubscriberConfigs",

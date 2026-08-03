@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785794268330,
+  "lastUpdate": 1785800935731,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -106240,6 +106240,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 19759,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "17d856c6491a29fc39d4dea1a51cb4a6dadce339",
+          "message": "fix(deps): bump ip-address from 10.2.0 to 10.4.0\n\nBumps [ip-address](https://github.com/beaugunderson/ip-address) from 10.2.0 to 10.4.0.\n- [Release notes](https://github.com/beaugunderson/ip-address/releases)\n- [Commits](https://github.com/beaugunderson/ip-address/compare/v10.2.0...v10.4.0)\n\n---\nupdated-dependencies:\n- dependency-name: ip-address\n  dependency-version: 10.4.0\n  dependency-type: indirect\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-08-03T23:40:13Z",
+          "tree_id": "ecc131a8e8e5ed4577418ba71405ebf7aaa1d80d",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/17d856c6491a29fc39d4dea1a51cb4a6dadce339"
+        },
+        "date": 1785800915694,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 448,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4028,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 4122,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 6915,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 919,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 11009,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 12534,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 11097,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1698,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 22159,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 22444,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 20255,
             "unit": "ms"
           }
         ]

@@ -50,7 +50,9 @@
     "botBlocks": "botblock",
     "botTemplates": "bottemplate",
     "bots": "bot",
+    "calculatedInsights": "calculatedinsight",
     "contentTypes": "contenttypebundle",
+    "dataModelObjects": "datamodelobject",
     "documents": "document",
     "emailservices": "emailservicesfunction",
     "experiencePropertyTypeBundles": "experiencepropertytypebundle",
@@ -5394,6 +5396,30 @@
         "adapter": "bundle"
       },
       "supportsPartialDelete": true
+    },
+    "calculatedinsight": {
+      "id": "calculatedinsight",
+      "name": "CalculatedInsight",
+      "suffix": "json",
+      "directoryName": "calculatedInsights",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "dataspaceScoped",
+        "transformer": "dataspaceScoped"
+      }
+    },
+    "datamodelobject": {
+      "id": "datamodelobject",
+      "name": "DataModelObject",
+      "suffix": "json",
+      "directoryName": "dataModelObjects",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "dataspaceScoped",
+        "transformer": "dataspaceScoped"
+      }
     }
   }
 }

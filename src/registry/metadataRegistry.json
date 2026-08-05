@@ -50,7 +50,9 @@
     "botBlocks": "botblock",
     "botTemplates": "bottemplate",
     "bots": "bot",
+    "calculatedInsights": "calculatedinsight",
     "contentTypes": "contenttypebundle",
+    "dataModelObjects": "datamodelobject",
     "documents": "document",
     "emailservices": "emailservicesfunction",
     "experiencePropertyTypeBundles": "experiencepropertytypebundle",
@@ -5403,7 +5405,8 @@
       "inFolder": false,
       "strictDirectoryName": true,
       "strategies": {
-        "adapter": "matchingContentFile"
+        "adapter": "dataspaceScoped",
+        "transformer": "dataspaceScoped"
       }
     },
     "datamodelobject": {
@@ -5414,7 +5417,8 @@
       "inFolder": false,
       "strictDirectoryName": true,
       "strategies": {
-        "adapter": "matchingContentFile"
+        "adapter": "dataspaceScoped",
+        "transformer": "dataspaceScoped"
       }
     }
   }

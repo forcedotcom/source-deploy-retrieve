@@ -99,6 +99,7 @@ export {
   DestructiveChangesType,
   FromSourceOptions,
   FromManifestOptions,
+  expandDataspaceScopedComponentSet,
 } from './collections';
 
 export { RegistryAccess, registry, getCurrentApiVersion, MetadataRegistry, MetadataType } from './registry';

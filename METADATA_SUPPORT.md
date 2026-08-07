@@ -849,8 +849,69 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 ## Next Release (v68)
 
-> **Note**
-> v68 coverage not available at this time
+v68 introduces the following new types.  Here's their current level of support
+
+|Metadata Type|Support|Notes|
+|:---|:---|:---|
+|AgentforcePlatformTracingSettings|✅||
+|AiAgentDefinition|❌|Not supported, but support could be added|
+|AiAgentDefinitionPlanner|❌|Not supported, but support could be added|
+|AiAgentDefinitionVersion|❌|Not supported, but support could be added|
+|AutomationPipeline|❌|Not supported, but support could be added|
+|BotEmailDefinition|❌|Not supported, but support could be added|
+|CnfgItemTypeIdentFieldMap|✅||
+|CnfgItemTypeIdentRule|✅||
+|CnfgItmTypAttrSrcRcnRule|❌|Not supported, but support could be added|
+|CnfgItmTypSrcRcnRule|❌|Not supported, but support could be added|
+|CnfgMgmtDataBndl|❌|Not supported, but support could be added|
+|CnfgMgmtItemFieldMap|❌|Not supported, but support could be added|
+|CnfgMgmtItemValueMap|❌|Not supported, but support could be added|
+|CnfgMgmtSvcMapLyot|❌|Not supported, but support could be added|
+|ContentWorkspace|❌|Not supported, but support could be added|
+|ContentWorkspacePermission|❌|Not supported, but support could be added|
+|CustomPreferencePageSettings|✅||
+|DCOpportunityScoringSettings|✅||
+|DebugLevel|❌|Not supported, but support could be added|
+|DynamicUiCardDefinition|✅||
+|FinancialEvaluationDef|❌|Not supported, but support could be added|
+|HealthInsDataSyncDefn|❌|Not supported, but support could be added|
+|HelpSettings|✅||
+|HouseholdNamingConfig|✅||
+|HouseholdUiConfiguration|❌|Not supported, but support could be added|
+|IdpConfiguration|⚠️|Supports deploy/retrieve but not source tracking|
+|IndustriesMaczPricingSettings|✅||
+|IndustriesMfgAdvnOrderSettings|✅||
+|IndustriesRepossessionSettings|✅||
+|InvMgmtForUnusableQtySettings|✅||
+|LightningOutApp|✅||
+|MCETransformationsSettings|✅||
+|MarketingHierarchyGroupDef|❌|Not supported, but support could be added|
+|MarketingHierarchyGroupNodeDef|❌|Not supported, but support could be added|
+|MarketingHierarchyNodeDef|❌|Not supported, but support could be added|
+|MissionforceSettings|✅||
+|MktPlanningOpsSettings|✅||
+|MobilePublisherAppConfig|❌|Not supported, but support could be added|
+|MobilePublisherAppVersion|❌|Not supported, but support could be added|
+|MobilePublisherDelegateDistributionAccount|❌|Not supported, but support could be added|
+|MobilePublisherPrivateDistributionAccount|❌|Not supported, but support could be added|
+|MobilePublisherProject|❌|Not supported, but support could be added|
+|PlanningDimensionDef|❌|Not supported, but support could be added|
+|RecLifecyclCompanCpblDef|❌|Not supported, but support could be added|
+|RecLifecyclCompanDef|❌|Not supported, but support could be added|
+|ReferralIntakeConfiguration|❌|Not supported, but support could be added|
+|ReferralManagementSettings|✅||
+|SalesPlanDataSource|❌|Not supported, but support could be added|
+|ScndTelephPrvdOtbdDtl|❌|Not supported, but support could be added|
+|ScopedAccess|❌|Not supported, but support could be added|
+|SecondaryTelephonyProvider|❌|Not supported, but support could be added|
+|SecurityCustomBaseline|❌|Not supported, but support could be added|
+|SensitiveDataRuleElmntGrp|❌|Not supported, but support could be added|
+|ServiceHeliosSettings|✅||
+|ServiceItamSettings|✅||
+|StatisticalDealInsightsSettings|✅||
+|TelephonyProvider|❌|Not supported, but support could be added|
+|TrustedTelephonyProvider|❌|Not supported, but support could be added|
+|WinProbabilityScoringSetup|❌|Not supported, but support could be added|
 
 ## Additional Types
 
@@ -889,7 +950,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - FormSection
 - GenAiPlanner
 - GlobalPicklist
-- HouseholdNamingConfig
 - InsightType
 - IntegrationHubSettings
 - IntegrationHubSettingsType
@@ -920,9 +980,4 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - WorkSkillRoutingAttribute
 - XOrgHub
 - RuleLibraryDefinition
-- DynamicUiCardDefinition
-- LightningOutApp
-- CnfgItemTypeIdentFieldMap
-- CnfgItemTypeIdentRule
-- IdpConfiguration
 - UiWidgetBundle

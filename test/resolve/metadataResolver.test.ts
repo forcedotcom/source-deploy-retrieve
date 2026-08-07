@@ -183,6 +183,16 @@ describe('MetadataResolver', () => {
         expect(components2[0].type.name).to.equal('PermissionSet');
       });
 
+      it('Should resolve the Beta2 Permission Set parent when resolving its directory', () => {
+        const resolver = new MetadataResolver(regAccPermissionSet, SOURCE_FORMAT_PS.tree);
+        const permissionSetDirectory = join('main', 'default', 'permissionsets', 'myPS');
+        const components = resolver.getComponentsFromPath(permissionSetDirectory);
+
+        expect(components).to.have.lengthOf(1);
+        expect(components[0].type.name).to.equal('PermissionSet');
+        expect(components[0].xml).to.equal(join(permissionSetDirectory, 'myPS.permissionset-meta.xml'));
+      });
+
       it('Should determine type for metadata file with known suffix and strictDirectoryName', () => {
         // CustomSite is an example.  The conditions are:
         //   1. Type has "strictDirectoryName": true

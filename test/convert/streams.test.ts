@@ -36,12 +36,12 @@ const registryAccess = new RegistryAccess();
 
 class TestTransformer extends BaseMetadataTransformer {
   // partial implementation only for tests
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, class-methods-use-this, @typescript-eslint/require-await
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, class-methods-use-this
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     return [{ output: '/type/file.m', source: new Readable() }];
   }
   // partial implementation only for tests
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/require-await
+  // eslint-disable-next-line class-methods-use-this
   public async toSourceFormat({ mergeWith }: ToSourceFormatInput): Promise<WriteInfo[]> {
     const output = mergeWith ? mergeWith.content ?? mergeWith.xml : '/type/file.s';
     assert(output);
@@ -168,7 +168,7 @@ describe('Streams', () => {
       myComp.setMarkedForDelete();
       const converter = new streams.ComponentConverter('source', registryAccess);
 
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises, @typescript-eslint/require-await
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(myComp, '', async (err: Error | undefined, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;

@@ -75,7 +75,7 @@ export class DecomposeExternalServiceRegistrationTransformer extends BaseMetadat
       processEntities: true,
       indentBy: '    ',
     });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+     
     const source = xmlBuilder.build({ ExternalServiceRegistration: xmlContent });
     writeInfos.push({
       source: Readable.from(Buffer.from(xmlDeclaration + source)),

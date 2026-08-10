@@ -48,22 +48,22 @@ describe('MetadataTransfer', () => {
       post: $$.SANDBOX.stub().returns({ id: '1' }),
       cancel: $$.SANDBOX.stub().returns(true),
     };
-    // eslint-disable-next-line @typescript-eslint/require-await
+     
     public async checkStatus(): Promise<MetadataRequestStatus> {
       return this.lifecycle.checkStatus();
     }
 
-    // eslint-disable-next-line @typescript-eslint/require-await
+     
     public async cancel(): Promise<void> {
       this.canceled = this.lifecycle.cancel();
     }
 
-    // eslint-disable-next-line @typescript-eslint/require-await
+     
     protected async pre(): Promise<{ id: string }> {
       return this.lifecycle.pre();
     }
 
-    // eslint-disable-next-line @typescript-eslint/require-await
+     
     protected async post(): Promise<MetadataTransferResult> {
       return this.lifecycle.post();
     }
@@ -225,7 +225,7 @@ describe('MetadataTransfer', () => {
         callOrder.push('firstCall2');
         return { done: false };
       });
-      // eslint-disable-next-line @typescript-eslint/require-await
+       
       checkStatus.onSecondCall().callsFake(async () => {
         callOrder.push('secondCall1');
         return { done: true };
@@ -243,7 +243,7 @@ describe('MetadataTransfer', () => {
       // until the timeout is exceeded.
       const { checkStatus } = operation.lifecycle;
       let callCount = 0;
-      // eslint-disable-next-line @typescript-eslint/require-await
+       
       checkStatus.callsFake(async () => {
         callCount += 1;
         if (callCount > 22) {

@@ -478,7 +478,7 @@ export async function filterAgentComponents(
             if (comp.pathContentMap && comp.xml) {
               comp.pathContentMap.set(comp.xml, xmlContent);
               // Store normalized structure in WeakMap for this component
-              normalizedBotXmlMap.set(comp, normalizedBotXml as JsonMap);
+              normalizedBotXmlMap.set(comp, normalizedBotXml);
 
               // Intercept parseXml to return normalized structure for Bot components
               const originalParseXml = comp.parseXml.bind(comp);

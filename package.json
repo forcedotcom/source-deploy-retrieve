@@ -43,7 +43,7 @@
   "devDependencies": {
     "@jsforce/jsforce-node": "^3.10.19",
     "@salesforce/cli-plugins-testkit": "^5.3.58",
-    "@salesforce/dev-scripts": "^11.0.4",
+    "@salesforce/dev-scripts": "^13.0.0",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/fast-levenshtein": "^0.0.4",
     "@types/graceful-fs": "^4.1.9",
@@ -51,6 +51,8 @@
     "@types/minimatch": "^5.1.2",
     "deep-equal-in-any-order": "^1.1.19",
     "esbuild": "^0.28.0",
+    "eslint": "^10.4.0",
+    "eslint-config-salesforce-typescript": "^6.0.0",
     "eslint-plugin-sf-plugin": "^1.20.33",
     "mocha": "^11.7.5",
     "mocha-junit-reporter": "^1.23.3",
@@ -135,6 +137,7 @@
         "src/**/*.ts",
         "test/**/*.ts",
         "messages/**",
+        "**/eslint.config.*",
         "**/.eslint*",
         "**/tsconfig.json"
       ],

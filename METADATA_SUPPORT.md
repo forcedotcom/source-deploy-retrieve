@@ -912,6 +912,7 @@ v68 introduces the following new types.  Here's their current level of support
 |TelephonyProvider|❌|Not supported, but support could be added|
 |TrustedTelephonyProvider|❌|Not supported, but support could be added|
 |WinProbabilityScoringSetup|❌|Not supported, but support could be added|
+|WorkforceSchedulingSettings|✅||
 
 ## Additional Types
 

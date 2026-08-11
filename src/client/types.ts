@@ -327,7 +327,7 @@ export type RetrieveOptions = {
   packageOptions?: PackageOptions;
   /**
    * An array of metadata type names for which related, dependent metadata
-   * will be retrieved. At this time only `Bot` is supported.
+   * will be retrieved. Supported values: `Bot`, `AiAgentDefinitionVersion`.
    */
   rootTypesWithDependencies?: string[];
   /**

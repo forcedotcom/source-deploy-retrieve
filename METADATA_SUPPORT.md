@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v67 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 766/834 supported metadata types.
+Currently, there are 768/836 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -162,6 +162,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CnfgItemSourceDefinition|✅||
 |CnfgItemTypeAttrRelDef|✅||
 |CnfgItemTypeDef|✅||
+|CnfgItemTypeIdentFieldMap|✅||
+|CnfgItemTypeIdentRule|✅||
 |CnfgItemTypeRelationDef|✅||
 |CnfgMgmtRelationTypeDef|✅||
 |CodeBuilderSettings|✅||
@@ -859,13 +861,12 @@ v68 introduces the following new types.  Here's their current level of support
 |AiAgentDefinitionVersion|❌|Not supported, but support could be added|
 |AutomationPipeline|❌|Not supported, but support could be added|
 |BotEmailDefinition|❌|Not supported, but support could be added|
-|CnfgItemTypeIdentFieldMap|✅||
-|CnfgItemTypeIdentRule|✅||
 |CnfgItmTypAttrSrcRcnRule|❌|Not supported, but support could be added|
 |CnfgItmTypSrcRcnRule|❌|Not supported, but support could be added|
 |CnfgMgmtDataBndl|❌|Not supported, but support could be added|
 |CnfgMgmtItemFieldMap|❌|Not supported, but support could be added|
 |CnfgMgmtItemValueMap|❌|Not supported, but support could be added|
+|CnfgMgmtRcnRuleSugg|❌|Not supported, but support could be added|
 |CnfgMgmtSvcMapLyot|❌|Not supported, but support could be added|
 |ContentWorkspace|❌|Not supported, but support could be added|
 |ContentWorkspacePermission|❌|Not supported, but support could be added|

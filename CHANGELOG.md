@@ -1,3 +1,12 @@
+# [13.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.0.1...13.1.0) (2026-08-12)
+
+
+### Features
+
+* add AiAgentDefinition and AiAgentDefinitionVersion metadata types @W-23818734@ ([#1819](https://github.com/forcedotcom/source-deploy-retrieve/issues/1819)) ([24f738c](https://github.com/forcedotcom/source-deploy-retrieve/commit/24f738cd721b26b28fdb03ff63379741349fb64d))
+
+
+
 ## [13.0.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.0.0...13.0.1) (2026-07-31)
 
 

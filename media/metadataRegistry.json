@@ -40,6 +40,7 @@
   "strictDirectoryNames": {
     "ActionableEventOrchDefSettings": "actionableeventorchdef",
     "ActionableEventTypeDefSettings": "actionableeventtypedef",
+    "aiAgentDefinitionVersions": "aiagentdefinitionversion",
     "aiAuthoringBundles": "aiauthoringbundle",
     "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
     "ObjectHierarchyRelationship": "objecthierarchyrelationship",
@@ -115,6 +116,7 @@
     "advAcctForecastPeriodGroup": "advacctforecastperiodgroup",
     "affinityScoreDefinition": "affinityscoredefinition",
     "ai": "aiapplication",
+    "aiAgentDefinition": "aiagentdefinition",
     "aiAgentScorerDefinition": "aiagentscorerdefinition",
     "aiAssistantTemplate": "aiassistanttemplate",
     "aiResponseFormat": "airesponseformat",
@@ -771,6 +773,22 @@
       "name": "AIApplicationConfig",
       "strictDirectoryName": false,
       "suffix": "aiapplicationconfig"
+    },
+    "aiagentdefinition": {
+      "id": "aiagentdefinition",
+      "name": "AiAgentDefinition",
+      "directoryName": "aiAgents",
+      "inFolder": false,
+      "suffix": "aiAgentDefinition",
+      "strictDirectoryName": false
+    },
+    "aiagentdefinitionversion": {
+      "id": "aiagentdefinitionversion",
+      "name": "AiAgentDefinitionVersion",
+      "directoryName": "aiAgentDefinitionVersions",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": { "adapter": "bundle" }
     },
     "aiagentscorerdefinition": {
       "directoryName": "aiAgentScorerDefinitions",

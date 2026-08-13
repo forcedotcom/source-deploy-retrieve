@@ -1,3 +1,12 @@
+## [13.1.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.1.0...13.1.1) (2026-08-13)
+
+
+### Bug Fixes
+
+* resolved TOCTOU attack (W-23808206) ([#1820](https://github.com/forcedotcom/source-deploy-retrieve/issues/1820)) ([ce7e89a](https://github.com/forcedotcom/source-deploy-retrieve/commit/ce7e89a31a72a718513912559b64c6224c82b684))
+
+
+
 # [13.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.0.1...13.1.0) (2026-08-12)
 
 

@@ -15,6 +15,7 @@
  */
 import { Readable } from 'node:stream';
 import { basename, join } from 'node:path';
+import { promises as fs } from 'graceful-fs';
 import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { Messages } from '@salesforce/core';
 import chai, { assert, expect } from 'chai';
@@ -374,6 +375,38 @@ describe('StaticResourceMetadataTransformer', () => {
       } catch (error) {
         expect((error as Error).message).to.include('resolves to a location outside the extraction directory');
       }
+    });
+
+    it('blocks static resources written through a pre-existing symlink', async () => {
+      assert(typeof transformer.defaultDirectory === 'string');
+
+      const component = mixedContentSingleFile.COMPONENT;
+      const { xml } = component;
+      assert(xml);
+      env.stub(component, 'parseXml').resolves({
+        StaticResource: {
+          contentType: 'application/zip',
+        },
+      });
+
+      // Entry name is entirely in-bounds (no '..'), so the zip-slip guard passes. The escape is
+      // a symlink already present on disk along the destination path.
+      const filePath = join('js', 'bundle.min.js');
+      const testZip = new JSZip().file(filePath, 'malicious content');
+      env.stub(JSZip, 'loadAsync').resolves(testZip);
+
+      env.stub(fs, 'lstat').callsFake(((p: string) =>
+        Promise.resolve({
+          isSymbolicLink: () => p.endsWith('js'),
+        })) as unknown as typeof fs.lstat);
+
+      try {
+        void (await transformer.toSourceFormat({ component }));
+        assert.fail('SHOULD HAVE THROWN ERROR');
+      } catch (error) {
+        expect((error as Error).message).to.include('would be written through a symbolic link');
+      }
+      expect(pipelineStub.callCount).to.equal(0);
     });
 
     it('should merge output with merge component when content is archive', async () => {

@@ -874,6 +874,7 @@ v68 introduces the following new types.  Here's their current level of support
 |DCOpportunityScoringSettings|✅||
 |DebugLevel|❌|Not supported, but support could be added|
 |DynamicUiCardDefinition|✅||
+|EngmtChannelTypeConfig|❌|Not supported, but support could be added (but not for tracking)|
 |FinancialEvaluationDef|❌|Not supported, but support could be added|
 |HealthInsDataSyncDefn|❌|Not supported, but support could be added|
 |HelpSettings|✅||
@@ -901,6 +902,7 @@ v68 introduces the following new types.  Here's their current level of support
 |RecLifecyclCompanDef|❌|Not supported, but support could be added|
 |ReferralIntakeConfiguration|❌|Not supported, but support could be added|
 |ReferralManagementSettings|✅||
+|ReplyEmailConfig|❌|Not supported, but support could be added (but not for tracking)|
 |SalesPlanDataSource|❌|Not supported, but support could be added|
 |ScndTelephPrvdOtbdDtl|❌|Not supported, but support could be added|
 |ScopedAccess|❌|Not supported, but support could be added|

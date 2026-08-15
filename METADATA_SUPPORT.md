@@ -873,6 +873,7 @@ v68 introduces the following new types.  Here's their current level of support
 |CustomPreferencePageSettings|✅||
 |DCOpportunityScoringSettings|✅||
 |DebugLevel|❌|Not supported, but support could be added|
+|DiscoSettings|✅||
 |DynamicUiCardDefinition|✅||
 |EngmtChannelTypeConfig|❌|Not supported, but support could be added (but not for tracking)|
 |FinancialEvaluationDef|❌|Not supported, but support could be added|
@@ -890,6 +891,7 @@ v68 introduces the following new types.  Here's their current level of support
 |MarketingHierarchyGroupDef|❌|Not supported, but support could be added|
 |MarketingHierarchyGroupNodeDef|❌|Not supported, but support could be added|
 |MarketingHierarchyNodeDef|❌|Not supported, but support could be added|
+|MessagingMobileAppChannel|❌|Not supported, but support could be added (but not for tracking)|
 |MissionforceSettings|✅||
 |MktPlanningOpsSettings|✅||
 |MobilePublisherAppConfig|❌|Not supported, but support could be added|

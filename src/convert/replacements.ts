@@ -129,7 +129,7 @@ export const replacementIterations = async (
       await lifecycleInstance.emit('replacement', {
         filename: replacement.matchedFilename,
         replaced: replacement.toReplace.toString(),
-      } as ReplacementEvent);
+      });
     }
     // No warning here; warnings are handled in ReplacementStream._flush
   }

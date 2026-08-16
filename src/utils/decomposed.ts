@@ -37,7 +37,7 @@ export const unwrapAndOmitNS =
 
 /** Remove the namespace key from the json object.  Only the parent needs one */
 const omitNsKey = (obj: JsonMap): JsonMap =>
-  Object.fromEntries(Object.entries(obj).filter(([key]) => key !== XML_NS_KEY)) as JsonMap;
+  Object.fromEntries(Object.entries(obj).filter(([key]) => key !== XML_NS_KEY));
 
 const unwrapXml =
   (outerType: string) =>

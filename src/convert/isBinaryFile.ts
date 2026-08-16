@@ -125,7 +125,7 @@ function isBinaryProto(fileBuffer: Buffer, totalBytes: number): boolean {
   const reader = new Reader(fileBuffer, totalBytes);
   let numMessages = 0;
 
-  // eslint-disable-next-line no-constant-condition
+   
   while (true) {
     // Definitely not a valid protobuf
     if (!readProtoMessage(reader) && !reader.hasError()) {

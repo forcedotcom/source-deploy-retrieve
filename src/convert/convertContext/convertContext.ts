@@ -32,7 +32,7 @@ export class ConvertContext {
   public readonly decomposedPermissionSet = new DecomposedPermissionSetFinalizer();
   public readonly decomposedExternalServiceRegistration = new DecomposedExternalServiceRegistrationFinalizer();
 
-  // eslint-disable-next-line @typescript-eslint/require-await
+   
   public async *executeFinalizers(defaultDirectory?: string): AsyncIterable<WriterFormat[]> {
     for (const member of Object.values(this)) {
       if (member instanceof ConvertTransactionFinalizer) {

@@ -299,7 +299,7 @@ describe('MetadataApiDeploy', () => {
         const poll = (): Promise<StatusResult> =>
           Promise.resolve({
             completed: true,
-            payload: {} as AnyJson,
+            payload: {},
           });
 
         await operation.start();

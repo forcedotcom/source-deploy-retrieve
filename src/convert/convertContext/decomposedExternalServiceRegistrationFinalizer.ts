@@ -31,7 +31,7 @@ export class DecomposedExternalServiceRegistrationFinalizer extends ConvertTrans
   public transactionState: ExternalServiceRegistrationState = {
     esrRecords: new Map<string, ExternalServiceRegistration>(),
   };
-  // eslint-disable-next-line class-methods-use-this
+   
   public defaultDir: string | undefined;
 
   public finalize(defaultDirectory: string | undefined): Promise<WriterFormat[]> {

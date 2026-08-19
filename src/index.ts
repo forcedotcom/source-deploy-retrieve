@@ -101,7 +101,14 @@ export {
   FromManifestOptions,
 } from './collections';
 
-export { RegistryAccess, registry, getCurrentApiVersion, MetadataRegistry, MetadataType } from './registry';
+export {
+  RegistryAccess,
+  registry,
+  getCurrentApiVersion,
+  MetadataRegistry,
+  MetadataType,
+  standardValueSet,
+} from './registry';
 
 // TODO: don't export these strategies
 export { DecompositionStrategy, TransformerStrategy, RecompositionStrategy } from './registry/types';

@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787154867150,
+  "lastUpdate": 1787156175578,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -112016,6 +112016,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 8924,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "distinct": true,
+          "id": "f46c7e487cdcf63b42db07f97006842f1e4ac084",
+          "message": "fix: prevent ENOTDIR crash when non-component files exist in bundle type directories (W-23924917)\n\nWhen a non-component file (e.g., README.md, .DS_Store) sits directly\ninside a bundle type directory like lwc/, retrieve/deploy commands crash\nwith ENOTDIR because the file path is passed to readDirectory().\n\nThree complementary guards:\n- MixedContentSourceAdapter.getRootMetadataXmlPath: check isDirectory\n  before calling tree.find() on the computed component root\n- BundleSourceAdapter.populate: skip files whose trimPathToContent\n  resolves to a non-directory (i.e., files at the type directory level\n  rather than inside a component folder)\n- NodeFSTreeContainer.readDirectory: return [] for non-directory paths\n  instead of letting readdirSync throw ENOTDIR",
+          "timestamp": "2026-08-19T10:13:13-06:00",
+          "tree_id": "e35bb2444553e59a55da77e801d7ef5296d04226",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/f46c7e487cdcf63b42db07f97006842f1e4ac084"
+        },
+        "date": 1787156163499,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 272,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 1849,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2087,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 2591,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 391,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 4586,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 6169,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 4512,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 562,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 7975,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 12249,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 8339,
             "unit": "ms"
           }
         ]

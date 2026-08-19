@@ -109,11 +109,21 @@ describe('Tree Containers', () => {
     });
 
     it('should use expected Node API for readDirectory', () => {
+      const statStub = env.stub(fs, 'statSync');
+      // @ts-ignore lstat returns more than isDirectory function
+      statStub.withArgs(path).returns({ isDirectory: () => true });
       const readdirStub = env.stub(fs, 'readdirSync');
       // @ts-ignore wants Dirents but string[] works as well
       readdirStub.withArgs(path).returns(readDirResults);
       expect(tree.readDirectory(path)).to.deep.equal(readDirResults);
       expect(readdirStub.calledOnce).to.be.true;
+    });
+
+    it('should return empty array for readDirectory on a file path', () => {
+      const statStub = env.stub(fs, 'statSync');
+      // @ts-ignore lstat returns more than isDirectory function
+      statStub.withArgs(path).returns({ isDirectory: () => false });
+      expect(tree.readDirectory(path)).to.deep.equal([]);
     });
 
     it('should use expected Node API for readFile', async () => {

@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+import { join } from 'node:path';
 import { expect } from 'chai';
 import { bundle, lwcBundle } from '../../mock';
 import { BundleSourceAdapter } from '../../../src/resolve/adapters';
 import { CONTENT_PATH } from '../../mock/type-constants/auraBundleConstant';
 import { CONTENT_PATH as LWC_CONTENT_PATH } from '../../mock/type-constants/lwcBundleConstant';
-import { RegistryAccess } from '../../../src';
+import { RegistryAccess, registry, VirtualTreeContainer } from '../../../src';
 
 describe('BundleSourceAdapter with AuraBundle', () => {
   const registryAccess = new RegistryAccess();
@@ -76,6 +77,43 @@ describe('BundleSourceAdapter with AuraBundle', () => {
         lwcBundle.EMPTY_BUNDLE.tree
       );
       expect(emptyBundleAdapter.getComponent(LWC_CONTENT_PATH)).to.be.undefined;
+    });
+  });
+
+  describe('non-component files in bundle type directory', () => {
+    const type = registry.types.lightningcomponentbundle;
+    const typeDir = join('force-app', 'main', 'default', type.directoryName);
+    const readmePath = join(typeDir, 'README.md');
+    const dsStorePath = join(typeDir, '.DS_Store');
+    const componentName = 'validCmp';
+    const componentDir = join(typeDir, componentName);
+
+    const tree = new VirtualTreeContainer([
+      {
+        dirPath: typeDir,
+        children: [componentName, 'README.md', '.DS_Store'],
+      },
+      {
+        dirPath: componentDir,
+        children: [`${componentName}.js`, `${componentName}.js-meta.xml`],
+      },
+    ]);
+
+    const adapter = new BundleSourceAdapter(type, registryAccess, undefined, tree);
+
+    it('Should return undefined for a non-component file (README.md) in lwc/', () => {
+      expect(adapter.getComponent(readmePath)).to.be.undefined;
+    });
+
+    it('Should return undefined for a dot file (.DS_Store) in lwc/', () => {
+      expect(adapter.getComponent(dsStorePath)).to.be.undefined;
+    });
+
+    it('Should still resolve a valid component directory', () => {
+      const result = adapter.getComponent(componentDir);
+      expect(result).to.not.be.undefined;
+      expect(result?.type).to.deep.equal(type);
+      expect(result?.name).to.equal(componentName);
     });
   });
 });

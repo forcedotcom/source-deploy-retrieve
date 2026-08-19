@@ -57,9 +57,18 @@ export class BundleSourceAdapter extends MixedContentSourceAdapter {
    * @protected
    */
   protected populate(trigger: SourcePath, component?: SourceComponent): SourceComponent | undefined {
-    if (this.tree.isDirectory(trigger) && !this.tree.readDirectory(trigger)?.length) {
-      // if it's an empty directory, don't include it (e.g., lwc/emptyLWC)
-      return;
+    if (this.tree.isDirectory(trigger)) {
+      if (!this.tree.readDirectory(trigger)?.length) {
+        // if it's an empty directory, don't include it (e.g., lwc/emptyLWC)
+        return;
+      }
+    } else if (!component) {
+      const componentRoot = this.trimPathToContent(trigger);
+      if (!this.tree.isDirectory(componentRoot)) {
+        // the file sits directly inside the type directory (e.g., lwc/README.md)
+        // rather than inside a component bundle folder — it is not a valid component
+        return;
+      }
     }
     return super.populate(trigger, component);
   }

@@ -1,3 +1,12 @@
+# [13.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.1.1...13.2.0) (2026-08-19)
+
+
+### Features
+
+* export stdValueSetRegistry.json from main index.ts to be called properly outside this repo - W-23802414 ([#1822](https://github.com/forcedotcom/source-deploy-retrieve/issues/1822)) ([54dda96](https://github.com/forcedotcom/source-deploy-retrieve/commit/54dda96adbf7001ab201a4cd63232afdc89441d4))
+
+
+
 ## [13.1.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.1.0...13.1.1) (2026-08-13)
 
 

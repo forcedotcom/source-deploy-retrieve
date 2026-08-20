@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787159093981,
+  "lastUpdate": 1787245248459,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -106996,6 +106996,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 20534,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "maximilien.huet@cnp-ps.fr",
+            "name": "Maximilien",
+            "username": "MaxHuet"
+          },
+          "committer": {
+            "email": "maximilien.huet@cnp-ps.fr",
+            "name": "Maximilien",
+            "username": "MaxHuet"
+          },
+          "distinct": true,
+          "id": "83ce8bc05aa8120c5b06dbec1121ec5d0fad8c0c",
+          "message": "fix: resolve decomposed Permission Set parents by suffix",
+          "timestamp": "2026-08-07T18:05:47+02:00",
+          "tree_id": "2f9c95aec6a5ae9d817bf77264c2ab85bfd2b359",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/83ce8bc05aa8120c5b06dbec1121ec5d0fad8c0c"
+        },
+        "date": 1787245228149,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 619,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 3852,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3746,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 6551,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 875,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 10620,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10263,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 10505,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1544,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 18872,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 18661,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 19936,
             "unit": "ms"
           }
         ]

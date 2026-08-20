@@ -918,6 +918,11 @@ v68 introduces the following new types.  Here's their current level of support
 |ServiceItamSettings|✅||
 |StatisticalDealInsightsSettings|✅||
 |TelephonyProvider|❌|Not supported, but support could be added|
+|TenantSecurityPlaybookDef|❌|Not supported, but support could be added|
+|TenantSecurityPlaybookDefStep|❌|Not supported, but support could be added|
+|TenantSecurityPlaybookDefVer|❌|Not supported, but support could be added|
+|TenantSecurityStepDef|❌|Not supported, but support could be added|
+|TenantSecurityStepDefVer|❌|Not supported, but support could be added|
 |TrustedTelephonyProvider|❌|Not supported, but support could be added|
 |WinProbabilityScoringSetup|❌|Not supported, but support could be added|
 |WorkforceSchedulingSettings|✅||

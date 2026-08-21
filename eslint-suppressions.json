@@ -1,0 +1,391 @@
+{
+  "src/client/metadataApiDeploy.ts": {
+    "@typescript-eslint/prefer-nullish-coalescing": {
+      "count": 1
+    }
+  },
+  "src/client/metadataApiRetrieve.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "src/client/metadataTransfer.ts": {
+    "@typescript-eslint/prefer-nullish-coalescing": {
+      "count": 1
+    },
+    "no-useless-assignment": {
+      "count": 1
+    }
+  },
+  "src/client/retrieveExtract.ts": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 1
+    },
+    "complexity": {
+      "count": 1
+    }
+  },
+  "src/collections/componentSet.ts": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 3
+    }
+  },
+  "src/collections/lazyCollection.ts": {
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 1
+    }
+  },
+  "src/convert/replacements.ts": {
+    "@typescript-eslint/no-misused-promises": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unused-vars": {
+      "count": 1
+    }
+  },
+  "src/convert/streams.ts": {
+    "@typescript-eslint/no-misused-promises": {
+      "count": 5
+    },
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 1
+    }
+  },
+  "src/convert/transformers/decomposedPermissionSetTransformer.ts": {
+    "@typescript-eslint/no-unused-expressions": {
+      "count": 1
+    }
+  },
+  "src/convert/transformers/staticResourceMetadataTransformer.ts": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 1
+    }
+  },
+  "src/registry/registryAccess.ts": {
+    "@typescript-eslint/prefer-nullish-coalescing": {
+      "count": 3
+    }
+  },
+  "src/registry/variants.ts": {
+    "@typescript-eslint/no-base-to-string": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unused-vars": {
+      "count": 1
+    }
+  },
+  "src/resolve/adapters/baseSourceAdapter.ts": {
+    "no-useless-assignment": {
+      "count": 1
+    }
+  },
+  "src/resolve/forceIgnore.ts": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 2
+    },
+    "@typescript-eslint/prefer-optional-chain": {
+      "count": 1
+    }
+  },
+  "src/utils/filePathGenerator.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "test/client/deployMessages.test.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 1
+    }
+  },
+  "test/client/diagnosticUtil.test.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 1
+    }
+  },
+  "test/client/metadataApiDeploy.test.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 4
+    },
+    "@typescript-eslint/no-unused-vars": {
+      "count": 1
+    }
+  },
+  "test/client/metadataTransfer.test.ts": {
+    "@typescript-eslint/no-shadow": {
+      "count": 5
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 12
+    }
+  },
+  "test/client/retrieveExtract.test.ts": {
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 29
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 5
+    }
+  },
+  "test/collections/componentSet.test.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 7
+    }
+  },
+  "test/collections/componentSetBuilder.test.ts": {
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 9
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 9
+    }
+  },
+  "test/collections/decodeableMap.test.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 8
+    },
+    "camelcase": {
+      "count": 8
+    }
+  },
+  "test/convert/convertContext/nonDecomposition.test.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 4
+    }
+  },
+  "test/convert/convertContext/recomposition.test.ts": {
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 7
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 8
+    }
+  },
+  "test/convert/metadataConverter.test.ts": {
+    "@typescript-eslint/no-shadow": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 12
+    }
+  },
+  "test/convert/replacements.test.ts": {
+    "@typescript-eslint/no-shadow": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 1
+    }
+  },
+  "test/convert/streams.test.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 5
+    },
+    "@typescript-eslint/no-shadow": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 5
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 5
+    },
+    "no-underscore-dangle": {
+      "count": 25
+    }
+  },
+  "test/convert/transformers/decomposedLabelsTransformer.test.ts": {
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 1
+    }
+  },
+  "test/convert/transformers/decomposedMetadataTransformer.test.ts": {
+    "@typescript-eslint/no-shadow": {
+      "count": 2
+    }
+  },
+  "test/convert/transformers/metadataTransformerFactory.test.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 1
+    }
+  },
+  "test/convert/transformers/staticResourceMetadataTransformer.test.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 1
+    },
+    "no-underscore-dangle": {
+      "count": 1
+    }
+  },
+  "test/mock/client/transferOperations.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 6
+    },
+    "@typescript-eslint/prefer-nullish-coalescing": {
+      "count": 1
+    },
+    "no-useless-assignment": {
+      "count": 1
+    }
+  },
+  "test/mock/convert/readables.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 1
+    }
+  },
+  "test/mock/type-constants/customlabelsConstant.ts": {
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 3
+    }
+  },
+  "test/nuts/scale/eda.nut.ts": {
+    "@typescript-eslint/prefer-nullish-coalescing": {
+      "count": 1
+    }
+  },
+  "test/nuts/scale/lotsOfClasses.nut.ts": {
+    "@typescript-eslint/prefer-nullish-coalescing": {
+      "count": 1
+    }
+  },
+  "test/nuts/scale/lotsOfClassesOneDir.nut.ts": {
+    "@typescript-eslint/prefer-nullish-coalescing": {
+      "count": 1
+    }
+  },
+  "test/nuts/scale/perfUtils.ts": {
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 1
+    },
+    "@typescript-eslint/prefer-nullish-coalescing": {
+      "count": 1
+    }
+  },
+  "test/resolve/adapters/baseSourceAdapter.test.ts": {
+    "@typescript-eslint/unbound-method": {
+      "count": 4
+    }
+  },
+  "test/resolve/adapters/decomposedSourceAdapter.test.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 1
+    },
+    "@typescript-eslint/no-shadow": {
+      "count": 9
+    }
+  },
+  "test/resolve/adapters/matchingContentSourceAdapter.test.ts": {
+    "@typescript-eslint/no-shadow": {
+      "count": 1
+    }
+  },
+  "test/resolve/adapters/mixedContentSourceAdapter.test.ts": {
+    "@typescript-eslint/no-shadow": {
+      "count": 3
+    }
+  },
+  "test/resolve/adapters/partialDecomposedAdapter.test.ts": {
+    "@typescript-eslint/no-shadow": {
+      "count": 1
+    }
+  },
+  "test/resolve/adapters/sourceAdapterFactory.test.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 1
+    }
+  },
+  "test/resolve/adapters/uiBundlesSourceAdapter.test.ts": {
+    "@typescript-eslint/no-shadow": {
+      "count": 3
+    }
+  },
+  "test/resolve/connectionResolver.test.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 3
+    }
+  },
+  "test/resolve/forceIgnore.test.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 1
+    }
+  },
+  "test/resolve/manifestResolver.test.ts": {
+    "@typescript-eslint/no-shadow": {
+      "count": 3
+    }
+  },
+  "test/resolve/metadataResolver.test.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 1
+    },
+    "@typescript-eslint/no-shadow": {
+      "count": 14
+    },
+    "camelcase": {
+      "count": 3
+    }
+  },
+  "test/resolve/sourceComponent.test.ts": {
+    "@typescript-eslint/no-shadow": {
+      "count": 3
+    }
+  },
+  "test/resolve/treeContainers.test.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 5
+    },
+    "@typescript-eslint/no-shadow": {
+      "count": 5
+    }
+  },
+  "test/snapshot/helper/conversions.ts": {
+    "@typescript-eslint/await-thenable": {
+      "count": 1
+    },
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 1
+    }
+  },
+  "test/snapshot/sampleProjects/customLabels-multiple/snapshots.test.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "test/snapshot/sampleProjects/forceignore/snapshots.test.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "test/snapshot/sampleProjects/preset-PermSet/snapshots.test.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "test/snapshot/sampleProjects/preset-sharingRules/snapshots.test.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "test/snapshot/sampleProjects/staticResource/snapshots.test.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  }
+}

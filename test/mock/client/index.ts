@@ -15,7 +15,7 @@
  */
 import JSZip from 'jszip';
 
-// eslint-disable-next-line @typescript-eslint/require-await
+ 
 export async function createMockZip(entries: string[]): Promise<Buffer> {
   const zip = JSZip();
   for (const entry of entries) {

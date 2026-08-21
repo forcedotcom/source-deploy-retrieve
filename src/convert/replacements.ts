@@ -23,7 +23,7 @@ import { ensureString, isString } from '@salesforce/ts-types';
 import { SourcePath } from '../common/types';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { isBinaryFileSync } from './isBinaryFile';
-import { MarkedReplacement, ReplacementConfig, ReplacementEvent } from './types';
+import { MarkedReplacement, ReplacementConfig } from './types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -129,7 +129,7 @@ export const replacementIterations = async (
       await lifecycleInstance.emit('replacement', {
         filename: replacement.matchedFilename,
         replaced: replacement.toReplace.toString(),
-      } as ReplacementEvent);
+      });
     }
     // No warning here; warnings are handled in ReplacementStream._flush
   }

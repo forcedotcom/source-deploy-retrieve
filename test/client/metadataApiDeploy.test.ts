@@ -16,7 +16,7 @@
 import { basename, join, sep } from 'node:path';
 import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import chai, { assert, expect } from 'chai';
-import { AnyJson, ensureString, getString } from '@salesforce/ts-types';
+import { ensureString, getString } from '@salesforce/ts-types';
 import { envVars, Lifecycle, Messages, PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
 import deepEqualInAnyOrder from 'deep-equal-in-any-order';
@@ -299,7 +299,7 @@ describe('MetadataApiDeploy', () => {
         const poll = (): Promise<StatusResult> =>
           Promise.resolve({
             completed: true,
-            payload: {} as AnyJson,
+            payload: {},
           });
 
         await operation.start();

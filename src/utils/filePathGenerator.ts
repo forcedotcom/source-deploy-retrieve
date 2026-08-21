@@ -43,7 +43,7 @@ const registryAccess = new RegistryAccess();
  * @param packageDir optional package directory to apply to the file paths
  * @returns array of file paths
  */
-// eslint-disable-next-line complexity
+ 
 export const filePathsFromMetadataComponent = (
   { fullName, type }: MetadataComponent,
   packageDir?: string

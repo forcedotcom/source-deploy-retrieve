@@ -16,9 +16,12 @@
 import * as standardValueSetData from './stdValueSetRegistry.json';
 
 /**
- * The standardValueSet fullNames.
+ * StandardValueSet metadata reference data.
+ *
+ * Contains a list of all supported StandardValueSet full names (e.g., `AccountContactMultiRoles`, `AccountOwnership`)
+ * that can be queried from Salesforce orgs. Useful for working with StandardValueSet metadata via the Metadata API.
  *
  * The static import of json file should never be changed,
- * other read methods might make esbuild fail to bundle the json file
+ * other read methods might make esbuild fail to bundle the json file.
  */
 export const standardValueSet = standardValueSetData as Readonly<typeof standardValueSetData>;

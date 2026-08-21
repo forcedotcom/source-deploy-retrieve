@@ -10,6 +10,7 @@
   - [Metadata registry entries](#metadata-registry-file)
   - [Updating the Metadata registry file](#updating-the-metadata-registry-file)
   - [The registry object](#the-registry-object)
+  - [Standard value sets](#standard-value-sets)
   - [Querying registry data](#querying-registry-data)
 - [Component Resolution](#component-resolution)
   - [Overview](#overview-1)
@@ -145,6 +146,17 @@ registry.types.auradefinitionbundle.directoryName; // => 'aura'
 ```
 
 📝 _The registry object is “deeply frozen”, meaning none of its properties, even the nested ones, are mutable. This is to ensure that a consumer cannot change registry information in a process and potentially affect functionality._
+
+### Standard value sets
+
+The library also exports `standardValueSet`, a reference to all supported StandardValueSet full names (e.g., `AccountContactMultiRoles`, `AccountOwnership`). This is useful when querying StandardValueSet metadata from an org:
+
+```typescript
+import { standardValueSet } from '@salesforce/source-deploy-retrieve';
+
+// Get all standard value set names
+const allStandardValueSets = standardValueSet.fullnames;
+```
 
 ### Registry Variants
 

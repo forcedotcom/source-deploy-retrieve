@@ -146,7 +146,10 @@ export type MetadataApiDeployStatus = {
   rollbackOnError: boolean;
   startDate?: string;
   stateDetail?: string;
+  notifications?: DeployNotification | DeployNotification[];
 } & MetadataRequestStatus;
+
+export type DeployNotification = { messageCode: string; messageText: string };
 
 export type DeployDetails = {
   componentFailures?: DeployMessage | DeployMessage[];

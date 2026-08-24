@@ -24,14 +24,19 @@ import { RegistryAccess, registry, VirtualTreeContainer } from '../../../src';
 
 describe('BundleSourceAdapter with AuraBundle', () => {
   const registryAccess = new RegistryAccess();
-  const adapter = new BundleSourceAdapter(bundle.COMPONENT.type, registryAccess, undefined, bundle.COMPONENT.tree);
+  const sharedAdapter = new BundleSourceAdapter(
+    bundle.COMPONENT.type,
+    registryAccess,
+    undefined,
+    bundle.COMPONENT.tree
+  );
 
   it('Should return expected SourceComponent when given a root metadata xml path', () => {
-    expect(adapter.getComponent(bundle.XML_PATH)).to.deep.equal(bundle.COMPONENT);
+    expect(sharedAdapter.getComponent(bundle.XML_PATH)).to.deep.equal(bundle.COMPONENT);
   });
 
   it('Should return expected SourceComponent when given a bundle directory', () => {
-    expect(adapter.getComponent(bundle.CONTENT_PATH)).to.deep.equal(bundle.COMPONENT);
+    expect(sharedAdapter.getComponent(bundle.CONTENT_PATH)).to.deep.equal(bundle.COMPONENT);
   });
 
   it('Should exclude empty bundle directories', () => {
@@ -46,7 +51,7 @@ describe('BundleSourceAdapter with AuraBundle', () => {
 
   it('Should return expected SourceComponent when given a source path', () => {
     const randomSource = bundle.SOURCE_PATHS[1];
-    expect(adapter.getComponent(randomSource)).to.deep.equal(bundle.COMPONENT);
+    expect(sharedAdapter.getComponent(randomSource)).to.deep.equal(bundle.COMPONENT);
   });
 
   describe('deeply nested LWC', () => {

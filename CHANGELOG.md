@@ -1,3 +1,12 @@
+## [13.2.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.2.2...13.2.3) (2026-08-24)
+
+
+### Bug Fixes
+
+* prevent ENOTDIR crash for non-component files in bundle directories @W-23924917@ ([#1823](https://github.com/forcedotcom/source-deploy-retrieve/issues/1823)) ([e5b6a28](https://github.com/forcedotcom/source-deploy-retrieve/commit/e5b6a28146d6caaeba99a4dbf246a8291cc3abd4))
+
+
+
 ## [13.2.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.2.1...13.2.2) (2026-08-24)
 
 

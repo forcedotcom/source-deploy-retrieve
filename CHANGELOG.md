@@ -1,3 +1,12 @@
+## [13.2.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.2.1...13.2.2) (2026-08-24)
+
+
+### Bug Fixes
+
+* linting post-fork-merge ([#1824](https://github.com/forcedotcom/source-deploy-retrieve/issues/1824)) ([d5e0be4](https://github.com/forcedotcom/source-deploy-retrieve/commit/d5e0be4428846d7e7f6931aca51785981772895f))
+
+
+
 ## [13.2.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.2.0...13.2.1) (2026-08-24)
 
 

@@ -88,58 +88,66 @@ describe('Tree Containers', () => {
 
   describe('NodeFSTreeContainer', () => {
     const env = createSandbox();
-    const tree = new NodeFSTreeContainer();
-    const path = join('path', 'to', 'test');
+    const sharedTree = new NodeFSTreeContainer();
+    const sharedPath = join('path', 'to', 'test');
 
     afterEach(() => env.restore());
 
     it('should use expected Node API for exists', () => {
       const existsStub = env.stub(fs, 'existsSync');
-      existsStub.withArgs(path).returns(true);
-      expect(tree.exists(path)).to.be.true;
+      existsStub.withArgs(sharedPath).returns(true);
+      expect(sharedTree.exists(sharedPath)).to.be.true;
       expect(existsStub.calledOnce).to.be.true;
     });
 
     it('should use expected Node API for isDirectory', () => {
       const statStub = env.stub(fs, 'statSync');
-      // @ts-ignore lstat returns more than isDirectory function
-      statStub.withArgs(path).returns({ isDirectory: () => true });
-      expect(tree.isDirectory(path)).to.be.true;
+      // @ts-expect-error lstat returns more than isDirectory function
+      statStub.withArgs(sharedPath).returns({ isDirectory: () => true });
+      expect(sharedTree.isDirectory(sharedPath)).to.be.true;
       expect(statStub.calledOnce).to.be.true;
     });
 
     it('should use expected Node API for readDirectory', () => {
+      const statStub = env.stub(fs, 'statSync');
+      // @ts-expect-error lstat returns more than isDirectory function
+      statStub.withArgs(sharedPath).returns({ isDirectory: () => true });
       const readdirStub = env.stub(fs, 'readdirSync');
-      // @ts-ignore wants Dirents but string[] works as well
-      readdirStub.withArgs(path).returns(readDirResults);
-      expect(tree.readDirectory(path)).to.deep.equal(readDirResults);
+      // @ts-expect-error wants Dirents but string[] works as well
+      readdirStub.withArgs(sharedPath).returns(readDirResults);
+      expect(sharedTree.readDirectory(sharedPath)).to.deep.equal(readDirResults);
       expect(readdirStub.calledOnce).to.be.true;
+    });
+
+    it('should return empty array for readDirectory on a file path', () => {
+      const statStub = env.stub(fs, 'statSync');
+      // @ts-expect-error lstat returns more than isDirectory function
+      statStub.withArgs(sharedPath).returns({ isDirectory: () => false });
+      expect(sharedTree.readDirectory(sharedPath)).to.deep.equal([]);
     });
 
     it('should use expected Node API for readFile', async () => {
       const readFileStub = env.stub(fs, 'readFileSync');
-      // @ts-ignore wants Dirents but string[] works as well
-      readFileStub.withArgs(path).resolves(Buffer.from('test'));
-      const data = await tree.readFile(path);
+      readFileStub.withArgs(sharedPath).resolves(Buffer.from('test'));
+      const data = await sharedTree.readFile(sharedPath);
       expect(data.toString()).to.deep.equal('test');
       expect(readFileStub.calledOnce).to.be.true;
     });
 
     it('should use expected Node API for readFileSync', () => {
       const readFileStub = env.stub(fs, 'readFileSync');
-      // @ts-ignore wants Dirents but string[] works as well
-      readFileStub.withArgs(path).returns(Buffer.from('test'));
-      const data = tree.readFileSync(path);
+      readFileStub.withArgs(sharedPath).returns(Buffer.from('test'));
+      const data = sharedTree.readFileSync(sharedPath);
       expect(data.toString()).to.deep.equal('test');
       expect(readFileStub.calledOnce).to.be.true;
     });
 
     it('should use expected Node API for stream', () => {
       const readable = new Readable();
-      // @ts-ignore wants ReadStream but Readable works for testing
+      // @ts-expect-error wants ReadStream but Readable works for testing
       env.stub(fs, 'createReadStream').returns(readable);
       env.stub(fs, 'existsSync').returns(true);
-      expect(tree.stream(path)).to.deep.equal(readable);
+      expect(sharedTree.stream(sharedPath)).to.deep.equal(readable);
     });
 
     describe('with projectPath/cwd', () => {

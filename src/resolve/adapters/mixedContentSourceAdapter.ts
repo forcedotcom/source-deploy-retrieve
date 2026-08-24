@@ -55,6 +55,7 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
   protected getRootMetadataXmlPath(trigger: SourcePath): SourcePath | undefined {
     if (this.ownFolder) {
       const componentRoot = this.trimPathToContent(trigger);
+      if (!this.tree.isDirectory(componentRoot)) return undefined;
 
       const rootSuffixes = [this.type.suffix, this.type.legacySuffix].filter(
         (suffix): suffix is string => typeof suffix === 'string'

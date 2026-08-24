@@ -561,6 +561,19 @@ describe('MetadataResolver', () => {
         expect(mdResolver.getComponentsFromPath(nonMetadataDirPath, filter)).to.deep.equal([]);
       });
 
+      it('Should return empty array for a non-component file directly inside a bundle type directory (lwc/)', () => {
+        const lwcDir = join('force-app', 'main', 'default', 'lwc');
+        const readmePath = join(lwcDir, 'README.md');
+        const cmpDir = join(lwcDir, 'myCmp');
+        const treeContainer = new VirtualTreeContainer([
+          { dirPath: join('force-app', 'main', 'default'), children: ['lwc'] },
+          { dirPath: lwcDir, children: ['myCmp', 'README.md'] },
+          { dirPath: cmpDir, children: ['myCmp.js', 'myCmp.js-meta.xml'] },
+        ]);
+        const mdResolver = new MetadataResolver(undefined, treeContainer, false);
+        expect(mdResolver.getComponentsFromPath(readmePath)).to.deep.equal([]);
+      });
+
       it('Should resolve RestrictionRules metadata in mdapi format', () => {
         const unpackagedPath = 'unpackaged';
         const packageXmlPath = join(unpackagedPath, 'package.xml');

@@ -124,7 +124,9 @@ export class NodeFSTreeContainer extends TreeContainer {
   }
 
   public readDirectory(fsPath: SourcePath): string[] {
-    return readdirSync(this.getUpdatedFsPath(fsPath));
+    const resolved = this.getUpdatedFsPath(fsPath);
+    if (!statSync(resolved).isDirectory()) return [];
+    return readdirSync(resolved);
   }
 
   public readFile(fsPath: SourcePath): Promise<Buffer> {

@@ -14,23 +14,29 @@
  * limitations under the License.
  */
 
+import { join } from 'node:path';
 import { expect } from 'chai';
 import { bundle, lwcBundle } from '../../mock';
 import { BundleSourceAdapter } from '../../../src/resolve/adapters';
 import { CONTENT_PATH } from '../../mock/type-constants/auraBundleConstant';
 import { CONTENT_PATH as LWC_CONTENT_PATH } from '../../mock/type-constants/lwcBundleConstant';
-import { RegistryAccess } from '../../../src';
+import { RegistryAccess, registry, VirtualTreeContainer } from '../../../src';
 
 describe('BundleSourceAdapter with AuraBundle', () => {
   const registryAccess = new RegistryAccess();
-  const adapter = new BundleSourceAdapter(bundle.COMPONENT.type, registryAccess, undefined, bundle.COMPONENT.tree);
+  const sharedAdapter = new BundleSourceAdapter(
+    bundle.COMPONENT.type,
+    registryAccess,
+    undefined,
+    bundle.COMPONENT.tree
+  );
 
   it('Should return expected SourceComponent when given a root metadata xml path', () => {
-    expect(adapter.getComponent(bundle.XML_PATH)).to.deep.equal(bundle.COMPONENT);
+    expect(sharedAdapter.getComponent(bundle.XML_PATH)).to.deep.equal(bundle.COMPONENT);
   });
 
   it('Should return expected SourceComponent when given a bundle directory', () => {
-    expect(adapter.getComponent(bundle.CONTENT_PATH)).to.deep.equal(bundle.COMPONENT);
+    expect(sharedAdapter.getComponent(bundle.CONTENT_PATH)).to.deep.equal(bundle.COMPONENT);
   });
 
   it('Should exclude empty bundle directories', () => {
@@ -45,7 +51,7 @@ describe('BundleSourceAdapter with AuraBundle', () => {
 
   it('Should return expected SourceComponent when given a source path', () => {
     const randomSource = bundle.SOURCE_PATHS[1];
-    expect(adapter.getComponent(randomSource)).to.deep.equal(bundle.COMPONENT);
+    expect(sharedAdapter.getComponent(randomSource)).to.deep.equal(bundle.COMPONENT);
   });
 
   describe('deeply nested LWC', () => {
@@ -76,6 +82,43 @@ describe('BundleSourceAdapter with AuraBundle', () => {
         lwcBundle.EMPTY_BUNDLE.tree
       );
       expect(emptyBundleAdapter.getComponent(LWC_CONTENT_PATH)).to.be.undefined;
+    });
+  });
+
+  describe('non-component files in bundle type directory', () => {
+    const type = registry.types.lightningcomponentbundle;
+    const typeDir = join('force-app', 'main', 'default', type.directoryName);
+    const readmePath = join(typeDir, 'README.md');
+    const dsStorePath = join(typeDir, '.DS_Store');
+    const componentName = 'validCmp';
+    const componentDir = join(typeDir, componentName);
+
+    const tree = new VirtualTreeContainer([
+      {
+        dirPath: typeDir,
+        children: [componentName, 'README.md', '.DS_Store'],
+      },
+      {
+        dirPath: componentDir,
+        children: [`${componentName}.js`, `${componentName}.js-meta.xml`],
+      },
+    ]);
+
+    const adapter = new BundleSourceAdapter(type, registryAccess, undefined, tree);
+
+    it('Should return undefined for a non-component file (README.md) in lwc/', () => {
+      expect(adapter.getComponent(readmePath)).to.be.undefined;
+    });
+
+    it('Should return undefined for a dot file (.DS_Store) in lwc/', () => {
+      expect(adapter.getComponent(dsStorePath)).to.be.undefined;
+    });
+
+    it('Should still resolve a valid component directory', () => {
+      const result = adapter.getComponent(componentDir);
+      expect(result).to.not.be.undefined;
+      expect(result?.type).to.deep.equal(type);
+      expect(result?.name).to.equal(componentName);
     });
   });
 });

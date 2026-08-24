@@ -334,11 +334,8 @@
     }
   },
   "test/resolve/treeContainers.test.ts": {
-    "@typescript-eslint/ban-ts-comment": {
-      "count": 5
-    },
     "@typescript-eslint/no-shadow": {
-      "count": 5
+      "count": 1
     }
   },
   "test/snapshot/helper/conversions.ts": {

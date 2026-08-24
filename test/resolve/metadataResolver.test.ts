@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* eslint-disable @typescript-eslint/no-shadow */
 
 import { basename, dirname, join } from 'node:path';
 import { assert, expect } from 'chai';
@@ -70,10 +69,10 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('MetadataResolver', () => {
-  const resolver = new MetadataResolver();
-  const registryAccess = new RegistryAccess(registry);
+  const sharedResolver = new MetadataResolver();
+  const sharedRegistryAccess = new RegistryAccess(registry);
   describe('Should not resolve using strictDir when suffixes do not match', () => {
-    const type = registryAccess.getTypeByName('ApexClass');
+    const type = sharedRegistryAccess.getTypeByName('ApexClass');
     const COMPONENT_NAMES = ['myClass'];
     // real scenario: classes/foo/objects/myCls.cls (where objects is the strictDir of another type)
     const TYPE_DIRECTORY = join('classes', 'subfolder', 'subfolder2', 'objects');
@@ -100,13 +99,13 @@ describe('MetadataResolver', () => {
         )
     );
     it('metadata file', () => {
-      const resolver = new MetadataResolver(registryAccess, TREE);
+      const resolver = new MetadataResolver(sharedRegistryAccess, TREE);
       const sourceComponent = resolver.getComponentsFromPath(XML_PATHS[0])[0];
       expect(sourceComponent.type).to.deep.equal(type);
       expect(sourceComponent).to.deep.equal(COMPONENTS[0]);
     });
     it('content file', () => {
-      const resolver = new MetadataResolver(registryAccess, TREE);
+      const resolver = new MetadataResolver(sharedRegistryAccess, TREE);
       expect(resolver.getComponentsFromPath(CONTENT_PATHS[0])).to.deep.equal([COMPONENTS[0]]);
     });
   });
@@ -119,7 +118,7 @@ describe('MetadataResolver', () => {
         const path = matchingContentFile.CONTENT_PATHS[0];
 
         assert.throws(
-          () => resolver.getComponentsFromPath(path),
+          () => sharedResolver.getComponentsFromPath(path),
           SfError,
           messages.getMessage('error_path_not_found', [path])
         );
@@ -727,7 +726,6 @@ describe('MetadataResolver', () => {
       });
 
       it('Should return a component for a directory that is content or a child of content', () => {
-        const { MIXED_CONTENT_DIRECTORY_CONTENT_PATH } = mixedContentDirectory;
         const access = testUtil.createMetadataResolver([
           {
             dirPath: MIXED_CONTENT_DIRECTORY_CONTENT_PATH,

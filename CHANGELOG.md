@@ -1,3 +1,30 @@
+## [13.2.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.2.1...13.2.2) (2026-08-24)
+
+
+### Bug Fixes
+
+* linting post-fork-merge ([#1824](https://github.com/forcedotcom/source-deploy-retrieve/issues/1824)) ([d5e0be4](https://github.com/forcedotcom/source-deploy-retrieve/commit/d5e0be4428846d7e7f6931aca51785981772895f))
+
+
+
+## [13.2.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.2.0...13.2.1) (2026-08-24)
+
+
+### Bug Fixes
+
+* resolve decomposed Permission Set parents by suffix ([#1817](https://github.com/forcedotcom/source-deploy-retrieve/issues/1817)) ([e1efcbc](https://github.com/forcedotcom/source-deploy-retrieve/commit/e1efcbc947a1c23dd7394bc8c20e95801bd4174c))
+
+
+
+# [13.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.1.1...13.2.0) (2026-08-19)
+
+
+### Features
+
+* export stdValueSetRegistry.json from main index.ts to be called properly outside this repo - W-23802414 ([#1822](https://github.com/forcedotcom/source-deploy-retrieve/issues/1822)) ([54dda96](https://github.com/forcedotcom/source-deploy-retrieve/commit/54dda96adbf7001ab201a4cd63232afdc89441d4))
+
+
+
 ## [13.1.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.1.0...13.1.1) (2026-08-13)
 
 

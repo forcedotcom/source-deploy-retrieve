@@ -110,9 +110,12 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
         const typeDirName = basename(this.type.inFolder ? dirname(parentPath) : parentPath);
         const nameMatchesParent = basename(parentPath) === metaXml.fullName;
         const inTypeDir = typeDirName === this.type.directoryName;
-        // if the parent folder name matches the fullName OR parent folder name is
-        // metadata type's directory name, it's a root metadata xml.
-        isRootMetadataXml = nameMatchesParent || inTypeDir;
+        const rootSuffixes = [this.type.suffix, this.type.legacySuffix].filter(Boolean);
+        const suffixMatchesRoot = rootSuffixes.includes(metaXml.suffix);
+        // Decomposed children can share the parent fullName (for example,
+        // MyPermissionSet.applicationVisibility-meta.xml). The suffix must
+        // identify the parent before the directory name can confirm it.
+        isRootMetadataXml = suffixMatchesRoot && (nameMatchesParent || inTypeDir);
       } else {
         isRootMetadataXml = true;
       }

@@ -59,7 +59,6 @@ import {
   SOURCE_FORMAT_PS,
   regAcc as regAccPermissionSet,
 } from '../mock/type-constants/decomposedPermissionSetConstant';
-// import { THREE_CUSTOM_LABELS_CMP, regAcc as regAccCustomLabels } from '../mock/type-constants/decomposedCustomLabelsConstant';
 import { META_XML_SUFFIX } from '../../src/common';
 import { DE_METAFILE } from '../mock/type-constants/digitalExperienceBundleConstants';
 import { RegistryTestUtil } from './registryTestUtil';
@@ -70,10 +69,10 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('MetadataResolver', () => {
-  const resolver = new MetadataResolver();
-  const registryAccess = new RegistryAccess(registry);
+  const sharedResolver = new MetadataResolver();
+  const sharedRegistryAccess = new RegistryAccess(registry);
   describe('Should not resolve using strictDir when suffixes do not match', () => {
-    const type = registryAccess.getTypeByName('ApexClass');
+    const type = sharedRegistryAccess.getTypeByName('ApexClass');
     const COMPONENT_NAMES = ['myClass'];
     // real scenario: classes/foo/objects/myCls.cls (where objects is the strictDir of another type)
     const TYPE_DIRECTORY = join('classes', 'subfolder', 'subfolder2', 'objects');
@@ -100,13 +99,13 @@ describe('MetadataResolver', () => {
         )
     );
     it('metadata file', () => {
-      const resolver = new MetadataResolver(registryAccess, TREE);
+      const resolver = new MetadataResolver(sharedRegistryAccess, TREE);
       const sourceComponent = resolver.getComponentsFromPath(XML_PATHS[0])[0];
       expect(sourceComponent.type).to.deep.equal(type);
       expect(sourceComponent).to.deep.equal(COMPONENTS[0]);
     });
     it('content file', () => {
-      const resolver = new MetadataResolver(registryAccess, TREE);
+      const resolver = new MetadataResolver(sharedRegistryAccess, TREE);
       expect(resolver.getComponentsFromPath(CONTENT_PATHS[0])).to.deep.equal([COMPONENTS[0]]);
     });
   });
@@ -119,7 +118,7 @@ describe('MetadataResolver', () => {
         const path = matchingContentFile.CONTENT_PATHS[0];
 
         assert.throws(
-          () => resolver.getComponentsFromPath(path),
+          () => sharedResolver.getComponentsFromPath(path),
           SfError,
           messages.getMessage('error_path_not_found', [path])
         );
@@ -183,6 +182,16 @@ describe('MetadataResolver', () => {
         expect(components2[0].type.name).to.equal('PermissionSet');
       });
 
+      it('Should resolve the Beta2 Permission Set parent when resolving its directory', () => {
+        const resolver = new MetadataResolver(regAccPermissionSet, SOURCE_FORMAT_PS.tree);
+        const permissionSetDirectory = join('main', 'default', 'permissionsets', 'myPS');
+        const components = resolver.getComponentsFromPath(permissionSetDirectory);
+
+        expect(components).to.have.lengthOf(1);
+        expect(components[0].type.name).to.equal('PermissionSet');
+        expect(components[0].xml).to.equal(join(permissionSetDirectory, 'myPS.permissionset-meta.xml'));
+      });
+
       it('Should determine type for metadata file with known suffix and strictDirectoryName', () => {
         // CustomSite is an example.  The conditions are:
         //   1. Type has "strictDirectoryName": true
@@ -240,16 +249,16 @@ describe('MetadataResolver', () => {
 
       it('Should determine type for DigitalExperience metadata file (_meta.json file)', () => {
         const parent = join('unpackaged', 'digitalExperiences', 'site', 'foo');
-        const parent_meta_file = join(parent, 'foo.digitalExperience-meta.xml');
+        const parentMetaFile = join(parent, 'foo.digitalExperience-meta.xml');
         assert(DE_METAFILE);
         const path = join(parent, 'sfdc_cms__view', 'home', DE_METAFILE);
-        const treeContainer = VirtualTreeContainer.fromFilePaths([path, parent_meta_file]);
+        const treeContainer = VirtualTreeContainer.fromFilePaths([path, parentMetaFile]);
         const mdResolver = new MetadataResolver(undefined, treeContainer);
         const parentComponent = new SourceComponent(
           {
             name: 'site/foo',
             type: registry.types.digitalexperiencebundle,
-            xml: parent_meta_file,
+            xml: parentMetaFile,
           },
           treeContainer
         );
@@ -361,7 +370,7 @@ describe('MetadataResolver', () => {
             children: [{ name: 'dir1.report-meta.xml', data: Buffer.from('Some Data') }],
           },
         ]);
-        // @ts-ignore
+        // @ts-expect-error private member access
         const isDirSpy = env.spy(access.tree, 'isDirectory');
 
         const componentMappings = xmlInFolder.COMPONENTS.map((c: SourceComponent) => ({
@@ -730,7 +739,6 @@ describe('MetadataResolver', () => {
       });
 
       it('Should return a component for a directory that is content or a child of content', () => {
-        const { MIXED_CONTENT_DIRECTORY_CONTENT_PATH } = mixedContentDirectory;
         const access = testUtil.createMetadataResolver([
           {
             dirPath: MIXED_CONTENT_DIRECTORY_CONTENT_PATH,

@@ -231,7 +231,7 @@ describe('UiBundlesSourceAdapter', () => {
 
     describe('Types & Formats', () => {
       it('apiVersion is unknown property - skipped', () => {
-        expectValidationSkipped({ apiVersion: '66.0' } as unknown as object);
+        expectValidationSkipped({ apiVersion: '66.0' });
       });
 
       it('outputDir empty string - skipped', () => {
@@ -239,15 +239,15 @@ describe('UiBundlesSourceAdapter', () => {
       });
 
       it('outputDir wrong type - skipped', () => {
-        expectValidationSkipped({ outputDir: 123 } as unknown as object);
+        expectValidationSkipped({ outputDir: 123 });
       });
 
       it('routing wrong type - skipped', () => {
-        expectValidationSkipped({ routing: 'invalid' } as unknown as object);
+        expectValidationSkipped({ routing: 'invalid' });
       });
 
       it('headers wrong type - skipped', () => {
-        expectValidationSkipped({ headers: 'invalid' } as unknown as object);
+        expectValidationSkipped({ headers: 'invalid' });
       });
 
       it('trailingSlash invalid - skipped', () => {
@@ -258,7 +258,7 @@ describe('UiBundlesSourceAdapter', () => {
         expectValidationSkipped({
           outputDir: 'dist',
           routing: { redirects: [{ route: '/a', redirect: '/b', statusCode: 200 }] },
-        } as unknown as object);
+        });
       });
     });
 
@@ -567,7 +567,7 @@ describe('UiBundlesSourceAdapter', () => {
       });
 
       it('additional property at root - skipped', () => {
-        expectValidationSkipped({ outputDir: 'src', customField: 'x' } as unknown as object);
+        expectValidationSkipped({ outputDir: 'src', customField: 'x' });
       });
 
       it('non-empty strings for route/rewrite - pass', () => {
@@ -581,16 +581,16 @@ describe('UiBundlesSourceAdapter', () => {
     describe('error message quality (VirtualTreeContainer — validation skipped)', () => {
       it('no validation errors are produced for any invalid input', () => {
         const cases: Array<{ input: object | string; options?: Parameters<typeof buildTree>[1] }> = [
-          { input: { outputDir: 123 } as unknown as object },
+          { input: { outputDir: 123 } },
           { input: { routing: { trailingSlash: 'sometimes' } } },
           {
-            input: { routing: { redirects: [{ route: '/a', redirect: '/b', statusCode: 200 }] } } as unknown as object,
+            input: { routing: { redirects: [{ route: '/a', redirect: '/b', statusCode: 200 }] } },
           },
           {
             input: { outputDir: 'dist', routing: { rewrites: [{ rewrite: 'missing.html' }] } },
             options: { outputDir: 'dist', outputDirFiles: ['other.html'] },
           },
-          { input: { outputDir: 'src', foo: 1, bar: 2 } as unknown as object },
+          { input: { outputDir: 'src', foo: 1, bar: 2 } },
           { input: '[1,2,3]' },
           { input: {} },
           { input: { outputDir: 'dist' }, options: { outputDir: 'dist', includeOutputDir: false } },

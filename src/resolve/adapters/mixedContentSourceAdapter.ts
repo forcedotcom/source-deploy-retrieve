@@ -16,7 +16,7 @@
 import { dirname, basename, sep, join } from 'node:path';
 import { Messages } from '@salesforce/core/messages';
 import { SfError } from '@salesforce/core/sfError';
-import { baseName } from '../../utils/path';
+import { baseName, parseMetadataXml } from '../../utils/path';
 import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
 import { BaseSourceAdapter } from './baseSourceAdapter';
@@ -56,6 +56,19 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
     if (this.ownFolder) {
       const componentRoot = this.trimPathToContent(trigger);
       if (!this.tree.isDirectory(componentRoot)) return undefined;
+
+      const rootSuffixes = [this.type.suffix, this.type.legacySuffix].filter(
+        (suffix): suffix is string => typeof suffix === 'string'
+      );
+      const rootFile = this.tree.readDirectory(componentRoot).find((entry) => {
+        const metadata = parseMetadataXml(join(componentRoot, entry));
+        return metadata?.suffix !== undefined && rootSuffixes.includes(metadata.suffix);
+      });
+
+      if (rootFile) {
+        return join(componentRoot, rootFile);
+      }
+
       return this.tree.find('metadataXml', basename(componentRoot), componentRoot);
     }
     return this.findMetadataFromContent(trigger);

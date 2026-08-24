@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* eslint-disable @typescript-eslint/no-shadow */
 
 import { basename, dirname, join } from 'node:path';
 import { assert, expect } from 'chai';
@@ -59,7 +60,6 @@ import {
   SOURCE_FORMAT_PS,
   regAcc as regAccPermissionSet,
 } from '../mock/type-constants/decomposedPermissionSetConstant';
-// import { THREE_CUSTOM_LABELS_CMP, regAcc as regAccCustomLabels } from '../mock/type-constants/decomposedCustomLabelsConstant';
 import { META_XML_SUFFIX } from '../../src/common';
 import { DE_METAFILE } from '../mock/type-constants/digitalExperienceBundleConstants';
 import { RegistryTestUtil } from './registryTestUtil';
@@ -250,16 +250,16 @@ describe('MetadataResolver', () => {
 
       it('Should determine type for DigitalExperience metadata file (_meta.json file)', () => {
         const parent = join('unpackaged', 'digitalExperiences', 'site', 'foo');
-        const parent_meta_file = join(parent, 'foo.digitalExperience-meta.xml');
+        const parentMetaFile = join(parent, 'foo.digitalExperience-meta.xml');
         assert(DE_METAFILE);
         const path = join(parent, 'sfdc_cms__view', 'home', DE_METAFILE);
-        const treeContainer = VirtualTreeContainer.fromFilePaths([path, parent_meta_file]);
+        const treeContainer = VirtualTreeContainer.fromFilePaths([path, parentMetaFile]);
         const mdResolver = new MetadataResolver(undefined, treeContainer);
         const parentComponent = new SourceComponent(
           {
             name: 'site/foo',
             type: registry.types.digitalexperiencebundle,
-            xml: parent_meta_file,
+            xml: parentMetaFile,
           },
           treeContainer
         );
@@ -371,7 +371,7 @@ describe('MetadataResolver', () => {
             children: [{ name: 'dir1.report-meta.xml', data: Buffer.from('Some Data') }],
           },
         ]);
-        // @ts-ignore
+        // @ts-expect-error private member access
         const isDirSpy = env.spy(access.tree, 'isDirectory');
 
         const componentMappings = xmlInFolder.COMPONENTS.map((c: SourceComponent) => ({

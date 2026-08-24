@@ -328,17 +328,6 @@
       "count": 3
     }
   },
-  "test/resolve/metadataResolver.test.ts": {
-    "@typescript-eslint/ban-ts-comment": {
-      "count": 1
-    },
-    "@typescript-eslint/no-shadow": {
-      "count": 14
-    },
-    "camelcase": {
-      "count": 3
-    }
-  },
   "test/resolve/sourceComponent.test.ts": {
     "@typescript-eslint/no-shadow": {
       "count": 3

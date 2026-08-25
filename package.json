@@ -25,7 +25,7 @@
     "node": ">=22.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^9.1.6",
+    "@salesforce/core": "^9.1.7",
     "@salesforce/kit": "^4.0.0",
     "@salesforce/ts-types": "^3.0.0",
     "@salesforce/types": "^1.6.0",
@@ -41,7 +41,7 @@
     "yaml": "^2.9.0"
   },
   "devDependencies": {
-    "@jsforce/jsforce-node": "^3.10.19",
+    "@jsforce/jsforce-node": "^3.10.23",
     "@salesforce/cli-plugins-testkit": "^5.3.58",
     "@salesforce/dev-scripts": "^13.0.2",
     "@types/chai": "^4.3.17",

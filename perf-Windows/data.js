@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787690525828,
+  "lastUpdate": 1787692600195,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -107920,6 +107920,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 19901,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "distinct": true,
+          "id": "cb9bd709ed3626b7868e61a419b51fe952ee35f9",
+          "message": "fix: support '#' version separator in AiAgentDefinitionVersion fullNames @W-23939860@\n\nAiAgentDefinitionVersion uses '#' as its version separator (e.g., 'ASA1#1'),\nwhich conflicts with SDR's internal KEY_DELIMITER that also uses '#' for\ncomposite keys (type#fullName). This change:\n\n- Fixes key.split('#') in metadataApiDeploy to split only on the first '#'\n- Adds registry suffix and versionSeparator field for AiAgentDefinitionVersion\n- Adds parseAgentVersionFullName for version filter parsing\n- Adds componentSetBuilder handling for AiAgentDefinitionVersion entries\n- Adds filePathGenerator bundle mapping for the type",
+          "timestamp": "2026-08-25T15:07:27-06:00",
+          "tree_id": "fb0604eb6ac5ba816540c4798337175fc1347b09",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/cb9bd709ed3626b7868e61a419b51fe952ee35f9"
+        },
+        "date": 1787692584719,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 588,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4280,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 4038,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 7773,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1060,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 11513,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10486,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 11321,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1819,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 20552,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 19489,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 20629,
             "unit": "ms"
           }
         ]

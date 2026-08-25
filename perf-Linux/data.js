@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787690120069,
+  "lastUpdate": 1787692261005,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -113192,6 +113192,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 11363,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "distinct": true,
+          "id": "cb9bd709ed3626b7868e61a419b51fe952ee35f9",
+          "message": "fix: support '#' version separator in AiAgentDefinitionVersion fullNames @W-23939860@\n\nAiAgentDefinitionVersion uses '#' as its version separator (e.g., 'ASA1#1'),\nwhich conflicts with SDR's internal KEY_DELIMITER that also uses '#' for\ncomposite keys (type#fullName). This change:\n\n- Fixes key.split('#') in metadataApiDeploy to split only on the first '#'\n- Adds registry suffix and versionSeparator field for AiAgentDefinitionVersion\n- Adds parseAgentVersionFullName for version filter parsing\n- Adds componentSetBuilder handling for AiAgentDefinitionVersion entries\n- Adds filePathGenerator bundle mapping for the type",
+          "timestamp": "2026-08-25T15:07:27-06:00",
+          "tree_id": "fb0604eb6ac5ba816540c4798337175fc1347b09",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/cb9bd709ed3626b7868e61a419b51fe952ee35f9"
+        },
+        "date": 1787692248686,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 421,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2447,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2705,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 3205,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 477,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 5806,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7772,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 5910,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 877,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 10885,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 15396,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 11048,
             "unit": "ms"
           }
         ]

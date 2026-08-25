@@ -43,7 +43,7 @@ const registryAccess = new RegistryAccess();
  * @param packageDir optional package directory to apply to the file paths
  * @returns array of file paths
  */
- 
+
 export const filePathsFromMetadataComponent = (
   { fullName, type }: MetadataComponent,
   packageDir?: string
@@ -145,6 +145,10 @@ export const filePathsFromMetadataComponent = (
       [
         'AiAuthoringBundle',
         [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.aiAuthoringBundle${META_XML_SUFFIX}`)],
+      ],
+      [
+        'AiAgentDefinitionVersion',
+        [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.aiAgentDefinitionVersion${META_XML_SUFFIX}`)],
       ],
       // schema.json is optional, so only the meta XML and the content JSON are guaranteed file paths.
       [

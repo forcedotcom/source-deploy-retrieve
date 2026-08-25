@@ -74,6 +74,11 @@ export type MetadataType = {
    */
   strictDirectoryName?: boolean;
   /**
+   * The character used to separate the component name from its version number in a fullName.
+   * Defaults to '.' when not specified. Example: '#' for AiAgentDefinitionVersion (e.g., 'AgentName#1').
+   */
+  versionSeparator?: string;
+  /**
    * Whether or not to ignore the fullName that's parsed from the file path. If true, the metadata type's
    * name will be used instead. For example, CustomLabels instead of MyLabels.
    */

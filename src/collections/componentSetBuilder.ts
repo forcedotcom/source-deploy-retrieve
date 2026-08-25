@@ -515,6 +515,16 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
         // Add the Bot entry instead of BotVersion
         replacedEntries.push(`Bot:${botName}`);
       }
+    } else if (typeName === 'AiAgentDefinitionVersion') {
+      // AiAgentDefinitionVersion fullNames use '#' as version separator (e.g., ASA1#3).
+      // Unlike BotVersion, the Metadata API respects specific fullNames in the manifest,
+      // so no client-side version filtering is needed.
+      const fullName = name.join(':').trim();
+      if (!fullName || fullName === '*') {
+        replacedEntries.push(`${typeName}:*`);
+      } else {
+        replacedEntries.push(`${typeName}:${fullName}`);
+      }
     } else {
       // Normalize entries to Type:* format when no name is provided
       // This handles both "Type" (no colon) and "Type:" (colon with empty name)

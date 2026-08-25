@@ -859,6 +859,7 @@ v68 introduces the following new types.  Here's their current level of support
 |AiAgentDefinition|✅||
 |AiAgentDefinitionPlanner|❌|Not supported, but support could be added|
 |AiAgentDefinitionVersion|✅||
+|ApptBookingConfig|❌|Not supported, but support could be added|
 |AutomationPipeline|❌|Not supported, but support could be added|
 |BotEmailDefinition|❌|Not supported, but support could be added|
 |CnfgItmTypAttrSrcRcnRule|❌|Not supported, but support could be added|
@@ -874,6 +875,7 @@ v68 introduces the following new types.  Here's their current level of support
 |DCOpportunityScoringSettings|✅||
 |DebugLevel|❌|Not supported, but support could be added|
 |DiscoSettings|✅||
+|DsarPolicy|❌|Not supported, but support could be added|
 |DynamicUiCardDefinition|✅||
 |EngmtChannelTypeConfig|❌|Not supported, but support could be added (but not for tracking)|
 |FinancialEvaluationDef|❌|Not supported, but support could be added|

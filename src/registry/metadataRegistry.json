@@ -787,7 +787,6 @@
       "name": "AiAgentDefinitionVersion",
       "directoryName": "aiAgentDefinitionVersions",
       "inFolder": false,
-      "suffix": "aiAgentDefinitionVersion",
       "strictDirectoryName": true,
       "versionSeparator": "#",
       "strategies": { "adapter": "bundle" }

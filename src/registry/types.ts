@@ -75,7 +75,7 @@ export type MetadataType = {
   strictDirectoryName?: boolean;
   /**
    * The character used to separate the component name from its version number in a fullName.
-   * Defaults to '.' when not specified. Example: '#' for AiAgentDefinitionVersion (e.g., 'AgentName#1').
+   * Examples: '.' for BotVersion (e.g., 'BotName.v1'), '#' for AiAgentDefinitionVersion (e.g., 'AgentName#1').
    */
   versionSeparator?: string;
   /**

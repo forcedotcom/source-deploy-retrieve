@@ -1195,7 +1195,8 @@
             "directoryName": "botVersions",
             "id": "botversion",
             "name": "BotVersion",
-            "suffix": "botVersion"
+            "suffix": "botVersion",
+            "versionSeparator": "."
           }
         }
       },

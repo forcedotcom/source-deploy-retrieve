@@ -1,3 +1,12 @@
+# [13.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.2.3...13.3.0) (2026-08-25)
+
+
+### Features
+
+* add DeployNotification type for deploy-level notifications @W-23939851@ ([#1825](https://github.com/forcedotcom/source-deploy-retrieve/issues/1825)) ([b7a2887](https://github.com/forcedotcom/source-deploy-retrieve/commit/b7a2887dffaa5e3bf5932908bbe90ea302d31727))
+
+
+
 ## [13.2.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.2.2...13.2.3) (2026-08-24)
 
 

@@ -16,6 +16,7 @@
 
 import * as path from 'node:path';
 import { AuthInfo, Connection, Logger, Messages, SfError, StateAggregator } from '@salesforce/core';
+import { ensureArray } from '@salesforce/kit';
 import fs from 'graceful-fs';
 import { minimatch } from 'minimatch';
 import { MetadataComponent } from '../resolve/types';
@@ -476,6 +477,7 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
   const pseudoEntries: string[][] = [];
   let replacedEntries: string[] = [];
   const botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }> = [];
+  const pendingAgentVersionResolutions: Array<{ typeName: string; agentName: string }> = [];
 
   mdOption.metadataEntries.map((rawEntry) => {
     const [typeName, ...name] = rawEntry.split(':');
@@ -522,7 +524,14 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
       const fullName = name.join(':').trim();
       if (!fullName || fullName === '*') {
         replacedEntries.push(`${typeName}:*`);
+      } else if (fullName.includes('#')) {
+        // Already has a version specifier (e.g., AgentName#2 or AgentName#*)
+        replacedEntries.push(`${typeName}:${fullName}`);
+      } else if (connection) {
+        // Bare name without version — resolve to the highest version from the org
+        pendingAgentVersionResolutions.push({ typeName, agentName: fullName });
       } else {
+        // No connection available (local-only) — pass through as-is
         replacedEntries.push(`${typeName}:${fullName}`);
       }
     } else {
@@ -559,6 +568,30 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
         }
       })
     );
+  }
+
+  // Resolve bare AiAgentDefinitionVersion names to their highest version
+  if (pendingAgentVersionResolutions.length > 0 && connection) {
+    const allVersions = await connection.metadata.list({ type: 'AiAgentDefinitionVersion' });
+    const versionList = ensureArray(allVersions);
+    for (const { typeName, agentName } of pendingAgentVersionResolutions) {
+      const matching = versionList
+        .filter((v) => v.fullName.startsWith(`${agentName}#`))
+        .map((v) => {
+          const versionNum = parseInt(v.fullName.slice(agentName.length + 1), 10);
+          return { fullName: v.fullName, version: versionNum };
+        })
+        .filter((v) => !isNaN(v.version));
+
+      if (matching.length > 0) {
+        const highest = matching.reduce((a, b) => (a.version > b.version ? a : b));
+        getLogger().debug(`Resolved ${typeName}:${agentName} to highest version: ${highest.fullName}`);
+        replacedEntries.push(`${typeName}:${highest.fullName}`);
+      } else {
+        getLogger().debug(`No versions found for ${typeName}:${agentName}, passing through as-is`);
+        replacedEntries.push(`${typeName}:${agentName}`);
+      }
+    }
   }
 
   return { replacedEntries, botVersionFilters };

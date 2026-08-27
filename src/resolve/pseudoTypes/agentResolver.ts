@@ -130,39 +130,6 @@ export function parseBotVersionFullName(fullName: string): {
 }
 
 /**
- * Parses an AiAgentDefinitionVersion fullName to extract agent name and version.
- * Supports patterns:
- * - `AgentName#N` - specific version (e.g., `ASA1#3`)
- * - `AgentName#*` - all versions
- * - `AgentName` - no version specified, defaults to highest
- *
- * @param fullName The AiAgentDefinitionVersion fullName from manifest/metadata
- * @returns An object with the agent name and version filter
- */
-export function parseAgentVersionFullName(fullName: string): {
-  agentName: string;
-  versionFilter: 'all' | 'highest' | number;
-} {
-  // Handle AgentName#N format
-  const match = fullName.match(/^(.+)#(\d+)$/);
-  if (match) {
-    const [, agentName, versionStr] = match;
-    return { agentName, versionFilter: parseInt(versionStr, 10) };
-  }
-
-  // Handle AgentName#* pattern (all versions)
-  if (fullName.endsWith('#*')) {
-    return {
-      agentName: fullName.substring(0, fullName.length - 2),
-      versionFilter: 'all',
-    };
-  }
-
-  // No # in name, treat entire string as agent name
-  return { agentName: fullName, versionFilter: 'highest' };
-}
-
-/**
  * This is the local "spidering" logic for agents.  Given the API name for a Bot,
  * and either an org connection or local file system paths, resolve to the top
  * level agent metadata. E.g., Bot, BotVersion, GenAiPlanner, GenAiPlugin, and

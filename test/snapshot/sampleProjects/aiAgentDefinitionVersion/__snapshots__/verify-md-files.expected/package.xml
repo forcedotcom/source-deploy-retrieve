@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>ASA1#1</members>
+        <members>ASA1#2</members>
+        <name>AiAgentDefinitionVersion</name>
+    </types>
+    <version>63.0</version>
+</Package>

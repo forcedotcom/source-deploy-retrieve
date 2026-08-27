@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AiAgentDefinitionVersion xmlns="http://soap.sforce.com/2006/04/metadata">
+    <masterLabel>ASA1 Version 2</masterLabel>
+    <relatedAiAgentDefinition>ASA1</relatedAiAgentDefinition>
+    <versionNumber>2</versionNumber>
+</AiAgentDefinitionVersion>

@@ -131,14 +131,6 @@
       "count": 7
     }
   },
-  "test/collections/componentSetBuilder.test.ts": {
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 9
-    },
-    "@typescript-eslint/no-unsafe-member-access": {
-      "count": 9
-    }
-  },
   "test/collections/decodeableMap.test.ts": {
     "@typescript-eslint/ban-ts-comment": {
       "count": 8

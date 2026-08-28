@@ -863,6 +863,7 @@ v68 introduces the following new types.  Here's their current level of support
 |ApptBookingUrlConfig|❌|Not supported, but support could be added|
 |AutomationPipeline|❌|Not supported, but support could be added|
 |BotEmailDefinition|❌|Not supported, but support could be added|
+|BusinessValueMetricsSettings|✅||
 |CnfgItmTypAttrSrcRcnRule|❌|Not supported, but support could be added|
 |CnfgItmTypSrcRcnRule|❌|Not supported, but support could be added|
 |CnfgMgmtDataBndl|❌|Not supported, but support could be added|
@@ -879,6 +880,8 @@ v68 introduces the following new types.  Here's their current level of support
 |DocProcDefinition|❌|Not supported, but support could be added|
 |DsarPolicy|❌|Not supported, but support could be added|
 |DynamicUiCardDefinition|✅||
+|EasyFreemiumSettings|✅||
+|EasySuitesInvoicingSettings|✅||
 |EngmtChannelTypeConfig|❌|Not supported, but support could be added (but not for tracking)|
 |FinancialEvaluationDef|❌|Not supported, but support could be added|
 |HealthInsDataSyncDefn|❌|Not supported, but support could be added|
@@ -906,18 +909,21 @@ v68 introduces the following new types.  Here's their current level of support
 |MobilePublisherDelegateDistributionAccount|❌|Not supported, but support could be added|
 |MobilePublisherPrivateDistributionAccount|❌|Not supported, but support could be added|
 |MobilePublisherProject|❌|Not supported, but support could be added|
+|MsTeamsAppSettings|✅||
 |PlanningDimensionDef|❌|Not supported, but support could be added|
 |RecLifecyclCompanCpblDef|❌|Not supported, but support could be added|
 |RecLifecyclCompanDef|❌|Not supported, but support could be added|
 |ReferralIntakeConfiguration|❌|Not supported, but support could be added|
 |ReferralManagementSettings|✅||
 |ReplyEmailConfig|❌|Not supported, but support could be added (but not for tracking)|
+|SalesCloudSurfacesSettings|✅||
 |SalesPlanDataSource|❌|Not supported, but support could be added|
 |ScndTelephPrvdOtbdDtl|❌|Not supported, but support could be added|
 |ScopedAccess|❌|Not supported, but support could be added|
 |SecondaryTelephonyProvider|❌|Not supported, but support could be added|
 |SecurityCustomBaseline|❌|Not supported, but support could be added|
 |SensitiveDataRuleElmntGrp|❌|Not supported, but support could be added|
+|ServiceHamSettings|✅||
 |ServiceHeliosSettings|✅||
 |ServiceItamSettings|✅||
 |StatisticalDealInsightsSettings|✅||

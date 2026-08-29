@@ -855,7 +855,9 @@ v68 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
+|AIWorksheetTemplate|❌|Not supported, but support could be added|
 |AgentforcePlatformTracingSettings|✅||
+|AgentforceProspectingSettings|✅||
 |AiAgentDefinition|✅||
 |AiAgentDefinitionPlanner|❌|Not supported, but support could be added|
 |AiAgentDefinitionVersion|✅||
@@ -926,6 +928,7 @@ v68 introduces the following new types.  Here's their current level of support
 |ServiceHamSettings|✅||
 |ServiceHeliosSettings|✅||
 |ServiceItamSettings|✅||
+|ServiceItomSettings|✅||
 |StatisticalDealInsightsSettings|✅||
 |TelephonyProvider|❌|Not supported, but support could be added|
 |TenantSecurityPlaybookDef|❌|Not supported, but support could be added|

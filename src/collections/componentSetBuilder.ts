@@ -518,11 +518,11 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
         replacedEntries.push(`Bot:${botName}`);
       }
     } else {
+      const fullName = name.join(':').trim();
       const versionSep = registry.getTypeByName(typeName)?.versionSeparator;
       if (versionSep) {
         // Type uses a version separator in fullNames (e.g., '#' for AiAgentDefinitionVersion).
         // The Metadata API respects specific fullNames, so no client-side filtering is needed.
-        const fullName = name.join(':').trim();
         if (!fullName || fullName === '*') {
           replacedEntries.push(`${typeName}:*`);
         } else if (fullName.includes(versionSep)) {
@@ -535,7 +535,6 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
       } else {
         // Normalize entries to Type:* format when no name is provided
         // This handles both "Type" (no colon) and "Type:" (colon with empty name)
-        const fullName = name.join(':').trim();
         const normalizedEntry = fullName ? rawEntry : `${typeName}:*`;
         replacedEntries.push(normalizedEntry);
       }

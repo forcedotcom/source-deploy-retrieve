@@ -858,6 +858,7 @@ v68 introduces the following new types.  Here's their current level of support
 |AIWorksheetTemplate|❌|Not supported, but support could be added|
 |AgentforcePlatformTracingSettings|✅||
 |AgentforceProspectingSettings|✅||
+|AgentforceSessionTracingSettings|✅||
 |AiAgentDefinition|✅||
 |AiAgentDefinitionPlanner|❌|Not supported, but support could be added|
 |AiAgentDefinitionVersion|✅||

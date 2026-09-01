@@ -470,7 +470,7 @@ const warnIfUnmatchedServerResult =
   (messageMap: Map<string, DeployMessage[]>): void[] =>
     // keep the parents and children separated for MPD scenarios where we have a parent in one, children in another package
     [...messageMap.keys()].flatMap((key) => {
-      const [type, fullName] = key.split('#');
+      const [type, fullName] = key.split('#', 2);
 
       // UIBundleResource messages are already handled by the parent UIBundle component
       const consumedByWebApp =

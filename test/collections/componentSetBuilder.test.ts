@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
+
 import * as path from 'node:path';
 import { join } from 'node:path';
 import fs from 'graceful-fs';
@@ -679,6 +681,135 @@ describe('ComponentSetBuilder', () => {
           expect(compSet.getSourceComponents()).to.deep.equal(mdCompSet.getSourceComponents());
         });
       });
+
+      describe('AiAgentDefinitionVersion handling (versionSeparator)', () => {
+        const packageDir1 = path.resolve('force-app');
+        const agentComponent = {
+          type: 'AiAgentDefinitionVersion',
+          fullName: 'ASA1#2',
+          xml: 'ASA1#2.aiAgentDefinitionVersion-meta.xml',
+        };
+
+        it('should pass through specific version (AgentName#N)', async () => {
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(agentComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['AiAgentDefinitionVersion:ASA1#2'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          await ComponentSetBuilder.build(options);
+          expect(fromSourceStub.callCount).to.equal(1);
+          const fromSourceArg = fromSourceStub.firstCall.firstArg;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal([
+            'aiagentdefinitionversion#ASA1#2',
+          ]);
+        });
+
+        it('should handle wildcard (AiAgentDefinitionVersion:*)', async () => {
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(agentComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['AiAgentDefinitionVersion:*'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          await ComponentSetBuilder.build(options);
+          expect(fromSourceStub.callCount).to.equal(1);
+          const fromSourceArg = fromSourceStub.firstCall.firstArg;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(['aiagentdefinitionversion#*']);
+        });
+
+        it('should pass through version wildcard (ASA1#*)', async () => {
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(agentComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['AiAgentDefinitionVersion:ASA1#*'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          await ComponentSetBuilder.build(options);
+          // First call: wildcard resolution (fetches all components of type, filters by minimatch)
+          // Second call: final source resolution
+          expect(fromSourceStub.callCount).to.equal(2);
+          const wildcardArg = fromSourceStub.firstCall.firstArg;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          expect(Array.from(wildcardArg.include.components.keys())).to.deep.equal(['aiagentdefinitionversion#*']);
+        });
+
+        it('should pass through bare name without connection', async () => {
+          const mdCompSet = new ComponentSet();
+          mdCompSet.add(agentComponent);
+          fromSourceStub.returns(mdCompSet);
+
+          const options = {
+            metadata: {
+              metadataEntries: ['AiAgentDefinitionVersion:ASA1'],
+              directoryPaths: [packageDir1],
+            },
+          };
+
+          await ComponentSetBuilder.build(options);
+          expect(fromSourceStub.callCount).to.equal(1);
+          const fromSourceArg = fromSourceStub.firstCall.firstArg;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          expect(Array.from(fromSourceArg.include.components.keys())).to.deep.equal(['aiagentdefinitionversion#ASA1']);
+        });
+
+        it('should resolve bare name to highest version with connection', async () => {
+          const $$ = instantiateContext();
+          stubContext($$);
+          const testOrg = new MockTestOrgData();
+          await $$.stubAuths(testOrg);
+          const conn = await testOrg.getConnection();
+
+          sandbox.stub(conn.metadata, 'list').resolves([
+            { fullName: 'ASA1#1', type: 'AiAgentDefinitionVersion' },
+            { fullName: 'ASA1#3', type: 'AiAgentDefinitionVersion' },
+            { fullName: 'ASA1#2', type: 'AiAgentDefinitionVersion' },
+            { fullName: 'OtherAgent#1', type: 'AiAgentDefinitionVersion' },
+          ] as never);
+
+          $$.SANDBOX.stub(Connection, 'create').resolves(conn);
+          fromConnectionStub.resolves(new ComponentSet());
+
+          const options = {
+            metadata: {
+              metadataEntries: ['AiAgentDefinitionVersion:ASA1'],
+              directoryPaths: [packageDir1],
+            },
+            org: {
+              username: testOrg.username,
+              exclude: [],
+            },
+          };
+
+          await ComponentSetBuilder.build(options);
+          expect(fromConnectionStub.callCount).to.equal(1);
+          const fromConnectionArg = fromConnectionStub.firstCall.firstArg;
+          expect(fromConnectionArg).to.have.property('metadataTypes').that.includes('AiAgentDefinitionVersion');
+          // The componentFilter should match the resolved highest version (ASA1#3)
+          const filter = fromConnectionArg.componentFilter;
+          expect(filter({ type: 'AiAgentDefinitionVersion', fullName: 'ASA1#3' })).to.equal(true);
+          expect(filter({ type: 'AiAgentDefinitionVersion', fullName: 'ASA1#1' })).to.equal(false);
+
+          restoreContext($$);
+        });
+      });
     });
 
     it('should create ComponentSet from manifest', async () => {
@@ -779,7 +910,6 @@ describe('ComponentSetBuilder', () => {
         const fromConnectionArgs = fromConnectionStub.firstCall.firstArg;
         expect(fromConnectionArgs).has.property('usernameOrConnection').and.instanceOf(Connection);
         expect(fromConnectionArgs['usernameOrConnection'].getUsername()).to.equal(options.org.username);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         expect(fromConnectionArgs['componentFilter'].call()).equal(true);
         expect(compSet.size).to.equal(1);
         expect(compSet.has(apexClassComponent)).to.equal(true);

@@ -21,6 +21,7 @@ import {
   isUiBundleInternalPath,
   isUiBundleResourceMessage,
   uiBundleResourceFullNameToFilePath,
+  toKey,
   UI_BUNDLE_RESOURCE_TYPE,
 } from '../../src/client/deployMessages';
 
@@ -207,6 +208,23 @@ describe('deployMessages', () => {
         const msg = createDeployMessage({ created: 'false', changed: 'true', deleted: 'false', success: 'false' });
         expect(getState(msg)).to.equal(ComponentStatus.Changed);
       });
+    });
+  });
+
+  describe('toKey', () => {
+    it('should create a key from type name and fullName', () => {
+      const result = toKey({ type: 'ApexClass', fullName: 'MyClass' });
+      expect(result).to.equal('ApexClass#MyClass');
+    });
+
+    it('should handle fullNames containing # (version separator)', () => {
+      const result = toKey({ type: 'AiAgentDefinitionVersion', fullName: 'ASA1#1' });
+      expect(result).to.equal('AiAgentDefinitionVersion#ASA1#1');
+    });
+
+    it('should handle type as MetadataType object', () => {
+      const result = toKey({ type: { name: 'CustomObject' } as never, fullName: 'Account' });
+      expect(result).to.equal('CustomObject#Account');
     });
   });
 });

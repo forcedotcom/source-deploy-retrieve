@@ -16,6 +16,7 @@
 
 import * as path from 'node:path';
 import { AuthInfo, Connection, Logger, Messages, SfError, StateAggregator } from '@salesforce/core';
+import { ensureArray } from '@salesforce/kit';
 import fs from 'graceful-fs';
 import { minimatch } from 'minimatch';
 import { MetadataComponent } from '../resolve/types';
@@ -476,6 +477,7 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
   const pseudoEntries: string[][] = [];
   let replacedEntries: string[] = [];
   const botVersionFilters: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }> = [];
+  const pendingVersionResolutions: Array<{ typeName: string; name: string; versionSeparator: string }> = [];
 
   mdOption.metadataEntries.map((rawEntry) => {
     const [typeName, ...name] = rawEntry.split(':');
@@ -516,11 +518,26 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
         replacedEntries.push(`Bot:${botName}`);
       }
     } else {
-      // Normalize entries to Type:* format when no name is provided
-      // This handles both "Type" (no colon) and "Type:" (colon with empty name)
       const fullName = name.join(':').trim();
-      const normalizedEntry = fullName ? rawEntry : `${typeName}:*`;
-      replacedEntries.push(normalizedEntry);
+      const versionSep = registry.getTypeByName(typeName)?.versionSeparator;
+      if (versionSep) {
+        // Type uses a version separator in fullNames (e.g., '#' for AiAgentDefinitionVersion).
+        // The Metadata API respects specific fullNames, so no client-side filtering is needed.
+        if (!fullName || fullName === '*') {
+          replacedEntries.push(`${typeName}:*`);
+        } else if (fullName.includes(versionSep)) {
+          replacedEntries.push(`${typeName}:${fullName}`);
+        } else if (connection) {
+          pendingVersionResolutions.push({ typeName, name: fullName, versionSeparator: versionSep });
+        } else {
+          replacedEntries.push(`${typeName}:${fullName}`);
+        }
+      } else {
+        // Normalize entries to Type:* format when no name is provided
+        // This handles both "Type" (no colon) and "Type:" (colon with empty name)
+        const normalizedEntry = fullName ? rawEntry : `${typeName}:*`;
+        replacedEntries.push(normalizedEntry);
+      }
     }
   });
 
@@ -549,6 +566,41 @@ const replacePseudoTypes = async (pseudoTypeInfo: {
         }
       })
     );
+  }
+
+  // Resolve bare versioned-type names to their highest version
+  if (pendingVersionResolutions.length > 0 && connection) {
+    const byType = new Map<string, Array<{ name: string; versionSeparator: string }>>();
+    for (const { typeName, name: entryName, versionSeparator } of pendingVersionResolutions) {
+      if (!byType.has(typeName)) byType.set(typeName, []);
+      byType.get(typeName)!.push({ name: entryName, versionSeparator });
+    }
+
+    const typeNames = [...byType.keys()];
+    const listResults = await Promise.all(typeNames.map((t) => connection.metadata.list({ type: t })));
+    const versionsByType = new Map(typeNames.map((t, i) => [t, ensureArray(listResults[i])]));
+
+    for (const [typeName, entries] of byType) {
+      const versionList = versionsByType.get(typeName) ?? [];
+      for (const { name: entryName, versionSeparator } of entries) {
+        const matching = versionList
+          .filter((v) => v.fullName.startsWith(`${entryName}${versionSeparator}`))
+          .map((v) => {
+            const versionNum = parseInt(v.fullName.slice(entryName.length + versionSeparator.length), 10);
+            return { fullName: v.fullName, version: versionNum };
+          })
+          .filter((v) => !isNaN(v.version));
+
+        if (matching.length > 0) {
+          const highest = matching.reduce((a, b) => (a.version > b.version ? a : b));
+          getLogger().debug(`Resolved ${typeName}:${entryName} to highest version: ${highest.fullName}`);
+          replacedEntries.push(`${typeName}:${highest.fullName}`);
+        } else {
+          getLogger().debug(`No versions found for ${typeName}:${entryName}, passing through as-is`);
+          replacedEntries.push(`${typeName}:${entryName}`);
+        }
+      }
+    }
   }
 
   return { replacedEntries, botVersionFilters };

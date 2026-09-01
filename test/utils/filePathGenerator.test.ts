@@ -182,6 +182,16 @@ const testData = {
       },
     ],
   },
+  bundleAiAgentDefinitionVersion: {
+    fullName: 'ASA1#2',
+    typeName: 'AiAgentDefinitionVersion',
+    expectedFilePaths: [getFilePath('aiAgentDefinitionVersions/ASA1#2/ASA1#2.aiAgentDefinitionVersion-meta.xml')],
+    expectedComponents: [
+      {
+        xml: getFilePath('aiAgentDefinitionVersions/ASA1#2/ASA1#2.aiAgentDefinitionVersion-meta.xml'),
+      },
+    ],
+  },
   bundleUiWidget: {
     fullName: 'myWidget',
     typeName: 'UiWidgetBundle',
@@ -399,6 +409,10 @@ describe('generating virtual tree from component name/type', () => {
 
     it('uiWidget', () => {
       runTest(testData.bundleUiWidget);
+    });
+
+    it('aiAgentDefinitionVersion', () => {
+      runTest(testData.bundleAiAgentDefinitionVersion);
     });
   });
 

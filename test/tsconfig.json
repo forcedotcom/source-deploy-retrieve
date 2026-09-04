@@ -5,8 +5,7 @@
     // Needed in order to import metadataRegistry.json
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "baseUrl": "..",
-    "paths": { "@salesforce/kit": ["node_modules/@salesforce/kit"] },
+    "paths": { "@salesforce/kit": ["../node_modules/@salesforce/kit"] },
     "moduleResolution": "Node16",
     "module": "Node16"
   }

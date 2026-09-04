@@ -40,4 +40,4 @@
 .hl-0 { color: var(--hl-0); }
 .hl-1 { color: var(--hl-1); }
 .hl-2 { color: var(--hl-2); }
-pre, code { background: var(--code-background); }
+pre, code, math[display='block'] { background: var(--code-background); }

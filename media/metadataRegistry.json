@@ -788,6 +788,7 @@
       "directoryName": "aiAgentDefinitionVersions",
       "inFolder": false,
       "strictDirectoryName": true,
+      "versionSeparator": "#",
       "strategies": { "adapter": "bundle" }
     },
     "aiagentscorerdefinition": {

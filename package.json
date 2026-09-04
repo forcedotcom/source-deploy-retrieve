@@ -25,9 +25,9 @@
     "node": ">=22.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^9.1.7",
+    "@salesforce/core": "^9.1.10",
     "@salesforce/kit": "^4.0.0",
-    "@salesforce/ts-types": "^3.0.0",
+    "@salesforce/ts-types": "^3.2.0",
     "@salesforce/types": "^1.6.0",
     "fast-levenshtein": "^3.0.0",
     "fast-xml-parser": "^5.7.3",
@@ -42,8 +42,8 @@
   },
   "devDependencies": {
     "@jsforce/jsforce-node": "^3.10.23",
-    "@salesforce/cli-plugins-testkit": "^5.3.58",
-    "@salesforce/dev-scripts": "^13.0.2",
+    "@salesforce/cli-plugins-testkit": "^5.3.66",
+    "@salesforce/dev-scripts": "^14.0.0",
     "@types/chai": "^4.3.17",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/fast-levenshtein": "^0.0.4",
@@ -63,7 +63,7 @@
     "mocha-snap": "^5.0.1",
     "ts-node": "^10.9.2",
     "ts-patch": "^3.3.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.0"
   },
   "scripts": {
     "build": "wireit",

@@ -242,18 +242,18 @@
     }
   },
   "test/nuts/scale/eda.nut.ts": {
-    "@typescript-eslint/prefer-nullish-coalescing": {
-      "count": 1
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 7
     }
   },
   "test/nuts/scale/lotsOfClasses.nut.ts": {
-    "@typescript-eslint/prefer-nullish-coalescing": {
-      "count": 1
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 7
     }
   },
   "test/nuts/scale/lotsOfClassesOneDir.nut.ts": {
-    "@typescript-eslint/prefer-nullish-coalescing": {
-      "count": 1
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 7
     }
   },
   "test/nuts/scale/perfUtils.ts": {
@@ -261,9 +261,6 @@
       "count": 1
     },
     "@typescript-eslint/no-unsafe-member-access": {
-      "count": 1
-    },
-    "@typescript-eslint/prefer-nullish-coalescing": {
       "count": 1
     }
   },

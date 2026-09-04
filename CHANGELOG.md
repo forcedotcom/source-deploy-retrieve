@@ -1,3 +1,12 @@
+## [13.3.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.3.0...13.3.1) (2026-09-04)
+
+
+### Bug Fixes
+
+* support '#' version separator in AiAgentDefinitionVersion @W-23939860@ ([#1826](https://github.com/forcedotcom/source-deploy-retrieve/issues/1826)) ([0bdc29b](https://github.com/forcedotcom/source-deploy-retrieve/commit/0bdc29b8a953cab506b7809b644ede65e1d75c87)), closes [ASA1#1](https://github.com/ASA1/issues/1)
+
+
+
 # [13.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.2.3...13.3.0) (2026-08-25)
 
 

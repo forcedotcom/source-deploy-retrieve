@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788533043926,
+  "lastUpdate": 1788967952481,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -114620,6 +114620,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 10812,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "distinct": true,
+          "id": "b39445a62c5764c029d2b9409bdf92244f4b7e79",
+          "message": "fix: reject path traversal in registryCustomizations directoryName @W-24132549@\n\nPrevent CWE-22 path traversal via malicious directoryName values in\nsfdx-project.json registryCustomizations. A crafted directoryName\nlike \"../../../../outside\" could escape the project root during\nsource retrieve/convert, overwriting arbitrary files.\n\nTwo-layer defense:\n- ensureSafeDirectoryName() in calculateRelativePath rejects\n  directoryName values containing \"..\" path segments\n- makeWriteInfoAbsolute() validates that relative write paths,\n  after joining with rootDestination, stay within the root",
+          "timestamp": "2026-09-09T09:28:58-06:00",
+          "tree_id": "fd776c0ae2ce642be27834e67f1a9d30f7d6616b",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/b39445a62c5764c029d2b9409bdf92244f4b7e79"
+        },
+        "date": 1788967938995,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 223,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2012,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2268,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 2429,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 379,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 4771,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 6849,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 4943,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 653,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 8736,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 12780,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 8881,
             "unit": "ms"
           }
         ]

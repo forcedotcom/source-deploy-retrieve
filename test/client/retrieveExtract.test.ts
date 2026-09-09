@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 import { join } from 'node:path';
+import os from 'node:os';
+import fs from 'graceful-fs';
 import { expect } from 'chai';
 import { XMLParser } from 'fast-xml-parser';
 import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../src';
@@ -872,5 +874,62 @@ describe('retrieveExtract - Version Filtering', () => {
       expect(parsed.Bot?.botVersions).to.have.length(1);
       expect((parsed.Bot?.botVersions as Array<{ fullName?: string }>)[0]).to.have.property('fullName', 'v5');
     });
+  });
+});
+
+describe('partial-delete symlink protection', () => {
+  let tmpDir: string;
+
+  beforeEach(() => {
+    tmpDir = fs.mkdtempSync(join(os.tmpdir(), 'sdr-symlink-test-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it('lstatSync rejects symlinked directories (used by supportsPartialDeleteAndHasContent)', () => {
+    const realDir = join(tmpDir, 'real');
+    fs.mkdirSync(realDir);
+    const symlinkDir = join(tmpDir, 'link');
+    fs.symlinkSync(realDir, symlinkDir);
+
+    // statSync follows symlinks — would treat a symlink-to-directory as a directory (the old vulnerable behavior)
+    expect(fs.statSync(symlinkDir).isDirectory()).to.be.true;
+    // lstatSync does NOT follow — sees the symlink itself, not a directory (the fix)
+    expect(fs.lstatSync(symlinkDir).isDirectory()).to.be.false;
+    expect(fs.lstatSync(symlinkDir).isSymbolicLink()).to.be.true;
+  });
+
+  it('lstatSync still recognizes regular directories (no false positives)', () => {
+    const realDir = join(tmpDir, 'real');
+    fs.mkdirSync(realDir);
+
+    expect(fs.lstatSync(realDir).isDirectory()).to.be.true;
+    expect(fs.lstatSync(realDir).isSymbolicLink()).to.be.false;
+  });
+
+  it('lstatSync detects symlinked files within a content directory', () => {
+    const contentDir = join(tmpDir, 'content');
+    fs.mkdirSync(contentDir);
+    const externalFile = join(tmpDir, 'external.txt');
+    fs.writeFileSync(externalFile, 'external data');
+    const symlinkFile = join(contentDir, 'linked.txt');
+    fs.symlinkSync(externalFile, symlinkFile);
+
+    expect(fs.lstatSync(symlinkFile).isSymbolicLink()).to.be.true;
+  });
+
+  it('rmSync on a symlink removes the link, not the target', () => {
+    const externalDir = join(tmpDir, 'external');
+    fs.mkdirSync(externalDir);
+    fs.writeFileSync(join(externalDir, 'important.txt'), 'do not delete');
+    const symlinkPath = join(tmpDir, 'link');
+    fs.symlinkSync(externalDir, symlinkPath);
+
+    fs.rmSync(symlinkPath, { force: true });
+
+    expect(fs.existsSync(symlinkPath)).to.be.false;
+    expect(fs.existsSync(join(externalDir, 'important.txt'))).to.be.true;
   });
 });

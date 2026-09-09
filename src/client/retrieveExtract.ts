@@ -179,6 +179,7 @@ const handlePartialDeleteMerges = ({
           return matchingLocalComp.contentList
             .filter((fileName) => !remoteContentList.has(fileName))
             .filter((fileName) => !pathOrSomeChildIsIgnored(logger)(comp)(matchingLocalComp)(fileName))
+            .filter((fileName) => !isSymlinkSync(path.join(matchingLocalComp.contentPath, fileName)))
             .map(
               (fileName): FileResponseSuccess => ({
                 fullName: comp.fullName,
@@ -192,7 +193,7 @@ const handlePartialDeleteMerges = ({
 };
 
 const supportsPartialDeleteAndHasContent = (comp: SourceComponent): comp is SourceComponentWithContent =>
-  supportsPartialDelete(comp) && typeof comp.content === 'string' && fs.statSync(comp.content).isDirectory();
+  supportsPartialDelete(comp) && typeof comp.content === 'string' && fs.lstatSync(comp.content).isDirectory();
 
 const supportsPartialDeleteAndHasZipContent =
   (tree: ZipTreeContainer) =>
@@ -220,7 +221,7 @@ const pathOrSomeChildIsIgnored =
   (localComp: PartialDeleteComp) =>
   (fileName: string): boolean => {
     const fileNameFullPath = path.join(localComp.contentPath, fileName);
-    return fs.statSync(fileNameFullPath).isDirectory()
+    return fs.lstatSync(fileNameFullPath).isDirectory()
       ? fs.readdirSync(fileNameFullPath).map(fnJoin(fileNameFullPath)).some(isForceIgnored(logger)(component))
       : isForceIgnored(logger)(component)(fileNameFullPath);
   };
@@ -236,10 +237,22 @@ const isForceIgnored =
     return ignored;
   };
 
+const isSymlinkSync = (filePath: string): boolean => {
+  try {
+    return fs.lstatSync(filePath).isSymbolicLink();
+  } catch {
+    return false;
+  }
+};
+
 const deleteFilePath =
   (logger: Logger) =>
   (fr: FileResponseSuccess): FileResponseSuccess => {
     if (fr.filePath) {
+      if (isSymlinkSync(fr.filePath)) {
+        logger.debug(`Skipping delete of symlink ${fr.filePath} to prevent modification of files outside the project.`);
+        return fr;
+      }
       logger.debug(
         `Local component (${fr.fullName}) contains ${fr.filePath} while remote component does not. This file is being removed.`
       );

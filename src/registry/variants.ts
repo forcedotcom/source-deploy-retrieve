@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 import { normalize, sep } from 'node:path';
-import { Logger, SfProject, SfProjectJson, Lifecycle, SfError } from '@salesforce/core';
+import { Logger, Messages, SfProject, SfProjectJson, Lifecycle, SfError } from '@salesforce/core';
 import { MetadataRegistry } from './types';
 // The static import of json file should never be changed,
 // other read methods might make esbuild fail to bundle the json file
 import * as registryData from './metadataRegistry.json';
 import { presetMap } from './presets/presetMap';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 type ProjectVariants = {
   registryCustomizations?: MetadataRegistry;
@@ -129,12 +132,10 @@ const validateCustomizationDirectoryNames = (registry: MetadataRegistry): Metada
     if (typeDef.directoryName) {
       const normalized = normalize(typeDef.directoryName);
       if (normalized.startsWith('..') || normalized.startsWith(sep + '..') || normalized.includes(sep + '..' + sep)) {
-        throw SfError.create({
-          message: `The directoryName '${typeDef.directoryName}' for metadata type '${
-            typeDef.name ?? typeId
-          }' contains path segments that resolve outside the project root. Verify your registryCustomizations in sfdx-project.json do not contain directory traversal sequences.`,
-          name: 'PathTraversalError',
-        });
+        throw messages.createError('error_directory_name_path_traversal', [
+          typeDef.directoryName,
+          typeDef.name ?? typeId,
+        ]);
       }
     }
   }

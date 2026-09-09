@@ -466,7 +466,6 @@ describe('Streams', () => {
         await writer._write(traversalChunk, '', (err: Error | undefined) => {
           assert(err instanceof Error);
           expect(err.message).to.include('resolves outside the root destination');
-          expect(err.name).to.equal('PathTraversalError');
         });
       });
 

@@ -16,12 +16,15 @@
 
 import { basename, dirname, extname, sep, join, normalize } from 'node:path';
 import { Optional } from '@salesforce/ts-types';
-import { SfError } from '@salesforce/core';
+import { Messages } from '@salesforce/core';
 import { SfdxFileFormat } from '../convert/types';
 import { SourcePath } from '../common/types';
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../common/constants';
 import { MetadataXml } from '../resolve/types';
 import { MetadataType } from '../registry/types';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 /**
  * Get the file or directory name at the end of a path. Different from `path.basename`
@@ -140,10 +143,7 @@ export function parseNestedFullName(fsPath: string, directoryName: string): stri
 const ensureSafeDirectoryName = (directoryName: string, typeName: string): void => {
   const normalized = normalize(directoryName);
   if (normalized.startsWith('..') || normalized.startsWith(sep + '..') || normalized.includes(sep + '..' + sep)) {
-    throw SfError.create({
-      message: `The directoryName '${directoryName}' for metadata type '${typeName}' contains path segments that resolve outside the project root. Verify your registryCustomizations in sfdx-project.json do not contain directory traversal sequences.`,
-      name: 'PathTraversalError',
-    });
+    throw messages.createError('error_directory_name_path_traversal', [directoryName, typeName]);
   }
 };
 

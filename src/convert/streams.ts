@@ -21,7 +21,7 @@ import { createWriteStream, existsSync, promises as fsPromises } from 'graceful-
 import { JsonMap } from '@salesforce/ts-types';
 import { XMLBuilder } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core/logger';
-import { SfError } from '@salesforce/core';
+import { Messages } from '@salesforce/core';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { SourcePath } from '../common/types';
 import { XML_COMMENT_PROP_NAME, XML_DECL } from '../common/constants';
@@ -33,6 +33,9 @@ import { ForceIgnore } from '../resolve';
 import { MetadataTransformerFactory } from './transformers/metadataTransformerFactory';
 import { ConvertContext } from './convertContext/convertContext';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export type PromisifiedPipeline = <T extends NodeJS.ReadableStream>(
   source: T,
@@ -336,10 +339,7 @@ const makeWriteInfoAbsolute =
       const normalizedRoot = normalize(pathResolve(rootDestination));
       const normalizedOutput = normalize(pathResolve(absoluteOutput));
       if (!normalizedOutput.startsWith(normalizedRoot + sep) && normalizedOutput !== normalizedRoot) {
-        throw SfError.create({
-          message: `The write path '${writeInfo.output}' resolves outside the root destination '${rootDestination}'. This may indicate a path traversal attempt via registryCustomizations.`,
-          name: 'PathTraversalError',
-        });
+        throw messages.createError('error_write_path_outside_root', [writeInfo.output, rootDestination]);
       }
     }
     return { ...writeInfo, output: absoluteOutput };

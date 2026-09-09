@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { normalize, sep } from 'node:path';
 import { Logger, SfProject, SfProjectJson, Lifecycle, SfError } from '@salesforce/core';
 import { MetadataRegistry } from './types';
 // The static import of json file should never be changed,
@@ -39,8 +40,11 @@ export type RegistryLoadInput =
   | ProjectVariants;
 
 /** combine the standard registration with any overrides specific in the sfdx-project.json */
-export const getEffectiveRegistry = (input?: RegistryLoadInput): Readonly<MetadataRegistry> =>
-  removeEmptyStrings(
+export const getEffectiveRegistry = (input?: RegistryLoadInput): Readonly<MetadataRegistry> => {
+  if (input?.registryCustomizations) {
+    validateCustomizationDirectoryNames(input.registryCustomizations);
+  }
+  return removeEmptyStrings(
     firstLevelMerge(
       registryData as MetadataRegistry,
       mergeVariants(
@@ -48,6 +52,7 @@ export const getEffectiveRegistry = (input?: RegistryLoadInput): Readonly<Metada
       )
     )
   );
+};
 
 /** read the project to get additional registry customizations and sourceBehaviorOptions */
 const getProjectVariants = (projectDir?: string): ProjectVariants => {
@@ -60,7 +65,9 @@ const getProjectVariants = (projectDir?: string): ProjectVariants => {
   }
 
   // there might not be any customizations in a project, so we default to the emptyRegistry
-  const registryCustomizations = projJson.get<MetadataRegistry>('registryCustomizations') ?? emptyRegistry;
+  const registryCustomizations = validateCustomizationDirectoryNames(
+    projJson.get<MetadataRegistry>('registryCustomizations') ?? emptyRegistry
+  );
   const presets = [
     ...new Set([
       // TODO: deprecated, remove this
@@ -115,6 +122,24 @@ const emptyRegistry = {
   suffixes: {},
   strictDirectoryNames: {},
 } as const satisfies MetadataRegistry;
+
+/** Reject registryCustomizations whose directoryName contains path traversal sequences. */
+const validateCustomizationDirectoryNames = (registry: MetadataRegistry): MetadataRegistry => {
+  for (const [typeId, typeDef] of Object.entries(registry.types ?? {})) {
+    if (typeDef.directoryName) {
+      const normalized = normalize(typeDef.directoryName);
+      if (normalized.startsWith('..') || normalized.startsWith(sep + '..') || normalized.includes(sep + '..' + sep)) {
+        throw SfError.create({
+          message: `The directoryName '${typeDef.directoryName}' for metadata type '${
+            typeDef.name ?? typeId
+          }' contains path segments that resolve outside the project root. Verify your registryCustomizations in sfdx-project.json do not contain directory traversal sequences.`,
+          name: 'PathTraversalError',
+        });
+      }
+    }
+  }
+  return registry;
+};
 
 /** merge the children of the top-level properties (ex: types, suffixes, etc) on 2 registries */
 export const firstLevelMerge = (original: MetadataRegistry, overrides: MetadataRegistry): MetadataRegistry => ({

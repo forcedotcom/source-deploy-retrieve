@@ -17,6 +17,7 @@ import { assert, expect, use } from 'chai';
 import { Messages, SfError } from '@salesforce/core';
 import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { MetadataType, registry, RegistryAccess } from '../../src';
+import { getEffectiveRegistry } from '../../src/registry/variants';
 
 use(deepEqualInAnyOrder);
 
@@ -151,6 +152,46 @@ describe('RegistryAccess', () => {
     it('guess for a type that is first-uppercase should return the correct type first', () => {
       const result = registryAccess.guessTypeBySuffix('Cls');
       expect(result?.[0].metadataTypeGuess.name).to.equal('ApexClass');
+    });
+  });
+
+  describe('registryCustomizations path traversal', () => {
+    it('should reject directoryName with traversal sequences at registry load time', () => {
+      expect(() =>
+        getEffectiveRegistry({
+          registryCustomizations: {
+            types: {
+              apexclass: {
+                id: 'apexclass',
+                name: 'ApexClass',
+                directoryName: '../../../../outside',
+              },
+            },
+            suffixes: {},
+            strictDirectoryNames: {},
+            childTypes: {},
+          },
+        })
+      ).to.throw('path segments that resolve outside the project root');
+    });
+
+    it('should allow safe directoryName in registryCustomizations', () => {
+      expect(() =>
+        getEffectiveRegistry({
+          registryCustomizations: {
+            types: {
+              apexclass: {
+                id: 'apexclass',
+                name: 'ApexClass',
+                directoryName: 'custom_classes',
+              },
+            },
+            suffixes: {},
+            strictDirectoryNames: {},
+            childTypes: {},
+          },
+        })
+      ).to.not.throw();
     });
   });
 });

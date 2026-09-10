@@ -874,6 +874,7 @@ v68 introduces the following new types.  Here's their current level of support
 |CnfgMgmtItemValueMap|❌|Not supported, but support could be added|
 |CnfgMgmtRcnRuleSugg|❌|Not supported, but support could be added|
 |CnfgMgmtSvcMapLyot|❌|Not supported, but support could be added|
+|ConstraintOptDef|❌|Not supported, but support could be added|
 |ContentWorkspace|❌|Not supported, but support could be added|
 |ContentWorkspacePermission|❌|Not supported, but support could be added|
 |CustomPreferencePageSettings|✅||
@@ -886,12 +887,14 @@ v68 introduces the following new types.  Here's their current level of support
 |EasyFreemiumSettings|✅||
 |EasySuitesInvoicingSettings|✅||
 |EngmtChannelTypeConfig|❌|Not supported, but support could be added (but not for tracking)|
+|FinancialAppUiConfig|❌|Not supported, but support could be added|
 |FinancialEvaluationDef|❌|Not supported, but support could be added|
 |HealthInsDataSyncDefn|❌|Not supported, but support could be added|
 |HelpSettings|✅||
 |HouseholdNamingConfig|✅||
 |HouseholdUiConfiguration|❌|Not supported, but support could be added|
 |IdpConfiguration|⚠️|Supports deploy/retrieve but not source tracking|
+|IndustriesCommunicationsSalesSettings|✅||
 |IndustriesMaczPricingSettings|✅||
 |IndustriesMfgAdvnOrderSettings|✅||
 |IndustriesRepossessionSettings|✅||
@@ -915,6 +918,7 @@ v68 introduces the following new types.  Here's their current level of support
 |MobilePublisherProject|❌|Not supported, but support could be added|
 |MsTeamsAppSettings|✅||
 |PlanningDimensionDef|❌|Not supported, but support could be added|
+|PlatformComputeApp|❌|Not supported, but support could be added|
 |RecLifecyclCompanCpblDef|❌|Not supported, but support could be added|
 |RecLifecyclCompanDef|❌|Not supported, but support could be added|
 |ReferralIntakeConfiguration|❌|Not supported, but support could be added|
@@ -939,6 +943,7 @@ v68 introduces the following new types.  Here's their current level of support
 |TenantSecurityStepDef|❌|Not supported, but support could be added|
 |TenantSecurityStepDefVer|❌|Not supported, but support could be added|
 |TrustedTelephonyProvider|❌|Not supported, but support could be added|
+|UiWidgetBundle|⚠️|Supports deploy/retrieve but not source tracking|
 |WinProbabilityScoringSetup|❌|Not supported, but support could be added|
 |WorkforceSchedulingSettings|✅||
 
@@ -1009,4 +1014,3 @@ v68 introduces the following new types.  Here's their current level of support
 - WorkSkillRoutingAttribute
 - XOrgHub
 - RuleLibraryDefinition
-- UiWidgetBundle

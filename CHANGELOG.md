@@ -1,3 +1,13 @@
+## [13.3.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.3.1...13.3.2) (2026-09-11)
+
+
+### Bug Fixes
+
+* disable got retry to fix crash on Node 24.20+ ([#1834](https://github.com/forcedotcom/source-deploy-retrieve/issues/1834)) ([3d7f965](https://github.com/forcedotcom/source-deploy-retrieve/commit/3d7f96543758a7f048c1409c28d458825f5fe82c))
+* reject path traversal in registryCustomizations directoryName @W-24132549@ ([#1832](https://github.com/forcedotcom/source-deploy-retrieve/issues/1832)) ([99e04dc](https://github.com/forcedotcom/source-deploy-retrieve/commit/99e04dc2d82083fd98094a0edda55272a9f411c6))
+
+
+
 ## [13.3.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.3.0...13.3.1) (2026-09-04)
 
 

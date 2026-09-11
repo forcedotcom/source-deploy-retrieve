@@ -278,10 +278,12 @@ describe('Streams', () => {
       let writer: streams.StandardWriter;
 
       let ensureFile: SinonStub;
+      let findSymlinkStub: SinonStub;
 
       beforeEach(() => {
         writer = new streams.StandardWriter(rootDestination);
         ensureFile = env.stub(fsUtil, 'ensureFileExists');
+        findSymlinkStub = env.stub(fsUtil, 'findSymlinkOnPath').resolves(undefined);
         const mockPipeline = env.stub().resolves();
         pipelineStub = env.stub(streams, 'getPipeline').returns(mockPipeline);
         env
@@ -449,6 +451,50 @@ describe('Streams', () => {
           const fullDest = join(rootDestination, compWriteInfo.output);
           const expectedLogMsg = `Ignoring duplicate metadata for: ${fullDest}`;
           expect(loggerStub.firstCall.args[0]).to.equal(expectedLogMsg);
+        });
+      });
+
+      it('should throw when a symlink is detected on the write path', async () => {
+        const symlinkPath = join(rootDestination, COMPONENT.type.directoryName);
+        findSymlinkStub.resolves(symlinkPath);
+
+        await writer._write(chunk, '', (err: Error | undefined) => {
+          assert(err instanceof Error);
+          expect(err.message).to.include('symbolic link');
+        });
+      });
+
+      it('should throw when a symlink is detected on the delete path', async () => {
+        const deleteChunk: WriterFormat = {
+          component,
+          writeInfos: [
+            {
+              output: component.getPackageRelativePath(component.xml!, 'metadata'),
+              shouldDelete: true,
+              type: component.type.name,
+              fullName: component.fullName,
+            },
+          ],
+        };
+        const symlinkPath = join(rootDestination, COMPONENT.type.directoryName);
+        findSymlinkStub.resolves(symlinkPath);
+
+        await writer._write(deleteChunk, '', (err: Error | undefined) => {
+          assert(err instanceof Error);
+          expect(err.message).to.include('symbolic link');
+        });
+      });
+
+      it('should call findSymlinkOnPath for each writeInfo', async () => {
+        const mockPipeline = env.stub().resolves();
+        pipelineStub.returns(mockPipeline);
+
+        await writer._write(chunk, '', (err: Error | undefined) => {
+          expect(err).to.be.undefined;
+          expect(findSymlinkStub.callCount).to.equal(chunk.writeInfos.length);
+          for (const call of findSymlinkStub.getCalls()) {
+            expect(call.args[0]).to.equal(rootDestination);
+          }
         });
       });
     });

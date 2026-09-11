@@ -45,3 +45,27 @@ export function searchUp(start: SourcePath, fileName: string): string | undefine
 
   return searchUp(parent, fileName);
 }
+
+/**
+ * Walk every path segment between the root (exclusive) and the destination
+ * (inclusive) and return the first one that is a symbolic link, or undefined if none is.
+ *
+ * Both `createWriteStream` and recursive `mkdir` follow symlinks, so a link planted anywhere
+ * along the destination path can redirect writes outside the root. The root is assumed trusted
+ * and is not checked.
+ */
+export const findSymlinkOnPath = async (root: string, destination: string): Promise<string | undefined> => {
+  const rel = path.relative(root, destination);
+  const segments = rel.split(path.sep).filter((s) => s.length > 0);
+  const paths = segments.map((_, i) => path.join(root, ...segments.slice(0, i + 1)));
+  const results = await Promise.all(
+    paths.map(async (p) => {
+      try {
+        return (await fs.promises.lstat(p)).isSymbolicLink();
+      } catch {
+        return false;
+      }
+    })
+  );
+  return paths.find((_, i) => results[i]);
+};

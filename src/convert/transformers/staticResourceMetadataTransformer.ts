@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { basename, dirname, isAbsolute, join, relative, sep } from 'node:path';
+import { basename, dirname, isAbsolute, join, relative } from 'node:path';
 import { Readable } from 'node:stream';
 import JSZip from 'jszip';
 import { getExtension } from 'mime';
 import { JsonMap } from '@salesforce/ts-types';
-import { createWriteStream, promises as fs } from 'graceful-fs';
+import { createWriteStream } from 'graceful-fs';
 import { Logger } from '@salesforce/core/logger';
 import { Messages } from '@salesforce/core/messages';
 import { SfError } from '@salesforce/core/sfError';
@@ -27,7 +27,7 @@ import { baseName } from '../../utils/path';
 import { ToSourceFormatInput, WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { SourcePath } from '../../common/types';
-import { ensureFileExists } from '../../utils/fileSystemHandler';
+import { ensureFileExists, findSymlinkOnPath } from '../../utils/fileSystemHandler';
 import { getPipeline } from '../streams';
 import { getReplacementStreamForReadable } from '../replacements';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
@@ -269,32 +269,6 @@ const componentIsExpandedArchive = async (component: SourceComponent): Promise<b
     );
   }
   return false;
-};
-
-/**
- * Walk every path segment between the extraction root (exclusive) and the destination
- * (inclusive) and return the first one that is a symbolic link, or undefined if none is.
- *
- * `createWriteStream` and recursive `mkdir` both follow symlinks, so a link planted anywhere
- * along the destination path can redirect the write outside the extraction root even when the
- * zip entry name itself contains no `..`. The root is assumed trusted and is not checked.
- */
-const findSymlinkOnPath = async (root: string, destination: string): Promise<string | undefined> => {
-  const rel = relative(root, destination);
-  const segments = rel.split(sep).filter((s) => s.length > 0);
-  // Build the cumulative path for each segment below the root, then lstat them concurrently.
-  const paths = segments.map((_, i) => join(root, ...segments.slice(0, i + 1)));
-  const results = await Promise.all(
-    paths.map(async (p) => {
-      try {
-        return (await fs.lstat(p)).isSymbolicLink();
-      } catch {
-        // Path segment does not exist yet; it will be created as a regular file/dir, so it is safe.
-        return false;
-      }
-    })
-  );
-  return paths.find((_, i) => results[i]);
 };
 
 async function getStaticResourceZip(component: SourceComponent, content: string): Promise<JSZip> {

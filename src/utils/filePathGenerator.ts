@@ -23,7 +23,11 @@ import { RegistryAccess } from '../registry/registryAccess';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
-const registryAccess = new RegistryAccess();
+let registryAccess: RegistryAccess;
+const getRegistryAccess = (): RegistryAccess => {
+  registryAccess ??= new RegistryAccess();
+  return registryAccess;
+};
 
 /**
  * Provided a metadata fullName and type pair, return an array of file paths that should
@@ -73,7 +77,7 @@ export const filePathsFromMetadataComponent = (
   }
 
   // this needs to be done before the other types because of potential overlaps
-  if (!type.children && Object.keys(registryAccess.getRegistry().childTypes).includes(type.id)) {
+  if (!type.children && Object.keys(getRegistryAccess().getRegistry().childTypes).includes(type.id)) {
     return getDecomposedChildType({ fullName, type }, packageDir);
   }
 
@@ -184,14 +188,14 @@ const generateFolders = ({ fullName, type }: MetadataComponent, packageDirWithTy
       join(
         packageDirWithTypeDir,
         `${originalArray.slice(0, index + 1).join(sep)}.${
-          registryAccess.getTypeByName(folderType).suffix ?? ''
+          getRegistryAccess().getTypeByName(folderType).suffix ?? ''
         }${META_XML_SUFFIX}`
       )
     );
 };
 
 const getDecomposedChildType = ({ fullName, type }: MetadataComponent, packageDir?: string): string[] => {
-  const topLevelType = registryAccess.findType(
+  const topLevelType = getRegistryAccess().findType(
     (t) => isPlainObject(t.children) && Object.keys(t.children.types).includes(type.id)
   );
   if (!topLevelType) {

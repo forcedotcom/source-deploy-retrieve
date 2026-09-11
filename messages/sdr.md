@@ -203,6 +203,14 @@ If the type is available via Metadata API but not in the registry
 - Open an issue <https://github.com/forcedotcom/cli/issues>
 - Add the type via PR. Instructions: <https://github.com/forcedotcom/source-deploy-retrieve/blob/main/contributing/metadata.md>
 
+# error_directory_name_path_traversal
+
+The directoryName '%s' for metadata type '%s' contains path segments that resolve outside the project root. Verify your registryCustomizations in sfdx-project.json do not contain directory traversal sequences.
+
+# error_write_path_outside_root
+
+The write path '%s' resolves outside the root destination '%s'. This may indicate a path traversal attempt via registryCustomizations.
+
 # type_name_suggestions
 
 Confirm the metadata type name is correct. Validate against the registry at:

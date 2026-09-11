@@ -451,6 +451,41 @@ describe('Streams', () => {
           expect(loggerStub.firstCall.args[0]).to.equal(expectedLogMsg);
         });
       });
+
+      it('should throw when write path escapes root destination via path traversal', async () => {
+        const traversalChunk: WriterFormat = {
+          component,
+          writeInfos: [
+            {
+              source: readableMock,
+              output: join('..', '..', '..', '..', 'outside', 'evil.cls'),
+            },
+          ],
+        };
+
+        await writer._write(traversalChunk, '', (err: Error | undefined) => {
+          assert(err instanceof Error);
+          expect(err.message).to.include('resolves outside the root destination');
+        });
+      });
+
+      it('should not throw for absolute write paths (passthrough for merge targets)', async () => {
+        const mockPipeline = env.stub().resolves();
+        pipelineStub.returns(mockPipeline);
+        const absoluteChunk: WriterFormat = {
+          component,
+          writeInfos: [
+            {
+              source: readableMock,
+              output: join(sep, 'some', 'absolute', 'merge', 'target.cls'),
+            },
+          ],
+        };
+
+        await writer._write(absoluteChunk, '', (err: Error | undefined) => {
+          expect(err).to.be.undefined;
+        });
+      });
     });
 
     describe('ZipWriter', () => {

@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-import { basename, dirname, extname, sep, join } from 'node:path';
+import { basename, dirname, extname, sep, join, normalize } from 'node:path';
 import { Optional } from '@salesforce/ts-types';
+import { Messages } from '@salesforce/core';
 import { SfdxFileFormat } from '../convert/types';
 import { SourcePath } from '../common/types';
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../common/constants';
 import { MetadataXml } from '../resolve/types';
 import { MetadataType } from '../registry/types';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 /**
  * Get the file or directory name at the end of a path. Different from `path.basename`
@@ -126,11 +130,22 @@ export function parseNestedFullName(fsPath: string, directoryName: string): stri
   }
   const pathPrefix = pathSplits.slice(pathSplits.lastIndexOf(directoryName) + 1);
   // the eslint comment should remain until strictMode is fully implemented
-   
+
   const fileName = (pathSplits.pop() as string).replace('-meta.xml', '').split('.')[0];
   pathPrefix[pathPrefix.length - 1] = fileName;
   return pathPrefix.join('/');
 }
+
+/**
+ * Throws if a directoryName contains path traversal sequences (e.g. '..').
+ * The normalized result is checked to ensure it stays within the base directory.
+ */
+const ensureSafeDirectoryName = (directoryName: string, typeName: string): void => {
+  const normalized = normalize(directoryName);
+  if (normalized.startsWith('..') || normalized.startsWith(sep + '..') || normalized.includes(sep + '..' + sep)) {
+    throw messages.createError('error_directory_name_path_traversal', [directoryName, typeName]);
+  }
+};
 
 export const calculateRelativePath =
   (format: SfdxFileFormat) =>
@@ -139,6 +154,11 @@ export const calculateRelativePath =
   (fsPath: string): string => {
     const base = format === 'source' ? DEFAULT_PACKAGE_ROOT_SFDX : '';
     const { directoryName, suffix, inFolder, folderType, folderContentType } = types.self;
+
+    ensureSafeDirectoryName(directoryName, types.self.name);
+    if (types.parentType) {
+      ensureSafeDirectoryName(types.parentType.directoryName, types.parentType.name);
+    }
 
     // if there isn't a suffix, assume this is a mixed content component that must
     // reside in the directoryName of its type. trimUntil maintains the folder structure

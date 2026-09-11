@@ -17,6 +17,7 @@ import { join } from 'node:path';
 import { expect } from 'chai';
 import { META_XML_SUFFIX } from '../../src/common';
 import { parseMetadataXml, trimUntil, baseName, parseNestedFullName, baseWithoutSuffixes } from '../../src/utils';
+import { calculateRelativePath } from '../../src/utils/path';
 import { MetadataType } from '../../src/registry/types';
 
 describe('Path Utils', () => {
@@ -130,6 +131,70 @@ describe('Path Utils', () => {
     it('Should return undefined for file name not in metadata xml format', () => {
       const path = join(root, 'a.ext');
       expect(parseMetadataXml(path)).to.be.undefined;
+    });
+  });
+
+  describe('calculateRelativePath', () => {
+    const makeType = (directoryName: string, overrides: Partial<MetadataType> = {}): MetadataType => ({
+      id: 'apexclass',
+      name: 'ApexClass',
+      directoryName,
+      suffix: 'cls',
+      ...overrides,
+    });
+
+    it('should produce a valid relative path for a safe directoryName', () => {
+      const result = calculateRelativePath('source')({ self: makeType('classes') })('MyClass')(
+        join('some', 'path', 'classes', 'MyClass.cls')
+      );
+      expect(result).to.equal(join('main', 'default', 'classes', 'MyClass.cls'));
+    });
+
+    it('should throw for directoryName with path traversal (../../../../outside)', () => {
+      expect(() =>
+        calculateRelativePath('source')({ self: makeType('../../../../outside') })('MyClass')(
+          join('some', 'path', 'classes', 'MyClass.cls')
+        )
+      ).to.throw('path segments that resolve outside the project root');
+    });
+
+    it('should throw for directoryName with single ..', () => {
+      expect(() =>
+        calculateRelativePath('source')({ self: makeType('..') })('MyClass')(
+          join('some', 'path', 'classes', 'MyClass.cls')
+        )
+      ).to.throw('path segments that resolve outside the project root');
+    });
+
+    it('should throw for directoryName with embedded traversal (foo/../../bar)', () => {
+      expect(() =>
+        calculateRelativePath('source')({ self: makeType('foo/../../bar') })('MyClass')(
+          join('some', 'path', 'classes', 'MyClass.cls')
+        )
+      ).to.throw('path segments that resolve outside the project root');
+    });
+
+    it('should throw for parent type directoryName with traversal', () => {
+      const parentType: MetadataType = {
+        id: 'territory2model',
+        name: 'Territory2Model',
+        directoryName: '../../../../outside',
+        folderType: 'territory2model',
+      };
+      expect(() =>
+        calculateRelativePath('source')({
+          self: makeType('territory2', { folderType: 'territory2model' }),
+          parentType,
+        })('MyTerritory')(join('some', 'path', 'territory2', 'MyTerritory.territory2-meta.xml'))
+      ).to.throw('path segments that resolve outside the project root');
+    });
+
+    it('should allow subdirectory names without traversal', () => {
+      expect(() =>
+        calculateRelativePath('source')({ self: makeType('custom/subdir') })('MyClass')(
+          join('some', 'path', 'classes', 'MyClass.cls')
+        )
+      ).to.not.throw();
     });
   });
 

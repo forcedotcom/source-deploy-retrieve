@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Logger, SfProject, SfProjectJson, Lifecycle, SfError } from '@salesforce/core';
+import { normalize, sep } from 'node:path';
+import { Logger, Messages, SfProject, SfProjectJson, Lifecycle, SfError } from '@salesforce/core';
 import { MetadataRegistry } from './types';
 // The static import of json file should never be changed,
 // other read methods might make esbuild fail to bundle the json file
 import * as registryData from './metadataRegistry.json';
 import { presetMap } from './presets/presetMap';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 type ProjectVariants = {
   registryCustomizations?: MetadataRegistry;
@@ -39,8 +43,11 @@ export type RegistryLoadInput =
   | ProjectVariants;
 
 /** combine the standard registration with any overrides specific in the sfdx-project.json */
-export const getEffectiveRegistry = (input?: RegistryLoadInput): Readonly<MetadataRegistry> =>
-  removeEmptyStrings(
+export const getEffectiveRegistry = (input?: RegistryLoadInput): Readonly<MetadataRegistry> => {
+  if (input?.registryCustomizations) {
+    validateCustomizationDirectoryNames(input.registryCustomizations);
+  }
+  return removeEmptyStrings(
     firstLevelMerge(
       registryData as MetadataRegistry,
       mergeVariants(
@@ -48,6 +55,7 @@ export const getEffectiveRegistry = (input?: RegistryLoadInput): Readonly<Metada
       )
     )
   );
+};
 
 /** read the project to get additional registry customizations and sourceBehaviorOptions */
 const getProjectVariants = (projectDir?: string): ProjectVariants => {
@@ -60,7 +68,9 @@ const getProjectVariants = (projectDir?: string): ProjectVariants => {
   }
 
   // there might not be any customizations in a project, so we default to the emptyRegistry
-  const registryCustomizations = projJson.get<MetadataRegistry>('registryCustomizations') ?? emptyRegistry;
+  const registryCustomizations = validateCustomizationDirectoryNames(
+    projJson.get<MetadataRegistry>('registryCustomizations') ?? emptyRegistry
+  );
   const presets = [
     ...new Set([
       // TODO: deprecated, remove this
@@ -115,6 +125,22 @@ const emptyRegistry = {
   suffixes: {},
   strictDirectoryNames: {},
 } as const satisfies MetadataRegistry;
+
+/** Reject registryCustomizations whose directoryName contains path traversal sequences. */
+const validateCustomizationDirectoryNames = (registry: MetadataRegistry): MetadataRegistry => {
+  for (const [typeId, typeDef] of Object.entries(registry.types ?? {})) {
+    if (typeDef.directoryName) {
+      const normalized = normalize(typeDef.directoryName);
+      if (normalized.startsWith('..') || normalized.startsWith(sep + '..') || normalized.includes(sep + '..' + sep)) {
+        throw messages.createError('error_directory_name_path_traversal', [
+          typeDef.directoryName,
+          typeDef.name ?? typeId,
+        ]);
+      }
+    }
+  }
+  return registry;
+};
 
 /** merge the children of the top-level properties (ex: types, suffixes, etc) on 2 registries */
 export const firstLevelMerge = (original: MetadataRegistry, overrides: MetadataRegistry): MetadataRegistry => ({

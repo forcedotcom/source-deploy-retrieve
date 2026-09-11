@@ -868,6 +868,9 @@ v68 introduces the following new types.  Here's their current level of support
 |BotEmailDefinition|❌|Not supported, but support could be added|
 |BusinessValueMetricsSettings|✅||
 |CnfgItmTypAttrSrcRcnRule|❌|Not supported, but support could be added|
+|CnfgItmTypCmplCond|❌|Not supported, but support could be added|
+|CnfgItmTypCmplCrit|❌|Not supported, but support could be added|
+|CnfgItmTypDefCmplCrit|❌|Not supported, but support could be added|
 |CnfgItmTypSrcRcnRule|❌|Not supported, but support could be added|
 |CnfgMgmtDataBndl|❌|Not supported, but support could be added|
 |CnfgMgmtItemFieldMap|❌|Not supported, but support could be added|
@@ -931,6 +934,7 @@ v68 introduces the following new types.  Here's their current level of support
 |SecondaryTelephonyProvider|❌|Not supported, but support could be added|
 |SecurityCustomBaseline|❌|Not supported, but support could be added|
 |SensitiveDataRuleElmntGrp|❌|Not supported, but support could be added|
+|ServiceCatalogSettings|✅||
 |ServiceHamSettings|✅||
 |ServiceHeliosSettings|✅||
 |ServiceItamSettings|✅||

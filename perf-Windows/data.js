@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789154232465,
+  "lastUpdate": 1789161255370,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -109936,6 +109936,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 25658,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "distinct": true,
+          "id": "c41f628df0b3fab080827900406a1bd710f7b75b",
+          "message": "fix: defer RegistryAccess construction to avoid throw at module load time\n\nThe module-level `new RegistryAccess()` in filePathGenerator.ts caused\nthe directoryName validation to run during oclif command discovery,\nproducing multiple cascading warnings/errors. Making it lazy ensures\nthe validation only fires at command execution time.",
+          "timestamp": "2026-09-11T15:05:55-06:00",
+          "tree_id": "97fb440648820dcaeba38bc6323594201e0f6d3d",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/c41f628df0b3fab080827900406a1bd710f7b75b"
+        },
+        "date": 1789161235588,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 728,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4325,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 4070,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 8066,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1029,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 11367,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10544,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 11500,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1817,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 20345,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 19868,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 21120,
             "unit": "ms"
           }
         ]

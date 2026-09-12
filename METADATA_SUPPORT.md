@@ -939,6 +939,7 @@ v68 introduces the following new types.  Here's their current level of support
 |ServiceHeliosSettings|✅||
 |ServiceItamSettings|✅||
 |ServiceItomSettings|✅||
+|ServiceRepAssistantSettings|✅||
 |StatisticalDealInsightsSettings|✅||
 |TelephonyProvider|❌|Not supported, but support could be added|
 |TenantSecurityPlaybookDef|❌|Not supported, but support could be added|

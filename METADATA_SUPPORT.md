@@ -928,6 +928,7 @@ v68 introduces the following new types.  Here's their current level of support
 |ReferralManagementSettings|✅||
 |ReplyEmailConfig|❌|Not supported, but support could be added (but not for tracking)|
 |SalesCloudSurfacesSettings|✅||
+|SalesEmailAssistantSettings|✅||
 |SalesPlanDataSource|❌|Not supported, but support could be added|
 |ScndTelephPrvdOtbdDtl|❌|Not supported, but support could be added|
 |ScopedAccess|❌|Not supported, but support could be added|

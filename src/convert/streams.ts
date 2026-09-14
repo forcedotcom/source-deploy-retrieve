@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { isAbsolute, join, relative } from 'node:path';
+import { isAbsolute, join, normalize, relative, resolve as pathResolve, sep } from 'node:path';
 import { pipeline as cbPipeline, Readable, Transform, Writable, Stream } from 'node:stream';
 import { promisify } from 'node:util';
 import JSZip from 'jszip';
@@ -341,10 +341,20 @@ const isWriteInfoWithSource = (writeInfo: WriteInfo): writeInfo is WriteInfo & {
 
 const makeWriteInfoAbsolute =
   (rootDestination = '') =>
-  (writeInfo: WriteInfo): WriteInfo => ({
-    ...writeInfo,
-    output: isAbsolute(writeInfo.output) ? writeInfo.output : join(rootDestination, writeInfo.output),
-  });
+  (writeInfo: WriteInfo): WriteInfo => {
+    if (isAbsolute(writeInfo.output)) {
+      return writeInfo;
+    }
+    const absoluteOutput = join(rootDestination, writeInfo.output);
+    if (rootDestination) {
+      const normalizedRoot = normalize(pathResolve(rootDestination));
+      const normalizedOutput = normalize(pathResolve(absoluteOutput));
+      if (!normalizedOutput.startsWith(normalizedRoot + sep) && normalizedOutput !== normalizedRoot) {
+        throw messages.createError('error_write_path_outside_root', [writeInfo.output, rootDestination]);
+      }
+    }
+    return { ...writeInfo, output: absoluteOutput };
+  };
 
 const existsOrDoesntMatchIgnored =
   (forceignore: ForceIgnore, logger: Logger) =>

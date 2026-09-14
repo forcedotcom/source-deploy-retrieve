@@ -26,6 +26,9 @@ const getProxiedOptions = (url: string): OptionsOfTextResponseBody => ({
   timeout: {
     request: 10_000,
   },
+  retry: {
+    limit: 0,
+  },
   agent: {
     https: new ProxyAgent(),
   },

@@ -400,8 +400,7 @@ export const normalizePollingInputs = (
   return pollingOptions;
 };
 
-/** yeah, there's a size property on CS.  But we want the actual number of source components */
-const sizeOfComponentSet = (cs?: ComponentSet): number => cs?.getSourceComponents().toArray().length ?? 0;
+const sizeOfComponentSet = (cs?: ComponentSet): number => cs?.size ?? 0;
 
 /** based on the size of the deploy (zip bytes for large deploys, component count for small ones), pick a reasonable polling frequency */
 export const calculatePollingFrequency = (componentCount: number, zipSize?: number): number => {

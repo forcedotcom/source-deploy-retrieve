@@ -862,6 +862,9 @@ v68 introduces the following new types.  Here's their current level of support
 |AiAgentDefinition|✅||
 |AiAgentDefinitionPlanner|❌|Not supported, but support could be added|
 |AiAgentDefinitionVersion|✅||
+|AnalyticsAgentDefinition|❌|Not supported, but support could be added|
+|AnalyticsLlmOverride|❌|Not supported, but support could be added|
+|AnlytAgntFlbkSmntcModel|❌|Not supported, but support could be added|
 |ApptBookingConfig|❌|Not supported, but support could be added|
 |ApptBookingUrlConfig|❌|Not supported, but support could be added|
 |AutomationPipeline|❌|Not supported, but support could be added|
@@ -922,6 +925,7 @@ v68 introduces the following new types.  Here's their current level of support
 |MsTeamsAppSettings|✅||
 |PlanningDimensionDef|❌|Not supported, but support could be added|
 |PlatformComputeApp|❌|Not supported, but support could be added|
+|PrivacyOrgConfig|❌|Not supported, but support could be added|
 |RecLifecyclCompanCpblDef|❌|Not supported, but support could be added|
 |RecLifecyclCompanDef|❌|Not supported, but support could be added|
 |ReferralIntakeConfiguration|❌|Not supported, but support could be added|

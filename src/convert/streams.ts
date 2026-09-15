@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { isAbsolute, join, normalize, resolve as pathResolve, sep } from 'node:path';
+import { isAbsolute, join, normalize, relative, resolve as pathResolve, sep } from 'node:path';
 import { pipeline as cbPipeline, Readable, Transform, Writable, Stream } from 'node:stream';
 import { promisify } from 'node:util';
 import JSZip from 'jszip';
@@ -21,13 +21,13 @@ import { createWriteStream, existsSync, promises as fsPromises } from 'graceful-
 import { JsonMap } from '@salesforce/ts-types';
 import { XMLBuilder } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core/logger';
-import { Messages } from '@salesforce/core';
+import { Messages } from '@salesforce/core/messages';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { SourcePath } from '../common/types';
 import { XML_COMMENT_PROP_NAME, XML_DECL } from '../common/constants';
 import { ComponentSet } from '../collections/componentSet';
 import { RegistryAccess } from '../registry/registryAccess';
-import { ensureFileExists } from '../utils/fileSystemHandler';
+import { ensureFileExists, findSymlinkOnPath } from '../utils/fileSystemHandler';
 import { ComponentStatus, FileResponseSuccess } from '../client/types';
 import { ForceIgnore } from '../resolve';
 import { MetadataTransformerFactory } from './transformers/metadataTransformerFactory';
@@ -167,6 +167,17 @@ export class StandardWriter extends ComponentWriter {
             .map(makeWriteInfoAbsolute(this.rootDestination))
             .filter(existsOrDoesntMatchIgnored(this.forceignore, this.logger)) // Skip files matched by default ignore
             .map(async (info) => {
+              if (this.rootDestination) {
+                const symlink = await findSymlinkOnPath(this.rootDestination, info.output);
+                if (symlink) {
+                  throw messages.createError('error_retrieve_symlink', [
+                    info.output,
+                    relative(this.rootDestination, symlink),
+                    this.rootDestination,
+                  ]);
+                }
+              }
+
               if (info.shouldDelete) {
                 this.deleted.push({
                   filePath: info.output,

@@ -21,6 +21,7 @@ import { XMLParser } from 'fast-xml-parser';
 import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../src';
 import { BotVersionFilter } from '../../src/client/types';
 import { extractVersionNumber, filterAgentComponents, filterBotVersionEntries } from '../../src/client/retrieveExtract';
+import { findSymlinkOnPathSync } from '../../src/utils/fileSystemHandler';
 
 describe('retrieveExtract - Version Filtering', () => {
   const registryAccess = new RegistryAccess();
@@ -931,5 +932,37 @@ describe('partial-delete symlink protection', () => {
 
     expect(fs.existsSync(symlinkPath)).to.be.false;
     expect(fs.existsSync(join(externalDir, 'important.txt'))).to.be.true;
+  });
+
+  it('findSymlinkOnPathSync catches ancestor symlink in partial-delete scenario', () => {
+    // Simulate Eric's repro: digitalExperiences/ is a symlink to an external directory.
+    // A retrieve zip is missing one content file, so partial-delete would try to rmSync it.
+    // The ancestor-symlink check must prevent that deletion.
+    const packageRoot = join(tmpDir, 'force-app', 'main', 'default');
+    const externalDir = join(tmpDir, 'outside-project');
+    fs.mkdirSync(packageRoot, { recursive: true });
+    fs.mkdirSync(join(externalDir, 'site', 'MySite1', 'sfdc_cms__view', 'home'), { recursive: true });
+
+    const victimFile = join(externalDir, 'site', 'MySite1', 'sfdc_cms__view', 'home', 'localOnly.json');
+    fs.writeFileSync(victimFile, '{"local":"only content"}');
+
+    // Replace digitalExperiences with a symlink to the external directory
+    const deDir = join(packageRoot, 'digitalExperiences');
+    fs.symlinkSync(externalDir, deDir);
+
+    // This is the file path that handlePartialDeleteMerges would construct:
+    // packageRoot/digitalExperiences/site/MySite1/sfdc_cms__view/home/localOnly.json
+    const candidatePath = join(deDir, 'site', 'MySite1', 'sfdc_cms__view', 'home', 'localOnly.json');
+
+    // Verify the file is reachable through the symlink
+    expect(fs.existsSync(candidatePath)).to.be.true;
+
+    // The ancestor-aware check must detect the symlinked digitalExperiences directory
+    const symlink = findSymlinkOnPathSync(packageRoot, candidatePath);
+    expect(symlink).to.equal(deDir);
+
+    // Because findSymlinkOnPathSync returns truthy, deleteFilePath would skip the rmSync.
+    // Verify the external file survives.
+    expect(fs.existsSync(victimFile)).to.be.true;
   });
 });

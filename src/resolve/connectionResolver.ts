@@ -38,6 +38,18 @@ export type ResolveConnectionResult = {
 let requestCount = 0;
 let shouldQueryStandardValueSets = false;
 
+function isJWTAccessToken(token: string | undefined | null): boolean {
+  if (!token) return false;
+  const parts = token.split('.');
+  if (parts.length !== 3) return false;
+  try {
+    JSON.parse(Buffer.from(parts[0], 'base64url').toString());
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 let logger: Logger;
 const getLogger = (): Logger => {
   if (!logger) {
@@ -89,6 +101,12 @@ export class ConnectionResolver {
   public async resolve(
     componentFilter = (component: Partial<FileProperties>): boolean => isPlainObject(component)
   ): Promise<ResolveConnectionResult> {
+    if (isJWTAccessToken(this.connection.accessToken) && parseInt(this.connection.getApiVersion(), 10) < 68) {
+      void Lifecycle.getInstance().emitWarning(
+        messages.getMessage('warning_jwt_api_version', [this.connection.getApiVersion()])
+      );
+    }
+
     // Aggregate array of metadata records in the org
     let aggregator: Array<Partial<FileProperties>> = [];
     // Folder component type names. Each array value has the form [type::folder]

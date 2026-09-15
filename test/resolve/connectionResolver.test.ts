@@ -16,7 +16,7 @@
 
 import { assert, expect, use } from 'chai';
 import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
-import { Connection } from '@salesforce/core';
+import { Connection, Lifecycle } from '@salesforce/core';
 import { env } from '@salesforce/kit';
 import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { ManageableState } from '../../src/client/types';
@@ -503,6 +503,51 @@ describe('ConnectionResolver', () => {
         },
       ];
       expect(result.components).to.deep.equalInAnyOrder(expected);
+    });
+  });
+
+  describe('JWT access token warning', () => {
+    const JWT_TOKEN = 'eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ0ZXN0In0.signature';
+
+    it('should warn when connection has JWT token and API version below 68', async () => {
+      $$.SANDBOX.stub(connection.metadata, 'list');
+      const emitWarningSpy = $$.SANDBOX.spy(Lifecycle.getInstance(), 'emitWarning');
+
+      connection.accessToken = JWT_TOKEN;
+      connection.setApiVersion('64.0');
+
+      const resolver = new ConnectionResolver(connection);
+      await resolver.resolve();
+
+      expect(emitWarningSpy.calledOnce).to.be.true;
+      expect(emitWarningSpy.firstCall.args[0]).to.include('JWT-based access tokens');
+      expect(emitWarningSpy.firstCall.args[0]).to.include('64.0');
+    });
+
+    it('should not warn when connection has JWT token and API version 68 or above', async () => {
+      $$.SANDBOX.stub(connection.metadata, 'list');
+      const emitWarningSpy = $$.SANDBOX.spy(Lifecycle.getInstance(), 'emitWarning');
+
+      connection.accessToken = JWT_TOKEN;
+      connection.setApiVersion('68.0');
+
+      const resolver = new ConnectionResolver(connection);
+      await resolver.resolve();
+
+      expect(emitWarningSpy.called).to.be.false;
+    });
+
+    it('should not warn when connection has non-JWT token and API version below 68', async () => {
+      $$.SANDBOX.stub(connection.metadata, 'list');
+      const emitWarningSpy = $$.SANDBOX.spy(Lifecycle.getInstance(), 'emitWarning');
+
+      connection.accessToken = '00D000000000000!AQcAQNotAJwtToken';
+      connection.setApiVersion('64.0');
+
+      const resolver = new ConnectionResolver(connection);
+      await resolver.resolve();
+
+      expect(emitWarningSpy.called).to.be.false;
     });
   });
 

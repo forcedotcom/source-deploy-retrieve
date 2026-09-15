@@ -525,7 +525,7 @@ const buildFileResponsesFromComponentSet =
   (response: MetadataApiDeployStatus): FileResponse[] => {
     const responseMessages = getDeployMessages(response);
 
-    const fileResponses: FileResponse[] = (cs.getSourceComponents().toArray() ?? [])
+    const fileResponses: FileResponse[] = [...cs.getSourceComponents()]
       .flatMap((deployedComponent): FileResponse[] => {
         // UIBundle bundles get per-file status via UIBundleResource messages
         if (

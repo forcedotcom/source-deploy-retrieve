@@ -69,3 +69,21 @@ export const findSymlinkOnPath = async (root: string, destination: string): Prom
   );
   return paths.find((_, i) => results[i]);
 };
+
+/** Synchronous variant of {@link findSymlinkOnPath} for use in sync call-chains. */
+export const findSymlinkOnPathSync = (root: string, destination: string): string | undefined => {
+  const rel = path.relative(root, destination);
+  if (rel.startsWith('..')) return destination;
+  const segments = rel.split(path.sep).filter((s) => s.length > 0);
+  for (let i = 0; i < segments.length; i++) {
+    const p = path.join(root, ...segments.slice(0, i + 1));
+    try {
+      if (fs.lstatSync(p).isSymbolicLink()) {
+        return p;
+      }
+    } catch {
+      // path segment doesn't exist, skip
+    }
+  }
+  return undefined;
+};

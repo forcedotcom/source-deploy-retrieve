@@ -25,6 +25,7 @@ import { ComponentSet } from '../collections';
 import { ZipTreeContainer } from '../resolve';
 import { SourceComponent, SourceComponentWithContent } from '../resolve/sourceComponent';
 import { fnJoin } from '../utils/path';
+import { findSymlinkOnPathSync } from '../utils/fileSystemHandler';
 import { correctComments, handleSpecialEntities } from '../convert/streams';
 import {
   BotVersionFilter,
@@ -117,7 +118,7 @@ export const extract = async ({
 
     if (merge) {
       partialDeleteFileResponses.push(
-        ...handlePartialDeleteMerges({ retrievedComponents, tree, mainComponents, logger })
+        ...handlePartialDeleteMerges({ retrievedComponents, tree, mainComponents, logger, packageRoot: pkg.outputDir })
       );
     }
 
@@ -148,11 +149,13 @@ const handlePartialDeleteMerges = ({
   retrievedComponents,
   tree,
   logger,
+  packageRoot,
 }: {
   mainComponents?: ComponentSet;
   retrievedComponents: SourceComponent[];
   tree: ZipTreeContainer;
   logger: Logger;
+  packageRoot: string;
 }): FileResponse[] => {
   // Find all merge (local) components that support partial delete.
   const partialDeleteComponents = new Map<string, PartialDeleteComp>(
@@ -179,7 +182,9 @@ const handlePartialDeleteMerges = ({
           return matchingLocalComp.contentList
             .filter((fileName) => !remoteContentList.has(fileName))
             .filter((fileName) => !pathOrSomeChildIsIgnored(logger)(comp)(matchingLocalComp)(fileName))
-            .filter((fileName) => !isSymlinkSync(path.join(matchingLocalComp.contentPath, fileName)))
+            .filter(
+              (fileName) => !findSymlinkOnPathSync(packageRoot, path.join(matchingLocalComp.contentPath, fileName))
+            )
             .map(
               (fileName): FileResponseSuccess => ({
                 fullName: comp.fullName,
@@ -188,7 +193,7 @@ const handlePartialDeleteMerges = ({
                 filePath: path.join(matchingLocalComp.contentPath, fileName),
               })
             )
-            .map(deleteFilePath(logger));
+            .map(deleteFilePath(logger, packageRoot));
         });
 };
 
@@ -237,20 +242,13 @@ const isForceIgnored =
     return ignored;
   };
 
-const isSymlinkSync = (filePath: string): boolean => {
-  try {
-    return fs.lstatSync(filePath).isSymbolicLink();
-  } catch {
-    return false;
-  }
-};
-
 const deleteFilePath =
-  (logger: Logger) =>
+  (logger: Logger, packageRoot: string) =>
   (fr: FileResponseSuccess): FileResponseSuccess => {
     if (fr.filePath) {
-      if (isSymlinkSync(fr.filePath)) {
-        logger.debug(`Skipping delete of symlink ${fr.filePath} to prevent modification of files outside the project.`);
+      const symlink = findSymlinkOnPathSync(packageRoot, fr.filePath);
+      if (symlink) {
+        logger.debug(`Skipping delete of ${fr.filePath} — path segment ${symlink} is a symbolic link.`);
         return fr;
       }
       logger.debug(

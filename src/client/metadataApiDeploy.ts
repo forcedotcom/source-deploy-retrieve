@@ -68,12 +68,15 @@ export class DeployResult implements MetadataTransferResult {
     // this involves FS operations, so only perform once!
     if (!this.fileResponses) {
       this.fileResponses = [
-        // removes duplicates from the file responses by parsing the object into a string, used as the key of the map
         ...new Map(
           (this.components
             ? buildFileResponsesFromComponentSet(this.components)(this.response)
             : buildFileResponses(this.response)
-          ).map((v) => [JSON.stringify(v), v])
+          ).map((v) => {
+            const base = `${v.type}#${v.fullName}#${v.filePath ?? ''}#${v.state}`;
+            const key = 'error' in v ? `${base}#${v.error}#${String(v.lineNumber)}#${String(v.columnNumber)}` : base;
+            return [key, v] as const;
+          })
         ).values(),
       ];
     }
@@ -465,24 +468,26 @@ const deleteNotFoundToFileResponses =
           : [];
       });
 
+const MANIFEST_FILES = new Set([
+  'package.xml',
+  'destructiveChanges.xml',
+  'destructiveChangesPost.xml',
+  'destructiveChangesPre.xml',
+]);
+
 const warnIfUnmatchedServerResult =
   (fr: FileResponse[]) =>
-  (messageMap: Map<string, DeployMessage[]>): void[] =>
-    // keep the parents and children separated for MPD scenarios where we have a parent in one, children in another package
-    [...messageMap.keys()].flatMap((key) => {
+  (messageMap: Map<string, DeployMessage[]>): void[] => {
+    const frKeys = new Set(fr.map((c) => `${c.type}#${c.fullName}`));
+
+    return [...messageMap.keys()].flatMap((key) => {
       const [type, fullName] = key.split('#', 2);
 
       // UIBundleResource messages are already handled by the parent UIBundle component
       const consumedByWebApp =
         type === 'UIBundleResource' && fr.some((c) => c.type === 'UIBundle' && fullName.startsWith(`${c.fullName}/`));
 
-      if (
-        !consumedByWebApp &&
-        !fr.find((c) => c.type === type && c.fullName === fullName) &&
-        !['package.xml', 'destructiveChanges.xml', 'destructiveChangesPost.xml', 'destructiveChangesPre.xml'].includes(
-          fullName
-        )
-      ) {
+      if (!consumedByWebApp && !frKeys.has(key) && !MANIFEST_FILES.has(fullName)) {
         const deployMessage = messageMap.get(key)!.at(0)!;
 
         // Don't warn for deleted components - not found in the component set (pre-destructiveChanges)
@@ -498,6 +503,7 @@ const warnIfUnmatchedServerResult =
         );
       }
     });
+  };
 const buildFileResponses = (response: MetadataApiDeployStatus): FileResponse[] =>
   ensureArray(response.details?.componentSuccesses)
     .concat(ensureArray(response.details?.componentFailures))
@@ -525,7 +531,7 @@ const buildFileResponsesFromComponentSet =
   (response: MetadataApiDeployStatus): FileResponse[] => {
     const responseMessages = getDeployMessages(response);
 
-    const fileResponses: FileResponse[] = (cs.getSourceComponents().toArray() ?? [])
+    const fileResponses: FileResponse[] = [...cs.getSourceComponents()]
       .flatMap((deployedComponent): FileResponse[] => {
         // UIBundle bundles get per-file status via UIBundleResource messages
         if (

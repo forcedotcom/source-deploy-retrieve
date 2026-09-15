@@ -68,12 +68,15 @@ export class DeployResult implements MetadataTransferResult {
     // this involves FS operations, so only perform once!
     if (!this.fileResponses) {
       this.fileResponses = [
-        // removes duplicates from the file responses by parsing the object into a string, used as the key of the map
         ...new Map(
           (this.components
             ? buildFileResponsesFromComponentSet(this.components)(this.response)
             : buildFileResponses(this.response)
-          ).map((v) => [JSON.stringify(v), v])
+          ).map((v) => {
+            const base = `${v.type}#${v.fullName}#${v.filePath ?? ''}#${v.state}`;
+            const key = 'error' in v ? `${base}#${v.error}#${String(v.lineNumber)}#${String(v.columnNumber)}` : base;
+            return [key, v] as const;
+          })
         ).values(),
       ];
     }

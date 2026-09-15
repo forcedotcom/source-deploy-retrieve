@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789407849826,
+  "lastUpdate": 1789482468384,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -110104,6 +110104,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 24325,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "distinct": true,
+          "id": "9f87e14d7d592242559aaed931a3ce4f475c425e",
+          "message": "fix: close ancestor-symlink gap in partial-delete path\n\nThe delete path only checked the leaf segment for symlinks, so a\nsymlinked ancestor directory (e.g. digitalExperiences/ → external)\ncould let rmSync delete files outside the project before the write-path\nguard fired.\n\n- Add findSymlinkOnPathSync to walk all segments from package root\n- Use it in the pre-filter (before FileResponse creation) and as\n  defense-in-depth in deleteFilePath\n- Guard both findSymlinkOnPath variants against destinations that\n  resolve outside the root (.. traversal)\n- Remove now-dead isSymlinkSync helper",
+          "timestamp": "2026-09-15T08:18:42-06:00",
+          "tree_id": "60421a4488ed3d383f2fc23c1c14a5b378c61a5a",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/9f87e14d7d592242559aaed931a3ce4f475c425e"
+        },
+        "date": 1789482449273,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 696,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4680,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 4107,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 8910,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1118,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 13854,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 11408,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 16042,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1866,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 23255,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 20762,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 25051,
             "unit": "ms"
           }
         ]

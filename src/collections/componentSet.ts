@@ -91,7 +91,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public botVersionFilters?: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
   private logger: Logger;
   private readonly registry: RegistryAccess;
-  private resolvedApiVersion?: string;
   // all components stored here, regardless of what manifest they belong to
   private components = new DecodeableMap<string, DecodeableMap<string, SourceComponent>>();
 
@@ -754,8 +753,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @returns string The resolved API version to use in a manifest
    */
   private async getApiVersion(): Promise<string> {
-    if (this.resolvedApiVersion) return this.resolvedApiVersion;
-
     let version = this.sourceApiVersion ?? this.apiVersion;
 
     if (!version) {
@@ -784,7 +781,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         this.logger.warn(messages.getMessage('missingApiVersion'));
       }
     }
-    this.resolvedApiVersion = version;
     return version;
   }
 }

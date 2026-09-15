@@ -96,8 +96,10 @@ export function trimUntil(fsPath: SourcePath, part: string, untilLast = false): 
  * @param fsPath - File path to parse
  * @returns MetadataXml info or undefined
  */
+const METADATA_XML_REGEX = /(.+)\.(.+)-meta\.xml/;
+
 export function parseMetadataXml(fsPath: string): Optional<MetadataXml> {
-  const match = new RegExp(/(.+)\.(.+)-meta\.xml/).exec(basename(fsPath));
+  const match = METADATA_XML_REGEX.exec(basename(fsPath));
   if (match) {
     return { fullName: match[1], suffix: match[2], path: fsPath };
   }

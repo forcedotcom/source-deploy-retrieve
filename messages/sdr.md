@@ -211,6 +211,10 @@ The directoryName '%s' for metadata type '%s' contains path segments that resolv
 
 The write path '%s' resolves outside the root destination '%s'. This may indicate a path traversal attempt via registryCustomizations.
 
+# warning_jwt_api_version
+
+This org uses JWT-based access tokens, which require API version 68.0 or later for SOAP metadata operations. The current API version is %s, so metadata listing may return empty or incomplete results. To resolve, use --api-version 68 or update sourceApiVersion in sfdx-project.json.
+
 # type_name_suggestions
 
 Confirm the metadata type name is correct. Validate against the registry at:

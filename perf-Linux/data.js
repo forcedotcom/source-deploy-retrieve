@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789568980502,
+  "lastUpdate": 1789569496660,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -116048,6 +116048,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 13895,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shantanumishra005@gmail.com",
+            "name": "Shantanu Mishra",
+            "username": "Shantanu005"
+          },
+          "committer": {
+            "email": "shantanumishra005@gmail.com",
+            "name": "Shantanu Mishra",
+            "username": "Shantanu005"
+          },
+          "distinct": true,
+          "id": "2595ade428e099ffdac37c22ca04fef7ec75b4de",
+          "message": "feat: add ReferralIntakeConfiguration to metadata registry\n\nAdds the ReferralIntakeConfiguration metadata type to the SDR registry.\nPreviously flagged in METADATA_SUPPORT.md as 'Not supported, but support\ncould be added'.\n\n@W-24343253@",
+          "timestamp": "2026-09-16T14:05:47+05:30",
+          "tree_id": "5ec6cd5b05ebfe321392e7e488230c4fc1bb9b4e",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/2595ade428e099ffdac37c22ca04fef7ec75b4de"
+        },
+        "date": 1789569484257,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 272,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2252,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2654,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 3409,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 499,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 5975,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7446,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 5973,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 859,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 10863,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 14671,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 11178,
             "unit": "ms"
           }
         ]

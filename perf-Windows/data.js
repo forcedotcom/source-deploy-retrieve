@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789569787408,
+  "lastUpdate": 1789575891262,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -110860,6 +110860,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 19349,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "distinct": true,
+          "id": "cdaf8b3b5b3ef06c85efcfa0bead9c3dc6a74cc3",
+          "message": "fix: align write-path symlink guard to use project root and add delete-skip logging\n\nThe write-path symlink check in StandardWriter used pkg.outputDir as its\ncontainment root while the delete-path check used projectDirectory. A symlink\nat or above outputDir (e.g. force-app itself) escaped the write guard.\n\nThread projectDirectory through MergeConfig → StandardWriter so both guards\nuse the same boundary. Log at warn level when the delete pre-filter suppresses\na partial-delete due to a symlink, making the skip visible in --dev-debug output.",
+          "timestamp": "2026-09-16T10:15:00-06:00",
+          "tree_id": "a8ec24a9ecdbff40e7dcef8b49bb2d22380fb59b",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/cdaf8b3b5b3ef06c85efcfa0bead9c3dc6a74cc3"
+        },
+        "date": 1789575877190,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 506,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 3511,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3299,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 6315,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 777,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 9346,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 8485,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 9743,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1279,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 17122,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 15937,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 18318,
             "unit": "ms"
           }
         ]

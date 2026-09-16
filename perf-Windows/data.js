@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789569345418,
+  "lastUpdate": 1789569787408,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -110776,6 +110776,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 24799,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shantanumishra005@gmail.com",
+            "name": "Shantanu Mishra",
+            "username": "Shantanu005"
+          },
+          "committer": {
+            "email": "shantanumishra005@gmail.com",
+            "name": "Shantanu Mishra",
+            "username": "Shantanu005"
+          },
+          "distinct": true,
+          "id": "2595ade428e099ffdac37c22ca04fef7ec75b4de",
+          "message": "feat: add ReferralIntakeConfiguration to metadata registry\n\nAdds the ReferralIntakeConfiguration metadata type to the SDR registry.\nPreviously flagged in METADATA_SUPPORT.md as 'Not supported, but support\ncould be added'.\n\n@W-24343253@",
+          "timestamp": "2026-09-16T14:05:47+05:30",
+          "tree_id": "5ec6cd5b05ebfe321392e7e488230c4fc1bb9b4e",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/2595ade428e099ffdac37c22ca04fef7ec75b4de"
+        },
+        "date": 1789569770368,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 646,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4031,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3928,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 7121,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 967,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 10606,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10500,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 10433,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1675,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 19140,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 19951,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 19349,
             "unit": "ms"
           }
         ]

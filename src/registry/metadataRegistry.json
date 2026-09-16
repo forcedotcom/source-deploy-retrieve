@@ -453,6 +453,7 @@
     "recordAlertTemplate": "recordalerttemplate",
     "redirectWhitelistUrl": "redirectwhitelisturl",
     "refdash": "referenceddashboard",
+    "referralIntakeConfiguration": "referralintakeconfiguration",
     "registeredExternalService": "registeredexternalservice",
     "relatedRecordAssocCriteria": "relatedrecordassoccriteria",
     "relationshipGraphDefinition": "relationshipgraphdefinition",
@@ -4033,6 +4034,14 @@
       "name": "ReferencedDashboard",
       "strictDirectoryName": false,
       "suffix": "refdash"
+    },
+    "referralintakeconfiguration": {
+      "directoryName": "referralIntakeConfigurations",
+      "id": "referralintakeconfiguration",
+      "inFolder": false,
+      "name": "ReferralIntakeConfiguration",
+      "strictDirectoryName": false,
+      "suffix": "referralIntakeConfiguration"
     },
     "registeredexternalservice": {
       "directoryName": "registeredExternalServices",

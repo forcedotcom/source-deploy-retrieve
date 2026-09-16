@@ -10,9 +10,9 @@
 <ul class="tsd-breadcrumb" aria-label="Breadcrumb">
 <li><a href="" aria-current="page">MergeConfig</a></li></ul>
 <h1>Type Alias MergeConfig</h1></div>
-<div class="tsd-signature"><span class="tsd-signature-keyword">type</span> <span class="tsd-kind-type-alias">MergeConfig</span> <span class="tsd-signature-symbol">=</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#defaultdirectory">defaultDirectory</a><span class="tsd-signature-symbol">:</span> <a href="SourcePath.html" class="tsd-signature-type tsd-kind-type-alias">SourcePath</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#forceignoredpaths">forceIgnoredPaths</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#mergewith">mergeWith</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/SourceComponent.html" class="tsd-signature-type tsd-kind-class">SourceComponent</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#type">type</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;merge&quot;</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
+<div class="tsd-signature"><span class="tsd-signature-keyword">type</span> <span class="tsd-kind-type-alias">MergeConfig</span> <span class="tsd-signature-symbol">=</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#defaultdirectory">defaultDirectory</a><span class="tsd-signature-symbol">:</span> <a href="SourcePath.html" class="tsd-signature-type tsd-kind-type-alias">SourcePath</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#forceignoredpaths">forceIgnoredPaths</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#mergewith">mergeWith</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/SourceComponent.html" class="tsd-signature-type tsd-kind-class">SourceComponent</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#projectdirectory">projectDirectory</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#type">type</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;merge&quot;</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/99e04dc2d82083fd98094a0edda55272a9f411c6/src/convert/types.ts#L74">convert/types.ts:74</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/5637e356fb4aeab30d80aa52dfc083da9e27fe96/src/convert/types.ts#L74">convert/types.ts:74</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -23,6 +23,7 @@
 <div class="tsd-index-list"><a href="#defaultdirectory" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>default<wbr/>Directory</span></a>
 <a href="#forceignoredpaths" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>force<wbr/>Ignored<wbr/>Paths?</span></a>
 <a href="#mergewith" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>merge<wbr/>With</span></a>
+<a href="#projectdirectory" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>project<wbr/>Directory?</span></a>
 <a href="#type" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>type</span></a>
 </div></section></div></details></section></section>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -34,24 +35,31 @@
 <div class="tsd-comment tsd-typography"><p>Location to store components that aren't merged.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/99e04dc2d82083fd98094a0edda55272a9f411c6/src/convert/types.ts#L83">convert/types.ts:83</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/5637e356fb4aeab30d80aa52dfc083da9e27fe96/src/convert/types.ts#L83">convert/types.ts:83</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="forceignoredpaths"><code class="tsd-tag">Optional</code><span>force<wbr/>Ignored<wbr/>Paths</span><a href="#forceignoredpaths" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">forceIgnoredPaths</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/99e04dc2d82083fd98094a0edda55272a9f411c6/src/convert/types.ts#L84">convert/types.ts:84</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/5637e356fb4aeab30d80aa52dfc083da9e27fe96/src/convert/types.ts#L84">convert/types.ts:84</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="mergewith"><span>merge<wbr/>With</span><a href="#mergewith" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">mergeWith</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/SourceComponent.html" class="tsd-signature-type tsd-kind-class">SourceComponent</a><span class="tsd-signature-symbol">&gt;</span></div>
 <div class="tsd-comment tsd-typography"><p>Existing components to merge and replace the converted components with.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/99e04dc2d82083fd98094a0edda55272a9f411c6/src/convert/types.ts#L79">convert/types.ts:79</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/5637e356fb4aeab30d80aa52dfc083da9e27fe96/src/convert/types.ts#L79">convert/types.ts:79</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="projectdirectory"><code class="tsd-tag">Optional</code><span>project<wbr/>Directory</span><a href="#projectdirectory" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">projectDirectory</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>Project root used as the symlink-containment boundary for write-path guards.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/5637e356fb4aeab30d80aa52dfc083da9e27fe96/src/convert/types.ts#L86">convert/types.ts:86</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="type"><span>type</span><a href="#type" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">type</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;merge&quot;</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/99e04dc2d82083fd98094a0edda55272a9f411c6/src/convert/types.ts#L75">convert/types.ts:75</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/5637e356fb4aeab30d80aa52dfc083da9e27fe96/src/convert/types.ts#L75">convert/types.ts:75</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -66,7 +74,7 @@
 <h3>On This Page</h3></summary>
 <div class="tsd-accordion-details">
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
-<div><a href="#defaultdirectory"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>default<wbr/>Directory</span></a><a href="#forceignoredpaths"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>force<wbr/>Ignored<wbr/>Paths</span></a><a href="#mergewith"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>merge<wbr/>With</span></a><a href="#type"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>type</span></a></div></details></div></details></div>
+<div><a href="#defaultdirectory"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>default<wbr/>Directory</span></a><a href="#forceignoredpaths"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>force<wbr/>Ignored<wbr/>Paths</span></a><a href="#mergewith"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>merge<wbr/>With</span></a><a href="#projectdirectory"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>project<wbr/>Directory</span></a><a href="#type"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>type</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../modules.html">@salesforce/source-deploy-retrieve</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">

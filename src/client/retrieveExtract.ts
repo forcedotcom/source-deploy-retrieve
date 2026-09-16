@@ -25,6 +25,7 @@ import { ComponentSet } from '../collections';
 import { ZipTreeContainer } from '../resolve';
 import { SourceComponent, SourceComponentWithContent } from '../resolve/sourceComponent';
 import { fnJoin } from '../utils/path';
+import { findSymlinkOnPathSync } from '../utils/fileSystemHandler';
 import { correctComments, handleSpecialEntities } from '../convert/streams';
 import {
   BotVersionFilter,
@@ -69,6 +70,7 @@ export const extract = async ({
           mergeWith: mainComponents?.getSourceComponents() ?? [],
           defaultDirectory: pkg.outputDir,
           forceIgnoredPaths: mainComponents?.forceIgnoredPaths ?? new Set<string>(),
+          projectDirectory: mainComponents?.projectDirectory,
         }
       : {
           type: 'directory',
@@ -117,7 +119,13 @@ export const extract = async ({
 
     if (merge) {
       partialDeleteFileResponses.push(
-        ...handlePartialDeleteMerges({ retrievedComponents, tree, mainComponents, logger })
+        ...handlePartialDeleteMerges({
+          retrievedComponents,
+          tree,
+          mainComponents,
+          logger,
+          packageRoot: mainComponents?.projectDirectory ?? pkg.outputDir,
+        })
       );
     }
 
@@ -148,11 +156,13 @@ const handlePartialDeleteMerges = ({
   retrievedComponents,
   tree,
   logger,
+  packageRoot,
 }: {
   mainComponents?: ComponentSet;
   retrievedComponents: SourceComponent[];
   tree: ZipTreeContainer;
   logger: Logger;
+  packageRoot: string;
 }): FileResponse[] => {
   // Find all merge (local) components that support partial delete.
   const partialDeleteComponents = new Map<string, PartialDeleteComp>(
@@ -179,6 +189,19 @@ const handlePartialDeleteMerges = ({
           return matchingLocalComp.contentList
             .filter((fileName) => !remoteContentList.has(fileName))
             .filter((fileName) => !pathOrSomeChildIsIgnored(logger)(comp)(matchingLocalComp)(fileName))
+            .filter((fileName) => {
+              const symlink = findSymlinkOnPathSync(packageRoot, path.join(matchingLocalComp.contentPath, fileName));
+              if (symlink) {
+                logger.warn(
+                  `Skipping delete of ${path.join(
+                    matchingLocalComp.contentPath,
+                    fileName
+                  )} — path segment ${symlink} is a symbolic link.`
+                );
+                return false;
+              }
+              return true;
+            })
             .map(
               (fileName): FileResponseSuccess => ({
                 fullName: comp.fullName,
@@ -187,12 +210,12 @@ const handlePartialDeleteMerges = ({
                 filePath: path.join(matchingLocalComp.contentPath, fileName),
               })
             )
-            .map(deleteFilePath(logger));
+            .map(deleteFilePath(logger, packageRoot));
         });
 };
 
 const supportsPartialDeleteAndHasContent = (comp: SourceComponent): comp is SourceComponentWithContent =>
-  supportsPartialDelete(comp) && typeof comp.content === 'string' && fs.statSync(comp.content).isDirectory();
+  supportsPartialDelete(comp) && typeof comp.content === 'string' && fs.lstatSync(comp.content).isDirectory();
 
 const supportsPartialDeleteAndHasZipContent =
   (tree: ZipTreeContainer) =>
@@ -220,7 +243,7 @@ const pathOrSomeChildIsIgnored =
   (localComp: PartialDeleteComp) =>
   (fileName: string): boolean => {
     const fileNameFullPath = path.join(localComp.contentPath, fileName);
-    return fs.statSync(fileNameFullPath).isDirectory()
+    return fs.lstatSync(fileNameFullPath).isDirectory()
       ? fs.readdirSync(fileNameFullPath).map(fnJoin(fileNameFullPath)).some(isForceIgnored(logger)(component))
       : isForceIgnored(logger)(component)(fileNameFullPath);
   };
@@ -237,9 +260,16 @@ const isForceIgnored =
   };
 
 const deleteFilePath =
-  (logger: Logger) =>
+  (logger: Logger, packageRoot: string) =>
   (fr: FileResponseSuccess): FileResponseSuccess => {
     if (fr.filePath) {
+      // defense-in-depth: the pre-filter in handlePartialDeleteMerges already removes symlinked paths,
+      // so this check only fires on a TOCTOU race where the path became a symlink between filter and delete
+      const symlink = findSymlinkOnPathSync(packageRoot, fr.filePath);
+      if (symlink) {
+        logger.warn(`Skipping delete of ${fr.filePath} — path segment ${symlink} is a symbolic link.`);
+        return fr;
+      }
       logger.debug(
         `Local component (${fr.fullName}) contains ${fr.filePath} while remote component does not. This file is being removed.`
       );

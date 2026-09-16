@@ -117,6 +117,10 @@ Entry '%s' in static resource '%s' resolves to a location outside the extraction
 
 Entry '%s' in static resource '%s' would be written through a symbolic link ('%s'). Writing through symbolic links is not allowed because it can place files outside the extraction directory ('%s').
 
+# error_retrieve_symlink
+
+File '%s' would be written through a symbolic link ('%s'). Writing through symbolic links is not allowed during retrieve because it can place files outside the project directory ('%s').
+
 # error_static_resource_expected_archive_type
 
 A StaticResource directory must have a content type of application/zip or application/jar - found %s for %s.

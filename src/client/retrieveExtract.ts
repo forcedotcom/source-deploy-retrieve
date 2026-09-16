@@ -268,6 +268,7 @@ const deleteFilePath =
       const symlink = findSymlinkOnPathSync(packageRoot, fr.filePath);
       if (symlink) {
         logger.warn(`Skipping delete of ${fr.filePath} — path segment ${symlink} is a symbolic link.`);
+
         return fr;
       }
       logger.debug(

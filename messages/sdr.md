@@ -217,7 +217,7 @@ The write path '%s' resolves outside the root destination '%s'. This may indicat
 
 # warning_jwt_api_version
 
-This org uses JWT-based access tokens, which require API version 68.0 or later for SOAP metadata operations. The current API version is %s, so metadata listing may return empty or incomplete results. To resolve, use --api-version 68 or update sourceApiVersion in sfdx-project.json.
+This org uses JWT-based access tokens, which require API version 68.0 or later for SOAP metadata operations. The current API version is %s, so metadata listing may return empty or incomplete results. To resolve, update sourceApiVersion in sfdx-project.json to 68.0 or higher.
 
 # type_name_suggestions
 

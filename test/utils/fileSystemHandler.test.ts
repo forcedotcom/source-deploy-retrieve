@@ -100,6 +100,21 @@ describe('File System Utils', () => {
       const dest = join(tmpDir, 'nonexistent', 'deep', 'file.cls');
       expect(await findSymlinkOnPath(tmpDir, dest)).to.be.undefined;
     });
+
+    it('should catch a symlink at the package-dir level when root is the project root', async () => {
+      const projectRoot = join(tmpDir, 'myproject');
+      fs.mkdirSync(projectRoot);
+      const externalDir = join(tmpDir, 'external');
+      fs.mkdirSync(join(externalDir, 'main', 'default'), { recursive: true });
+      const forceApp = join(projectRoot, 'force-app');
+      fs.symlinkSync(externalDir, forceApp);
+      const dest = join(forceApp, 'main', 'default', 'MyClass.cls');
+
+      // project root catches it: force-app is a checked segment
+      expect(await findSymlinkOnPath(projectRoot, dest)).to.equal(forceApp);
+      // package dir as root misses it: force-app IS the root, never checked
+      expect(await findSymlinkOnPath(forceApp, dest)).to.be.undefined;
+    });
   });
 
   describe('findSymlinkOnPathSync', () => {
@@ -157,6 +172,29 @@ describe('File System Utils', () => {
       const outside = join(tmpDir, 'outside', 'file.txt');
 
       expect(findSymlinkOnPathSync(projectRoot, outside)).to.equal(outside);
+    });
+
+    it('should allow cross-package-dir paths when root is the project root', () => {
+      const projectRoot = join(tmpDir, 'myproject');
+      fs.mkdirSync(join(projectRoot, 'force-app', 'main', 'default'), { recursive: true });
+      fs.mkdirSync(join(projectRoot, 'force-app-2', 'main', 'default'), { recursive: true });
+
+      const fileInOtherPkg = join(projectRoot, 'force-app-2', 'main', 'default', 'someFile.txt');
+      fs.writeFileSync(fileInOtherPkg, 'content');
+
+      expect(findSymlinkOnPathSync(projectRoot, fileInOtherPkg)).to.be.undefined;
+    });
+
+    it('should reject cross-package-dir paths when root is a single package dir', () => {
+      const projectRoot = join(tmpDir, 'myproject');
+      const pkg1 = join(projectRoot, 'force-app');
+      fs.mkdirSync(join(pkg1, 'main', 'default'), { recursive: true });
+      fs.mkdirSync(join(projectRoot, 'force-app-2', 'main', 'default'), { recursive: true });
+
+      const fileInOtherPkg = join(projectRoot, 'force-app-2', 'main', 'default', 'someFile.txt');
+      fs.writeFileSync(fileInOtherPkg, 'content');
+
+      expect(findSymlinkOnPathSync(pkg1, fileInOtherPkg)).to.equal(fileInOtherPkg);
     });
   });
 });

@@ -1,3 +1,9 @@
+## [13.3.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.3.2...13.3.3) (2026-09-16)
+
+### Bug Fixes
+
+- prevent symlink traversal during retrieve (partial-delete and writes) @W-24124120@ @W-24138711@ ([#1833](https://github.com/forcedotcom/source-deploy-retrieve/issues/1833)) ([5637e35](https://github.com/forcedotcom/source-deploy-retrieve/commit/5637e356fb4aeab30d80aa52dfc083da9e27fe96))
+
 ## [13.3.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.3.1...13.3.2) (2026-09-11)
 
 ### Bug Fixes

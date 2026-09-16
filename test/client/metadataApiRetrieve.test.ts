@@ -390,6 +390,7 @@ describe('MetadataApiRetrieve', () => {
             mergeWith: toRetrieve.getSourceComponents(),
             defaultDirectory: MOCK_DEFAULT_OUTPUT,
             forceIgnoredPaths: new Set<string>(),
+            projectDirectory: toRetrieve.projectDirectory,
           },
         ]);
       });

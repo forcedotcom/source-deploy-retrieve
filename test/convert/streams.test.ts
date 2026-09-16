@@ -498,6 +498,34 @@ describe('Streams', () => {
         });
       });
 
+      it('should use containmentRoot for symlink check when provided', async () => {
+        const containmentRoot = join(sep, 'project');
+        const writerWithContainment = new streams.StandardWriter(rootDestination, containmentRoot);
+        const mockPipeline = env.stub().resolves();
+        pipelineStub.returns(mockPipeline);
+
+        await writerWithContainment._write(chunk, '', (err: Error | undefined) => {
+          expect(err).to.be.undefined;
+          expect(findSymlinkStub.callCount).to.equal(chunk.writeInfos.length);
+          for (const call of findSymlinkStub.getCalls()) {
+            expect(call.args[0]).to.equal(containmentRoot);
+          }
+        });
+      });
+
+      it('should reference containmentRoot in error when symlink detected', async () => {
+        const containmentRoot = join(sep, 'project');
+        const writerWithContainment = new streams.StandardWriter(rootDestination, containmentRoot);
+        const symlinkPath = join(containmentRoot, 'force-app');
+        findSymlinkStub.resolves(symlinkPath);
+
+        await writerWithContainment._write(chunk, '', (err: Error | undefined) => {
+          assert(err instanceof Error);
+          expect(err.message).to.include('symbolic link');
+          expect(err.message).to.include(containmentRoot);
+        });
+      });
+
       it('should throw when write path escapes root destination via path traversal', async () => {
         const traversalChunk: WriterFormat = {
           component,

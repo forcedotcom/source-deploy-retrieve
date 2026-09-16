@@ -147,9 +147,11 @@ export class StandardWriter extends ComponentWriter {
   public readonly converted: string[] = [];
   public readonly deleted: FileResponseSuccess[] = [];
   public readonly forceignore: ForceIgnore;
+  private readonly containmentRoot?: SourcePath;
 
-  public constructor(rootDestination: SourcePath) {
+  public constructor(rootDestination: SourcePath, containmentRoot?: SourcePath) {
     super(rootDestination);
+    this.containmentRoot = containmentRoot;
     this.forceignore = ForceIgnore.findAndCreate(rootDestination);
   }
 
@@ -168,12 +170,13 @@ export class StandardWriter extends ComponentWriter {
             .filter(existsOrDoesntMatchIgnored(this.forceignore, this.logger)) // Skip files matched by default ignore
             .map(async (info) => {
               if (this.rootDestination) {
-                const symlink = await findSymlinkOnPath(this.rootDestination, info.output);
+                const symlinkRoot = this.containmentRoot ?? this.rootDestination;
+                const symlink = await findSymlinkOnPath(symlinkRoot, info.output);
                 if (symlink) {
                   throw messages.createError('error_retrieve_symlink', [
                     info.output,
-                    relative(this.rootDestination, symlink),
-                    this.rootDestination,
+                    relative(symlinkRoot, symlink),
+                    symlinkRoot,
                   ]);
                 }
               }

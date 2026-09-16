@@ -70,6 +70,7 @@ export const extract = async ({
           mergeWith: mainComponents?.getSourceComponents() ?? [],
           defaultDirectory: pkg.outputDir,
           forceIgnoredPaths: mainComponents?.forceIgnoredPaths ?? new Set<string>(),
+          projectDirectory: mainComponents?.projectDirectory,
         }
       : {
           type: 'directory',
@@ -188,9 +189,19 @@ const handlePartialDeleteMerges = ({
           return matchingLocalComp.contentList
             .filter((fileName) => !remoteContentList.has(fileName))
             .filter((fileName) => !pathOrSomeChildIsIgnored(logger)(comp)(matchingLocalComp)(fileName))
-            .filter(
-              (fileName) => !findSymlinkOnPathSync(packageRoot, path.join(matchingLocalComp.contentPath, fileName))
-            )
+            .filter((fileName) => {
+              const symlink = findSymlinkOnPathSync(packageRoot, path.join(matchingLocalComp.contentPath, fileName));
+              if (symlink) {
+                logger.warn(
+                  `Skipping delete of ${path.join(
+                    matchingLocalComp.contentPath,
+                    fileName
+                  )} — path segment ${symlink} is a symbolic link.`
+                );
+                return false;
+              }
+              return true;
+            })
             .map(
               (fileName): FileResponseSuccess => ({
                 fullName: comp.fullName,
@@ -252,9 +263,11 @@ const deleteFilePath =
   (logger: Logger, packageRoot: string) =>
   (fr: FileResponseSuccess): FileResponseSuccess => {
     if (fr.filePath) {
+      // defense-in-depth: the pre-filter in handlePartialDeleteMerges already removes symlinked paths,
+      // so this check only fires on a TOCTOU race where the path became a symlink between filter and delete
       const symlink = findSymlinkOnPathSync(packageRoot, fr.filePath);
       if (symlink) {
-        logger.debug(`Skipping delete of ${fr.filePath} — path segment ${symlink} is a symbolic link.`);
+        logger.warn(`Skipping delete of ${fr.filePath} — path segment ${symlink} is a symbolic link.`);
         return fr;
       }
       logger.debug(

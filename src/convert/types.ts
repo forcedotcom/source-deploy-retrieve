@@ -82,6 +82,8 @@ export type MergeConfig = {
    */
   defaultDirectory: SourcePath;
   forceIgnoredPaths?: Set<string>;
+  /** Project root used as the symlink-containment boundary for write-path guards. */
+  projectDirectory?: string;
 };
 
 export type ToSourceFormatInput = {

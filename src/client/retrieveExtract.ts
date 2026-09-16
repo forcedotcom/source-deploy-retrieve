@@ -118,7 +118,13 @@ export const extract = async ({
 
     if (merge) {
       partialDeleteFileResponses.push(
-        ...handlePartialDeleteMerges({ retrievedComponents, tree, mainComponents, logger, packageRoot: pkg.outputDir })
+        ...handlePartialDeleteMerges({
+          retrievedComponents,
+          tree,
+          mainComponents,
+          logger,
+          packageRoot: mainComponents?.projectDirectory ?? pkg.outputDir,
+        })
       );
     }
 

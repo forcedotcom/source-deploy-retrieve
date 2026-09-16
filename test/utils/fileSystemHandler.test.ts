@@ -158,5 +158,28 @@ describe('File System Utils', () => {
 
       expect(findSymlinkOnPathSync(projectRoot, outside)).to.equal(outside);
     });
+
+    it('should allow cross-package-dir paths when root is the project root', () => {
+      const projectRoot = join(tmpDir, 'myproject');
+      fs.mkdirSync(join(projectRoot, 'force-app', 'main', 'default'), { recursive: true });
+      fs.mkdirSync(join(projectRoot, 'force-app-2', 'main', 'default'), { recursive: true });
+
+      const fileInOtherPkg = join(projectRoot, 'force-app-2', 'main', 'default', 'someFile.txt');
+      fs.writeFileSync(fileInOtherPkg, 'content');
+
+      expect(findSymlinkOnPathSync(projectRoot, fileInOtherPkg)).to.be.undefined;
+    });
+
+    it('should reject cross-package-dir paths when root is a single package dir', () => {
+      const projectRoot = join(tmpDir, 'myproject');
+      const pkg1 = join(projectRoot, 'force-app');
+      fs.mkdirSync(join(pkg1, 'main', 'default'), { recursive: true });
+      fs.mkdirSync(join(projectRoot, 'force-app-2', 'main', 'default'), { recursive: true });
+
+      const fileInOtherPkg = join(projectRoot, 'force-app-2', 'main', 'default', 'someFile.txt');
+      fs.writeFileSync(fileInOtherPkg, 'content');
+
+      expect(findSymlinkOnPathSync(pkg1, fileInOtherPkg)).to.equal(fileInOtherPkg);
+    });
   });
 });

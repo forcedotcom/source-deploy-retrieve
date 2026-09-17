@@ -862,9 +862,9 @@ v68 introduces the following new types.  Here's their current level of support
 |AiAgentDefinition|✅||
 |AiAgentDefinitionPlanner|❌|Not supported, but support could be added|
 |AiAgentDefinitionVersion|✅||
-|AnalyticsAgentDefinition|❌|Not supported, but support could be added|
-|AnalyticsLlmOverride|❌|Not supported, but support could be added|
-|AnlytAgntFlbkSmntcModel|❌|Not supported, but support could be added|
+|AnalyticsAgentDefinition|❌|Not supported, but support could be added (but not for tracking)|
+|AnalyticsLlmOverride|❌|Not supported, but support could be added (but not for tracking)|
+|AnlytAgntFlbkSmntcModel|❌|Not supported, but support could be added (but not for tracking)|
 |ApptBookingConfig|❌|Not supported, but support could be added|
 |ApptBookingUrlConfig|❌|Not supported, but support could be added|
 |AutomationPipeline|❌|Not supported, but support could be added|
@@ -928,7 +928,7 @@ v68 introduces the following new types.  Here's their current level of support
 |PrivacyOrgConfig|❌|Not supported, but support could be added|
 |RecLifecyclCompanCpblDef|❌|Not supported, but support could be added|
 |RecLifecyclCompanDef|❌|Not supported, but support could be added|
-|ReferralIntakeConfiguration|❌|Not supported, but support could be added|
+|ReferralIntakeConfiguration|✅||
 |ReferralManagementSettings|✅||
 |ReplyEmailConfig|❌|Not supported, but support could be added (but not for tracking)|
 |SalesCloudSurfacesSettings|✅||

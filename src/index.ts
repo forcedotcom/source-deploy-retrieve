@@ -100,6 +100,7 @@ export {
   DestructiveChangesType,
   FromSourceOptions,
   FromManifestOptions,
+  expandDataspaceScopedComponentSet,
 } from './collections';
 
 export {

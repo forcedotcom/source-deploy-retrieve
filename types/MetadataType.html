@@ -15,7 +15,7 @@
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">type</span> <span class="tsd-kind-type-alias">MetadataType</span> <span class="tsd-signature-symbol">=</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#aliasfor">aliasFor</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#children">children</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">directories</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">DirectoryIndex</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">suffixes</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">SuffixIndex</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">types</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">TypeIndex</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#directoryname">directoryName</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#foldercontenttype">folderContentType</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#foldertype">folderType</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#id">id</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#ignoreparentname">ignoreParentName</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#ignoreparsedfullname">ignoreParsedFullName</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#infolder">inFolder</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#isaddressable">isAddressable</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#legacysuffix">legacySuffix</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#metafilesuffix">metaFileSuffix</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#name">name</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#strategies">strategies</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">adapter</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;mixedContent&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;matchingContentFile&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;decomposed&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;digitalExperience&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;bundle&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;default&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;partiallyDecomposed&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;uiBundles&quot;</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">decomposition</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;topLevel&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;folderPerType&quot;</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">recomposition</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;startEmpty&quot;</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">transformer</span><span class="tsd-signature-symbol">?:</span><br/>            <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;decomposed&quot;</span><br/>            <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;staticResource&quot;</span><br/>            <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;nonDecomposed&quot;</span><br/>            <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;standard&quot;</span><br/>            <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;decomposedLabels&quot;</span><br/>            <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;decomposedPermissionSet&quot;</span><br/>            <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;decomposeExternalServiceRegistration&quot;</span><br/>            <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;uiBundle&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#strictdirectoryname">strictDirectoryName</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#suffix">suffix</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#supportspartialdelete">supportsPartialDelete</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#supportswildcardandname">supportsWildcardAndName</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#unaddressablewithoutparent">unaddressableWithoutParent</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#uniqueidelement">uniqueIdElement</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#versionseparator">versionSeparator</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#xmlelementname">xmlElementName</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L35">registry/types.ts:35</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L35">registry/types.ts:35</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -55,7 +55,7 @@
 <div class="tsd-comment tsd-typography"><p>Whenever this type is requested, return the aliasFor type instead</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L141">registry/types.ts:141</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L141">registry/types.ts:141</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="children"><code class="tsd-tag">Optional</code><span>children</span><a href="#children" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">children</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">directories</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">DirectoryIndex</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">suffixes</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">SuffixIndex</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">types</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">TypeIndex</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
@@ -63,42 +63,42 @@
 <p><strong>Examples:</strong> <code>CustomField</code> and <code>CompactLayout</code> on <code>CustomObject</code></p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L147">registry/types.ts:147</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L147">registry/types.ts:147</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="directoryname"><span>directory<wbr/>Name</span><a href="#directoryname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">directoryName</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>Name of the directory where components are located in a package.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L47">registry/types.ts:47</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L47">registry/types.ts:47</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="foldercontenttype"><code class="tsd-tag">Optional</code><span>folder<wbr/>Content<wbr/>Type</span><a href="#foldercontenttype" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">folderContentType</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>If the type is a folder type (container for components), the id of the type it is a container for.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L89">registry/types.ts:89</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L89">registry/types.ts:89</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="foldertype"><code class="tsd-tag">Optional</code><span>folder<wbr/>Type</span><a href="#foldertype" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">folderType</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>If the type is contained in folders, the id of the type that contains it.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L93">registry/types.ts:93</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L93">registry/types.ts:93</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="id"><span>id</span><a href="#id" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">id</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>Unique identifier of the metadata type. Usually the API name lowercased.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L39">registry/types.ts:39</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L39">registry/types.ts:39</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="ignoreparentname"><code class="tsd-tag">Optional</code><span>ignore<wbr/>Parent<wbr/>Name</span><a href="#ignoreparentname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">ignoreParentName</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>If the parent name should be ignored when constructing the type's fullName</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L97">registry/types.ts:97</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L97">registry/types.ts:97</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="ignoreparsedfullname"><code class="tsd-tag">Optional</code><span>ignore<wbr/>Parsed<wbr/>Full<wbr/>Name</span><a href="#ignoreparsedfullname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">ignoreParsedFullName</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -106,7 +106,7 @@
 name will be used instead. For example, CustomLabels instead of MyLabels.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L85">registry/types.ts:85</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L85">registry/types.ts:85</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="infolder"><code class="tsd-tag">Optional</code><span class="deprecated">in<wbr/>Folder</span><a href="#infolder" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">inFolder</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -118,14 +118,14 @@ name will be used instead. For example, CustomLabels instead of MyLabels.</p>
 <h4 class="tsd-anchor-link" id="deprecated">Deprecated<a href="#deprecated" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>use <code>folderType</code> to get the related folder type, if one exists</p>
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L55">registry/types.ts:55</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L55">registry/types.ts:55</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="isaddressable"><code class="tsd-tag">Optional</code><span>is<wbr/>Addressable</span><a href="#isaddressable" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">isAddressable</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Whether the component is supported by the Metadata API and therefore should be included within a manifest.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L114">registry/types.ts:114</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L114">registry/types.ts:114</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="legacysuffix"><code class="tsd-tag">Optional</code><span>legacy<wbr/>Suffix</span><a href="#legacysuffix" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">legacySuffix</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -133,7 +133,7 @@ name will be used instead. For example, CustomLabels instead of MyLabels.</p>
 Use this, along with additional suffix keys in the registry, to support incorrect suffixes from existing code</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L106">registry/types.ts:106</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L106">registry/types.ts:106</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="metafilesuffix"><code class="tsd-tag">Optional</code><span>meta<wbr/>File<wbr/>Suffix</span><a href="#metafilesuffix" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">metaFileSuffix</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -142,28 +142,28 @@ Use this, along with additional suffix keys in the registry, to support incorrec
 <p><strong>Examples:</strong> &quot;_meta.json&quot; for DigitalExperience.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L71">registry/types.ts:71</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L71">registry/types.ts:71</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="name"><span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>API name of the metadata type.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L43">registry/types.ts:43</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L43">registry/types.ts:43</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="strategies"><code class="tsd-tag">Optional</code><span>strategies</span><a href="#strategies" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">strategies</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">adapter</span><span class="tsd-signature-symbol">:</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;mixedContent&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;matchingContentFile&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;decomposed&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;digitalExperience&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;bundle&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;default&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;partiallyDecomposed&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;uiBundles&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">decomposition</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;topLevel&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;folderPerType&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">recomposition</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;startEmpty&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">transformer</span><span class="tsd-signature-symbol">?:</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;decomposed&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;staticResource&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;nonDecomposed&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;standard&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;decomposedLabels&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;decomposedPermissionSet&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;decomposeExternalServiceRegistration&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;uiBundle&quot;</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
 <div class="tsd-comment tsd-typography"><p>Configuration for resolving and converting components of the type.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L155">registry/types.ts:155</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L155">registry/types.ts:155</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="strictdirectoryname"><code class="tsd-tag">Optional</code><span>strict<wbr/>Directory<wbr/>Name</span><a href="#strictdirectoryname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">strictDirectoryName</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Whether or not components are required to reside in a folder named after the type's directoryName.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L75">registry/types.ts:75</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L75">registry/types.ts:75</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="suffix"><code class="tsd-tag">Optional</code><span>suffix</span><a href="#suffix" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">suffix</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -172,7 +172,7 @@ Use this, along with additional suffix keys in the registry, to support incorrec
 <p><strong>Examples:</strong> LightningComponentBundles, Documents, StaticResources</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L63">registry/types.ts:63</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L63">registry/types.ts:63</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="supportspartialdelete"><code class="tsd-tag">Optional</code><span>supports<wbr/>Partial<wbr/>Delete</span><a href="#supportspartialdelete" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">supportsPartialDelete</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -180,7 +180,7 @@ Use this, along with additional suffix keys in the registry, to support incorrec
 <p><strong>Examples:</strong> <code>LightningComponentBundle</code>, <code>ExperienceBundle</code>, <code>StaticResource</code>, and <code>DigitalExperienceBundle</code></p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L136">registry/types.ts:136</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L136">registry/types.ts:136</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="supportswildcardandname"><code class="tsd-tag">Optional</code><span>supports<wbr/>Wildcard<wbr/>And<wbr/>Name</span><a href="#supportswildcardandname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">supportsWildcardAndName</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -190,21 +190,21 @@ Use this, along with additional suffix keys in the registry, to support incorrec
 
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L129">registry/types.ts:129</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L129">registry/types.ts:129</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="unaddressablewithoutparent"><code class="tsd-tag">Optional</code><span>unaddressable<wbr/>Without<wbr/>Parent</span><a href="#unaddressablewithoutparent" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">unaddressableWithoutParent</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Whether the component requires the parent to be present when deploying/retrieving</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L118">registry/types.ts:118</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L118">registry/types.ts:118</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="uniqueidelement"><code class="tsd-tag">Optional</code><span>unique<wbr/>Id<wbr/>Element</span><a href="#uniqueidelement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">uniqueIdElement</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>The xml attribute used as the unique identifier when parsing the xml</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L110">registry/types.ts:110</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L110">registry/types.ts:110</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="versionseparator"><code class="tsd-tag">Optional</code><span>version<wbr/>Separator</span><a href="#versionseparator" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">versionSeparator</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -212,14 +212,14 @@ Use this, along with additional suffix keys in the registry, to support incorrec
 Example: '#' for AiAgentDefinitionVersion (e.g., 'AgentName#1').</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L80">registry/types.ts:80</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L80">registry/types.ts:80</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="xmlelementname"><code class="tsd-tag">Optional</code><span>xml<wbr/>Element<wbr/>Name</span><a href="#xmlelementname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">xmlElementName</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>The XML element name for the type in the xml file used for constructing child components.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/524165c53c8fe3ee6833960f8f71a5d0126e48a6/src/registry/types.ts#L101">registry/types.ts:101</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b/src/registry/types.ts#L101">registry/types.ts:101</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

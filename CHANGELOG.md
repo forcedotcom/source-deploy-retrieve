@@ -1,3 +1,12 @@
+# [13.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.3.4...13.4.0) (2026-09-17)
+
+
+### Features
+
+* add ReferralIntakeConfiguration to metadata registry ([#1837](https://github.com/forcedotcom/source-deploy-retrieve/issues/1837)) ([7c7719d](https://github.com/forcedotcom/source-deploy-retrieve/commit/7c7719d888ce73d7e3e44a009f5ed3affb8d9d8b))
+
+
+
 ## [13.3.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.3.3...13.3.4) (2026-09-16)
 
 

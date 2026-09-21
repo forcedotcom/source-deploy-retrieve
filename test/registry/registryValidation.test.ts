@@ -294,6 +294,7 @@ describe('will run preset tests', () => {
                 'partiallyDecomposed',
                 'digitalExperience',
                 'uiBundles',
+                'dataspaceScoped',
               ]).includes(type.strategies?.adapter);
             });
           });

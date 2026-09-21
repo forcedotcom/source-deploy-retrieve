@@ -51,7 +51,9 @@
     "botBlocks": "botblock",
     "botTemplates": "bottemplate",
     "bots": "bot",
+    "calculatedInsight": "calculatedinsight",
     "contentTypes": "contenttypebundle",
+    "mktDataModelObject": "datamodelobject",
     "documents": "document",
     "emailservices": "emailservicesfunction",
     "experiencePropertyTypeBundles": "experiencepropertytypebundle",
@@ -344,6 +346,7 @@
     "integrationProviderDefinition": "integrationproviderdef",
     "internalDataConnector": "internaldataconnector",
     "internalOrganization": "internalorganization",
+    "json": "calculatedinsight",
     "keywords": "keywordlist",
     "labels": "customlabels",
     "layout": "layout",
@@ -394,7 +397,6 @@
     "navigationMenu": "navigationmenu",
     "network": "network",
     "networkBranding": "networkbranding",
-    "notificationDefinition": "ntfcndefinition",
     "notifications": "apexemailnotifications",
     "notiftype": "customnotificationtype",
     "oauthcustomscope": "oauthcustomscope",
@@ -609,6 +611,7 @@
     "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
     "meetingPlaybookDefinition": "meetingplaybookdefinition",
     "idpConfiguration": "idpconfiguration",
+    "notificationDefinition": "ntfcndefinition",
     "ecaAttest": "extlclntappattestsettings",
     "ecaAttestPlcy": "extlclntappattestconfigurablepolicies",
     "genOpPlanEligibilityConfig": "genopplaneligibilityconfig",
@@ -3573,14 +3576,6 @@
       "strictDirectoryName": false,
       "suffix": "config"
     },
-    "ntfcndefinition": {
-      "directoryName": "notificationDefinitions",
-      "id": "ntfcndefinition",
-      "inFolder": false,
-      "name": "NtfcnDefinition",
-      "strictDirectoryName": false,
-      "suffix": "notificationDefinition"
-    },
     "oauthcustomscope": {
       "directoryName": "oauthcustomscopes",
       "id": "oauthcustomscope",
@@ -3929,12 +3924,12 @@
       "id": "profile",
       "inFolder": false,
       "name": "Profile",
+      "strictDirectoryName": false,
+      "suffix": "profile",
       "strategies": {
         "adapter": "default",
         "transformer": "profile"
-      },
-      "strictDirectoryName": false,
-      "suffix": "profile"
+      }
     },
     "profilepasswordpolicy": {
       "directoryName": "profilePasswordPolicies",
@@ -5443,6 +5438,38 @@
         "adapter": "bundle"
       },
       "supportsPartialDelete": true
+    },
+    "calculatedinsight": {
+      "id": "calculatedinsight",
+      "name": "CalculatedInsight",
+      "suffix": "json",
+      "directoryName": "calculatedInsight",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "dataspaceScoped",
+        "transformer": "dataspaceScoped"
+      }
+    },
+    "datamodelobject": {
+      "id": "datamodelobject",
+      "name": "DataModelObject",
+      "suffix": "json",
+      "directoryName": "mktDataModelObject",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "dataspaceScoped",
+        "transformer": "dataspaceScoped"
+      }
+    },
+    "ntfcndefinition": {
+      "directoryName": "notificationDefinitions",
+      "id": "ntfcndefinition",
+      "inFolder": false,
+      "name": "NtfcnDefinition",
+      "strictDirectoryName": false,
+      "suffix": "notificationDefinition"
     },
     "extlclntappattestsettings": {
       "id": "extlclntappattestsettings",

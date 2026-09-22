@@ -27,7 +27,7 @@ import { DecomposedPermissionSetTransformer } from './decomposedPermissionSetTra
 import { DecomposeExternalServiceRegistrationTransformer } from './decomposeExternalServiceRegistrationTransformer';
 import { UiBundleMetadataTransformer } from './uiBundleMetadataTransformer';
 import { ProfileMetadataTransformer } from './profileMetadataTransformer';
-import { DataspaceScopedMetadataTransformer } from './dataspaceScopedMetadataTransformer';
+import { D360MetadataTransformer } from './d360MetadataTransformer';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -64,8 +64,8 @@ export class MetadataTransformerFactory {
         return new UiBundleMetadataTransformer(this.registry, this.context);
       case 'profile':
         return new ProfileMetadataTransformer(this.registry, this.context);
-      case 'dataspaceScoped':
-        return new DataspaceScopedMetadataTransformer(this.registry, this.context);
+      case 'd360':
+        return new D360MetadataTransformer(this.registry, this.context);
       default:
         throw messages.createError('error_missing_transformer', [type.name, transformerId]);
     }

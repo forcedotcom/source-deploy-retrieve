@@ -28,7 +28,7 @@ import { DefaultSourceAdapter } from './defaultSourceAdapter';
 import { DigitalExperienceSourceAdapter } from './digitalExperienceSourceAdapter';
 import { UiBundlesSourceAdapter } from './uiBundlesSourceAdapter';
 import { PartialDecomposedAdapter } from './partialDecomposedAdapter';
-import { DataspaceScopedSourceAdapter } from './dataspaceScopedSourceAdapter';
+import { D360SourceAdapter } from './d360SourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -59,8 +59,8 @@ export class SourceAdapterFactory {
         return new UiBundlesSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case 'partiallyDecomposed':
         return new PartialDecomposedAdapter(type, this.registry, forceIgnore, this.tree);
-      case 'dataspaceScoped':
-        return new DataspaceScopedSourceAdapter(type, this.registry, forceIgnore, this.tree);
+      case 'd360':
+        return new D360SourceAdapter(type, this.registry, forceIgnore, this.tree);
       case 'default':
       case undefined:
         return new DefaultSourceAdapter(type, this.registry, forceIgnore, this.tree);

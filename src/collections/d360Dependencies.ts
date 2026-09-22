@@ -26,7 +26,7 @@ import { ComponentSet } from './componentSet';
  *
  * The sidecar declares TWO distinct relationship lists, and they mean different things.
  * `retrieveWith` is the set of components that travel together with this one as a single deployable
- * unit — the deploy closure that {@link expandDataspaceScopedComponentSet} walks. `dependsOn` is
+ * unit — the deploy closure that {@link expandD360ComponentSet} walks. `dependsOn` is
  * informational metadata about what this component references (the components it points at) and is
  * NOT used to build the deploy closure.
  *
@@ -37,13 +37,13 @@ import { ComponentSet } from './componentSet';
  *
  * This module is intentionally standalone: it does NOT modify `ComponentSet` or any deploy
  * machinery. A caller (the CLI plugin) resolves the full project into `full`, decides what the
- * user requested into `requested`, and calls {@link expandDataspaceScopedComponentSet} to obtain
+ * user requested into `requested`, and calls {@link expandD360ComponentSet} to obtain
  * the exact closure to deploy — the requested components plus every dataspace-scoped component in
  * their transitive `retrieveWith` set, and nothing else.
  */
 
 /** The adapter strategy id shared by every dataspace-scoped type. */
-const DATASPACE_SCOPED_ADAPTER = 'dataspaceScoped';
+const D360_ADAPTER = 'd360';
 
 /** Filename suffix of the per-component metadata sidecar (`<name>.meta.json`). */
 const METADATA_SIDECAR_SUFFIX = '.meta.json';
@@ -60,8 +60,7 @@ type ComponentSidecar = {
   dependsOn?: ComponentRef[];
 };
 
-const isDataspaceScoped = (component: SourceComponent): boolean =>
-  component.type.strategies?.adapter === DATASPACE_SCOPED_ADAPTER;
+const isD360 = (component: SourceComponent): boolean => component.type.strategies?.adapter === D360_ADAPTER;
 
 const readJson = <T>(component: SourceComponent, path: string | undefined): T | undefined => {
   if (!path || !component.tree.exists(path)) {
@@ -100,7 +99,7 @@ const getRetrieveWithNames = (component: SourceComponent): string[] =>
  * @param registry Optional RegistryAccess to seed the resulting ComponentSet with (defaults to a fresh one).
  * @returns A new ComponentSet containing the requested components plus their dataspace-scoped retrieveWith closure.
  */
-export const expandDataspaceScopedComponentSet = (
+export const expandD360ComponentSet = (
   full: ComponentSet,
   requested: ComponentSet,
   registry?: RegistryAccess
@@ -108,7 +107,7 @@ export const expandDataspaceScopedComponentSet = (
   // Index dataspace-scoped candidates by their sidecar componentName (the retrieveWith key space).
   const byComponentName = new Map<string, SourceComponent>();
   for (const component of full.getSourceComponents()) {
-    if (isDataspaceScoped(component)) {
+    if (isD360(component)) {
       const componentName = getComponentName(component);
       if (componentName) {
         byComponentName.set(componentName, component);
@@ -125,7 +124,7 @@ export const expandDataspaceScopedComponentSet = (
     if (!seen.has(component)) {
       seen.add(component);
       result.add(component);
-      if (isDataspaceScoped(component)) {
+      if (isD360(component)) {
         worklist.push(component);
       }
     }

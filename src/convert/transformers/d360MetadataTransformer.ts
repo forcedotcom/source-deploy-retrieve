@@ -17,7 +17,7 @@ import { join } from 'node:path';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../common/constants';
 import { SourcePath } from '../../common/types';
 import { trimUntil } from '../../utils/path';
-import { METADATA_SIDECAR_SUFFIX } from '../../resolve/adapters/dataspaceScopedSourceAdapter';
+import { METADATA_SIDECAR_SUFFIX } from '../../resolve/adapters/d360SourceAdapter';
 import { getReplacementStreamForReadable } from '../replacements';
 import { WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve/sourceComponent';
@@ -44,7 +44,7 @@ const DATASPACE_ROOT = 'd360';
  * - source format:   `main/default/d360/dataspace/<ds>/<typeDir>/<name>.json` (+ `.meta.json`)
  * - metadata format: `d360/dataspace/<ds>/<typeDir>/<name>.json` (+ `.meta.json`)
  */
-export class DataspaceScopedMetadataTransformer extends BaseMetadataTransformer {
+export class D360MetadataTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line @typescript-eslint/require-await, class-methods-use-this
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     return getWriteInfos(component, 'metadata');
@@ -63,14 +63,14 @@ const getWriteInfos = (component: SourceComponent, targetFormat: 'source' | 'met
     const infos: WriteInfo[] = [
       {
         source: getReplacementStreamForReadable(component, path),
-        output: getDataspaceScopedDestination(path, targetFormat),
+        output: getD360Destination(path, targetFormat),
       },
     ];
     const sidecar = path.replace(/\.json$/, METADATA_SIDECAR_SUFFIX);
     if (sidecar !== path && component.tree.exists(sidecar)) {
       infos.push({
         source: getReplacementStreamForReadable(component, sidecar),
-        output: getDataspaceScopedDestination(sidecar, targetFormat),
+        output: getD360Destination(sidecar, targetFormat),
       });
     }
     return infos;
@@ -80,7 +80,7 @@ const getWriteInfos = (component: SourceComponent, targetFormat: 'source' | 'met
  * Build the destination path preserving the `d360/dataspace/<ds>/<typeDir>/<name>.json` structure.
  * Source format is rooted under `main/default`; metadata format keeps it at the package root.
  */
-const getDataspaceScopedDestination = (source: SourcePath, targetFormat: 'source' | 'metadata'): SourcePath => {
+const getD360Destination = (source: SourcePath, targetFormat: 'source' | 'metadata'): SourcePath => {
   const base = targetFormat === 'source' ? DEFAULT_PACKAGE_ROOT_SFDX : '';
   // trimUntil keeps the path from `d360` onward (dataspace wrapper + type dir + file).
   return join(base, trimUntil(source, DATASPACE_ROOT, true));

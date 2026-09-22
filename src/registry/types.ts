@@ -162,7 +162,7 @@ export type MetadataType = {
       | 'default'
       | 'partiallyDecomposed'
       | 'uiBundles'
-      | 'dataspaceScoped';
+      | 'd360';
     transformer?:
       | 'decomposed'
       | 'staticResource'
@@ -172,7 +172,7 @@ export type MetadataType = {
       | 'decomposedPermissionSet'
       | 'decomposeExternalServiceRegistration'
       | 'uiBundle'
-      | 'dataspaceScoped';
+      | 'd360';
     decomposition?: 'topLevel' | 'folderPerType';
     recomposition?: 'startEmpty';
   };

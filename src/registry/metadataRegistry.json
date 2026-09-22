@@ -5434,8 +5434,8 @@
       "inFolder": false,
       "strictDirectoryName": true,
       "strategies": {
-        "adapter": "dataspaceScoped",
-        "transformer": "dataspaceScoped"
+        "adapter": "d360",
+        "transformer": "d360"
       }
     },
     "datamodelobject": {
@@ -5446,8 +5446,8 @@
       "inFolder": false,
       "strictDirectoryName": true,
       "strategies": {
-        "adapter": "dataspaceScoped",
-        "transformer": "dataspaceScoped"
+        "adapter": "d360",
+        "transformer": "d360"
       }
     }
   }

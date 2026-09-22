@@ -21,4 +21,4 @@ export { DefaultSourceAdapter } from './defaultSourceAdapter';
 export { BaseSourceAdapter } from './baseSourceAdapter';
 export { DigitalExperienceSourceAdapter } from './digitalExperienceSourceAdapter';
 export { UiBundlesSourceAdapter } from './uiBundlesSourceAdapter';
-export { DataspaceScopedSourceAdapter } from './dataspaceScopedSourceAdapter';
+export { D360SourceAdapter } from './d360SourceAdapter';

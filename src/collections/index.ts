@@ -23,4 +23,4 @@ export {
   FromManifestOptions,
 } from './types';
 export { ComponentSetBuilder, ComponentSetOptions } from './componentSetBuilder';
-export { expandDataspaceScopedComponentSet } from './dataspaceScopedDependencies';
+export { expandD360ComponentSet } from './d360Dependencies';

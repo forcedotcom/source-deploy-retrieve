@@ -53,7 +53,7 @@ export const METADATA_SIDECAR_SUFFIX = '.meta.json';
  * |   |   ├── <name>.meta.json                -> sidecar (not its own component)
  *```
  */
-export class DataspaceScopedSourceAdapter extends MixedContentSourceAdapter {
+export class D360SourceAdapter extends MixedContentSourceAdapter {
   // Each component is a single JSON file; there is no separate metadata xml.
   protected metadataWithContent = false;
 
@@ -90,7 +90,7 @@ export class DataspaceScopedSourceAdapter extends MixedContentSourceAdapter {
       );
     }
 
-    const name = this.calculateDataspaceScopedName(contentPath);
+    const name = this.calculateD360Name(contentPath);
     if (component) {
       component.content = contentPath;
     } else {
@@ -112,7 +112,7 @@ export class DataspaceScopedSourceAdapter extends MixedContentSourceAdapter {
    * `.../dataSpaces/<dataspace>/<typeDir>/<name>.json`. The dataspace is the path segment
    * immediately preceding the type's directory.
    */
-  private calculateDataspaceScopedName(contentPath: SourcePath): string {
+  private calculateD360Name(contentPath: SourcePath): string {
     const pathParts = contentPath.split(sep);
     const typeFolderIndex = pathParts.lastIndexOf(this.type.directoryName);
     const dataspace = typeFolderIndex > 0 ? pathParts[typeFolderIndex - 1] : undefined;

@@ -880,6 +880,7 @@ v68 introduces the following new types.  Here's their current level of support
 |CnfgMgmtItemValueMap|❌|Not supported, but support could be added|
 |CnfgMgmtRcnRuleSugg|❌|Not supported, but support could be added|
 |CnfgMgmtSvcMapLyot|❌|Not supported, but support could be added|
+|ConsentTemplate|❌|Not supported, but support could be added|
 |ConstraintOptDef|❌|Not supported, but support could be added|
 |ContentWorkspace|❌|Not supported, but support could be added|
 |ContentWorkspacePermission|❌|Not supported, but support could be added|
@@ -892,6 +893,7 @@ v68 introduces the following new types.  Here's their current level of support
 |DynamicUiCardDefinition|✅||
 |EasyFreemiumSettings|✅||
 |EasySuitesInvoicingSettings|✅||
+|EinsteinGPTSalesEmailsSettings|✅||
 |EngmtChannelTypeConfig|❌|Not supported, but support could be added (but not for tracking)|
 |FinancialAppUiConfig|❌|Not supported, but support could be added|
 |FinancialEvaluationDef|❌|Not supported, but support could be added|
@@ -906,6 +908,7 @@ v68 introduces the following new types.  Here's their current level of support
 |IndustriesRepossessionSettings|✅||
 |InsuranceUnderwriterSettings|✅||
 |InvMgmtForUnusableQtySettings|✅||
+|LeadScoreSettings|✅||
 |LightningOutApp|✅||
 |MCETransformationsSettings|✅||
 |MarketingHierarchyGroupDef|❌|Not supported, but support could be added|
@@ -931,6 +934,7 @@ v68 introduces the following new types.  Here's their current level of support
 |ReferralIntakeConfiguration|✅||
 |ReferralManagementSettings|✅||
 |ReplyEmailConfig|❌|Not supported, but support could be added (but not for tracking)|
+|SalesBotsSettings|✅||
 |SalesCloudSurfacesSettings|✅||
 |SalesEmailAssistantSettings|✅||
 |SalesPlanDataSource|❌|Not supported, but support could be added|
@@ -945,6 +949,7 @@ v68 introduces the following new types.  Here's their current level of support
 |ServiceItamSettings|✅||
 |ServiceItomSettings|✅||
 |ServiceRepAssistantSettings|✅||
+|SpiffSettings|✅||
 |StatisticalDealInsightsSettings|✅||
 |TelephonyProvider|❌|Not supported, but support could be added|
 |TenantSecurityPlaybookDef|❌|Not supported, but support could be added|

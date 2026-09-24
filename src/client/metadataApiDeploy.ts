@@ -49,6 +49,8 @@ import {
   uiBundleResourceFullNameToFilePath,
 } from './deployMessages';
 import { parseDeployDiagnostic } from './diagnosticUtil';
+import { AsyncTransportHandle, TransportContext } from './transports/types';
+import { DeployPipeline, TransportGroup } from './transports/deployPipeline';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -56,6 +58,8 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 // TODO: (NEXT MAJOR) this should just be a readonly object and not a class.
 export class DeployResult implements MetadataTransferResult {
   private fileResponses?: FileResponse[];
+  private transportFileResponses: FileResponse[] = [];
+  private asyncTransportHandles: AsyncTransportHandle[] = [];
 
   public constructor(
     public readonly response: MetadataApiDeployStatus,
@@ -64,20 +68,33 @@ export class DeployResult implements MetadataTransferResult {
     public readonly zipMeta?: { zipSize: number; zipFileCount?: number }
   ) {}
 
+  public addTransportResults(fileResponses: FileResponse[], asyncHandles: AsyncTransportHandle[] = []): void {
+    this.transportFileResponses.push(...fileResponses);
+    this.asyncTransportHandles.push(...asyncHandles);
+    // invalidate cached responses so next getFileResponses() call includes transport results
+    this.fileResponses = undefined;
+  }
+
   public getFileResponses(): FileResponse[] {
     // this involves FS operations, so only perform once!
     if (!this.fileResponses) {
       this.fileResponses = [
         // removes duplicates from the file responses by parsing the object into a string, used as the key of the map
         ...new Map(
-          (this.components
-            ? buildFileResponsesFromComponentSet(this.components)(this.response)
-            : buildFileResponses(this.response)
-          ).map((v) => [JSON.stringify(v), v])
+          [
+            ...(this.components
+              ? buildFileResponsesFromComponentSet(this.components)(this.response)
+              : buildFileResponses(this.response)),
+            ...this.transportFileResponses,
+          ].map((v) => [JSON.stringify(v), v])
         ).values(),
       ];
     }
     return this.fileResponses;
+  }
+
+  public getAsyncTransportHandles(): AsyncTransportHandle[] {
+    return this.asyncTransportHandles;
   }
 }
 
@@ -108,6 +125,18 @@ export class MetadataApiDeploy extends MetadataTransfer<
       rest: false,
     },
   };
+
+  /** @internal */
+  public transportFileResponses: FileResponse[] = [];
+  /** @internal */
+  public transportAsyncHandles: AsyncTransportHandle[] = [];
+  /** @internal */
+  public pendingAfterMetadata?: {
+    pipeline: DeployPipeline;
+    transports: TransportGroup[];
+    context: TransportContext;
+  };
+
   private options: MetadataApiDeployOptions;
   private replacements: Map<string, Set<string>> = new Map();
   private orgId?: string;
@@ -319,12 +348,30 @@ export class MetadataApiDeploy extends MetadataTransfer<
         }`
       );
     }
+    // run after-metadata transports (e.g., DataKit trigger) if any are pending
+    // wrapped in try/catch so a transport failure doesn't lose the successful MDAPI result
+    if (this.pendingAfterMetadata) {
+      try {
+        const { pipeline, transports, context } = this.pendingAfterMetadata;
+        const afterResults = await pipeline.runAfterMetadata(context, transports);
+        this.transportFileResponses.push(...afterResults.fileResponses);
+        this.transportAsyncHandles.push(...afterResults.asyncHandles);
+      } catch (err) {
+        this.logger.warn(`After-metadata transport failed: ${(err as Error).message}`);
+      }
+    }
+
     const deployResult = new DeployResult(
       result,
       this.components,
       new Map(Array.from(this.replacements).map(([k, v]) => [k, Array.from(v)])),
       { zipSize: this.zipSize ?? 0, zipFileCount: this.zipFileCount }
     );
+
+    if (this.transportFileResponses.length > 0 || this.transportAsyncHandles.length > 0) {
+      deployResult.addTransportResults(this.transportFileResponses, this.transportAsyncHandles);
+    }
+
     // only do event hooks if source, (NOT a metadata format) deploy
     if (this.options.components) {
       // this may not be set if you resume a deploy so that `pre` is skipped.

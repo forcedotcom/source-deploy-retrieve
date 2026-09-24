@@ -30,6 +30,7 @@ import { objectHasSomeRealValues } from '../utils/decomposed';
 import { MetadataApiDeploy, MetadataApiDeployOptions } from '../client/metadataApiDeploy';
 import { MetadataApiRetrieve } from '../client/metadataApiRetrieve';
 import type { MetadataApiRetrieveOptions } from '../client/types';
+import { DeployPipeline } from '../client/transports/deployPipeline';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common/constants';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MetadataResolver } from '../resolve/metadataResolver';
@@ -89,6 +90,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public fullName?: string;
   public forceIgnoredPaths?: Set<string>;
   public botVersionFilters?: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
+  public deployPipeline?: DeployPipeline;
   private logger: Logger;
   private readonly registry: RegistryAccess;
   // all components stored here, regardless of what manifest they belong to
@@ -397,6 +399,11 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       );
     }
 
+    const pipeline = this.deployPipeline;
+    if (pipeline?.hasTransports(toDeploy)) {
+      return this.deployWithPipeline(options, toDeploy, pipeline);
+    }
+
     const operationOptions = Object.assign({}, options, {
       components: this,
       registry: this.registry,
@@ -522,7 +529,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     });
     const toParse = await this.getObject(destructiveType);
     toParse.Package[XML_NS_KEY] = XML_NS_URL;
-     
+
     return XML_DECL.concat(builder.build(toParse));
   }
 
@@ -736,6 +743,45 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       destructiveChangesTypes.push(DestructiveChangesType.POST);
     }
     return destructiveChangesTypes;
+  }
+
+  private async deployWithPipeline(
+    options: DeploySetOptions,
+    components: SourceComponent[],
+    pipeline: DeployPipeline
+  ): Promise<MetadataApiDeploy> {
+    const { transports } = pipeline.groupByTransport(components);
+
+    const connection =
+      typeof options.usernameOrConnection === 'string'
+        ? await Connection.create({ authInfo: await AuthInfo.create({ username: options.usernameOrConnection }) })
+        : options.usernameOrConnection;
+
+    const transportContext = {
+      components,
+      connection,
+      project: await SfProject.resolve(this.projectDirectory),
+      orgId: connection.getAuthInfoFields().orgId ?? '',
+    };
+
+    const beforeResults = await pipeline.runBeforeMetadata(transportContext, transports);
+
+    const operationOptions = Object.assign({}, options, {
+      components: this,
+      registry: this.registry,
+      apiVersion: this.apiVersion,
+    });
+
+    const mdapiDeploy = new MetadataApiDeploy(operationOptions);
+    await mdapiDeploy.start();
+
+    // store transport results and pending after-metadata groups on the deploy
+    // so they can be merged into DeployResult after polling completes
+    mdapiDeploy.transportFileResponses = beforeResults.fileResponses;
+    mdapiDeploy.transportAsyncHandles = beforeResults.asyncHandles;
+    mdapiDeploy.pendingAfterMetadata = { pipeline, transports, context: transportContext };
+
+    return mdapiDeploy;
   }
 
   /**

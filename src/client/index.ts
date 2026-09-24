@@ -23,6 +23,21 @@ export {
 } from './metadataApiDeploy';
 export { MetadataApiRetrieve, RetrieveResult, ScopedPostRetrieve, ScopedPreRetrieve } from './metadataApiRetrieve';
 export {
+  TransportProvider,
+  TransportContext,
+  TransportResult,
+  AsyncTransportHandle,
+  TransportStatus,
+  TransportPhase,
+  TransportDescription,
+  DeployPipeline,
+  TransportGroup,
+  GroupedComponents,
+  DeployPlan,
+  DeployPlanPhase,
+  PipelineDeployResult,
+} from './transports';
+export {
   ComponentDeployment,
   ComponentRetrieval,
   ComponentDiagnostic,

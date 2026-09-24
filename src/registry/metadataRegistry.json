@@ -65,6 +65,7 @@
     "mktDataSources": "datasource",
     "objectTranslations": "customobjecttranslation",
     "objects": "customobject",
+    "platformComputeApps": "platformcomputeapp",
     "restrictionRules": "restrictionrule",
     "siteDotComSites": "sitedotcom",
     "sites": "customsite",
@@ -607,7 +608,8 @@
     "cnfgItemTypeRelationDef": "cnfgitemtyperelationdef",
     "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
     "meetingPlaybookDefinition": "meetingplaybookdefinition",
-    "idpConfiguration": "idpconfiguration"
+    "idpConfiguration": "idpconfiguration",
+    "compute": "platformcomputeapp"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -790,7 +792,9 @@
       "inFolder": false,
       "strictDirectoryName": true,
       "versionSeparator": "#",
-      "strategies": { "adapter": "bundle" }
+      "strategies": {
+        "adapter": "bundle"
+      }
     },
     "aiagentscorerdefinition": {
       "directoryName": "aiAgentScorerDefinitions",
@@ -5422,6 +5426,18 @@
         "adapter": "bundle"
       },
       "supportsPartialDelete": true
+    },
+    "platformcomputeapp": {
+      "directoryName": "platformComputeApps",
+      "id": "platformcomputeapp",
+      "inFolder": false,
+      "name": "PlatformComputeApp",
+      "strategies": {
+        "adapter": "bundle",
+        "transport": "connectApi"
+      },
+      "strictDirectoryName": true,
+      "suffix": "compute"
     }
   }
 }

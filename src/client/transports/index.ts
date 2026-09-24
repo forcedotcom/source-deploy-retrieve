@@ -32,3 +32,5 @@ export {
   TransportPipelineResult,
 } from './transportPipeline';
 export { TransportCoordinator } from './transportCoordinator';
+export { ConnectApiTransport } from './connectApiTransport';
+export { packageComputeBundle, unpackComputeBundle, PackagedBundle, UnpackedBundle } from './computeSourceBundle';

@@ -36,6 +36,11 @@ export {
   TransportPlan,
   TransportPlanPhase,
   TransportPipelineResult,
+  ConnectApiTransport,
+  packageComputeBundle,
+  unpackComputeBundle,
+  PackagedBundle,
+  UnpackedBundle,
 } from './transports';
 export {
   ComponentDeployment,

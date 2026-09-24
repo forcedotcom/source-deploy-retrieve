@@ -50,7 +50,7 @@ import {
 } from './deployMessages';
 import { parseDeployDiagnostic } from './diagnosticUtil';
 import { AsyncTransportHandle, TransportContext } from './transports/types';
-import { DeployPipeline, TransportGroup } from './transports/deployPipeline';
+import { TransportPipeline, TransportGroup } from './transports/transportPipeline';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -132,7 +132,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
   public transportAsyncHandles: AsyncTransportHandle[] = [];
   /** @internal */
   public pendingAfterMetadata?: {
-    pipeline: DeployPipeline;
+    pipeline: TransportPipeline;
     transports: TransportGroup[];
     context: TransportContext;
   };

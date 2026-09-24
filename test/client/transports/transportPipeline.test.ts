@@ -19,7 +19,7 @@ import { Connection, SfProject } from '@salesforce/core';
 import {
   AsyncTransportHandle,
   ComponentStatus,
-  DeployPipeline,
+  TransportPipeline,
   FileResponse,
   RegistryAccess,
   SourceComponent,
@@ -62,10 +62,10 @@ function createMockComponent(typeName: string, fullName: string): SourceComponen
   return new SourceComponent({ name: fullName, type });
 }
 
-describe('DeployPipeline', () => {
+describe('TransportPipeline', () => {
   describe('groupByTransport', () => {
     it('should put all components in metadataApi when no transports registered', () => {
-      const pipeline = new DeployPipeline();
+      const pipeline = new TransportPipeline();
       const apexClass = createMockComponent('ApexClass', 'MyClass');
       const customObject = createMockComponent('CustomObject', 'MyObject__c');
 
@@ -76,7 +76,7 @@ describe('DeployPipeline', () => {
     });
 
     it('should group components by transport when transports are registered', () => {
-      const pipeline = new DeployPipeline();
+      const pipeline = new TransportPipeline();
       const mockTransport = createMockTransport('connectApi', 'before-metadata', ['ApexClass']);
       pipeline.registerTransport(mockTransport);
 
@@ -95,7 +95,7 @@ describe('DeployPipeline', () => {
     });
 
     it('should handle multiple transports', () => {
-      const pipeline = new DeployPipeline();
+      const pipeline = new TransportPipeline();
       pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['ApexClass']));
       pipeline.registerTransport(createMockTransport('datakitApi', 'after-metadata', ['CustomObject']));
 
@@ -118,14 +118,14 @@ describe('DeployPipeline', () => {
 
   describe('hasTransports', () => {
     it('should return false when no transports registered', () => {
-      const pipeline = new DeployPipeline();
+      const pipeline = new TransportPipeline();
       const apexClass = createMockComponent('ApexClass', 'MyClass');
 
       expect(pipeline.hasTransports([apexClass])).to.be.false;
     });
 
     it('should return false when no components match a transport', () => {
-      const pipeline = new DeployPipeline();
+      const pipeline = new TransportPipeline();
       pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['CustomObject']));
 
       const apexClass = createMockComponent('ApexClass', 'MyClass');
@@ -134,7 +134,7 @@ describe('DeployPipeline', () => {
     });
 
     it('should return true when a component matches a transport', () => {
-      const pipeline = new DeployPipeline();
+      const pipeline = new TransportPipeline();
       pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['ApexClass']));
 
       const apexClass = createMockComponent('ApexClass', 'MyClass');
@@ -143,7 +143,7 @@ describe('DeployPipeline', () => {
     });
 
     it('should return false when matching type is in skipTypes', () => {
-      const pipeline = new DeployPipeline();
+      const pipeline = new TransportPipeline();
       pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['ApexClass']));
 
       const apexClass = createMockComponent('ApexClass', 'MyClass');
@@ -154,7 +154,7 @@ describe('DeployPipeline', () => {
 
   describe('skipTypes', () => {
     it('should exclude skipped types from transport groups', () => {
-      const pipeline = new DeployPipeline();
+      const pipeline = new TransportPipeline();
       pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['ApexClass']));
       pipeline.registerTransport(createMockTransport('datakitApi', 'after-metadata', ['CustomObject']));
 
@@ -171,7 +171,7 @@ describe('DeployPipeline', () => {
     });
 
     it('should exclude skipped types from explain plan', () => {
-      const pipeline = new DeployPipeline();
+      const pipeline = new TransportPipeline();
       pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['ApexClass']));
       pipeline.registerTransport(createMockTransport('datakitApi', 'after-metadata', ['CustomObject']));
 
@@ -189,7 +189,7 @@ describe('DeployPipeline', () => {
 
   describe('explain', () => {
     it('should produce a plan with correct phase ordering', () => {
-      const pipeline = new DeployPipeline();
+      const pipeline = new TransportPipeline();
       pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['ApexClass']));
       pipeline.registerTransport(createMockTransport('datakitApi', 'after-metadata', ['CustomObject']));
 
@@ -209,7 +209,7 @@ describe('DeployPipeline', () => {
     });
 
     it('should produce metadata-only plan when no transports match', () => {
-      const pipeline = new DeployPipeline();
+      const pipeline = new TransportPipeline();
       const apexClass = createMockComponent('ApexClass', 'MyClass');
 
       const plan = pipeline.explain([apexClass]);
@@ -228,7 +228,7 @@ describe('DeployPipeline', () => {
     };
 
     it('should run only before-metadata transports in runBeforeMetadata', async () => {
-      const pipeline = new DeployPipeline();
+      const pipeline = new TransportPipeline();
       const beforeResponse: FileResponse = {
         fullName: 'MyApp',
         type: 'PlatformComputeApp',
@@ -253,7 +253,7 @@ describe('DeployPipeline', () => {
     });
 
     it('should run only after-metadata transports in runAfterMetadata', async () => {
-      const pipeline = new DeployPipeline();
+      const pipeline = new TransportPipeline();
       const afterResponse: FileResponse = {
         fullName: 'CustomerDataKit',
         type: 'DataPackageDefinition',
@@ -277,7 +277,7 @@ describe('DeployPipeline', () => {
     });
 
     it('should collect async handles from transports', async () => {
-      const pipeline = new DeployPipeline();
+      const pipeline = new TransportPipeline();
       const asyncTransport: TransportProvider = {
         name: 'connectApi',
         phase: { deploy: 'before-metadata', retrieve: 'after-metadata' },

@@ -24,10 +24,10 @@ export {
   TransportDescription,
 } from './types';
 export {
-  DeployPipeline,
+  TransportPipeline,
   TransportGroup,
   GroupedComponents,
-  DeployPlan,
-  DeployPlanPhase,
-  PipelineDeployResult,
-} from './deployPipeline';
+  TransportPlan,
+  TransportPlanPhase,
+  TransportPipelineResult,
+} from './transportPipeline';

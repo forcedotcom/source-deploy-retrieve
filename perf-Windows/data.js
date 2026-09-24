@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1790277682346,
+  "lastUpdate": 1790278278462,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -111280,6 +111280,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 25779,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "distinct": true,
+          "id": "db6e08b4d2f3593948c8b7667236fca49e852450",
+          "message": "feat: add TransportProvider abstraction and DeployPipeline scaffolding\n\nIntroduces a first-class transport layer so `componentSet.deploy()` can\nroute metadata types through secondary endpoints (Connect API, presigned\nURLs, DataKit) alongside the standard Metadata API.\n\n- TransportProvider interface: handles(), deploy(), retrieve(), describe()\n- DeployPipeline: groups components by transport, runs before/after\n  metadata phases, merges results into DeployResult\n- DeployResult: addTransportResults() + getAsyncTransportHandles()\n- componentSet.deploy() delegates to deployWithPipeline when transports\n  are registered — no public API signature change\n- Registry: transport strategy hint on MetadataType.strategies",
+          "timestamp": "2026-09-24T13:14:40-06:00",
+          "tree_id": "10627ea13ac38d6e3d4f0fbf2968d542eebe0a93",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/db6e08b4d2f3593948c8b7667236fca49e852450"
+        },
+        "date": 1790278261197,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 721,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4635,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 4135,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 9081,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1100,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 12918,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10983,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 13304,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 2086,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 25025,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 27003,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 33259,
             "unit": "ms"
           }
         ]

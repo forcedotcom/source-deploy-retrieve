@@ -29,28 +29,28 @@ export type GroupedComponents = {
   transports: TransportGroup[];
 };
 
-export type DeployPlan = {
-  phases: DeployPlanPhase[];
+export type TransportPlan = {
+  phases: TransportPlanPhase[];
 };
 
-export type DeployPlanPhase = {
+export type TransportPlanPhase = {
   phase: TransportPhase | 'metadata-api';
   label: string;
   endpoint: string;
   components: Array<{ fullName: string; type: string }>;
 };
 
-export type PipelineDeployResult = {
+export type TransportPipelineResult = {
   fileResponses: FileResponse[];
   asyncHandles: AsyncTransportHandle[];
 };
 
-export class DeployPipeline {
+export class TransportPipeline {
   private readonly transports: TransportProvider[] = [];
   private readonly logger: Logger;
 
   public constructor() {
-    this.logger = Logger.childFromRoot('DeployPipeline');
+    this.logger = Logger.childFromRoot('TransportPipeline');
   }
 
   public registerTransport(transport: TransportProvider): void {
@@ -87,9 +87,9 @@ export class DeployPipeline {
     components: SourceComponent[],
     operation: 'deploy' | 'retrieve' = 'deploy',
     skipTypes?: string[]
-  ): DeployPlan {
+  ): TransportPlan {
     const { metadataApi, transports } = this.groupByTransport(components, skipTypes);
-    const phases: DeployPlanPhase[] = [];
+    const phases: TransportPlanPhase[] = [];
 
     const beforeMetadata = transports.filter((g) => g.transport.phase[operation] === 'before-metadata');
     const afterMetadata = transports.filter((g) => g.transport.phase[operation] === 'after-metadata');
@@ -128,7 +128,7 @@ export class DeployPipeline {
     context: TransportContext,
     groups: TransportGroup[],
     operation: 'deploy' | 'retrieve' = 'deploy'
-  ): Promise<PipelineDeployResult> {
+  ): Promise<TransportPipelineResult> {
     const beforeMetadata = groups.filter((g) => g.transport.phase[operation] === 'before-metadata');
     return this.runTransportGroups(beforeMetadata, context, operation);
   }
@@ -137,7 +137,7 @@ export class DeployPipeline {
     context: TransportContext,
     groups: TransportGroup[],
     operation: 'deploy' | 'retrieve' = 'deploy'
-  ): Promise<PipelineDeployResult> {
+  ): Promise<TransportPipelineResult> {
     const afterMetadata = groups.filter((g) => g.transport.phase[operation] === 'after-metadata');
     return this.runTransportGroups(afterMetadata, context, operation);
   }
@@ -158,7 +158,7 @@ export class DeployPipeline {
     groups: TransportGroup[],
     context: TransportContext,
     operation: 'deploy' | 'retrieve'
-  ): Promise<PipelineDeployResult> {
+  ): Promise<TransportPipelineResult> {
     const allFileResponses: FileResponse[] = [];
     const allAsyncHandles: AsyncTransportHandle[] = [];
 

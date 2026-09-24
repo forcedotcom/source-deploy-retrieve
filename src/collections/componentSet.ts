@@ -30,7 +30,7 @@ import { objectHasSomeRealValues } from '../utils/decomposed';
 import { MetadataApiDeploy, MetadataApiDeployOptions } from '../client/metadataApiDeploy';
 import { MetadataApiRetrieve } from '../client/metadataApiRetrieve';
 import type { MetadataApiRetrieveOptions } from '../client/types';
-import { DeployPipeline } from '../client/transports/deployPipeline';
+import { TransportPipeline } from '../client/transports/transportPipeline';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common/constants';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MetadataResolver } from '../resolve/metadataResolver';
@@ -90,7 +90,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public fullName?: string;
   public forceIgnoredPaths?: Set<string>;
   public botVersionFilters?: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
-  public deployPipeline?: DeployPipeline;
+  public transportPipeline?: TransportPipeline;
   private logger: Logger;
   private readonly registry: RegistryAccess;
   // all components stored here, regardless of what manifest they belong to
@@ -399,7 +399,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       );
     }
 
-    const pipeline = this.deployPipeline;
+    const pipeline = this.transportPipeline;
     if (pipeline?.hasTransports(toDeploy)) {
       return this.deployWithPipeline(options, toDeploy, pipeline);
     }
@@ -748,7 +748,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   private async deployWithPipeline(
     options: DeploySetOptions,
     components: SourceComponent[],
-    pipeline: DeployPipeline
+    pipeline: TransportPipeline
   ): Promise<MetadataApiDeploy> {
     const { transports } = pipeline.groupByTransport(components);
 

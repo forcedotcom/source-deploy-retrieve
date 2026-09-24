@@ -30,12 +30,12 @@ export {
   TransportStatus,
   TransportPhase,
   TransportDescription,
-  DeployPipeline,
+  TransportPipeline,
   TransportGroup,
   GroupedComponents,
-  DeployPlan,
-  DeployPlanPhase,
-  PipelineDeployResult,
+  TransportPlan,
+  TransportPlanPhase,
+  TransportPipelineResult,
 } from './transports';
 export {
   ComponentDeployment,

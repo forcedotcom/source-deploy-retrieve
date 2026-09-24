@@ -399,8 +399,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       );
     }
 
-    const pipeline = this.transportPipeline;
-    if (pipeline?.hasTransports(toDeploy, options.skipTransports)) {
+    const pipeline = this.transportPipeline ?? TransportPipeline.withBuiltinTransports();
+    if (pipeline.hasTransports(toDeploy, options.skipTransports)) {
       return this.deployWithPipeline(options, toDeploy, pipeline);
     }
 
@@ -443,9 +443,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       );
     }
 
-    const pipeline = this.transportPipeline;
+    const pipeline = this.transportPipeline ?? TransportPipeline.withBuiltinTransports();
     const toRetrieve = Array.from(this.getSourceComponents());
-    if (pipeline?.hasTransports(toRetrieve, options.skipTransports)) {
+    if (pipeline.hasTransports(toRetrieve, options.skipTransports)) {
       return this.retrieveWithPipeline(operationOptions, toRetrieve, pipeline, options.skipTransports);
     }
 

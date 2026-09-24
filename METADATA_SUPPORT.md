@@ -959,6 +959,7 @@ v68 introduces the following new types.  Here's their current level of support
 |TenantSecurityStepDefVer|❌|Not supported, but support could be added|
 |TrustedTelephonyProvider|❌|Not supported, but support could be added|
 |UiWidgetBundle|⚠️|Supports deploy/retrieve but not source tracking|
+|VoiceWorkflowDefinition|❌|Not supported, but support could be added|
 |WinProbabilityScoringSetup|❌|Not supported, but support could be added|
 |WorkforceSchedulingSettings|✅||
 

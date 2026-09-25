@@ -928,6 +928,7 @@ v68 introduces the following new types.  Here's their current level of support
 |MsTeamsAppSettings|✅||
 |PlanningDimensionDef|❌|Not supported, but support could be added|
 |PlatformComputeApp|❌|Not supported, but support could be added|
+|PrivacyAgentSettings|✅||
 |PrivacyOrgConfig|❌|Not supported, but support could be added|
 |RecLifecyclCompanCpblDef|❌|Not supported, but support could be added|
 |RecLifecyclCompanDef|❌|Not supported, but support could be added|

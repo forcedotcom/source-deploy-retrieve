@@ -31,6 +31,9 @@ import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
+const CLOSE_META_SUFFIX_REGEX = /.+\.([^.-]+)(?:-.*)?\.xml/;
+const FOLDER_META_XML_REGEX = /(.+)-meta\.xml/;
+
 /**
  * Resolver for metadata type and component objects.
  *
@@ -262,7 +265,7 @@ const getSuggestionsForUnresolvedTypes =
     const metaSuffix = parsedMetaXml?.suffix;
     // Finds close matches for meta suffixes
     // Examples: https://regex101.com/r/vbRjwy/1
-    const closeMetaSuffix = new RegExp(/.+\.([^.-]+)(?:-.*)?\.xml/).exec(basename(fsPath));
+    const closeMetaSuffix = CLOSE_META_SUFFIX_REGEX.exec(basename(fsPath));
 
     let guesses;
 
@@ -307,7 +310,7 @@ const parseAsFolderMetadataXml =
   (registry: RegistryAccess) =>
   (fsPath: string): string | undefined => {
     let folderName: string | undefined;
-    const match = new RegExp(/(.+)-meta\.xml/).exec(basename(fsPath));
+    const match = FOLDER_META_XML_REGEX.exec(basename(fsPath));
     if (match && !match[1].includes('.')) {
       const parts = fsPath.split(sep);
       if (parts.length > 1) {

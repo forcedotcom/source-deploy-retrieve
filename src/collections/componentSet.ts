@@ -30,6 +30,7 @@ import { objectHasSomeRealValues } from '../utils/decomposed';
 import { MetadataApiDeploy, MetadataApiDeployOptions } from '../client/metadataApiDeploy';
 import { MetadataApiRetrieve } from '../client/metadataApiRetrieve';
 import type { MetadataApiRetrieveOptions } from '../client/types';
+import { TransportPipeline } from '../client/transports/transportPipeline';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common/constants';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MetadataResolver } from '../resolve/metadataResolver';
@@ -89,6 +90,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public fullName?: string;
   public forceIgnoredPaths?: Set<string>;
   public botVersionFilters?: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
+  public transportPipeline?: TransportPipeline;
   private logger: Logger;
   private readonly registry: RegistryAccess;
   // all components stored here, regardless of what manifest they belong to
@@ -397,6 +399,11 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       );
     }
 
+    const pipeline = this.transportPipeline;
+    if (pipeline?.hasTransports(toDeploy, options.skipTransports)) {
+      return this.deployWithPipeline(options, toDeploy, pipeline);
+    }
+
     const operationOptions = Object.assign({}, options, {
       components: this,
       registry: this.registry,
@@ -434,6 +441,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       this.logger.debug(
         `Received conflicting apiVersion values for retrieve. Using option=${this.apiVersion}, Ignoring apiVersion on connection=${options.usernameOrConnection.version}.`
       );
+    }
+
+    const pipeline = this.transportPipeline;
+    const toRetrieve = Array.from(this.getSourceComponents());
+    if (pipeline?.hasTransports(toRetrieve, options.skipTransports)) {
+      return this.retrieveWithPipeline(operationOptions, toRetrieve, pipeline, options.skipTransports);
     }
 
     const mdapiRetrieve = new MetadataApiRetrieve(operationOptions);
@@ -522,7 +535,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     });
     const toParse = await this.getObject(destructiveType);
     toParse.Package[XML_NS_KEY] = XML_NS_URL;
-     
+
     return XML_DECL.concat(builder.build(toParse));
   }
 
@@ -736,6 +749,79 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       destructiveChangesTypes.push(DestructiveChangesType.POST);
     }
     return destructiveChangesTypes;
+  }
+
+  private async deployWithPipeline(
+    options: DeploySetOptions,
+    components: SourceComponent[],
+    pipeline: TransportPipeline
+  ): Promise<MetadataApiDeploy> {
+    const { transports } = pipeline.groupByTransport(components, options.skipTransports);
+
+    const connection =
+      typeof options.usernameOrConnection === 'string'
+        ? await Connection.create({ authInfo: await AuthInfo.create({ username: options.usernameOrConnection }) })
+        : options.usernameOrConnection;
+
+    const transportContext = {
+      components,
+      connection,
+      project: await SfProject.resolve(this.projectDirectory),
+      orgId: connection.getAuthInfoFields().orgId ?? '',
+    };
+
+    const beforeResults = await pipeline.runBeforeMetadata(transportContext, transports);
+
+    const operationOptions = Object.assign({}, options, {
+      components: this,
+      registry: this.registry,
+      apiVersion: this.apiVersion,
+    });
+
+    const mdapiDeploy = new MetadataApiDeploy(operationOptions);
+    await mdapiDeploy.start();
+
+    // store transport results and pending after-metadata groups on the deploy
+    // so they can be merged into DeployResult after polling completes
+    mdapiDeploy.transportFileResponses = beforeResults.fileResponses;
+    mdapiDeploy.transportAsyncHandles = beforeResults.asyncHandles;
+    mdapiDeploy.pendingAfterMetadata = { pipeline, transports, context: transportContext };
+
+    return mdapiDeploy;
+  }
+
+  private async retrieveWithPipeline(
+    operationOptions: MetadataApiRetrieveOptions,
+    components: SourceComponent[],
+    pipeline: TransportPipeline,
+    skipTransports?: string[]
+  ): Promise<MetadataApiRetrieve> {
+    const { transports } = pipeline.groupByTransport(components, skipTransports);
+
+    const connection =
+      typeof operationOptions.usernameOrConnection === 'string'
+        ? await Connection.create({
+            authInfo: await AuthInfo.create({ username: operationOptions.usernameOrConnection }),
+          })
+        : operationOptions.usernameOrConnection;
+
+    const transportContext = {
+      components,
+      connection,
+      project: await SfProject.resolve(this.projectDirectory),
+      orgId: connection.getAuthInfoFields().orgId ?? '',
+    };
+
+    const beforeResults = await pipeline.runBeforeMetadata(transportContext, transports, 'retrieve');
+
+    const mdapiRetrieve = new MetadataApiRetrieve(operationOptions);
+
+    mdapiRetrieve.transportFileResponses = beforeResults.fileResponses;
+    mdapiRetrieve.transportAsyncHandles = beforeResults.asyncHandles;
+    mdapiRetrieve.pendingAfterMetadata = { pipeline, transports, context: transportContext };
+
+    await mdapiRetrieve.start();
+    return mdapiRetrieve;
   }
 
   /**

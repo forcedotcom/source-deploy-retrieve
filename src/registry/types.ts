@@ -173,6 +173,7 @@ export type MetadataType = {
       | 'uiBundle';
     decomposition?: 'topLevel' | 'folderPerType';
     recomposition?: 'startEmpty';
+    transport?: 'connectApi' | 'presignedUrl' | 'datakitApi';
   };
 };
 

@@ -100,6 +100,7 @@ export {
   DestructiveChangesType,
   FromSourceOptions,
   FromManifestOptions,
+  expandD360ComponentSet,
 } from './collections';
 
 export {

@@ -38,6 +38,7 @@ import {
   MetadataApiDeployOptions as ApiOptions,
   MetadataApiDeployStatus,
   MetadataTransferResult,
+  RequestStatus,
 } from './types';
 import {
   createResponses,
@@ -109,6 +110,12 @@ export type MetadataApiDeployOptions = {
    */
   mdapiPath?: string;
   registry?: RegistryAccess;
+  /**
+   * Metadata type names whose transports should be skipped (e.g., `['PlatformComputeApp']`).
+   * Components of these types will still deploy via the Metadata API but their
+   * secondary transport (Connect API, presigned URL, etc.) will not run.
+   */
+  skipTransports?: string[];
 } & MetadataTransferOptions;
 
 export class MetadataApiDeploy extends MetadataTransfer<
@@ -348,18 +355,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
         }`
       );
     }
-    // run after-metadata transports (e.g., DataKit trigger) if any are pending
-    // wrapped in try/catch so a transport failure doesn't lose the successful MDAPI result
-    if (this.pendingAfterMetadata) {
-      try {
-        const { pipeline, transports, context } = this.pendingAfterMetadata;
-        const afterResults = await pipeline.runAfterMetadata(context, transports);
-        this.transportFileResponses.push(...afterResults.fileResponses);
-        this.transportAsyncHandles.push(...afterResults.asyncHandles);
-      } catch (err) {
-        this.logger.warn(`After-metadata transport failed: ${(err as Error).message}`);
-      }
-    }
+    await this.runPendingAfterMetadataTransports(result.status);
 
     const deployResult = new DeployResult(
       result,
@@ -416,6 +412,18 @@ export class MetadataApiDeploy extends MetadataTransfer<
       await Lifecycle.getInstance().emitWarning(
         `Deployment zip file count is approaching the Metadata API limit (10,000). Warning threshold is ${thresholdPercentage}% and count ${zipFileCount} > ${fileCountThreshold}`
       );
+    }
+  }
+
+  private async runPendingAfterMetadataTransports(status: RequestStatus): Promise<void> {
+    if (status !== RequestStatus.Succeeded || !this.pendingAfterMetadata) return;
+    try {
+      const { pipeline, transports, context } = this.pendingAfterMetadata;
+      const afterResults = await pipeline.runAfterMetadata(context, transports);
+      this.transportFileResponses.push(...afterResults.fileResponses);
+      this.transportAsyncHandles.push(...afterResults.asyncHandles);
+    } catch (err) {
+      this.logger.warn(`After-metadata transport failed: ${(err as Error).message}`);
     }
   }
 

@@ -276,6 +276,53 @@ describe('TransportPipeline', () => {
       expect(result.fileResponses[0].fullName).to.equal('CustomerDataKit');
     });
 
+    it('should use retrieve phase ordering when operation is retrieve', async () => {
+      const pipeline = new TransportPipeline();
+      const retrieveResponse: FileResponse = {
+        fullName: 'MyApp',
+        type: 'PlatformComputeApp',
+        state: ComponentStatus.Changed,
+        filePath: 'force-app/main/default/compute/MyApp/main.py',
+      };
+      // deploy: before-metadata → retrieve: after-metadata (flipped by createMockTransport)
+      const transport = createMockTransport('connectApi', 'before-metadata', ['ApexClass'], retrieveResponse ? [] : []);
+      // override retrieve to return responses
+      transport.retrieve = async (): Promise<TransportResult> => ({ fileResponses: [retrieveResponse] });
+      pipeline.registerTransport(transport);
+
+      const groups = [{ transport, components: [createMockComponent('ApexClass', 'MyClass')] }];
+
+      // for deploy, this transport is before-metadata → runAfterMetadata should skip it
+      const deployResult = await pipeline.runAfterMetadata(mockContext, groups, 'deploy');
+      expect(deployResult.fileResponses).to.have.lengthOf(0);
+
+      // for retrieve, this transport is after-metadata → runAfterMetadata should run it
+      const retrieveResult = await pipeline.runAfterMetadata(mockContext, groups, 'retrieve');
+      expect(retrieveResult.fileResponses).to.have.lengthOf(1);
+      expect(retrieveResult.fileResponses[0].fullName).to.equal('MyApp');
+    });
+
+    it('should produce correct explain plan for retrieve operation', () => {
+      const pipeline = new TransportPipeline();
+      // deploy: before-metadata → retrieve: after-metadata
+      pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['ApexClass']));
+
+      const apexClass = createMockComponent('ApexClass', 'MyClass');
+      const customObject = createMockComponent('CustomObject', 'MyObject__c');
+
+      const deployPlan = pipeline.explain([apexClass, customObject], 'deploy');
+      const retrievePlan = pipeline.explain([apexClass, customObject], 'retrieve');
+
+      // deploy: connectApi is before-metadata
+      expect(deployPlan.phases[0].phase).to.equal('before-metadata');
+      expect(deployPlan.phases[0].label).to.equal('Mock connectApi');
+
+      // retrieve: connectApi is after-metadata (phases are flipped)
+      expect(retrievePlan.phases[0].phase).to.equal('metadata-api');
+      expect(retrievePlan.phases[1].phase).to.equal('after-metadata');
+      expect(retrievePlan.phases[1].label).to.equal('Mock connectApi');
+    });
+
     it('should collect async handles from transports', async () => {
       const pipeline = new TransportPipeline();
       const asyncTransport: TransportProvider = {

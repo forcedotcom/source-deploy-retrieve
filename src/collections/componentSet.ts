@@ -400,7 +400,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
 
     const pipeline = this.transportPipeline;
-    if (pipeline?.hasTransports(toDeploy)) {
+    if (pipeline?.hasTransports(toDeploy, options.skipTransports)) {
       return this.deployWithPipeline(options, toDeploy, pipeline);
     }
 
@@ -441,6 +441,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       this.logger.debug(
         `Received conflicting apiVersion values for retrieve. Using option=${this.apiVersion}, Ignoring apiVersion on connection=${options.usernameOrConnection.version}.`
       );
+    }
+
+    const pipeline = this.transportPipeline;
+    const toRetrieve = Array.from(this.getSourceComponents());
+    if (pipeline?.hasTransports(toRetrieve, options.skipTransports)) {
+      return this.retrieveWithPipeline(operationOptions, toRetrieve, pipeline, options.skipTransports);
     }
 
     const mdapiRetrieve = new MetadataApiRetrieve(operationOptions);
@@ -750,7 +756,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     components: SourceComponent[],
     pipeline: TransportPipeline
   ): Promise<MetadataApiDeploy> {
-    const { transports } = pipeline.groupByTransport(components);
+    const { transports } = pipeline.groupByTransport(components, options.skipTransports);
 
     const connection =
       typeof options.usernameOrConnection === 'string'
@@ -782,6 +788,40 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     mdapiDeploy.pendingAfterMetadata = { pipeline, transports, context: transportContext };
 
     return mdapiDeploy;
+  }
+
+  private async retrieveWithPipeline(
+    operationOptions: MetadataApiRetrieveOptions,
+    components: SourceComponent[],
+    pipeline: TransportPipeline,
+    skipTransports?: string[]
+  ): Promise<MetadataApiRetrieve> {
+    const { transports } = pipeline.groupByTransport(components, skipTransports);
+
+    const connection =
+      typeof operationOptions.usernameOrConnection === 'string'
+        ? await Connection.create({
+            authInfo: await AuthInfo.create({ username: operationOptions.usernameOrConnection }),
+          })
+        : operationOptions.usernameOrConnection;
+
+    const transportContext = {
+      components,
+      connection,
+      project: await SfProject.resolve(this.projectDirectory),
+      orgId: connection.getAuthInfoFields().orgId ?? '',
+    };
+
+    const beforeResults = await pipeline.runBeforeMetadata(transportContext, transports, 'retrieve');
+
+    const mdapiRetrieve = new MetadataApiRetrieve(operationOptions);
+
+    mdapiRetrieve.transportFileResponses = beforeResults.fileResponses;
+    mdapiRetrieve.transportAsyncHandles = beforeResults.asyncHandles;
+    mdapiRetrieve.pendingAfterMetadata = { pipeline, transports, context: transportContext };
+
+    await mdapiRetrieve.start();
+    return mdapiRetrieve;
   }
 
   /**

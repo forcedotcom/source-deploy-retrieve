@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1790353312367,
+  "lastUpdate": 1790355676349,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -111700,6 +111700,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 31168,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "distinct": true,
+          "id": "7b1151471ffdb229cea359a6ca4a4efdbf5d556e",
+          "message": "feat: wire transport pipeline into retrieve path and add skipTransports option\n\n- Add skipTransports option to MetadataApiDeployOptions and MetadataApiRetrieveOptions\n- Wire retrieve pipeline with both before-metadata and after-metadata phases\n- Guard deploy post() after-metadata transports on RequestStatus.Succeeded\n- Deduplicate transport file responses in RetrieveResult (matches DeployResult)\n- Extract runPendingAfterMetadataTransports helper in MetadataApiDeploy\n- Add retrieveWithPipeline in ComponentSet mirroring deployWithPipeline\n- Add tests for retrieve transport phases, skipTransports, error handling, dedup",
+          "timestamp": "2026-09-25T10:51:54-06:00",
+          "tree_id": "7ca8464678fb77a2f577b64f0297ad0d7e8b7473",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/7b1151471ffdb229cea359a6ca4a4efdbf5d556e"
+        },
+        "date": 1790355657901,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 721,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4555,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 4001,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 8790,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1126,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 12773,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 11617,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 14260,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1807,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 24353,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 21189,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 33366,
             "unit": "ms"
           }
         ]

@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1790352830216,
+  "lastUpdate": 1790355300818,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -116972,6 +116972,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 8233,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "distinct": true,
+          "id": "7b1151471ffdb229cea359a6ca4a4efdbf5d556e",
+          "message": "feat: wire transport pipeline into retrieve path and add skipTransports option\n\n- Add skipTransports option to MetadataApiDeployOptions and MetadataApiRetrieveOptions\n- Wire retrieve pipeline with both before-metadata and after-metadata phases\n- Guard deploy post() after-metadata transports on RequestStatus.Succeeded\n- Deduplicate transport file responses in RetrieveResult (matches DeployResult)\n- Extract runPendingAfterMetadataTransports helper in MetadataApiDeploy\n- Add retrieveWithPipeline in ComponentSet mirroring deployWithPipeline\n- Add tests for retrieve transport phases, skipTransports, error handling, dedup",
+          "timestamp": "2026-09-25T10:51:54-06:00",
+          "tree_id": "7ca8464678fb77a2f577b64f0297ad0d7e8b7473",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/7b1151471ffdb229cea359a6ca4a4efdbf5d556e"
+        },
+        "date": 1790355288652,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 208,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 1817,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2177,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 2915,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 388,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 5090,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 6250,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 5335,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 679,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 9079,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 11687,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 10285,
             "unit": "ms"
           }
         ]

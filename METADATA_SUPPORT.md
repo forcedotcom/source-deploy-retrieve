@@ -961,6 +961,7 @@ v68 introduces the following new types.  Here's their current level of support
 |TrustedTelephonyProvider|❌|Not supported, but support could be added|
 |UiWidgetBundle|⚠️|Supports deploy/retrieve but not source tracking|
 |VoiceWorkflowDefinition|❌|Not supported, but support could be added|
+|VoiceWorkflowVersion|❌|Not supported, but support could be added (but not for tracking)|
 |WinProbabilityScoringSetup|❌|Not supported, but support could be added|
 |WorkforceSchedulingSettings|✅||
 

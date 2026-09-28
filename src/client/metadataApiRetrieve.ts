@@ -38,6 +38,8 @@ import {
 import { extract } from './retrieveExtract';
 import { getPackageOptions } from './retrieveExtract';
 import { MetadataApiRetrieveOptions } from './types';
+import { AsyncTransportHandle, TransportContext } from './transports/types';
+import { TransportPipeline, TransportGroup } from './transports/transportPipeline';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -48,6 +50,8 @@ export class RetrieveResult implements MetadataTransferResult {
   // rather than "Changed".
   private localComponents: ComponentSet;
   private fileResponses?: FileResponse[];
+  private transportFileResponses: FileResponse[] = [];
+  private asyncTransportHandles: AsyncTransportHandle[] = [];
 
   /**
    * @param response The metadata retrieve response from the server
@@ -69,7 +73,7 @@ export class RetrieveResult implements MetadataTransferResult {
       return this.fileResponses;
     }
 
-    this.fileResponses = [];
+    const responses: FileResponse[] = [];
 
     // construct failures
     if (this.response.messages) {
@@ -80,7 +84,7 @@ export class RetrieveResult implements MetadataTransferResult {
         const matches = new RegExp(/.+'(.+)'.+'(.+)'/).exec(message.problem);
         if (matches) {
           const [typeName, fullName] = matches.slice(1);
-          this.fileResponses.push({
+          responses.push({
             fullName,
             type: typeName,
             state: ComponentStatus.Failed,
@@ -88,7 +92,7 @@ export class RetrieveResult implements MetadataTransferResult {
             problemType: 'Error',
           });
         } else {
-          this.fileResponses.push({
+          responses.push({
             fullName: '',
             type: '',
             problemType: 'Error',
@@ -110,20 +114,35 @@ export class RetrieveResult implements MetadataTransferResult {
 
       if (!type.children || Object.values(type.children.types).some((t) => t.unaddressableWithoutParent)) {
         for (const filePath of retrievedComponent.walkContent()) {
-          this.fileResponses.push({ ...baseResponse, filePath } satisfies FileResponseSuccess);
+          responses.push({ ...baseResponse, filePath } satisfies FileResponseSuccess);
         }
       }
 
       if (xml) {
-        this.fileResponses.push({ ...baseResponse, filePath: xml } satisfies FileResponseSuccess);
+        responses.push({ ...baseResponse, filePath: xml } satisfies FileResponseSuccess);
       }
     }
 
     // Add file responses for components that support partial delete (e.g., DigitalExperience)
     // where pieces of the component were deleted in the org, then retrieved.
-    this.fileResponses.push(...(this.partialDeleteFileResponses ?? []));
+    responses.push(...(this.partialDeleteFileResponses ?? []));
+
+    responses.push(...this.transportFileResponses);
+
+    // deduplicate by serializing each response
+    this.fileResponses = [...new Map(responses.map((v) => [JSON.stringify(v), v])).values()];
 
     return this.fileResponses;
+  }
+
+  public addTransportResults(fileResponses: FileResponse[], asyncHandles: AsyncTransportHandle[] = []): void {
+    this.transportFileResponses.push(...fileResponses);
+    this.asyncTransportHandles.push(...asyncHandles);
+    this.fileResponses = undefined;
+  }
+
+  public getAsyncTransportHandles(): AsyncTransportHandle[] {
+    return this.asyncTransportHandles;
   }
 }
 
@@ -133,6 +152,16 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   MetadataApiRetrieveOptions
 > {
   public static DEFAULT_OPTIONS: Partial<MetadataApiRetrieveOptions> = { merge: false };
+  /** @internal */
+  public transportFileResponses: FileResponse[] = [];
+  /** @internal */
+  public transportAsyncHandles: AsyncTransportHandle[] = [];
+  /** @internal */
+  public pendingAfterMetadata?: {
+    pipeline: TransportPipeline;
+    transports: TransportGroup[];
+    context: TransportContext;
+  };
   private readonly options: MetadataApiRetrieveOptions;
   private orgId?: string;
 
@@ -212,6 +241,17 @@ export class MetadataApiRetrieve extends MetadataTransfer<
         }));
       }
     }
+    if (result.status === RequestStatus.Succeeded && this.pendingAfterMetadata) {
+      try {
+        const { pipeline, transports, context } = this.pendingAfterMetadata;
+        const afterResults = await pipeline.runAfterMetadata(context, transports, 'retrieve');
+        this.transportFileResponses.push(...afterResults.fileResponses);
+        this.transportAsyncHandles.push(...afterResults.asyncHandles);
+      } catch (err) {
+        this.logger.warn(`After-metadata transport failed during retrieve: ${(err as Error).message}`);
+      }
+    }
+
     componentSet ??= new ComponentSet(undefined, this.options.registry);
 
     const retrieveResult = new RetrieveResult(
@@ -221,6 +261,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       partialDeleteFileResponses,
       this.options.registry
     );
+    if (this.transportFileResponses.length > 0 || this.transportAsyncHandles.length > 0) {
+      retrieveResult.addTransportResults(this.transportFileResponses, this.transportAsyncHandles);
+    }
     if (!isMdapiRetrieve && !this.options.suppressEvents) {
       // This should only be done when retrieving source format since retrieving
       // mdapi format has no conversion or events/hooks

@@ -412,4 +412,10 @@ export type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & {
     registry?: RegistryAccess;
     botVersionFilters?: BotVersionFilter[];
+    /**
+     * Metadata type names whose transports should be skipped (e.g., `['PlatformComputeApp']`).
+     * Components of these types will still be retrieved via the Metadata API but their
+     * secondary transport (Connect API, presigned URL, etc.) will not run.
+     */
+    skipTransports?: string[];
   };

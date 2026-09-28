@@ -870,11 +870,13 @@ v68 introduces the following new types.  Here's their current level of support
 |AutomationPipeline|❌|Not supported, but support could be added|
 |BotEmailDefinition|❌|Not supported, but support could be added|
 |BusinessValueMetricsSettings|✅||
+|CnfgItmAstSyncRule|❌|Not supported, but support could be added (but not for tracking)|
 |CnfgItmTypAttrSrcRcnRule|❌|Not supported, but support could be added|
 |CnfgItmTypCmplCond|❌|Not supported, but support could be added|
 |CnfgItmTypCmplCrit|❌|Not supported, but support could be added|
 |CnfgItmTypDefCmplCrit|❌|Not supported, but support could be added|
 |CnfgItmTypSrcRcnRule|❌|Not supported, but support could be added|
+|CnfgMgmtAssetStsQual|❌|Not supported, but support could be added (but not for tracking)|
 |CnfgMgmtDataBndl|❌|Not supported, but support could be added|
 |CnfgMgmtItemFieldMap|❌|Not supported, but support could be added|
 |CnfgMgmtItemValueMap|❌|Not supported, but support could be added|

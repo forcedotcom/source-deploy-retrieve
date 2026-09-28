@@ -51,7 +51,9 @@
     "botBlocks": "botblock",
     "botTemplates": "bottemplate",
     "bots": "bot",
+    "calculatedInsight": "calculatedinsight",
     "contentTypes": "contenttypebundle",
+    "mktDataModelObject": "datamodelobject",
     "documents": "document",
     "emailservices": "emailservicesfunction",
     "experiencePropertyTypeBundles": "experiencepropertytypebundle",
@@ -344,6 +346,7 @@
     "integrationProviderDefinition": "integrationproviderdef",
     "internalDataConnector": "internaldataconnector",
     "internalOrganization": "internalorganization",
+    "json": "calculatedinsight",
     "keywords": "keywordlist",
     "labels": "customlabels",
     "layout": "layout",
@@ -5422,6 +5425,30 @@
         "adapter": "bundle"
       },
       "supportsPartialDelete": true
+    },
+    "calculatedinsight": {
+      "id": "calculatedinsight",
+      "name": "CalculatedInsight",
+      "suffix": "json",
+      "directoryName": "calculatedInsight",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "datamodelobject": {
+      "id": "datamodelobject",
+      "name": "DataModelObject",
+      "suffix": "json",
+      "directoryName": "mktDataModelObject",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
     }
   }
 }

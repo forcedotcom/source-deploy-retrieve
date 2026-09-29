@@ -254,7 +254,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
     let zipMessage = `Deployment zip file size = ${this.zipSize} Bytes`;
     if (zipFileCount) {
       this.zipFileCount = zipFileCount;
-      zipMessage += ` containing ${zipFileCount} files`;
+      zipMessage += ` containing ${zipFileCount} entries`;
     }
     this.logger.debug(zipMessage);
     await LifecycleInstance.emit('apiVersionDeploy', { webService, manifestVersion, apiVersion });
@@ -367,7 +367,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
 
     if (zipFileCount && zipFileCount > fileCountThreshold) {
       await Lifecycle.getInstance().emitWarning(
-        `Deployment zip file count is approaching the Metadata API limit (10,000). Warning threshold is ${thresholdPercentage}% and count ${zipFileCount} > ${fileCountThreshold}`
+        `Deployment zip entry count (files + folders) is approaching the Metadata API limit (10,000). Warning threshold is ${thresholdPercentage}% and count ${zipFileCount} > ${fileCountThreshold}`
       );
     }
   }
@@ -382,7 +382,6 @@ export class MetadataApiDeploy extends MetadataTransfer<
       }
 
       const zip = JSZip();
-      let zipFileCount = 0;
 
       const zipDirRecursive = (dir: string): void => {
         const dirents = fs.readdirSync(dir, { withFileTypes: true });
@@ -396,12 +395,14 @@ export class MetadataApiDeploy extends MetadataTransfer<
             // Ensure only posix paths are added to zip files
             const relPosixPath = relPath.replace(/\\/g, '/');
             zip.file(relPosixPath, fs.createReadStream(fullPath));
-            zipFileCount++;
           }
         }
       };
       this.logger.debug(`Zipping directory for metadata deploy: ${mdapiPath}`);
       zipDirRecursive(mdapiPath);
+
+      // Count all entries (files + auto-created directories) to match the server's limit check
+      const zipFileCount = Object.keys(zip.files).length;
 
       return {
         zipBuffer: await zip.generateAsync({

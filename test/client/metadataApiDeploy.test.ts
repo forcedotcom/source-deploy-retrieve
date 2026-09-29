@@ -197,7 +197,7 @@ describe('MetadataApiDeploy', () => {
         await MetadataApiDeploy.prototype.warnIfDeployThresholdExceeded.call(mdapThis, 31_200_000, 8001);
         expect(emitWarningStub.calledOnce, 'emitWarning for fileSize should have been called').to.be.true;
         const warningMsg =
-          'Deployment zip file count is approaching the Metadata API limit (10,000). Warning threshold is 80%';
+          'Deployment zip entry count (files + folders) is approaching the Metadata API limit (10,000). Warning threshold is 80%';
         expect(emitWarningStub.firstCall.args[0]).to.include(warningMsg);
         expect(loggerDebugSpy.called).to.be.false;
       });
@@ -225,7 +225,7 @@ describe('MetadataApiDeploy', () => {
         const fileSizeWarningMsg =
           'Deployment zip file size is approaching the Metadata API limit (~39MB). Warning threshold is 75%';
         const fileCountWarningMsg =
-          'Deployment zip file count is approaching the Metadata API limit (10,000). Warning threshold is 75%';
+          'Deployment zip entry count (files + folders) is approaching the Metadata API limit (10,000). Warning threshold is 75%';
         expect(emitWarningStub.firstCall.args[0]).to.include(fileSizeWarningMsg);
         expect(emitWarningStub.secondCall.args[0]).to.include(fileCountWarningMsg);
         expect(loggerDebugSpy.calledOnce).to.be.true;

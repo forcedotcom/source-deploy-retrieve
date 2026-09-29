@@ -29,6 +29,9 @@ import { RegistryAccess } from '../../registry/registryAccess';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
+const NAME_AND_SUFFIX_REGEX = /(.+)\.(.+)/;
+const FOLDER_META_XML_STRICT_REGEX = /(.+)-meta\.xml$/;
+
 export abstract class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
   protected registry: RegistryAccess;
@@ -191,14 +194,14 @@ const parseAsContentMetadataXml =
       return undefined;
     }
 
-    const match = new RegExp(/(.+)\.(.+)/).exec(basename(path));
+    const match = NAME_AND_SUFFIX_REGEX.exec(basename(path));
     if (match && type.suffix === match[2]) {
       return { fullName: match[1], suffix: match[2], path };
     }
   };
 
 const parseAsFolderMetadataXml = (fsPath: SourcePath): MetadataXml | undefined => {
-  const match = new RegExp(/(.+)-meta\.xml$/).exec(basename(fsPath));
+  const match = FOLDER_META_XML_STRICT_REGEX.exec(basename(fsPath));
   const parts = fsPath.split(sep);
   if (match && !match[1].includes('.') && parts.length > 1) {
     return { fullName: match[1], suffix: undefined, path: fsPath };

@@ -124,9 +124,13 @@ export class NodeFSTreeContainer extends TreeContainer {
   }
 
   public readDirectory(fsPath: SourcePath): string[] {
-    const resolved = this.getUpdatedFsPath(fsPath);
-    if (!statSync(resolved).isDirectory()) return [];
-    return readdirSync(resolved);
+    try {
+      return readdirSync(this.getUpdatedFsPath(fsPath));
+    } catch (e) {
+      const code = (e as NodeJS.ErrnoException).code;
+      if (code === 'ENOTDIR' || code === 'ENOENT') return [];
+      throw e;
+    }
   }
 
   public readFile(fsPath: SourcePath): Promise<Buffer> {
@@ -152,15 +156,33 @@ export class NodeFSTreeContainer extends TreeContainer {
 export class ZipTreeContainer extends TreeContainer {
   private zip: JSZip;
   private zipKeyMap: Map<string, string> = new Map<string, string>();
+  private dirChildren: Map<string, string[]> = new Map<string, string[]>();
 
   private constructor(zip: JSZip) {
     super();
     this.zip = zip;
     for (const key of Object.keys(this.zip.files)) {
       if (key.endsWith('/')) {
-        this.zipKeyMap.set(key.slice(0, -1), key);
+        const normalized = key.slice(0, -1);
+        this.zipKeyMap.set(normalized, key);
+        const dir = dirname(normalized);
+        if (dir !== normalized) {
+          let children = this.dirChildren.get(dir);
+          if (!children) {
+            children = [];
+            this.dirChildren.set(dir, children);
+          }
+          children.push(basename(normalized));
+        }
       } else {
         this.zipKeyMap.set(key, key);
+        const dir = dirname(key);
+        let children = this.dirChildren.get(dir);
+        if (!children) {
+          children = [];
+          this.dirChildren.set(dir, children);
+        }
+        children.push(basename(key));
       }
     }
   }
@@ -185,12 +207,8 @@ export class ZipTreeContainer extends TreeContainer {
   public readDirectory(fsPath: string): string[] {
     const resolvedPath = this.match(fsPath);
     if (resolvedPath && this.ensureDirectory(resolvedPath)) {
-      // Remove trailing path sep if it exists. JSZip always adds them for directories but
-      // when comparing we call `dirname()` which does not include them.
       const dirPath = resolvedPath.endsWith('/') ? resolvedPath.slice(0, -1) : resolvedPath;
-      return Object.keys(this.zip.files)
-        .filter((filePath) => dirname(filePath) === dirPath)
-        .map((filePath) => basename(filePath));
+      return this.dirChildren.get(dirPath) ?? [];
     }
     throw new SfError(messages.getMessage('error_expected_directory_path', [fsPath]), 'LibraryError');
   }

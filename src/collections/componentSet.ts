@@ -522,7 +522,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     });
     const toParse = await this.getObject(destructiveType);
     toParse.Package[XML_NS_KEY] = XML_NS_URL;
-     
+
     return XML_DECL.concat(builder.build(toParse));
   }
 

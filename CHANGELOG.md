@@ -1,3 +1,12 @@
+## [13.4.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.4.1...13.4.2) (2026-09-29)
+
+
+### Performance Improvements
+
+* deploy and retrieve flow efficiency improvements @W-24222996@ ([#1836](https://github.com/forcedotcom/source-deploy-retrieve/issues/1836)) ([c086d40](https://github.com/forcedotcom/source-deploy-retrieve/commit/c086d40e264b12905ef2aecc5726336105e73d2c))
+
+
+
 ## [13.4.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.4.0...13.4.1) (2026-09-28)
 
 

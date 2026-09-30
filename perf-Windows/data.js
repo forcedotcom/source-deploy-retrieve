@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1790786541891,
+  "lastUpdate": 1790788079289,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -112372,6 +112372,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 21284,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "distinct": true,
+          "id": "f5fd897817fec672fc143c5aa1fe0e120d747d10",
+          "message": "refactor: lazy transport pipeline discovery and improved test coverage\n\nComponentSet now lazily auto-discovers builtin transports only when\ntransport-eligible types (e.g. PlatformComputeApp) are present, avoiding\npipeline/logger overhead for the 99% case with no transport components.\nReplaces the eager withBuiltinTransports() fallback on every deploy/retrieve.\n\nAlso fixes the no-op deploy test (now stubs packageComputeBundle and\nasserts on Connect API calls) and adds ComponentSet auto-discovery tests.",
+          "timestamp": "2026-09-30T10:56:49-06:00",
+          "tree_id": "1caac4a64c2a3ee5ac8adb15d3afbc37b3625d5b",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/f5fd897817fec672fc143c5aa1fe0e120d747d10"
+        },
+        "date": 1790788010171,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 665,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4581,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 4183,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 8888,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1078,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 12625,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10587,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 13311,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1853,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 24429,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 21555,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 27296,
             "unit": "ms"
           }
         ]

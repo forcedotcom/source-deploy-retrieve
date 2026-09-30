@@ -31,3 +31,5 @@ export {
   TransportPlanPhase,
   TransportPipelineResult,
 } from './transportPipeline';
+export { ConnectApiTransport } from './connectApiTransport';
+export { packageComputeBundle, unpackComputeBundle, PackagedBundle, UnpackedBundle } from './computeSourceBundle';

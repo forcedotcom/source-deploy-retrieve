@@ -18,6 +18,7 @@ import { Logger } from '@salesforce/core';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { FileResponse } from '../types';
 import { AsyncTransportHandle, TransportContext, TransportPhase, TransportProvider, TransportResult } from './types';
+import { ConnectApiTransport } from './connectApiTransport';
 
 export type TransportGroup = {
   transport: TransportProvider;
@@ -51,6 +52,12 @@ export class TransportPipeline {
 
   public constructor() {
     this.logger = Logger.childFromRoot('TransportPipeline');
+  }
+
+  public static withBuiltinTransports(): TransportPipeline {
+    const pipeline = new TransportPipeline();
+    pipeline.registerTransport(new ConnectApiTransport());
+    return pipeline;
   }
 
   public registerTransport(transport: TransportProvider): void {

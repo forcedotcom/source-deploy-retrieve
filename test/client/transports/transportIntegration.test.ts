@@ -257,6 +257,20 @@ describe('Transport integration', () => {
       expect(cs.transportPipeline).to.be.undefined;
     });
 
+    it('should re-evaluate when transport-eligible component is added after first access', () => {
+      const apexType = registryAccess.getTypeByName('ApexClass');
+      const cs = new ComponentSet([new SourceComponent({ name: 'MyClass', type: apexType })]);
+
+      expect(cs.transportPipeline).to.be.undefined;
+
+      const computeType = registryAccess.getTypeByName('PlatformComputeApp');
+      const computeComp = new SourceComponent({ name: 'MyApp', type: computeType, content: '/mock/app' });
+      cs.add(computeComp);
+
+      expect(cs.transportPipeline).to.not.be.undefined;
+      expect(cs.transportPipeline!.hasTransports([computeComp])).to.be.true;
+    });
+
     it('should allow explicit pipeline to override auto-discovery', () => {
       const computeType = registryAccess.getTypeByName('PlatformComputeApp');
       const component = new SourceComponent({ name: 'MyApp', type: computeType, content: '/mock/app' });

@@ -90,7 +90,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public fullName?: string;
   public forceIgnoredPaths?: Set<string>;
   public botVersionFilters?: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
-  public transportPipeline?: TransportPipeline;
+  private cachedTransportPipeline?: TransportPipeline;
+  private transportPipelineResolved = false;
   private logger: Logger;
   private readonly registry: RegistryAccess;
   // all components stored here, regardless of what manifest they belong to
@@ -146,6 +147,21 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
   public get destructiveChangesPost(): DecodeableMap<string, DecodeableMap<string, SourceComponent>> {
     return this.destructiveComponents[DestructiveChangesType.POST];
+  }
+
+  public get transportPipeline(): TransportPipeline | undefined {
+    if (!this.cachedTransportPipeline && !this.transportPipelineResolved) {
+      if (this.hasTransportEligibleTypes()) {
+        this.cachedTransportPipeline = TransportPipeline.withBuiltinTransports();
+      }
+      this.transportPipelineResolved = true;
+    }
+    return this.cachedTransportPipeline;
+  }
+
+  public set transportPipeline(pipeline: TransportPipeline | undefined) {
+    this.cachedTransportPipeline = pipeline;
+    this.transportPipelineResolved = true;
   }
 
   /**
@@ -399,8 +415,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       );
     }
 
-    const pipeline = this.transportPipeline ?? TransportPipeline.withBuiltinTransports();
-    if (pipeline.hasTransports(toDeploy, options.skipTransports)) {
+    const pipeline = this.transportPipeline;
+    if (pipeline?.hasTransports(toDeploy, options.skipTransports)) {
       return this.deployWithPipeline(options, toDeploy, pipeline);
     }
 
@@ -443,9 +459,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       );
     }
 
-    const pipeline = this.transportPipeline ?? TransportPipeline.withBuiltinTransports();
+    const pipeline = this.transportPipeline;
     const toRetrieve = Array.from(this.getSourceComponents());
-    if (pipeline.hasTransports(toRetrieve, options.skipTransports)) {
+    if (pipeline?.hasTransports(toRetrieve, options.skipTransports)) {
       return this.retrieveWithPipeline(operationOptions, toRetrieve, pipeline, options.skipTransports);
     }
 
@@ -822,6 +838,13 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     await mdapiRetrieve.start();
     return mdapiRetrieve;
+  }
+
+  private hasTransportEligibleTypes(): boolean {
+    for (const comp of this.getSourceComponents()) {
+      if (comp.type.strategies?.transport) return true;
+    }
+    return false;
   }
 
   /**

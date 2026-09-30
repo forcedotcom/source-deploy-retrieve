@@ -17,7 +17,14 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { Connection, SfProject } from '@salesforce/core';
-import { ConnectApiTransport, TransportPipeline, RegistryAccess, SourceComponent, TransportContext } from '../../../src';
+import {
+  ConnectApiTransport,
+  TransportPipeline,
+  RegistryAccess,
+  SourceComponent,
+  TransportContext,
+} from '../../../src';
+import * as computeSourceBundle from '../../../src/client/transports/computeSourceBundle';
 
 const registryAccess = new RegistryAccess();
 
@@ -122,20 +129,77 @@ describe('ConnectApiTransport', () => {
   });
 
   describe('deploy', () => {
-    it('should attempt to package and upload for each component', async () => {
-      const stub = sinon.stub();
-      stub.resolves({ platformComputeId: 'pc1', buildId: 'build1', sourceBlobSize: 500, uploadedAt: '2026-01-01' });
+    let packageStub: sinon.SinonStub;
+
+    beforeEach(() => {
+      packageStub = sinon.stub(computeSourceBundle, 'packageComputeBundle');
+    });
+
+    afterEach(() => {
+      packageStub.restore();
+    });
+
+    it('should package and upload each component via Connect API', async () => {
+      packageStub.resolves({ buffer: Buffer.from('fake-bundle'), fileCount: 3 });
+
+      const requestStub = sinon.stub();
+      requestStub.resolves({
+        platformComputeId: 'pc1',
+        buildId: 'build1',
+        sourceBlobSize: 500,
+        uploadedAt: '2026-01-01',
+      });
 
       const context = createMockContext({
-        connection: { version: '68.0', request: stub } as unknown as Connection,
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
         components: [createComputeComponent('MyApp', '/mock/app')],
       });
 
-      // packageComputeBundle will fail because /mock/app doesn't exist on the filesystem
+      const result = await transport.deploy(context);
+
+      expect(packageStub.calledOnce).to.be.true;
+      expect(packageStub.firstCall.args[0]).to.equal('/mock/app');
+      expect(requestStub.calledOnce).to.be.true;
+      expect(requestStub.firstCall.args[0]).to.have.property('method', 'POST');
+      expect(result.fileResponses).to.have.lengthOf(1);
+      expect(result.fileResponses[0]).to.include({ fullName: 'MyApp', type: 'PlatformComputeApp' });
+    });
+
+    it('should deploy multiple components in sequence', async () => {
+      packageStub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
+
+      const requestStub = sinon.stub();
+      requestStub.resolves({ platformComputeId: 'pc1', buildId: 'b1', sourceBlobSize: 100, uploadedAt: 'now' });
+
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('App1', '/mock/app1'), createComputeComponent('App2', '/mock/app2')],
+      });
+
+      const result = await transport.deploy(context);
+
+      expect(packageStub.calledTwice).to.be.true;
+      expect(requestStub.calledTwice).to.be.true;
+      expect(result.fileResponses).to.have.lengthOf(2);
+    });
+
+    it('should wrap upload errors with SfError', async () => {
+      packageStub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
+
+      const requestStub = sinon.stub();
+      requestStub.rejects(new Error('500 server error'));
+
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('MyApp', '/mock/app')],
+      });
+
       try {
         await transport.deploy(context);
-      } catch {
-        // expected — no real filesystem
+        expect.fail('should have thrown');
+      } catch (err) {
+        expect((err as Error).message).to.include('Connect API upload failed');
+        expect((err as Error).message).to.include('500 server error');
       }
     });
   });

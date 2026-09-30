@@ -622,6 +622,10 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       }
       this.manifestComponents.get(key)?.set(srcKey, component);
     }
+
+    if (component.type.strategies?.transport && this.transportPipelineResolved && !this.cachedTransportPipeline) {
+      this.transportPipelineResolved = false;
+    }
   }
 
   /**

@@ -110,21 +110,21 @@ describe('ConnectApiTransport', () => {
     });
 
     it('should not throw when API version meets minimum', async () => {
+      const stub = sinon.stub(computeSourceBundle, 'packageComputeBundle');
+      stub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
+
+      const requestStub = sinon.stub();
+      requestStub.resolves({ platformComputeId: 'id', buildId: 'b1', sourceBlobSize: 100, uploadedAt: 'now' });
+
       const context = createMockContext({
-        connection: {
-          version: '68.0',
-          request: sinon
-            .stub()
-            .resolves({ platformComputeId: 'id', buildId: 'b1', sourceBlobSize: 100, uploadedAt: 'now' }),
-        } as unknown as Connection,
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
         components: [createComputeComponent('MyApp', '/mock/app')],
       });
 
-      try {
-        await transport.deploy(context);
-      } catch (err) {
-        expect((err as Error).message).to.not.include('API version');
-      }
+      const result = await transport.deploy(context);
+      expect(result.fileResponses).to.have.lengthOf(1);
+
+      stub.restore();
     });
   });
 

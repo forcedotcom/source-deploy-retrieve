@@ -1,3 +1,12 @@
+## [13.4.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.4.2...13.4.3) (2026-10-01)
+
+
+### Bug Fixes
+
+* include folder entries in deploy zip count to match server limit @W-24345651@ ([#1844](https://github.com/forcedotcom/source-deploy-retrieve/issues/1844)) ([399687d](https://github.com/forcedotcom/source-deploy-retrieve/commit/399687d65711940ee6b561289b8ae6e01f1c50ee))
+
+
+
 ## [13.4.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.4.1...13.4.2) (2026-09-29)
 
 

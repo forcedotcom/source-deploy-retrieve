@@ -865,6 +865,7 @@ v68 introduces the following new types.  Here's their current level of support
 |AnalyticsAgentDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |AnalyticsLlmOverride|❌|Not supported, but support could be added (but not for tracking)|
 |AnlytAgntFlbkSmntcModel|❌|Not supported, but support could be added (but not for tracking)|
+|AppStudioSettings|✅||
 |ApptBookingConfig|❌|Not supported, but support could be added|
 |ApptBookingUrlConfig|❌|Not supported, but support could be added|
 |AutomationPipeline|❌|Not supported, but support could be added|
@@ -897,6 +898,7 @@ v68 introduces the following new types.  Here's their current level of support
 |EasySuitesInvoicingSettings|✅||
 |EinsteinGPTSalesEmailsSettings|✅||
 |EngmtChannelTypeConfig|❌|Not supported, but support could be added (but not for tracking)|
+|EnhancedServiceWFMSettings|✅||
 |FinancialAppUiConfig|❌|Not supported, but support could be added|
 |FinancialEvaluationDef|❌|Not supported, but support could be added|
 |HealthInsDataSyncDefn|❌|Not supported, but support could be added|

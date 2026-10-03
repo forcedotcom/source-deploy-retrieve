@@ -147,9 +147,16 @@ export type MetadataApiDeployStatus = {
   startDate?: string;
   stateDetail?: string;
   notifications?: DeployNotification | DeployNotification[];
+  deployExtensionResults?: DeployExtensionResult | DeployExtensionResult[];
 } & MetadataRequestStatus;
 
 export type DeployNotification = { messageCode: string; messageText: string };
+
+export type DeployExtensionResult = {
+  type: string;
+  status: string;
+  message?: string;
+};
 
 export type DeployDetails = {
   componentFailures?: DeployMessage | DeployMessage[];

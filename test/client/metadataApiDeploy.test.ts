@@ -1272,6 +1272,117 @@ describe('MetadataApiDeploy', () => {
         expect(responses).to.deep.equal(expected);
       });
 
+      it('should match deleted inFolder component when API returns truncated fullName', () => {
+        const nestedReportType = registry.types.report;
+        const nestedComponent = new SourceComponent({
+          name: 'Outer/Inner/My_Report',
+          type: nestedReportType,
+          xml: join(
+            'path',
+            'to',
+            'reports',
+            'Outer',
+            'Inner',
+            `My_Report.${nestedReportType.suffix}${META_XML_SUFFIX}`
+          ),
+        });
+        const deployedSet = new ComponentSet([nestedComponent]);
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentSuccesses: {
+              changed: 'false',
+              created: 'false',
+              deleted: 'true',
+              fullName: 'Inner/My_Report',
+              componentType: nestedReportType.name,
+            } as DeployMessage,
+          },
+        };
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+        const responses = result.getFileResponses();
+        expect(responses).to.have.length(1);
+        expect(responses[0]).to.deep.include({
+          fullName: nestedComponent.fullName,
+          type: nestedReportType.name,
+          state: ComponentStatus.Deleted,
+        });
+      });
+
+      it('should match "not found" delete warning when API returns truncated fullName for inFolder type', () => {
+        const nestedReportType = registry.types.report;
+        const nestedComponent = new SourceComponent({
+          name: 'Outer/Inner/My_Report',
+          type: nestedReportType,
+          xml: join(
+            'path',
+            'to',
+            'reports',
+            'Outer',
+            'Inner',
+            `My_Report.${nestedReportType.suffix}${META_XML_SUFFIX}`
+          ),
+        });
+        const deployedSet = new ComponentSet([nestedComponent]);
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentFailures: {
+              changed: 'false',
+              created: 'false',
+              deleted: 'false',
+              fullName: 'destructiveChanges.xml',
+              componentType: nestedReportType.name,
+              problem: `No ${nestedReportType.name} named: Inner/My_Report found`,
+              problemType: 'Warning',
+            } as DeployMessage,
+          },
+        };
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+        const responses = result.getFileResponses();
+        expect(responses).to.have.length(1);
+        expect(responses[0]).to.deep.include({
+          fullName: 'Outer/Inner/My_Report',
+          type: nestedReportType.name,
+          state: ComponentStatus.Deleted,
+        });
+      });
+
+      it('should NOT suffix-match a delete when another component owns the fullName exactly', () => {
+        const reportType = registry.types.report;
+        const shallowComponent = new SourceComponent({
+          name: 'Inner/My_Report',
+          type: reportType,
+          xml: join('path', 'to', 'reports', 'Inner', `My_Report.${reportType.suffix}${META_XML_SUFFIX}`),
+        });
+        const deepComponent = new SourceComponent({
+          name: 'Outer/Inner/My_Report',
+          type: reportType,
+          xml: join('path', 'to', 'reports', 'Outer', 'Inner', `My_Report.${reportType.suffix}${META_XML_SUFFIX}`),
+        });
+        const deployedSet = new ComponentSet([shallowComponent, deepComponent]);
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentSuccesses: {
+              changed: 'false',
+              created: 'false',
+              deleted: 'true',
+              fullName: 'Inner/My_Report',
+              componentType: reportType.name,
+            } as DeployMessage,
+          },
+        };
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+        const responses = result.getFileResponses();
+        const deletedResponses = responses.filter((r) => r.state === ComponentStatus.Deleted);
+        expect(deletedResponses).to.have.length(1);
+        expect(deletedResponses[0]).to.deep.include({
+          fullName: 'Inner/My_Report',
+          type: reportType.name,
+        });
+      });
+
       it('should cache fileResponses', () => {
         const component = COMPONENT;
         const deployedSet = new ComponentSet([component]);

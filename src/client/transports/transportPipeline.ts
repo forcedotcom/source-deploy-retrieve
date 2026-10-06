@@ -61,10 +61,6 @@ export class TransportPipeline {
     return new TransportPipeline([new HerokuComputeTransport()]);
   }
 
-  public registerTransport(transport: TransportProvider): void {
-    this.transports.push(transport);
-  }
-
   public groupByTransport(components: SourceComponent[]): GroupedComponents {
     const metadataApi: SourceComponent[] = [];
     const transportMap = new Map<string, TransportGroup>();

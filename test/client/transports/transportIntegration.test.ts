@@ -114,8 +114,7 @@ describe('Transport integration', () => {
         retrieveSpy,
       });
 
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(transport);
+      const pipeline = new TransportPipeline([transport]);
 
       const groups = [{ transport, components: [createMockComponent('CustomObject', 'MyObject__c')] }];
 
@@ -136,8 +135,7 @@ describe('Transport integration', () => {
         retrieveSpy,
       });
 
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(transport);
+      const pipeline = new TransportPipeline([transport]);
 
       const groups = [{ transport, components: [createMockComponent('ApexClass', 'MyClass')] }];
 
@@ -158,8 +156,7 @@ describe('Transport integration', () => {
         shouldThrow: 'retrieve',
       });
 
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(transport);
+      const pipeline = new TransportPipeline([transport]);
 
       const groups = [{ transport, components: [createMockComponent('ApexClass', 'MyClass')] }];
 
@@ -180,8 +177,7 @@ describe('Transport integration', () => {
         shouldThrow: 'deploy',
       });
 
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(transport);
+      const pipeline = new TransportPipeline([transport]);
 
       const groups = [{ transport, components: [createMockComponent('ApexClass', 'MyClass')] }];
 
@@ -196,15 +192,14 @@ describe('Transport integration', () => {
 
   describe('skipTransports with retrieve', () => {
     it('should exclude skipped types from retrieve explain plan', () => {
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(
+      const pipeline = new TransportPipeline([
         createMockTransport({
           name: 'connectApi',
           deployPhase: 'before-metadata',
           retrievePhase: 'after-metadata',
           typeNames: ['ApexClass'],
-        })
-      );
+        }),
+      ]);
 
       const apexClass = createMockComponent('ApexClass', 'MyClass');
 
@@ -217,15 +212,14 @@ describe('Transport integration', () => {
     });
 
     it('should exclude skipped types from groupByTransport but keep in metadataApi', () => {
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(
+      const pipeline = new TransportPipeline([
         createMockTransport({
           name: 'connectApi',
           deployPhase: 'before-metadata',
           retrievePhase: 'after-metadata',
           typeNames: ['ApexClass', 'ApexTrigger'],
-        })
-      );
+        }),
+      ]);
 
       const apexClass = createMockComponent('ApexClass', 'MyClass');
       const apexTrigger = createMockComponent('ApexTrigger', 'MyTrigger');

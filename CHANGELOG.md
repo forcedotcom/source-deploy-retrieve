@@ -1,3 +1,12 @@
+## [13.4.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.4.3...13.4.4) (2026-10-06)
+
+
+### Bug Fixes
+
+* expose covered deploy test locations - W-16286380 ([#1847](https://github.com/forcedotcom/source-deploy-retrieve/issues/1847)) ([eec91ac](https://github.com/forcedotcom/source-deploy-retrieve/commit/eec91ac8295198fec839e40a9c47d1b91a323201))
+
+
+
 ## [13.4.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.4.2...13.4.3) (2026-10-01)
 
 

@@ -171,11 +171,16 @@ export type RunTestResult = {
 
 export type CodeCoverage = {
   id: string;
+  locationsCovered?: LocationsCovered[] | LocationsCovered;
   locationsNotCovered?: LocationsNotCovered[] | LocationsNotCovered;
   name: string;
   numLocations: string;
   numLocationsNotCovered: string;
   type: string;
+};
+
+export type LocationsCovered = {
+  line: string;
 };
 
 export type LocationsNotCovered = {

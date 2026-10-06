@@ -24,6 +24,7 @@ import * as sinon from 'sinon';
 import {
   ComponentSet,
   ComponentStatus,
+  CodeCoverage,
   DeployMessage,
   DeployResult,
   FileResponse,
@@ -350,6 +351,61 @@ describe('MetadataApiDeploy', () => {
       expect(checkStatusStub.firstCall.firstArg).to.equal(MOCK_ASYNC_RESULT.id);
       expect(checkStatusStub.firstCall.args[1]).to.equal(true);
       expect(checkStatusStub.firstCall.args[2]).to.equal(false);
+    });
+
+    it('should return coverage without v264 covered locations', async () => {
+      const { operation, response } = await stubMetadataDeploy($$, testOrg, {
+        id: MOCK_ASYNC_RESULT.id,
+        components: new ComponentSet(),
+      });
+      const coverage: CodeCoverage = {
+        id: '01p000000000001',
+        name: 'CoverageExample',
+        type: 'ApexClass',
+        numLocations: '3',
+        numLocationsNotCovered: '1',
+        locationsNotCovered: [{ column: '1', line: '6', numExecutions: '0', time: '0' }],
+      };
+      response.details = {
+        runTestResult: {
+          codeCoverage: coverage,
+          numFailures: '0',
+          numTestsRun: '1',
+          totalTime: '1',
+        },
+      };
+
+      const status = await operation.checkStatus();
+
+      expect(status.details?.runTestResult?.codeCoverage).to.deep.equal(coverage);
+    });
+
+    it('should return v264 covered and uncovered coverage locations unchanged', async () => {
+      const { operation, response } = await stubMetadataDeploy($$, testOrg, {
+        id: MOCK_ASYNC_RESULT.id,
+        components: new ComponentSet(),
+      });
+      const coverage: CodeCoverage = {
+        id: '01p000000000001',
+        name: 'CoverageExample',
+        type: 'ApexClass',
+        numLocations: '3',
+        numLocationsNotCovered: '1',
+        locationsCovered: { line: '4' },
+        locationsNotCovered: [{ column: '1', line: '6', numExecutions: '0', time: '0' }],
+      };
+      response.details = {
+        runTestResult: {
+          codeCoverage: coverage,
+          numFailures: '0',
+          numTestsRun: '1',
+          totalTime: '1',
+        },
+      };
+
+      const status = await operation.checkStatus();
+
+      expect(status.details?.runTestResult?.codeCoverage).to.deep.equal(coverage);
     });
   });
 

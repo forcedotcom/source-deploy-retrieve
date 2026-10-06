@@ -40,6 +40,7 @@ export {
   DeployDetails,
   RunTestResult,
   CodeCoverage,
+  LocationsCovered,
   LocationsNotCovered,
   CodeCoverageWarnings,
   Failures,

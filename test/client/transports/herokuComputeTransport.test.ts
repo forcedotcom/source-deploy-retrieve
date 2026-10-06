@@ -16,9 +16,10 @@
 
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { Connection, SfProject } from '@salesforce/core';
+import { Connection, SfError, SfProject } from '@salesforce/core';
 import {
-  ConnectApiTransport,
+  FileResponse,
+  HerokuComputeTransport,
   TransportPipeline,
   RegistryAccess,
   SourceComponent,
@@ -52,12 +53,12 @@ function createMockContext(overrides: Partial<TransportContext> = {}): Transport
   };
 }
 
-describe('ConnectApiTransport', () => {
-  const transport = new ConnectApiTransport();
+describe('HerokuComputeTransport', () => {
+  const transport = new HerokuComputeTransport();
 
   describe('metadata', () => {
     it('should have correct name and phase', () => {
-      expect(transport.name).to.equal('connectApi');
+      expect(transport.name).to.equal('herokuCompute');
       expect(transport.phase).to.deep.equal({
         deploy: 'before-metadata',
         retrieve: 'after-metadata',
@@ -66,7 +67,7 @@ describe('ConnectApiTransport', () => {
 
     it('should describe itself correctly', () => {
       const desc = transport.describe();
-      expect(desc.label).to.equal('Heroku Compute (Connect API)');
+      expect(desc.label).to.equal('Heroku Compute');
       expect(desc.endpoint).to.equal('/connect/compute/source');
     });
   });
@@ -77,10 +78,10 @@ describe('ConnectApiTransport', () => {
       expect(transport.handles(component)).to.be.true;
     });
 
-    it('should handle components with connectApi transport strategy', () => {
+    it('should handle components with herokuCompute transport strategy', () => {
       const type = {
         ...registryAccess.getTypeByName('ApexClass'),
-        strategies: { adapter: 'default' as const, transport: 'connectApi' as const },
+        strategies: { adapter: 'default' as const, transport: 'herokuCompute' as const },
       };
       const component = new SourceComponent({ name: 'Test', type });
       expect(transport.handles(component)).to.be.true;
@@ -183,7 +184,37 @@ describe('ConnectApiTransport', () => {
       expect(result.fileResponses).to.have.lengthOf(2);
     });
 
-    it('should wrap upload errors with SfError', async () => {
+    it('should process all components and throw aggregate error when one fails', async () => {
+      packageStub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
+
+      const requestStub = sinon.stub();
+      requestStub
+        .onFirstCall()
+        .resolves({ platformComputeId: 'pc1', buildId: 'b1', sourceBlobSize: 100, uploadedAt: 'now' });
+      requestStub.onSecondCall().rejects(new Error('500 server error'));
+
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('App1', '/mock/app1'), createComputeComponent('App2', '/mock/app2')],
+      });
+
+      try {
+        await transport.deploy(context);
+        expect.fail('should have thrown');
+      } catch (err) {
+        const sfErr = err as SfError;
+        expect(sfErr.message).to.include('Heroku Compute upload failed');
+        expect(sfErr.message).to.include('App2');
+        expect(sfErr.message).to.include('1 of 2');
+        // partial results attached to error.data
+        const responses = sfErr.data as FileResponse[];
+        expect(responses).to.have.lengthOf(2);
+        expect(responses[0]).to.include({ fullName: 'App1', state: 'Changed' });
+        expect(responses[1]).to.include({ fullName: 'App2', state: 'Failed' });
+      }
+    });
+
+    it('should throw with error details when single component fails', async () => {
       packageStub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
 
       const requestStub = sinon.stub();
@@ -198,14 +229,14 @@ describe('ConnectApiTransport', () => {
         await transport.deploy(context);
         expect.fail('should have thrown');
       } catch (err) {
-        expect((err as Error).message).to.include('Connect API upload failed');
-        expect((err as Error).message).to.include('500 server error');
+        expect((err as Error).message).to.include('Heroku Compute upload failed');
+        expect((err as Error).message).to.include('MyApp');
       }
     });
   });
 
   describe('retrieve', () => {
-    it('should wrap download errors with SfError', async () => {
+    it('should throw with error details on download failure', async () => {
       const stub = sinon.stub();
       stub.rejects(new Error('404 not found'));
 
@@ -218,19 +249,23 @@ describe('ConnectApiTransport', () => {
         await transport.retrieve(context);
         expect.fail('should have thrown');
       } catch (err) {
-        expect((err as Error).message).to.include('Connect API download failed');
-        expect((err as Error).message).to.include('404 not found');
+        const sfErr = err as SfError;
+        expect(sfErr.message).to.include('Heroku Compute download failed');
+        expect(sfErr.message).to.include('MyApp');
+        const responses = sfErr.data as FileResponse[];
+        expect(responses).to.have.lengthOf(1);
+        expect(responses[0]).to.include({ fullName: 'MyApp', state: 'Failed' });
       }
     });
   });
 
-  describe('resolveAppDir', () => {
-    it('should prefer content over xml dirname', () => {
+  describe('component validation', () => {
+    it('should accept components with a content path', () => {
       const component = createComputeComponent('MyApp', '/project/force-app/platformComputeApps/MyApp');
       expect(component.content).to.equal('/project/force-app/platformComputeApps/MyApp');
     });
 
-    it('should throw for component with no content or xml', () => {
+    it('should collect failure for component with no content path', () => {
       const type = registryAccess.getTypeByName('PlatformComputeApp');
       const component = new SourceComponent({ name: 'NoPath', type });
 
@@ -241,14 +276,20 @@ describe('ConnectApiTransport', () => {
       return transport.deploy(context).then(
         () => expect.fail('should have thrown'),
         (err: unknown) => {
-          expect((err as Error).message).to.include('no content or xml path');
+          const sfErr = err as SfError;
+          expect(sfErr.message).to.include('Heroku Compute upload failed');
+          expect(sfErr.message).to.include('NoPath');
+          const responses = sfErr.data as FileResponse[];
+          expect(responses).to.have.lengthOf(1);
+          expect(responses[0].state).to.equal('Failed');
+          expect((responses[0] as { error: string }).error).to.include('requires a content path');
         }
       );
     });
   });
 
   describe('withBuiltinTransports integration', () => {
-    it('should auto-register ConnectApiTransport in pipeline', () => {
+    it('should auto-register HerokuComputeTransport in pipeline', () => {
       const pipeline = TransportPipeline.withBuiltinTransports();
       const component = createComputeComponent('MyApp', '/mock/app');
       expect(pipeline.hasTransports([component])).to.be.true;

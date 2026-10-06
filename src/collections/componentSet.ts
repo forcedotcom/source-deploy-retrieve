@@ -91,8 +91,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public fullName?: string;
   public forceIgnoredPaths?: Set<string>;
   public botVersionFilters?: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
-  private cachedTransportPipeline?: TransportPipeline;
-  private transportPipelineResolved = false;
+  private manualTransportPipeline?: TransportPipeline;
+  private hasManualPipeline = false;
   private logger: Logger;
   private readonly registry: RegistryAccess;
   // all components stored here, regardless of what manifest they belong to
@@ -151,18 +151,13 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   public get transportPipeline(): TransportPipeline | undefined {
-    if (!this.cachedTransportPipeline && !this.transportPipelineResolved) {
-      if (this.hasTransportEligibleTypes()) {
-        this.cachedTransportPipeline = TransportPipeline.withBuiltinTransports();
-      }
-      this.transportPipelineResolved = true;
-    }
-    return this.cachedTransportPipeline;
+    if (this.hasManualPipeline) return this.manualTransportPipeline;
+    return this.hasTransportEligibleTypes() ? TransportPipeline.withBuiltinTransports() : undefined;
   }
 
   public set transportPipeline(pipeline: TransportPipeline | undefined) {
-    this.cachedTransportPipeline = pipeline;
-    this.transportPipelineResolved = true;
+    this.manualTransportPipeline = pipeline;
+    this.hasManualPipeline = true;
   }
 
   /**
@@ -622,10 +617,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         this.manifestComponents.set(key, new DecodeableMap<string, SourceComponent>());
       }
       this.manifestComponents.get(key)?.set(srcKey, component);
-    }
-
-    if (component.type.strategies?.transport && this.transportPipelineResolved && !this.cachedTransportPipeline) {
-      this.transportPipelineResolved = false;
     }
   }
 

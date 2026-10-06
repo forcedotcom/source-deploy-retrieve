@@ -32,5 +32,5 @@ export {
   TransportPipelineResult,
 } from './transportPipeline';
 export { TransportCoordinator } from './transportCoordinator';
-export { ConnectApiTransport } from './connectApiTransport';
+export { HerokuComputeTransport } from './herokuComputeTransport';
 export { packageComputeBundle, unpackComputeBundle, PackagedBundle, UnpackedBundle } from './computeSourceBundle';

@@ -5434,7 +5434,7 @@
       "name": "PlatformComputeApp",
       "strategies": {
         "adapter": "bundle",
-        "transport": "connectApi"
+        "transport": "herokuCompute"
       },
       "strictDirectoryName": true,
       "suffix": "compute"

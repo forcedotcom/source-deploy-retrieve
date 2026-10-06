@@ -36,7 +36,7 @@ export {
   TransportPlan,
   TransportPlanPhase,
   TransportPipelineResult,
-  ConnectApiTransport,
+  HerokuComputeTransport,
   packageComputeBundle,
   unpackComputeBundle,
   PackagedBundle,

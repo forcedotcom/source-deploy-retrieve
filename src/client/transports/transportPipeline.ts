@@ -18,7 +18,7 @@ import { Logger, SfError } from '@salesforce/core';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { FileResponse } from '../types';
 import { AsyncTransportHandle, TransportContext, TransportPhase, TransportProvider, TransportResult } from './types';
-import { ConnectApiTransport } from './connectApiTransport';
+import { HerokuComputeTransport } from './herokuComputeTransport';
 
 export type TransportGroup = {
   transport: TransportProvider;
@@ -50,14 +50,15 @@ export class TransportPipeline {
   private readonly transports: TransportProvider[] = [];
   private readonly logger: Logger;
 
-  public constructor() {
+  public constructor(transports?: TransportProvider[]) {
     this.logger = Logger.childFromRoot('TransportPipeline');
+    if (transports) {
+      this.transports.push(...transports);
+    }
   }
 
   public static withBuiltinTransports(): TransportPipeline {
-    const pipeline = new TransportPipeline();
-    pipeline.registerTransport(new ConnectApiTransport());
-    return pipeline;
+    return new TransportPipeline([new HerokuComputeTransport()]);
   }
 
   public registerTransport(transport: TransportProvider): void {

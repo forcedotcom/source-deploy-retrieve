@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1791406917441,
+  "lastUpdate": 1791407446434,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -113464,6 +113464,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 22404,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "distinct": true,
+          "id": "30cc02b6a9b4e9a4df3dd4f509cd7a9442c39248",
+          "message": "Merge branch 'wr/transport-scaffolding' of github.com:forcedotcom/source-deploy-retrieve into wr/transport-scaffolding\n\n# Conflicts:\n#\tpackage.json\n#\tsrc/client/metadataApiDeploy.ts\n#\tsrc/client/metadataApiRetrieve.ts\n#\tsrc/client/transports/index.ts\n#\tsrc/client/transports/transportPipeline.ts\n#\tsrc/client/transports/types.ts\n#\tsrc/collections/componentSet.ts\n#\tsrc/index.ts\n#\tsrc/registry/types.ts\n#\ttest/client/transports/deployResultTransport.test.ts\n#\ttest/client/transports/retrieveResultTransport.test.ts\n#\ttest/client/transports/transportIntegration.test.ts\n#\ttest/client/transports/transportPipeline.test.ts\n#\tyarn.lock",
+          "timestamp": "2026-10-07T14:58:36-06:00",
+          "tree_id": "3c1df59e4533408840ab757e07ba8dc65bc1b9ce",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/30cc02b6a9b4e9a4df3dd4f509cd7a9442c39248"
+        },
+        "date": 1791407431164,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 366,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 2606,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 2418,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 4447,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 588,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 7573,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 7293,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 8380,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1016,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 15927,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 14887,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 15141,
             "unit": "ms"
           }
         ]

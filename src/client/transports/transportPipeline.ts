@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Logger, SfError } from '@salesforce/core';
+import { Lifecycle, Logger, SfError } from '@salesforce/core';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { FileResponse } from '../types';
 import { AsyncTransportHandle, TransportContext, TransportPhase, TransportProvider, TransportResult } from './types';
@@ -44,6 +44,16 @@ export type TransportPlanPhase = {
 export type TransportPipelineResult = {
   fileResponses: FileResponse[];
   asyncHandles: AsyncTransportHandle[];
+};
+
+export type TransportStageEvent = {
+  transportName: string;
+  label: string;
+  operation: 'deploy' | 'retrieve';
+  stage: 'start' | 'complete' | 'error';
+  componentCount: number;
+  componentNames: string[];
+  errorMessage?: string;
 };
 
 export class TransportPipeline {
@@ -165,22 +175,52 @@ export class TransportPipeline {
   ): Promise<TransportPipelineResult> {
     const allFileResponses: FileResponse[] = [];
     const allAsyncHandles: AsyncTransportHandle[] = [];
+    const lifecycle = Lifecycle.getInstance();
 
     for (const group of groups) {
       this.logger.debug(
         `Running transport '${group.transport.name}' (${operation}) for ${group.components.length} component(s)`
       );
 
+      const desc = group.transport.describe();
+      const componentNames = group.components.map((c) => c.fullName);
+      const eventBase: Omit<TransportStageEvent, 'stage'> = {
+        transportName: group.transport.name,
+        label: desc.label,
+        operation,
+        componentCount: group.components.length,
+        componentNames,
+      };
+
+      // eslint-disable-next-line no-await-in-loop
+      await lifecycle.emit('transportStage', { ...eventBase, stage: 'start' });
+
       const transportContext: TransportContext = {
         ...context,
         components: group.components,
       };
 
-      // eslint-disable-next-line no-await-in-loop
-      const result: TransportResult = await group.transport[operation](transportContext);
-      allFileResponses.push(...result.fileResponses);
-      if (result.asyncResult) {
-        allAsyncHandles.push(result.asyncResult);
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        const result: TransportResult = await group.transport[operation](transportContext);
+        allFileResponses.push(...result.fileResponses);
+        if (result.asyncResult) {
+          allAsyncHandles.push(result.asyncResult);
+        }
+        // eslint-disable-next-line no-await-in-loop
+        await lifecycle.emit('transportStage', { ...eventBase, stage: 'complete' });
+      } catch (err) {
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          await lifecycle.emit('transportStage', {
+            ...eventBase,
+            stage: 'error',
+            errorMessage: (err as Error).message,
+          });
+        } catch {
+          /* don't mask the transport error */
+        }
+        throw err;
       }
     }
 

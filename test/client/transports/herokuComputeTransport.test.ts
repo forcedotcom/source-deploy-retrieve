@@ -204,8 +204,7 @@ describe('HerokuComputeTransport', () => {
       } catch (err) {
         const sfErr = err as SfError;
         expect(sfErr.message).to.include('Heroku Compute upload failed');
-        expect(sfErr.message).to.include('App2');
-        expect(sfErr.message).to.include('1 of 2');
+        expect(sfErr.message).to.include('500 server error');
         // partial results attached to error.data
         const responses = sfErr.data as FileResponse[];
         expect(responses).to.have.lengthOf(2);

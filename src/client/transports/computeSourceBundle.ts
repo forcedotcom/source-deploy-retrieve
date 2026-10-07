@@ -83,6 +83,7 @@ export async function unpackComputeBundle(buffer: Buffer, appDir: string): Promi
     throw new Error(`Malformed compute source bundle: missing ${missing}`);
   }
 
+  await mkdir(appDir, { recursive: true });
   await writeFile(join(appDir, 'api-spec.yaml'), apiSpec);
 
   const sourceEntries = await untarGzip(sourceTarGz);

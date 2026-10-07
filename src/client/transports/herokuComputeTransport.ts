@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+import { join } from 'node:path';
 import FormData from 'form-data';
 import { Logger, SfError } from '@salesforce/core';
-import type { Connection } from '@salesforce/core';
+import type { Connection, SfProject } from '@salesforce/core';
+import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../common/constants';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { ComponentStatus, FileResponse } from '../types';
 import { TransportContext, TransportDescription, TransportProvider, TransportResult } from './types';
@@ -31,6 +33,11 @@ type ComputeSourceUploadResponse = {
 
 const MIN_API_VERSION = '68.0';
 const ENDPOINT = '/connect/compute/source';
+
+function resolveContentPath(component: SourceComponent, project: SfProject): string {
+  const packageDir = project.getDefaultPackage().fullPath;
+  return join(packageDir, DEFAULT_PACKAGE_ROOT_SFDX, component.type.directoryName, component.fullName);
+}
 
 function validateApiVersion(connection: Connection): void {
   const version = connection.version;
@@ -57,7 +64,7 @@ async function uploadSource(
   return connection.request<ComputeSourceUploadResponse>({
     method: 'POST',
     url: ENDPOINT,
-    body: form,
+    body: form.getBuffer(),
     headers: form.getHeaders(),
   });
 }
@@ -136,20 +143,20 @@ export class HerokuComputeTransport implements TransportProvider {
 
     for (const component of context.components) {
       try {
-        this.assertComputeComponent(component);
-        this.logger.debug('retrieving compute source for %s into %s', component.fullName, component.content);
+        const contentPath = component.content ?? resolveContentPath(component, context.project);
+        this.logger.debug('retrieving compute source for %s into %s', component.fullName, contentPath);
 
         // eslint-disable-next-line no-await-in-loop
         const buffer = await downloadSource(context.connection, component.fullName);
         // eslint-disable-next-line no-await-in-loop
-        const unpacked = await unpackComputeBundle(buffer, component.content);
-        this.logger.debug('unpacked %s: %d files into %s', component.fullName, unpacked.fileCount, component.content);
+        const unpacked = await unpackComputeBundle(buffer, contentPath);
+        this.logger.debug('unpacked %s: %d files into %s', component.fullName, unpacked.fileCount, contentPath);
 
         fileResponses.push({
           fullName: component.fullName,
           type: component.type.name,
           state: ComponentStatus.Changed,
-          filePath: component.content,
+          filePath: contentPath,
         });
       } catch (err) {
         fileResponses.push({
@@ -182,9 +189,9 @@ export class HerokuComputeTransport implements TransportProvider {
   private checkForFailures(fileResponses: FileResponse[], operation: string): TransportResult {
     const failures = fileResponses.filter((r) => r.state === ComponentStatus.Failed);
     if (failures.length > 0) {
-      const names = failures.map((f) => f.fullName).join(', ');
+      const details = failures.map((f) => f.error ?? f.fullName).join('; ');
       const error = new SfError(
-        `Heroku Compute ${operation} failed for: ${names}. ${failures.length} of ${fileResponses.length} component(s) failed.`,
+        `Heroku Compute ${operation} failed: ${details}`,
         `HerokuCompute${operation.charAt(0).toUpperCase() + operation.slice(1)}Error`
       );
       error.data = fileResponses;

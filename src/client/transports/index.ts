@@ -30,6 +30,7 @@ export {
   TransportPlan,
   TransportPlanPhase,
   TransportPipelineResult,
+  TransportStageEvent,
 } from './transportPipeline';
 export { TransportCoordinator } from './transportCoordinator';
 export { HerokuComputeTransport } from './herokuComputeTransport';

@@ -37,6 +37,7 @@ export {
   TransportPlan,
   TransportPlanPhase,
   TransportPipelineResult,
+  TransportStageEvent,
   HerokuComputeTransport,
   packageComputeBundle,
   unpackComputeBundle,

@@ -22,26 +22,7 @@ export {
   ScopedPostDeploy,
 } from './metadataApiDeploy';
 export { MetadataApiRetrieve, RetrieveResult, ScopedPostRetrieve, ScopedPreRetrieve } from './metadataApiRetrieve';
-export {
-  TransportProvider,
-  TransportContext,
-  TransportResult,
-  AsyncTransportHandle,
-  TransportStatus,
-  TransportDescription,
-  TransportPipeline,
-  TransportGroup,
-  GroupedComponents,
-  TransportPlan,
-  TransportPlanPhase,
-  TransportPipelineResult,
-  TransportStageEvent,
-  HerokuComputeTransport,
-  packageComputeBundle,
-  unpackComputeBundle,
-  PackagedBundle,
-  UnpackedBundle,
-} from './transports';
+export type { TransportStageEvent } from './transports';
 export {
   ComponentDeployment,
   ComponentRetrieval,

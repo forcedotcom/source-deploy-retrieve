@@ -26,12 +26,14 @@ import {
   RequestStatus,
   RetrieveResult,
   SourceComponent,
+} from '../../../src';
+import { TransportPipeline } from '../../../src/client/transports/transportPipeline';
+import {
   TransportContext,
   TransportDescription,
-  TransportPipeline,
   TransportProvider,
   TransportResult,
-} from '../../../src';
+} from '../../../src/client/transports/types';
 
 const registryAccess = new RegistryAccess();
 
@@ -237,7 +239,7 @@ describe('Transport integration', () => {
       cs.transportPipeline = customPipeline;
 
       expect(cs.transportPipeline).to.equal(customPipeline);
-      expect(cs.transportPipeline.hasTransports([component])).to.be.false;
+      expect(() => cs.transportPipeline?.hasTransports([component])).to.throw('No transport provider is registered');
     });
   });
 

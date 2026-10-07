@@ -21,7 +21,7 @@ import { createGzip } from 'node:zlib';
 import { buffer as streamToBuffer } from 'node:stream/consumers';
 import { expect } from 'chai';
 import tarStream from 'tar-stream';
-import { packageComputeBundle, unpackComputeBundle } from '../../../src';
+import { packageComputeBundle, unpackComputeBundle } from '../../../src/client/transports/computeSourceBundle';
 
 describe('computeSourceBundle', () => {
   let tempDir: string;

@@ -17,14 +17,10 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { Connection, SfError, SfProject } from '@salesforce/core';
-import {
-  FileResponse,
-  HerokuComputeTransport,
-  TransportPipeline,
-  RegistryAccess,
-  SourceComponent,
-  TransportContext,
-} from '../../../src';
+import { FileResponse, RegistryAccess, SourceComponent } from '../../../src';
+import { HerokuComputeTransport } from '../../../src/client/transports/herokuComputeTransport';
+import { TransportPipeline } from '../../../src/client/transports/transportPipeline';
+import { TransportContext } from '../../../src/client/transports/types';
 import * as computeSourceBundle from '../../../src/client/transports/computeSourceBundle';
 
 const registryAccess = new RegistryAccess();

@@ -15,14 +15,8 @@
  */
 
 import { expect } from 'chai';
-import {
-  AsyncTransportHandle,
-  ComponentStatus,
-  DeployResult,
-  FileResponse,
-  MetadataApiDeployStatus,
-  RequestStatus,
-} from '../../../src';
+import { ComponentStatus, DeployResult, FileResponse, MetadataApiDeployStatus, RequestStatus } from '../../../src';
+import { AsyncTransportHandle } from '../../../src/client/transports/types';
 
 function createDeployStatus(overrides: Partial<MetadataApiDeployStatus> = {}): MetadataApiDeployStatus {
   return {

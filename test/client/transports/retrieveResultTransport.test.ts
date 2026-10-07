@@ -16,7 +16,6 @@
 
 import { expect } from 'chai';
 import {
-  AsyncTransportHandle,
   ComponentSet,
   ComponentStatus,
   FileResponse,
@@ -24,6 +23,7 @@ import {
   RequestStatus,
   RetrieveResult,
 } from '../../../src';
+import { AsyncTransportHandle } from '../../../src/client/transports/types';
 
 function createRetrieveStatus(overrides: Partial<MetadataApiRetrieveStatus> = {}): MetadataApiRetrieveStatus {
   return {

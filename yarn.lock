@@ -789,10 +789,10 @@
     ts-retry-promise "^0.8.1"
     zod "^4.1.12"
 
-"@salesforce/core@^9.2.2":
-  version "9.2.2"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-9.2.2.tgz#e20561e763fef210c8a9f585a2fea84f7606e63e"
-  integrity sha512-7D4VqZuCzYbbrW5Yr4ECbVb3+fUa//YG7UMmWGBy3IwI/f65U5NuZ6ZTBOYuC0AM2/LXF97j2jASf5WubQVERg==
+"@salesforce/core@^9.3.2":
+  version "9.3.2"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-9.3.2.tgz#deda77122341b6bbeabe5569ecc6f5fa3c0b1dff"
+  integrity sha512-K9t6otT27v899XOVtTA11LTuzGvYl9LZjrPv7XerCIAs3IEiro7mZJg7Dd1VvJ7sR/4cwGyawP4K8P9FiYLnmg==
   dependencies:
     "@jsforce/jsforce-node" "^3.10.24"
     "@salesforce/kit" "^4.0.0"

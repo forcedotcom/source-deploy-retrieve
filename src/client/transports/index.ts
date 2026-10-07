@@ -31,3 +31,4 @@ export {
   TransportPlanPhase,
   TransportPipelineResult,
 } from './transportPipeline';
+export { TransportCoordinator } from './transportCoordinator';

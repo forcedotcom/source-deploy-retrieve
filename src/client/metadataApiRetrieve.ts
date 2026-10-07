@@ -38,8 +38,7 @@ import {
 import { extract } from './retrieveExtract';
 import { getPackageOptions } from './retrieveExtract';
 import { MetadataApiRetrieveOptions } from './types';
-import { AsyncTransportHandle, TransportContext } from './transports/types';
-import { TransportPipeline, TransportGroup } from './transports/transportPipeline';
+import { AsyncTransportHandle } from './transports/types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -152,16 +151,6 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   MetadataApiRetrieveOptions
 > {
   public static DEFAULT_OPTIONS: Partial<MetadataApiRetrieveOptions> = { merge: false };
-  /** @internal */
-  public transportFileResponses: FileResponse[] = [];
-  /** @internal */
-  public transportAsyncHandles: AsyncTransportHandle[] = [];
-  /** @internal */
-  public pendingAfterMetadata?: {
-    pipeline: TransportPipeline;
-    transports: TransportGroup[];
-    context: TransportContext;
-  };
   private readonly options: MetadataApiRetrieveOptions;
   private orgId?: string;
 
@@ -241,17 +230,6 @@ export class MetadataApiRetrieve extends MetadataTransfer<
         }));
       }
     }
-    if (result.status === RequestStatus.Succeeded && this.pendingAfterMetadata) {
-      try {
-        const { pipeline, transports, context } = this.pendingAfterMetadata;
-        const afterResults = await pipeline.runAfterMetadata(context, transports, 'retrieve');
-        this.transportFileResponses.push(...afterResults.fileResponses);
-        this.transportAsyncHandles.push(...afterResults.asyncHandles);
-      } catch (err) {
-        this.logger.warn(`After-metadata transport failed during retrieve: ${(err as Error).message}`);
-      }
-    }
-
     componentSet ??= new ComponentSet(undefined, this.options.registry);
 
     const retrieveResult = new RetrieveResult(
@@ -261,9 +239,6 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       partialDeleteFileResponses,
       this.options.registry
     );
-    if (this.transportFileResponses.length > 0 || this.transportAsyncHandles.length > 0) {
-      retrieveResult.addTransportResults(this.transportFileResponses, this.transportAsyncHandles);
-    }
     if (!isMdapiRetrieve && !this.options.suppressEvents) {
       // This should only be done when retrieving source format since retrieving
       // mdapi format has no conversion or events/hooks

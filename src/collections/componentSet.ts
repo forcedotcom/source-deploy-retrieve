@@ -31,6 +31,7 @@ import { MetadataApiDeploy, MetadataApiDeployOptions } from '../client/metadataA
 import { MetadataApiRetrieve } from '../client/metadataApiRetrieve';
 import type { MetadataApiRetrieveOptions } from '../client/types';
 import { TransportPipeline } from '../client/transports/transportPipeline';
+import { TransportCoordinator } from '../client/transports/transportCoordinator';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common/constants';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MetadataResolver } from '../resolve/metadataResolver';
@@ -400,7 +401,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
 
     const pipeline = this.transportPipeline;
-    if (pipeline?.hasTransports(toDeploy, options.skipTransports)) {
+    if (pipeline?.hasTransports(toDeploy)) {
       return this.deployWithPipeline(options, toDeploy, pipeline);
     }
 
@@ -445,8 +446,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     const pipeline = this.transportPipeline;
     const toRetrieve = Array.from(this.getSourceComponents());
-    if (pipeline?.hasTransports(toRetrieve, options.skipTransports)) {
-      return this.retrieveWithPipeline(operationOptions, toRetrieve, pipeline, options.skipTransports);
+    if (pipeline?.hasTransports(toRetrieve)) {
+      return this.retrieveWithPipeline(operationOptions, toRetrieve, pipeline);
     }
 
     const mdapiRetrieve = new MetadataApiRetrieve(operationOptions);
@@ -756,7 +757,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     components: SourceComponent[],
     pipeline: TransportPipeline
   ): Promise<MetadataApiDeploy> {
-    const { transports } = pipeline.groupByTransport(components, options.skipTransports);
+    const { transports } = pipeline.groupByTransport(components);
 
     const connection =
       typeof options.usernameOrConnection === 'string'
@@ -770,7 +771,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       orgId: connection.getAuthInfoFields().orgId ?? '',
     };
 
-    const beforeResults = await pipeline.runBeforeMetadata(transportContext, transports);
+    const coordinator = new TransportCoordinator(pipeline, transports, transportContext, 'deploy');
+    await coordinator.runBeforeMetadata();
 
     const operationOptions = Object.assign({}, options, {
       components: this,
@@ -779,13 +781,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     });
 
     const mdapiDeploy = new MetadataApiDeploy(operationOptions);
+    mdapiDeploy.addResultProcessor((result, status) => coordinator.processResult(result, status.status));
     await mdapiDeploy.start();
-
-    // store transport results and pending after-metadata groups on the deploy
-    // so they can be merged into DeployResult after polling completes
-    mdapiDeploy.transportFileResponses = beforeResults.fileResponses;
-    mdapiDeploy.transportAsyncHandles = beforeResults.asyncHandles;
-    mdapiDeploy.pendingAfterMetadata = { pipeline, transports, context: transportContext };
 
     return mdapiDeploy;
   }
@@ -793,10 +790,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   private async retrieveWithPipeline(
     operationOptions: MetadataApiRetrieveOptions,
     components: SourceComponent[],
-    pipeline: TransportPipeline,
-    skipTransports?: string[]
+    pipeline: TransportPipeline
   ): Promise<MetadataApiRetrieve> {
-    const { transports } = pipeline.groupByTransport(components, skipTransports);
+    const { transports } = pipeline.groupByTransport(components);
 
     const connection =
       typeof operationOptions.usernameOrConnection === 'string'
@@ -812,13 +808,11 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       orgId: connection.getAuthInfoFields().orgId ?? '',
     };
 
-    const beforeResults = await pipeline.runBeforeMetadata(transportContext, transports, 'retrieve');
+    const coordinator = new TransportCoordinator(pipeline, transports, transportContext, 'retrieve');
+    await coordinator.runBeforeMetadata();
 
     const mdapiRetrieve = new MetadataApiRetrieve(operationOptions);
-
-    mdapiRetrieve.transportFileResponses = beforeResults.fileResponses;
-    mdapiRetrieve.transportAsyncHandles = beforeResults.asyncHandles;
-    mdapiRetrieve.pendingAfterMetadata = { pipeline, transports, context: transportContext };
+    mdapiRetrieve.addResultProcessor((result, status) => coordinator.processResult(result, status.status));
 
     await mdapiRetrieve.start();
     return mdapiRetrieve;

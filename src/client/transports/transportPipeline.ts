@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Logger } from '@salesforce/core';
+import { Logger, SfError } from '@salesforce/core';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { FileResponse } from '../types';
 import { AsyncTransportHandle, TransportContext, TransportPhase, TransportProvider, TransportResult } from './types';
@@ -57,13 +57,12 @@ export class TransportPipeline {
     this.transports.push(transport);
   }
 
-  public groupByTransport(components: SourceComponent[], skipTypes?: string[]): GroupedComponents {
-    const skip = skipTypes ? new Set(skipTypes) : undefined;
+  public groupByTransport(components: SourceComponent[]): GroupedComponents {
     const metadataApi: SourceComponent[] = [];
     const transportMap = new Map<string, TransportGroup>();
 
     for (const component of components) {
-      const transport = this.findTransportFor(component, skip);
+      const transport = this.findTransportFor(component);
       if (transport) {
         let group = transportMap.get(transport.name);
         if (!group) {
@@ -83,12 +82,8 @@ export class TransportPipeline {
     };
   }
 
-  public explain(
-    components: SourceComponent[],
-    operation: 'deploy' | 'retrieve' = 'deploy',
-    skipTypes?: string[]
-  ): TransportPlan {
-    const { metadataApi, transports } = this.groupByTransport(components, skipTypes);
+  public explain(components: SourceComponent[], operation: 'deploy' | 'retrieve' = 'deploy'): TransportPlan {
+    const { metadataApi, transports } = this.groupByTransport(components);
     const phases: TransportPlanPhase[] = [];
 
     const beforeMetadata = transports.filter((g) => g.transport.phase[operation] === 'before-metadata');
@@ -142,16 +137,21 @@ export class TransportPipeline {
     return this.runTransportGroups(afterMetadata, context, operation);
   }
 
-  public hasTransports(components: SourceComponent[], skipTypes?: string[]): boolean {
-    const skip = skipTypes ? new Set(skipTypes) : undefined;
-    return components.some((c) => this.findTransportFor(c, skip) !== undefined);
+  public hasTransports(components: SourceComponent[]): boolean {
+    return components.some((component) => this.findTransportFor(component) !== undefined);
   }
 
-  private findTransportFor(component: SourceComponent, skipTypes?: Set<string>): TransportProvider | undefined {
-    if (skipTypes?.has(component.type.name)) {
-      return undefined;
+  private findTransportFor(component: SourceComponent): TransportProvider | undefined {
+    const transportName = component.type.strategies?.transport;
+    if (!transportName) return undefined;
+    const transport = this.transports.find((candidate) => candidate.name === transportName);
+    if (!transport) {
+      throw new SfError(
+        `No transport provider is registered for '${transportName}' required by ${component.type.name}.`,
+        'MissingTransportProvider'
+      );
     }
-    return this.transports.find((t) => t.handles(component));
+    return transport;
   }
 
   private async runTransportGroups(

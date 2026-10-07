@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1791406563846,
+  "lastUpdate": 1791407088013,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -118820,6 +118820,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 12878,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "distinct": true,
+          "id": "30cc02b6a9b4e9a4df3dd4f509cd7a9442c39248",
+          "message": "Merge branch 'wr/transport-scaffolding' of github.com:forcedotcom/source-deploy-retrieve into wr/transport-scaffolding\n\n# Conflicts:\n#\tpackage.json\n#\tsrc/client/metadataApiDeploy.ts\n#\tsrc/client/metadataApiRetrieve.ts\n#\tsrc/client/transports/index.ts\n#\tsrc/client/transports/transportPipeline.ts\n#\tsrc/client/transports/types.ts\n#\tsrc/collections/componentSet.ts\n#\tsrc/index.ts\n#\tsrc/registry/types.ts\n#\ttest/client/transports/deployResultTransport.test.ts\n#\ttest/client/transports/retrieveResultTransport.test.ts\n#\ttest/client/transports/transportIntegration.test.ts\n#\ttest/client/transports/transportPipeline.test.ts\n#\tyarn.lock",
+          "timestamp": "2026-10-07T14:58:36-06:00",
+          "tree_id": "3c1df59e4533408840ab757e07ba8dc65bc1b9ce",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/30cc02b6a9b4e9a4df3dd4f509cd7a9442c39248"
+        },
+        "date": 1791407071261,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 302,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2635,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2589,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 4219,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 476,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 6567,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7581,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 6976,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 879,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 11855,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 15151,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 13060,
             "unit": "ms"
           }
         ]

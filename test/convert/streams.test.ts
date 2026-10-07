@@ -601,6 +601,17 @@ describe('Streams', () => {
         expect(writer.fileCount).to.equal(3);
       });
 
+      it('should count files and directory entries in entryCount', () => {
+        writer = new streams.ZipWriter();
+        env.stub(JSZip.prototype, 'file');
+        writer.addToZip(Buffer.from('a'), 'pkg/classes/Foo.cls');
+        writer.addToZip(Buffer.from('b'), 'pkg/classes/Foo.cls-meta.xml');
+        writer.addToZip(Buffer.from('c'), 'pkg/lwc/bar/bar.js');
+        expect(writer.fileCount).to.equal(3);
+        // dirs: pkg/, pkg/classes/, pkg/lwc/, pkg/lwc/bar/
+        expect(writer.entryCount).to.equal(7);
+      });
+
       it('should generateAsync zip when stream is finished', async () => {
         const generateAsyncStub = env.stub(JSZip.prototype, 'generateAsync').resolves();
         const expectedArgs = {

@@ -15,10 +15,9 @@
  */
 
 import { Connection, SfProject } from '@salesforce/core';
+import { TransportName } from '../../registry/types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { FileResponse } from '../types';
-
-export type TransportPhase = 'before-metadata' | 'after-metadata';
 
 export type TransportStatus = 'Pending' | 'InProgress' | 'Succeeded' | 'Failed' | 'Unknown';
 
@@ -40,20 +39,18 @@ export type TransportResult = {
 };
 
 export type AsyncTransportHandle = {
-  transportName: string;
+  transportName: TransportName;
   status: TransportStatus;
   message?: string;
   checkStatus(): Promise<AsyncTransportHandle>;
 };
 
 export type TransportProvider = {
-  readonly name: string;
-  readonly phase: {
-    deploy: TransportPhase;
-    retrieve: TransportPhase;
-  };
+  readonly name: TransportName;
   describe(): TransportDescription;
   handles(component: SourceComponent): boolean;
-  deploy(context: TransportContext): Promise<TransportResult>;
-  retrieve(context: TransportContext): Promise<TransportResult>;
+  beforeDeploy?(context: TransportContext): Promise<TransportResult>;
+  afterDeploy?(context: TransportContext): Promise<TransportResult>;
+  beforeRetrieve?(context: TransportContext): Promise<TransportResult>;
+  afterRetrieve?(context: TransportContext): Promise<TransportResult>;
 };

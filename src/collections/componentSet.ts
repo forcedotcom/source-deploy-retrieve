@@ -31,6 +31,7 @@ import { MetadataApiDeploy, MetadataApiDeployOptions } from '../client/metadataA
 import { MetadataApiRetrieve } from '../client/metadataApiRetrieve';
 import type { MetadataApiRetrieveOptions } from '../client/types';
 import { TransportPipeline } from '../client/transports/transportPipeline';
+import { TransportCoordinator } from '../client/transports/transportCoordinator';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common/constants';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MetadataResolver } from '../resolve/metadataResolver';
@@ -90,7 +91,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public fullName?: string;
   public forceIgnoredPaths?: Set<string>;
   public botVersionFilters?: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
-  public transportPipeline?: TransportPipeline;
+  private manualTransportPipeline?: TransportPipeline;
+  private hasManualPipeline = false;
   private logger: Logger;
   private readonly registry: RegistryAccess;
   // all components stored here, regardless of what manifest they belong to
@@ -146,6 +148,16 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
   public get destructiveChangesPost(): DecodeableMap<string, DecodeableMap<string, SourceComponent>> {
     return this.destructiveComponents[DestructiveChangesType.POST];
+  }
+
+  public get transportPipeline(): TransportPipeline | undefined {
+    if (this.hasManualPipeline) return this.manualTransportPipeline;
+    return this.hasTransportEligibleTypes() ? TransportPipeline.withBuiltinTransports() : undefined;
+  }
+
+  public set transportPipeline(pipeline: TransportPipeline | undefined) {
+    this.manualTransportPipeline = pipeline;
+    this.hasManualPipeline = true;
   }
 
   /**
@@ -400,7 +412,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
 
     const pipeline = this.transportPipeline;
-    if (pipeline?.hasTransports(toDeploy, options.skipTransports)) {
+    if (pipeline?.hasTransports(toDeploy)) {
       return this.deployWithPipeline(options, toDeploy, pipeline);
     }
 
@@ -445,8 +457,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     const pipeline = this.transportPipeline;
     const toRetrieve = Array.from(this.getSourceComponents());
-    if (pipeline?.hasTransports(toRetrieve, options.skipTransports)) {
-      return this.retrieveWithPipeline(operationOptions, toRetrieve, pipeline, options.skipTransports);
+    // For retrieve, also include manifest-only components (e.g., -m flag
+    // where the component doesn't exist locally yet) so the transport
+    // pipeline can handle them.
+    const allComponents = toRetrieve.length > 0 ? toRetrieve : this.getManifestSourceComponents();
+    if (pipeline?.hasTransports(allComponents)) {
+      return this.retrieveWithPipeline(operationOptions, allComponents, pipeline);
     }
 
     const mdapiRetrieve = new MetadataApiRetrieve(operationOptions);
@@ -756,7 +772,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     components: SourceComponent[],
     pipeline: TransportPipeline
   ): Promise<MetadataApiDeploy> {
-    const { transports } = pipeline.groupByTransport(components, options.skipTransports);
+    const { transports } = pipeline.groupByTransport(components);
 
     const connection =
       typeof options.usernameOrConnection === 'string'
@@ -770,7 +786,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       orgId: connection.getAuthInfoFields().orgId ?? '',
     };
 
-    const beforeResults = await pipeline.runBeforeMetadata(transportContext, transports);
+    const coordinator = new TransportCoordinator(pipeline, transports, transportContext, 'deploy');
+    await coordinator.runBeforeMetadata();
 
     const operationOptions = Object.assign({}, options, {
       components: this,
@@ -779,13 +796,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     });
 
     const mdapiDeploy = new MetadataApiDeploy(operationOptions);
+    mdapiDeploy.addResultProcessor((result, status) => coordinator.processResult(result, status.status));
     await mdapiDeploy.start();
-
-    // store transport results and pending after-metadata groups on the deploy
-    // so they can be merged into DeployResult after polling completes
-    mdapiDeploy.transportFileResponses = beforeResults.fileResponses;
-    mdapiDeploy.transportAsyncHandles = beforeResults.asyncHandles;
-    mdapiDeploy.pendingAfterMetadata = { pipeline, transports, context: transportContext };
 
     return mdapiDeploy;
   }
@@ -793,10 +805,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   private async retrieveWithPipeline(
     operationOptions: MetadataApiRetrieveOptions,
     components: SourceComponent[],
-    pipeline: TransportPipeline,
-    skipTransports?: string[]
+    pipeline: TransportPipeline
   ): Promise<MetadataApiRetrieve> {
-    const { transports } = pipeline.groupByTransport(components, skipTransports);
+    const { transports } = pipeline.groupByTransport(components);
 
     const connection =
       typeof operationOptions.usernameOrConnection === 'string'
@@ -812,16 +823,43 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       orgId: connection.getAuthInfoFields().orgId ?? '',
     };
 
-    const beforeResults = await pipeline.runBeforeMetadata(transportContext, transports, 'retrieve');
+    const coordinator = new TransportCoordinator(pipeline, transports, transportContext, 'retrieve');
+    await coordinator.runBeforeMetadata();
 
     const mdapiRetrieve = new MetadataApiRetrieve(operationOptions);
-
-    mdapiRetrieve.transportFileResponses = beforeResults.fileResponses;
-    mdapiRetrieve.transportAsyncHandles = beforeResults.asyncHandles;
-    mdapiRetrieve.pendingAfterMetadata = { pipeline, transports, context: transportContext };
+    mdapiRetrieve.addResultProcessor((result, status) => coordinator.processResult(result, status.status));
 
     await mdapiRetrieve.start();
     return mdapiRetrieve;
+  }
+
+  private getManifestSourceComponents(): SourceComponent[] {
+    const seen = new Set<string>();
+    const results: SourceComponent[] = [];
+    for (const [, members] of this.manifestComponents) {
+      for (const [, comp] of members) {
+        const key = `${comp.type.name}#${comp.fullName}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          results.push(comp);
+        }
+      }
+    }
+    return results;
+  }
+
+  private hasTransportEligibleTypes(): boolean {
+    for (const comp of this.getSourceComponents()) {
+      if (comp.type.strategies?.transport) return true;
+    }
+    // Also check manifestComponents for components without local source
+    // (e.g., -m retrieves where the component doesn't exist on disk yet)
+    for (const [, members] of this.manifestComponents) {
+      for (const [, comp] of members) {
+        if (comp.type.strategies?.transport) return true;
+      }
+    }
+    return false;
   }
 
   /**

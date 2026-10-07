@@ -26,20 +26,21 @@ import {
   RequestStatus,
   RetrieveResult,
   SourceComponent,
+} from '../../../src';
+import { TransportPipeline } from '../../../src/client/transports/transportPipeline';
+import {
   TransportContext,
   TransportDescription,
-  TransportPhase,
-  TransportPipeline,
   TransportProvider,
   TransportResult,
-} from '../../../src';
+} from '../../../src/client/transports/types';
 
 const registryAccess = new RegistryAccess();
 
 function createMockTransport(overrides: {
-  name: string;
-  deployPhase: TransportPhase;
-  retrievePhase: TransportPhase;
+  name?: 'herokuCompute';
+  deployPhase: 'before-metadata' | 'after-metadata';
+  retrievePhase: 'before-metadata' | 'after-metadata';
   typeNames: string[];
   deployResponses?: FileResponse[];
   retrieveResponses?: FileResponse[];
@@ -47,30 +48,37 @@ function createMockTransport(overrides: {
   retrieveSpy?: sinon.SinonSpy;
   shouldThrow?: 'deploy' | 'retrieve';
 }): TransportProvider {
-  return {
-    name: overrides.name,
-    phase: { deploy: overrides.deployPhase, retrieve: overrides.retrievePhase },
+  const transport: TransportProvider = {
+    name: overrides.name ?? 'herokuCompute',
     describe(): TransportDescription {
-      return { label: `Mock ${overrides.name}`, endpoint: `https://example.com/${overrides.name}` };
+      return { label: 'Mock transport', endpoint: 'https://example.com/transport' };
     },
     handles(component: SourceComponent): boolean {
       return overrides.typeNames.includes(component.type.name);
     },
-    async deploy(ctx: TransportContext): Promise<TransportResult> {
-      overrides.deploySpy?.(ctx);
-      if (overrides.shouldThrow === 'deploy') throw new Error('deploy transport failed');
-      return { fileResponses: overrides.deployResponses ?? [] };
-    },
-    async retrieve(ctx: TransportContext): Promise<TransportResult> {
-      overrides.retrieveSpy?.(ctx);
-      if (overrides.shouldThrow === 'retrieve') throw new Error('retrieve transport failed');
-      return { fileResponses: overrides.retrieveResponses ?? [] };
-    },
   };
+  const deploy = async (ctx: TransportContext): Promise<TransportResult> => {
+    overrides.deploySpy?.(ctx);
+    if (overrides.shouldThrow === 'deploy') throw new Error('deploy transport failed');
+    return { fileResponses: overrides.deployResponses ?? [] };
+  };
+  const retrieve = async (ctx: TransportContext): Promise<TransportResult> => {
+    overrides.retrieveSpy?.(ctx);
+    if (overrides.shouldThrow === 'retrieve') throw new Error('retrieve transport failed');
+    return { fileResponses: overrides.retrieveResponses ?? [] };
+  };
+  if (overrides.deployPhase === 'before-metadata') transport.beforeDeploy = deploy;
+  else transport.afterDeploy = deploy;
+  if (overrides.retrievePhase === 'before-metadata') transport.beforeRetrieve = retrieve;
+  else transport.afterRetrieve = retrieve;
+  return transport;
 }
 
 function createMockComponent(typeName: string, fullName: string): SourceComponent {
-  const type = registryAccess.getTypeByName(typeName);
+  const type = {
+    ...registryAccess.getTypeByName(typeName),
+    strategies: { adapter: 'default' as const, transport: 'herokuCompute' as const },
+  };
   return new SourceComponent({ name: fullName, type });
 }
 
@@ -106,7 +114,6 @@ describe('Transport integration', () => {
         filePath: 'force-app/main/default/objects/PreRetrieveApp.object-meta.xml',
       };
       const transport = createMockTransport({
-        name: 'datakitApi',
         deployPhase: 'after-metadata',
         retrievePhase: 'before-metadata',
         typeNames: ['CustomObject'],
@@ -114,8 +121,7 @@ describe('Transport integration', () => {
         retrieveSpy,
       });
 
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(transport);
+      const pipeline = new TransportPipeline([transport]);
 
       const groups = [{ transport, components: [createMockComponent('CustomObject', 'MyObject__c')] }];
 
@@ -129,15 +135,13 @@ describe('Transport integration', () => {
     it('should not run after-metadata retrieve transports in runBeforeMetadata', async () => {
       const retrieveSpy = sinon.spy();
       const transport = createMockTransport({
-        name: 'connectApi',
         deployPhase: 'before-metadata',
         retrievePhase: 'after-metadata',
         typeNames: ['ApexClass'],
         retrieveSpy,
       });
 
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(transport);
+      const pipeline = new TransportPipeline([transport]);
 
       const groups = [{ transport, components: [createMockComponent('ApexClass', 'MyClass')] }];
 
@@ -151,15 +155,13 @@ describe('Transport integration', () => {
   describe('transport failure handling', () => {
     it('should propagate transport errors from runAfterMetadata for callers to catch', async () => {
       const transport = createMockTransport({
-        name: 'connectApi',
         deployPhase: 'before-metadata',
         retrievePhase: 'after-metadata',
         typeNames: ['ApexClass'],
         shouldThrow: 'retrieve',
       });
 
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(transport);
+      const pipeline = new TransportPipeline([transport]);
 
       const groups = [{ transport, components: [createMockComponent('ApexClass', 'MyClass')] }];
 
@@ -173,15 +175,13 @@ describe('Transport integration', () => {
 
     it('should propagate transport errors from runBeforeMetadata for callers to catch', async () => {
       const transport = createMockTransport({
-        name: 'connectApi',
         deployPhase: 'before-metadata',
         retrievePhase: 'after-metadata',
         typeNames: ['ApexClass'],
         shouldThrow: 'deploy',
       });
 
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(transport);
+      const pipeline = new TransportPipeline([transport]);
 
       const groups = [{ transport, components: [createMockComponent('ApexClass', 'MyClass')] }];
 
@@ -194,48 +194,48 @@ describe('Transport integration', () => {
     });
   });
 
-  describe('skipTransports with retrieve', () => {
-    it('should exclude skipped types from retrieve explain plan', () => {
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(
-        createMockTransport({
-          name: 'connectApi',
-          deployPhase: 'before-metadata',
-          retrievePhase: 'after-metadata',
-          typeNames: ['ApexClass'],
-        })
-      );
+  describe('ComponentSet auto-discovery', () => {
+    it('should auto-discover builtin transports for PlatformComputeApp', () => {
+      const computeType = registryAccess.getTypeByName('PlatformComputeApp');
+      const component = new SourceComponent({ name: 'MyApp', type: computeType, content: '/mock/app' });
+      const cs = new ComponentSet([component]);
 
-      const apexClass = createMockComponent('ApexClass', 'MyClass');
-
-      const planWithout = pipeline.explain([apexClass], 'retrieve');
-      const planWith = pipeline.explain([apexClass], 'retrieve', ['ApexClass']);
-
-      expect(planWithout.phases).to.have.lengthOf(2);
-      expect(planWith.phases).to.have.lengthOf(1);
-      expect(planWith.phases[0].phase).to.equal('metadata-api');
+      expect(cs.transportPipeline).to.not.be.undefined;
+      expect(cs.transportPipeline!.hasTransports([component])).to.be.true;
     });
 
-    it('should exclude skipped types from groupByTransport but keep in metadataApi', () => {
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(
-        createMockTransport({
-          name: 'connectApi',
-          deployPhase: 'before-metadata',
-          retrievePhase: 'after-metadata',
-          typeNames: ['ApexClass', 'ApexTrigger'],
-        })
-      );
+    it('should not create a pipeline when no transport-eligible types exist', () => {
+      const apexType = registryAccess.getTypeByName('ApexClass');
+      const component = new SourceComponent({ name: 'MyClass', type: apexType });
+      const cs = new ComponentSet([component]);
 
-      const apexClass = createMockComponent('ApexClass', 'MyClass');
-      const apexTrigger = createMockComponent('ApexTrigger', 'MyTrigger');
+      expect(cs.transportPipeline).to.be.undefined;
+    });
 
-      const result = pipeline.groupByTransport([apexClass, apexTrigger], ['ApexClass']);
+    it('should re-evaluate when transport-eligible component is added after first access', () => {
+      const apexType = registryAccess.getTypeByName('ApexClass');
+      const cs = new ComponentSet([new SourceComponent({ name: 'MyClass', type: apexType })]);
 
-      expect(result.metadataApi).to.have.lengthOf(2);
-      expect(result.transports).to.have.lengthOf(1);
-      expect(result.transports[0].components).to.have.lengthOf(1);
-      expect(result.transports[0].components[0].type.name).to.equal('ApexTrigger');
+      expect(cs.transportPipeline).to.be.undefined;
+
+      const computeType = registryAccess.getTypeByName('PlatformComputeApp');
+      const computeComp = new SourceComponent({ name: 'MyApp', type: computeType, content: '/mock/app' });
+      cs.add(computeComp);
+
+      expect(cs.transportPipeline).to.not.be.undefined;
+      expect(cs.transportPipeline!.hasTransports([computeComp])).to.be.true;
+    });
+
+    it('should allow explicit pipeline to override auto-discovery', () => {
+      const computeType = registryAccess.getTypeByName('PlatformComputeApp');
+      const component = new SourceComponent({ name: 'MyApp', type: computeType, content: '/mock/app' });
+      const cs = new ComponentSet([component]);
+
+      const customPipeline = new TransportPipeline();
+      cs.transportPipeline = customPipeline;
+
+      expect(cs.transportPipeline).to.equal(customPipeline);
+      expect(() => cs.transportPipeline?.hasTransports([component])).to.throw('No transport provider is registered');
     });
   });
 

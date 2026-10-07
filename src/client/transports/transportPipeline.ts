@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import { Logger } from '@salesforce/core';
+import { Lifecycle, Logger, SfError } from '@salesforce/core';
+import { TransportName } from '../../registry/types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { FileResponse } from '../types';
-import { AsyncTransportHandle, TransportContext, TransportPhase, TransportProvider, TransportResult } from './types';
+import { AsyncTransportHandle, TransportContext, TransportProvider, TransportResult } from './types';
+import { HerokuComputeTransport } from './herokuComputeTransport';
 
 export type TransportGroup = {
   transport: TransportProvider;
@@ -34,7 +36,7 @@ export type TransportPlan = {
 };
 
 export type TransportPlanPhase = {
-  phase: TransportPhase | 'metadata-api';
+  phase: 'before-metadata' | 'metadata-api' | 'after-metadata';
   label: string;
   endpoint: string;
   components: Array<{ fullName: string; type: string }>;
@@ -45,25 +47,37 @@ export type TransportPipelineResult = {
   asyncHandles: AsyncTransportHandle[];
 };
 
+export type TransportStageEvent = {
+  transportName: TransportName;
+  label: string;
+  operation: 'deploy' | 'retrieve';
+  stage: 'start' | 'complete' | 'error';
+  componentCount: number;
+  componentNames: string[];
+  errorMessage?: string;
+};
+
 export class TransportPipeline {
   private readonly transports: TransportProvider[] = [];
   private readonly logger: Logger;
 
-  public constructor() {
+  public constructor(transports?: TransportProvider[]) {
     this.logger = Logger.childFromRoot('TransportPipeline');
+    if (transports) {
+      this.transports.push(...transports);
+    }
   }
 
-  public registerTransport(transport: TransportProvider): void {
-    this.transports.push(transport);
+  public static withBuiltinTransports(): TransportPipeline {
+    return new TransportPipeline([new HerokuComputeTransport()]);
   }
 
-  public groupByTransport(components: SourceComponent[], skipTypes?: string[]): GroupedComponents {
-    const skip = skipTypes ? new Set(skipTypes) : undefined;
+  public groupByTransport(components: SourceComponent[]): GroupedComponents {
     const metadataApi: SourceComponent[] = [];
     const transportMap = new Map<string, TransportGroup>();
 
     for (const component of components) {
-      const transport = this.findTransportFor(component, skip);
+      const transport = this.findTransportFor(component);
       if (transport) {
         let group = transportMap.get(transport.name);
         if (!group) {
@@ -83,16 +97,12 @@ export class TransportPipeline {
     };
   }
 
-  public explain(
-    components: SourceComponent[],
-    operation: 'deploy' | 'retrieve' = 'deploy',
-    skipTypes?: string[]
-  ): TransportPlan {
-    const { metadataApi, transports } = this.groupByTransport(components, skipTypes);
+  public explain(components: SourceComponent[], operation: 'deploy' | 'retrieve' = 'deploy'): TransportPlan {
+    const { metadataApi, transports } = this.groupByTransport(components);
     const phases: TransportPlanPhase[] = [];
 
-    const beforeMetadata = transports.filter((g) => g.transport.phase[operation] === 'before-metadata');
-    const afterMetadata = transports.filter((g) => g.transport.phase[operation] === 'after-metadata');
+    const beforeMetadata = transports.filter((group) => getStep(group.transport, operation, 'before') !== undefined);
+    const afterMetadata = transports.filter((group) => getStep(group.transport, operation, 'after') !== undefined);
 
     for (const group of beforeMetadata) {
       const desc = group.transport.describe();
@@ -129,8 +139,7 @@ export class TransportPipeline {
     groups: TransportGroup[],
     operation: 'deploy' | 'retrieve' = 'deploy'
   ): Promise<TransportPipelineResult> {
-    const beforeMetadata = groups.filter((g) => g.transport.phase[operation] === 'before-metadata');
-    return this.runTransportGroups(beforeMetadata, context, operation);
+    return this.runTransportGroups(groups, context, operation, 'before');
   }
 
   public async runAfterMetadata(
@@ -138,48 +147,110 @@ export class TransportPipeline {
     groups: TransportGroup[],
     operation: 'deploy' | 'retrieve' = 'deploy'
   ): Promise<TransportPipelineResult> {
-    const afterMetadata = groups.filter((g) => g.transport.phase[operation] === 'after-metadata');
-    return this.runTransportGroups(afterMetadata, context, operation);
+    return this.runTransportGroups(groups, context, operation, 'after');
   }
 
-  public hasTransports(components: SourceComponent[], skipTypes?: string[]): boolean {
-    const skip = skipTypes ? new Set(skipTypes) : undefined;
-    return components.some((c) => this.findTransportFor(c, skip) !== undefined);
+  public hasTransports(components: SourceComponent[]): boolean {
+    return components.some((component) => this.findTransportFor(component) !== undefined);
   }
 
-  private findTransportFor(component: SourceComponent, skipTypes?: Set<string>): TransportProvider | undefined {
-    if (skipTypes?.has(component.type.name)) {
-      return undefined;
+  private findTransportFor(component: SourceComponent): TransportProvider | undefined {
+    const transportName = component.type.strategies?.transport;
+    if (!transportName) return undefined;
+    const transport = this.transports.find((candidate) => candidate.name === transportName);
+    if (!transport) {
+      throw new SfError(
+        `No transport provider is registered for '${transportName}' required by ${component.type.name}.`,
+        'MissingTransportProvider'
+      );
     }
-    return this.transports.find((t) => t.handles(component));
+    return transport;
   }
 
   private async runTransportGroups(
     groups: TransportGroup[],
     context: TransportContext,
-    operation: 'deploy' | 'retrieve'
+    operation: 'deploy' | 'retrieve',
+    timing: 'before' | 'after'
   ): Promise<TransportPipelineResult> {
     const allFileResponses: FileResponse[] = [];
     const allAsyncHandles: AsyncTransportHandle[] = [];
+    const lifecycle = Lifecycle.getInstance();
 
     for (const group of groups) {
+      const step = getStep(group.transport, operation, timing);
+      if (!step) continue;
       this.logger.debug(
         `Running transport '${group.transport.name}' (${operation}) for ${group.components.length} component(s)`
       );
+
+      const desc = group.transport.describe();
+      const componentNames = group.components.map((c) => c.fullName);
+      const eventBase: Omit<TransportStageEvent, 'stage'> = {
+        transportName: group.transport.name,
+        label: desc.label,
+        operation,
+        componentCount: group.components.length,
+        componentNames,
+      };
+
+      // eslint-disable-next-line no-await-in-loop
+      await lifecycle.emit('transportStage', { ...eventBase, stage: 'start' });
 
       const transportContext: TransportContext = {
         ...context,
         components: group.components,
       };
 
-      // eslint-disable-next-line no-await-in-loop
-      const result: TransportResult = await group.transport[operation](transportContext);
-      allFileResponses.push(...result.fileResponses);
-      if (result.asyncResult) {
-        allAsyncHandles.push(result.asyncResult);
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        const result: TransportResult = await step(transportContext);
+        allFileResponses.push(...result.fileResponses);
+        if (result.asyncResult) {
+          allAsyncHandles.push(result.asyncResult);
+        }
+        // eslint-disable-next-line no-await-in-loop
+        await lifecycle.emit('transportStage', { ...eventBase, stage: 'complete' });
+      } catch (err) {
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          await lifecycle.emit('transportStage', {
+            ...eventBase,
+            stage: 'error',
+            errorMessage: (err as Error).message,
+          });
+        } catch {
+          /* don't mask the transport error */
+        }
+        throw err;
       }
     }
 
     return { fileResponses: allFileResponses, asyncHandles: allAsyncHandles };
   }
+}
+
+function getStep(
+  transport: TransportProvider,
+  operation: 'deploy' | 'retrieve',
+  timing: 'before' | 'after'
+): ((context: TransportContext) => Promise<TransportResult>) | undefined {
+  if (operation === 'deploy' && timing === 'before') {
+    return transport.beforeDeploy
+      ? async (context): Promise<TransportResult> => transport.beforeDeploy!(context)
+      : undefined;
+  }
+  if (operation === 'deploy') {
+    return transport.afterDeploy
+      ? async (context): Promise<TransportResult> => transport.afterDeploy!(context)
+      : undefined;
+  }
+  if (timing === 'before') {
+    return transport.beforeRetrieve
+      ? async (context): Promise<TransportResult> => transport.beforeRetrieve!(context)
+      : undefined;
+  }
+  return transport.afterRetrieve
+    ? async (context): Promise<TransportResult> => transport.afterRetrieve!(context)
+    : undefined;
 }

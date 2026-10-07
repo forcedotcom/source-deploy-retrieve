@@ -28,6 +28,7 @@ import { ReplacementEvent } from '../convert/types';
 import { MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
+import { AsyncTransportHandle } from './transports/types';
 import {
   AsyncResult,
   ComponentStatus,
@@ -38,7 +39,6 @@ import {
   MetadataApiDeployOptions as ApiOptions,
   MetadataApiDeployStatus,
   MetadataTransferResult,
-  RequestStatus,
 } from './types';
 import {
   createResponses,
@@ -50,8 +50,6 @@ import {
   uiBundleResourceFullNameToFilePath,
 } from './deployMessages';
 import { parseDeployDiagnostic } from './diagnosticUtil';
-import { AsyncTransportHandle, TransportContext } from './transports/types';
-import { TransportPipeline, TransportGroup } from './transports/transportPipeline';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -69,19 +67,13 @@ export class DeployResult implements MetadataTransferResult {
     public readonly zipMeta?: { zipSize: number; zipFileCount?: number }
   ) {}
 
-  public addTransportResults(fileResponses: FileResponse[], asyncHandles: AsyncTransportHandle[] = []): void {
-    this.transportFileResponses.push(...fileResponses);
-    this.asyncTransportHandles.push(...asyncHandles);
-    // invalidate cached responses so next getFileResponses() call includes transport results
-    this.fileResponses = undefined;
-  }
-
   public getFileResponses(): FileResponse[] {
     // this involves FS operations, so only perform once!
     if (!this.fileResponses) {
       this.fileResponses = [
-        // removes duplicates from the file responses by parsing the object into a string, used as the key of the map
         ...new Map(
+          // MDAPI and required transport steps can report the same source file.
+          // A serialized structural key preserves one response without adding a dependency.
           [
             ...(this.components
               ? buildFileResponsesFromComponentSet(this.components)(this.response)
@@ -92,6 +84,12 @@ export class DeployResult implements MetadataTransferResult {
       ];
     }
     return this.fileResponses;
+  }
+
+  public addTransportResults(fileResponses: FileResponse[], asyncHandles: AsyncTransportHandle[] = []): void {
+    this.transportFileResponses.push(...fileResponses);
+    this.asyncTransportHandles.push(...asyncHandles);
+    this.fileResponses = undefined;
   }
 
   public getAsyncTransportHandles(): AsyncTransportHandle[] {
@@ -110,12 +108,6 @@ export type MetadataApiDeployOptions = {
    */
   mdapiPath?: string;
   registry?: RegistryAccess;
-  /**
-   * Metadata type names whose transports should be skipped (e.g., `['PlatformComputeApp']`).
-   * Components of these types will still deploy via the Metadata API but their
-   * secondary transport (Connect API, presigned URL, etc.) will not run.
-   */
-  skipTransports?: string[];
 } & MetadataTransferOptions;
 
 export class MetadataApiDeploy extends MetadataTransfer<
@@ -132,18 +124,6 @@ export class MetadataApiDeploy extends MetadataTransfer<
       rest: false,
     },
   };
-
-  /** @internal */
-  public transportFileResponses: FileResponse[] = [];
-  /** @internal */
-  public transportAsyncHandles: AsyncTransportHandle[] = [];
-  /** @internal */
-  public pendingAfterMetadata?: {
-    pipeline: TransportPipeline;
-    transports: TransportGroup[];
-    context: TransportContext;
-  };
-
   private options: MetadataApiDeployOptions;
   private replacements: Map<string, Set<string>> = new Map();
   private orgId?: string;
@@ -290,7 +270,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
     let zipMessage = `Deployment zip file size = ${this.zipSize} Bytes`;
     if (zipFileCount) {
       this.zipFileCount = zipFileCount;
-      zipMessage += ` containing ${zipFileCount} files`;
+      zipMessage += ` containing ${zipFileCount} entries`;
     }
     this.logger.debug(zipMessage);
     await LifecycleInstance.emit('apiVersionDeploy', { webService, manifestVersion, apiVersion });
@@ -355,19 +335,12 @@ export class MetadataApiDeploy extends MetadataTransfer<
         }`
       );
     }
-    await this.runPendingAfterMetadataTransports(result.status);
-
     const deployResult = new DeployResult(
       result,
       this.components,
       new Map(Array.from(this.replacements).map(([k, v]) => [k, Array.from(v)])),
       { zipSize: this.zipSize ?? 0, zipFileCount: this.zipFileCount }
     );
-
-    if (this.transportFileResponses.length > 0 || this.transportAsyncHandles.length > 0) {
-      deployResult.addTransportResults(this.transportFileResponses, this.transportAsyncHandles);
-    }
-
     // only do event hooks if source, (NOT a metadata format) deploy
     if (this.options.components) {
       // this may not be set if you resume a deploy so that `pre` is skipped.
@@ -410,20 +383,8 @@ export class MetadataApiDeploy extends MetadataTransfer<
 
     if (zipFileCount && zipFileCount > fileCountThreshold) {
       await Lifecycle.getInstance().emitWarning(
-        `Deployment zip file count is approaching the Metadata API limit (10,000). Warning threshold is ${thresholdPercentage}% and count ${zipFileCount} > ${fileCountThreshold}`
+        `Deployment zip entry count (files + folders) is approaching the Metadata API limit (10,000). Warning threshold is ${thresholdPercentage}% and count ${zipFileCount} > ${fileCountThreshold}`
       );
-    }
-  }
-
-  private async runPendingAfterMetadataTransports(status: RequestStatus): Promise<void> {
-    if (status !== RequestStatus.Succeeded || !this.pendingAfterMetadata) return;
-    try {
-      const { pipeline, transports, context } = this.pendingAfterMetadata;
-      const afterResults = await pipeline.runAfterMetadata(context, transports);
-      this.transportFileResponses.push(...afterResults.fileResponses);
-      this.transportAsyncHandles.push(...afterResults.asyncHandles);
-    } catch (err) {
-      this.logger.warn(`After-metadata transport failed: ${(err as Error).message}`);
     }
   }
 
@@ -437,7 +398,6 @@ export class MetadataApiDeploy extends MetadataTransfer<
       }
 
       const zip = JSZip();
-      let zipFileCount = 0;
 
       const zipDirRecursive = (dir: string): void => {
         const dirents = fs.readdirSync(dir, { withFileTypes: true });
@@ -451,12 +411,14 @@ export class MetadataApiDeploy extends MetadataTransfer<
             // Ensure only posix paths are added to zip files
             const relPosixPath = relPath.replace(/\\/g, '/');
             zip.file(relPosixPath, fs.createReadStream(fullPath));
-            zipFileCount++;
           }
         }
       };
       this.logger.debug(`Zipping directory for metadata deploy: ${mdapiPath}`);
       zipDirRecursive(mdapiPath);
+
+      // Count all entries (files + auto-created directories) to match the server's limit check
+      const zipFileCount = Object.keys(zip.files).length;
 
       return {
         zipBuffer: await zip.generateAsync({
@@ -520,24 +482,26 @@ const deleteNotFoundToFileResponses =
           : [];
       });
 
+const MANIFEST_FILES = new Set([
+  'package.xml',
+  'destructiveChanges.xml',
+  'destructiveChangesPost.xml',
+  'destructiveChangesPre.xml',
+]);
+
 const warnIfUnmatchedServerResult =
   (fr: FileResponse[]) =>
-  (messageMap: Map<string, DeployMessage[]>): void[] =>
-    // keep the parents and children separated for MPD scenarios where we have a parent in one, children in another package
-    [...messageMap.keys()].flatMap((key) => {
+  (messageMap: Map<string, DeployMessage[]>): void[] => {
+    const frKeys = new Set(fr.map((c) => `${c.type}#${c.fullName}`));
+
+    return [...messageMap.keys()].flatMap((key) => {
       const [type, fullName] = key.split('#', 2);
 
       // UIBundleResource messages are already handled by the parent UIBundle component
       const consumedByWebApp =
         type === 'UIBundleResource' && fr.some((c) => c.type === 'UIBundle' && fullName.startsWith(`${c.fullName}/`));
 
-      if (
-        !consumedByWebApp &&
-        !fr.find((c) => c.type === type && c.fullName === fullName) &&
-        !['package.xml', 'destructiveChanges.xml', 'destructiveChangesPost.xml', 'destructiveChangesPre.xml'].includes(
-          fullName
-        )
-      ) {
+      if (!consumedByWebApp && !frKeys.has(key) && !MANIFEST_FILES.has(fullName)) {
         const deployMessage = messageMap.get(key)!.at(0)!;
 
         // Don't warn for deleted components - not found in the component set (pre-destructiveChanges)
@@ -553,6 +517,7 @@ const warnIfUnmatchedServerResult =
         );
       }
     });
+  };
 const buildFileResponses = (response: MetadataApiDeployStatus): FileResponse[] =>
   ensureArray(response.details?.componentSuccesses)
     .concat(ensureArray(response.details?.componentFailures))
@@ -580,7 +545,7 @@ const buildFileResponsesFromComponentSet =
   (response: MetadataApiDeployStatus): FileResponse[] => {
     const responseMessages = getDeployMessages(response);
 
-    const fileResponses: FileResponse[] = (cs.getSourceComponents().toArray() ?? [])
+    const fileResponses: FileResponse[] = [...cs.getSourceComponents()]
       .flatMap((deployedComponent): FileResponse[] => {
         // UIBundle bundles get per-file status via UIBundleResource messages
         if (

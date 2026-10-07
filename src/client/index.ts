@@ -22,21 +22,7 @@ export {
   ScopedPostDeploy,
 } from './metadataApiDeploy';
 export { MetadataApiRetrieve, RetrieveResult, ScopedPostRetrieve, ScopedPreRetrieve } from './metadataApiRetrieve';
-export {
-  TransportProvider,
-  TransportContext,
-  TransportResult,
-  AsyncTransportHandle,
-  TransportStatus,
-  TransportPhase,
-  TransportDescription,
-  TransportPipeline,
-  TransportGroup,
-  GroupedComponents,
-  TransportPlan,
-  TransportPlanPhase,
-  TransportPipelineResult,
-} from './transports';
+export type { TransportStageEvent } from './transports';
 export {
   ComponentDeployment,
   ComponentRetrieval,
@@ -54,6 +40,7 @@ export {
   DeployDetails,
   RunTestResult,
   CodeCoverage,
+  LocationsCovered,
   LocationsNotCovered,
   CodeCoverageWarnings,
   Failures,

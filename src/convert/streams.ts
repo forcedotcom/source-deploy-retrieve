@@ -229,6 +229,7 @@ export class ZipWriter extends ComponentWriter {
   public fileCount: number = 0;
   private zip = JSZip();
   private zipBuffer?: Buffer;
+  private dirEntries = new Set<string>();
 
   public constructor(rootDestination?: SourcePath) {
     super(rootDestination);
@@ -238,6 +239,11 @@ export class ZipWriter extends ComponentWriter {
 
   public get buffer(): Buffer | undefined {
     return this.zipBuffer;
+  }
+
+  /** Total zip entries (files + auto-created directory entries). Matches the server's count. */
+  public get entryCount(): number {
+    return this.fileCount + this.dirEntries.size;
   }
 
   public async _write(chunk: WriterFormat, encoding: string, callback: (err?: Error) => void): Promise<void> {
@@ -281,6 +287,11 @@ export class ZipWriter extends ComponentWriter {
     const posixPath = path.replace(/\\/g, '/');
     this.zip.file(posixPath, contents);
     this.fileCount++;
+    // Track parent directory entries that JSZip auto-creates (createFolders defaults to true)
+    const parts = posixPath.split('/');
+    for (let i = 1; i < parts.length; i++) {
+      this.dirEntries.add(parts.slice(0, i).join('/') + '/');
+    }
   }
 }
 

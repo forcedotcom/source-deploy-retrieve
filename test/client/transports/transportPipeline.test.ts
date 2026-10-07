@@ -16,55 +16,43 @@
 
 import { expect } from 'chai';
 import { Connection, SfProject } from '@salesforce/core';
+import { ComponentStatus, FileResponse, RegistryAccess, SourceComponent } from '../../../src';
+import { TransportPipeline } from '../../../src/client/transports/transportPipeline';
 import {
   AsyncTransportHandle,
-  ComponentStatus,
-  TransportPipeline,
-  FileResponse,
-  RegistryAccess,
-  SourceComponent,
   TransportContext,
   TransportDescription,
-  TransportPhase,
   TransportProvider,
   TransportResult,
-} from '../../../src';
+} from '../../../src/client/transports/types';
 
 const registryAccess = new RegistryAccess();
 
 function createMockTransport(
   name: string,
-  deployPhase: TransportPhase,
-  typeNames: string[],
+  timing: 'before' | 'after' | 'before-metadata' | 'after-metadata',
   fileResponses: FileResponse[] = []
 ): TransportProvider {
-  const retrievePhase: TransportPhase = deployPhase === 'before-metadata' ? 'after-metadata' : 'before-metadata';
-  return {
-    name,
-    phase: { deploy: deployPhase, retrieve: retrievePhase },
+  const transport: TransportProvider = {
+    name: 'herokuCompute',
     describe(): TransportDescription {
       return { label: `Mock ${name}`, endpoint: `https://example.com/${name}` };
     },
-    handles(component: SourceComponent): boolean {
-      return typeNames.includes(component.type.name);
-    },
-    async deploy(): Promise<TransportResult> {
-      return { fileResponses };
-    },
-    async retrieve(): Promise<TransportResult> {
-      return { fileResponses: [] };
-    },
+    handles: () => true,
   };
+  if (timing === 'before' || timing === 'before-metadata') {
+    transport.beforeDeploy = async (): Promise<TransportResult> => ({ fileResponses });
+  } else transport.afterDeploy = async (): Promise<TransportResult> => ({ fileResponses });
+  return transport;
 }
 
 function createMockComponent(typeName: string, fullName: string): SourceComponent {
-  const type = registryAccess.getTypeByName(typeName);
-  return new SourceComponent({ name: fullName, type });
+  return new SourceComponent({ name: fullName, type: registryAccess.getTypeByName(typeName) });
 }
 
 describe('TransportPipeline', () => {
   describe('groupByTransport', () => {
-    it('should put all components in metadataApi when no transports registered', () => {
+    it('should put registry-unconfigured components in metadataApi when no transports are registered', () => {
       const pipeline = new TransportPipeline();
       const apexClass = createMockComponent('ApexClass', 'MyClass');
       const customObject = createMockComponent('CustomObject', 'MyObject__c');
@@ -76,57 +64,48 @@ describe('TransportPipeline', () => {
     });
 
     it('should group components by transport when transports are registered', () => {
-      const pipeline = new TransportPipeline();
-      const mockTransport = createMockTransport('connectApi', 'before-metadata', ['ApexClass']);
-      pipeline.registerTransport(mockTransport);
+      const mockTransport = createMockTransport('herokuCompute', 'before-metadata');
+      const pipeline = new TransportPipeline([mockTransport]);
 
-      const apexClass = createMockComponent('ApexClass', 'MyClass');
+      const apexClass = createMockComponent('PlatformComputeApp', 'MyApp');
       const customObject = createMockComponent('CustomObject', 'MyObject__c');
 
       const result = pipeline.groupByTransport([apexClass, customObject]);
 
       // all components go through metadata api
       expect(result.metadataApi).to.have.lengthOf(2);
-      // ApexClass also goes through transport
+      // Configured components also go through their registry transport.
       expect(result.transports).to.have.lengthOf(1);
-      expect(result.transports[0].transport.name).to.equal('connectApi');
+      expect(result.transports[0].transport.name).to.equal('herokuCompute');
       expect(result.transports[0].components).to.have.lengthOf(1);
-      expect(result.transports[0].components[0].fullName).to.equal('MyClass');
+      expect(result.transports[0].components[0].fullName).to.equal('MyApp');
     });
 
-    it('should handle multiple transports', () => {
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['ApexClass']));
-      pipeline.registerTransport(createMockTransport('datakitApi', 'after-metadata', ['CustomObject']));
+    it('should group all configured components for the registry transport', () => {
+      const pipeline = new TransportPipeline([createMockTransport('herokuCompute', 'before-metadata')]);
 
-      const apexClass = createMockComponent('ApexClass', 'MyClass');
-      const customObject = createMockComponent('CustomObject', 'MyObject__c');
+      const apexClass = createMockComponent('PlatformComputeApp', 'MyApp');
+      const customObject = createMockComponent('PlatformComputeApp', 'OtherApp');
       const apexTrigger = createMockComponent('ApexTrigger', 'MyTrigger');
 
       const result = pipeline.groupByTransport([apexClass, customObject, apexTrigger]);
 
       expect(result.metadataApi).to.have.lengthOf(3);
-      expect(result.transports).to.have.lengthOf(2);
-
-      const connectGroup = result.transports.find((t) => t.transport.name === 'connectApi');
-      const datakitGroup = result.transports.find((t) => t.transport.name === 'datakitApi');
-
-      expect(connectGroup?.components).to.have.lengthOf(1);
-      expect(datakitGroup?.components).to.have.lengthOf(1);
+      expect(result.transports).to.have.lengthOf(1);
+      expect(result.transports[0].components).to.have.lengthOf(2);
     });
   });
 
   describe('hasTransports', () => {
-    it('should return false when no transports registered', () => {
+    it('should throw when a registry-configured transport provider is missing', () => {
       const pipeline = new TransportPipeline();
-      const apexClass = createMockComponent('ApexClass', 'MyClass');
+      const app = createMockComponent('PlatformComputeApp', 'MyApp');
 
-      expect(pipeline.hasTransports([apexClass])).to.be.false;
+      expect(() => pipeline.hasTransports([app])).to.throw('No transport provider is registered');
     });
 
     it('should return false when no components match a transport', () => {
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['CustomObject']));
+      const pipeline = new TransportPipeline([createMockTransport('herokuCompute', 'before-metadata')]);
 
       const apexClass = createMockComponent('ApexClass', 'MyClass');
 
@@ -134,78 +113,29 @@ describe('TransportPipeline', () => {
     });
 
     it('should return true when a component matches a transport', () => {
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['ApexClass']));
+      const pipeline = new TransportPipeline([createMockTransport('herokuCompute', 'before-metadata')]);
 
-      const apexClass = createMockComponent('ApexClass', 'MyClass');
+      const apexClass = createMockComponent('PlatformComputeApp', 'MyApp');
 
       expect(pipeline.hasTransports([apexClass])).to.be.true;
-    });
-
-    it('should return false when matching type is in skipTypes', () => {
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['ApexClass']));
-
-      const apexClass = createMockComponent('ApexClass', 'MyClass');
-
-      expect(pipeline.hasTransports([apexClass], ['ApexClass'])).to.be.false;
-    });
-  });
-
-  describe('skipTypes', () => {
-    it('should exclude skipped types from transport groups', () => {
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['ApexClass']));
-      pipeline.registerTransport(createMockTransport('datakitApi', 'after-metadata', ['CustomObject']));
-
-      const apexClass = createMockComponent('ApexClass', 'MyClass');
-      const customObject = createMockComponent('CustomObject', 'MyObject__c');
-
-      const result = pipeline.groupByTransport([apexClass, customObject], ['ApexClass']);
-
-      // all components still go through metadata api
-      expect(result.metadataApi).to.have.lengthOf(2);
-      // only CustomObject transport remains
-      expect(result.transports).to.have.lengthOf(1);
-      expect(result.transports[0].transport.name).to.equal('datakitApi');
-    });
-
-    it('should exclude skipped types from explain plan', () => {
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['ApexClass']));
-      pipeline.registerTransport(createMockTransport('datakitApi', 'after-metadata', ['CustomObject']));
-
-      const apexClass = createMockComponent('ApexClass', 'MyClass');
-      const customObject = createMockComponent('CustomObject', 'MyObject__c');
-
-      const plan = pipeline.explain([apexClass, customObject], 'deploy', ['ApexClass']);
-
-      // before-metadata phase for connectApi is gone, only metadata-api + after-metadata remain
-      expect(plan.phases).to.have.lengthOf(2);
-      expect(plan.phases[0].phase).to.equal('metadata-api');
-      expect(plan.phases[1].phase).to.equal('after-metadata');
     });
   });
 
   describe('explain', () => {
     it('should produce a plan with correct phase ordering', () => {
-      const pipeline = new TransportPipeline();
-      pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['ApexClass']));
-      pipeline.registerTransport(createMockTransport('datakitApi', 'after-metadata', ['CustomObject']));
+      const pipeline = new TransportPipeline([createMockTransport('herokuCompute', 'before-metadata')]);
 
-      const apexClass = createMockComponent('ApexClass', 'MyClass');
+      const apexClass = createMockComponent('PlatformComputeApp', 'MyApp');
       const customObject = createMockComponent('CustomObject', 'MyObject__c');
       const apexTrigger = createMockComponent('ApexTrigger', 'MyTrigger');
 
       const plan = pipeline.explain([apexClass, customObject, apexTrigger]);
 
-      expect(plan.phases).to.have.lengthOf(3);
+      expect(plan.phases).to.have.lengthOf(2);
       expect(plan.phases[0].phase).to.equal('before-metadata');
-      expect(plan.phases[0].label).to.equal('Mock connectApi');
+      expect(plan.phases[0].label).to.equal('Mock herokuCompute');
       expect(plan.phases[1].phase).to.equal('metadata-api');
       expect(plan.phases[1].components).to.have.lengthOf(3);
-      expect(plan.phases[2].phase).to.equal('after-metadata');
-      expect(plan.phases[2].label).to.equal('Mock datakitApi');
     });
 
     it('should produce metadata-only plan when no transports match', () => {
@@ -228,17 +158,15 @@ describe('TransportPipeline', () => {
     };
 
     it('should run only before-metadata transports in runBeforeMetadata', async () => {
-      const pipeline = new TransportPipeline();
       const beforeResponse: FileResponse = {
         fullName: 'MyApp',
         type: 'PlatformComputeApp',
         state: ComponentStatus.Changed,
         filePath: 'force-app/main/default/compute/MyApp/main.py',
       };
-      const beforeTransport = createMockTransport('connectApi', 'before-metadata', ['ApexClass'], [beforeResponse]);
-      const afterTransport = createMockTransport('datakitApi', 'after-metadata', ['CustomObject']);
-      pipeline.registerTransport(beforeTransport);
-      pipeline.registerTransport(afterTransport);
+      const beforeTransport = createMockTransport('connectApi', 'before-metadata', [beforeResponse]);
+      const afterTransport = createMockTransport('datakitApi', 'after-metadata');
+      const pipeline = new TransportPipeline([beforeTransport, afterTransport]);
 
       const groups = [
         { transport: beforeTransport, components: [createMockComponent('ApexClass', 'MyClass')] },
@@ -253,17 +181,15 @@ describe('TransportPipeline', () => {
     });
 
     it('should run only after-metadata transports in runAfterMetadata', async () => {
-      const pipeline = new TransportPipeline();
       const afterResponse: FileResponse = {
         fullName: 'CustomerDataKit',
         type: 'DataPackageDefinition',
         state: ComponentStatus.Changed,
         filePath: 'force-app/main/default/datapkg/CustomerDataKit.json',
       };
-      const beforeTransport = createMockTransport('connectApi', 'before-metadata', ['ApexClass']);
-      const afterTransport = createMockTransport('datakitApi', 'after-metadata', ['CustomObject'], [afterResponse]);
-      pipeline.registerTransport(beforeTransport);
-      pipeline.registerTransport(afterTransport);
+      const beforeTransport = createMockTransport('connectApi', 'before-metadata');
+      const afterTransport = createMockTransport('datakitApi', 'after-metadata', [afterResponse]);
+      const pipeline = new TransportPipeline([beforeTransport, afterTransport]);
 
       const groups = [
         { transport: beforeTransport, components: [createMockComponent('ApexClass', 'MyClass')] },
@@ -277,7 +203,6 @@ describe('TransportPipeline', () => {
     });
 
     it('should use retrieve phase ordering when operation is retrieve', async () => {
-      const pipeline = new TransportPipeline();
       const retrieveResponse: FileResponse = {
         fullName: 'MyApp',
         type: 'PlatformComputeApp',
@@ -285,10 +210,10 @@ describe('TransportPipeline', () => {
         filePath: 'force-app/main/default/compute/MyApp/main.py',
       };
       // deploy: before-metadata → retrieve: after-metadata (flipped by createMockTransport)
-      const transport = createMockTransport('connectApi', 'before-metadata', ['ApexClass'], retrieveResponse ? [] : []);
+      const transport = createMockTransport('connectApi', 'before-metadata');
       // override retrieve to return responses
-      transport.retrieve = async (): Promise<TransportResult> => ({ fileResponses: [retrieveResponse] });
-      pipeline.registerTransport(transport);
+      transport.afterRetrieve = async (): Promise<TransportResult> => ({ fileResponses: [retrieveResponse] });
+      const pipeline = new TransportPipeline([transport]);
 
       const groups = [{ transport, components: [createMockComponent('ApexClass', 'MyClass')] }];
 
@@ -303,56 +228,53 @@ describe('TransportPipeline', () => {
     });
 
     it('should produce correct explain plan for retrieve operation', () => {
-      const pipeline = new TransportPipeline();
-      // deploy: before-metadata → retrieve: after-metadata
-      pipeline.registerTransport(createMockTransport('connectApi', 'before-metadata', ['ApexClass']));
+      const transport = createMockTransport('herokuCompute', 'before-metadata');
+      transport.afterRetrieve = async (): Promise<TransportResult> => ({ fileResponses: [] });
+      const pipeline = new TransportPipeline([transport]);
 
-      const apexClass = createMockComponent('ApexClass', 'MyClass');
+      const apexClass = createMockComponent('PlatformComputeApp', 'MyApp');
       const customObject = createMockComponent('CustomObject', 'MyObject__c');
 
       const deployPlan = pipeline.explain([apexClass, customObject], 'deploy');
       const retrievePlan = pipeline.explain([apexClass, customObject], 'retrieve');
 
-      // deploy: connectApi is before-metadata
+      // deploy: herokuCompute is before metadata.
       expect(deployPlan.phases[0].phase).to.equal('before-metadata');
-      expect(deployPlan.phases[0].label).to.equal('Mock connectApi');
+      expect(deployPlan.phases[0].label).to.equal('Mock herokuCompute');
 
-      // retrieve: connectApi is after-metadata (phases are flipped)
+      // retrieve: herokuCompute is after metadata.
       expect(retrievePlan.phases[0].phase).to.equal('metadata-api');
       expect(retrievePlan.phases[1].phase).to.equal('after-metadata');
-      expect(retrievePlan.phases[1].label).to.equal('Mock connectApi');
+      expect(retrievePlan.phases[1].label).to.equal('Mock herokuCompute');
     });
 
     it('should collect async handles from transports', async () => {
-      const pipeline = new TransportPipeline();
       const asyncTransport: TransportProvider = {
-        name: 'connectApi',
-        phase: { deploy: 'before-metadata', retrieve: 'after-metadata' },
+        name: 'herokuCompute',
         describe: () => ({ label: 'Connect API', endpoint: '/connect/compute' }),
         handles: () => true,
-        deploy: async () => ({
+        beforeDeploy: async () => ({
           fileResponses: [],
           asyncResult: {
-            transportName: 'connectApi',
+            transportName: 'herokuCompute',
             status: 'Pending' as const,
             message: 'Deploy extension pending',
             checkStatus: async (): Promise<AsyncTransportHandle> => ({
-              transportName: 'connectApi',
+              transportName: 'herokuCompute',
               status: 'Succeeded' as const,
               checkStatus: async (): Promise<AsyncTransportHandle> => ({} as unknown as AsyncTransportHandle),
             }),
           },
         }),
-        retrieve: async () => ({ fileResponses: [] }),
       };
-      pipeline.registerTransport(asyncTransport);
+      const pipeline = new TransportPipeline([asyncTransport]);
 
       const groups = [{ transport: asyncTransport, components: [createMockComponent('ApexClass', 'MyClass')] }];
 
       const result = await pipeline.runBeforeMetadata(mockContext, groups);
 
       expect(result.asyncHandles).to.have.lengthOf(1);
-      expect(result.asyncHandles[0].transportName).to.equal('connectApi');
+      expect(result.asyncHandles[0].transportName).to.equal('herokuCompute');
       expect(result.asyncHandles[0].status).to.equal('Pending');
     });
   });

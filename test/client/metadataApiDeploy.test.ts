@@ -24,6 +24,7 @@ import * as sinon from 'sinon';
 import {
   ComponentSet,
   ComponentStatus,
+  CodeCoverage,
   DeployMessage,
   DeployResult,
   FileResponse,
@@ -197,7 +198,7 @@ describe('MetadataApiDeploy', () => {
         await MetadataApiDeploy.prototype.warnIfDeployThresholdExceeded.call(mdapThis, 31_200_000, 8001);
         expect(emitWarningStub.calledOnce, 'emitWarning for fileSize should have been called').to.be.true;
         const warningMsg =
-          'Deployment zip file count is approaching the Metadata API limit (10,000). Warning threshold is 80%';
+          'Deployment zip entry count (files + folders) is approaching the Metadata API limit (10,000). Warning threshold is 80%';
         expect(emitWarningStub.firstCall.args[0]).to.include(warningMsg);
         expect(loggerDebugSpy.called).to.be.false;
       });
@@ -225,7 +226,7 @@ describe('MetadataApiDeploy', () => {
         const fileSizeWarningMsg =
           'Deployment zip file size is approaching the Metadata API limit (~39MB). Warning threshold is 75%';
         const fileCountWarningMsg =
-          'Deployment zip file count is approaching the Metadata API limit (10,000). Warning threshold is 75%';
+          'Deployment zip entry count (files + folders) is approaching the Metadata API limit (10,000). Warning threshold is 75%';
         expect(emitWarningStub.firstCall.args[0]).to.include(fileSizeWarningMsg);
         expect(emitWarningStub.secondCall.args[0]).to.include(fileCountWarningMsg);
         expect(loggerDebugSpy.calledOnce).to.be.true;
@@ -350,6 +351,61 @@ describe('MetadataApiDeploy', () => {
       expect(checkStatusStub.firstCall.firstArg).to.equal(MOCK_ASYNC_RESULT.id);
       expect(checkStatusStub.firstCall.args[1]).to.equal(true);
       expect(checkStatusStub.firstCall.args[2]).to.equal(false);
+    });
+
+    it('should return coverage without v264 covered locations', async () => {
+      const { operation, response } = await stubMetadataDeploy($$, testOrg, {
+        id: MOCK_ASYNC_RESULT.id,
+        components: new ComponentSet(),
+      });
+      const coverage: CodeCoverage = {
+        id: '01p000000000001',
+        name: 'CoverageExample',
+        type: 'ApexClass',
+        numLocations: '3',
+        numLocationsNotCovered: '1',
+        locationsNotCovered: [{ column: '1', line: '6', numExecutions: '0', time: '0' }],
+      };
+      response.details = {
+        runTestResult: {
+          codeCoverage: coverage,
+          numFailures: '0',
+          numTestsRun: '1',
+          totalTime: '1',
+        },
+      };
+
+      const status = await operation.checkStatus();
+
+      expect(status.details?.runTestResult?.codeCoverage).to.deep.equal(coverage);
+    });
+
+    it('should return v264 covered and uncovered coverage locations unchanged', async () => {
+      const { operation, response } = await stubMetadataDeploy($$, testOrg, {
+        id: MOCK_ASYNC_RESULT.id,
+        components: new ComponentSet(),
+      });
+      const coverage: CodeCoverage = {
+        id: '01p000000000001',
+        name: 'CoverageExample',
+        type: 'ApexClass',
+        numLocations: '3',
+        numLocationsNotCovered: '1',
+        locationsCovered: { line: '4' },
+        locationsNotCovered: [{ column: '1', line: '6', numExecutions: '0', time: '0' }],
+      };
+      response.details = {
+        runTestResult: {
+          codeCoverage: coverage,
+          numFailures: '0',
+          numTestsRun: '1',
+          totalTime: '1',
+        },
+      };
+
+      const status = await operation.checkStatus();
+
+      expect(status.details?.runTestResult?.codeCoverage).to.deep.equal(coverage);
     });
   });
 

@@ -16,7 +16,6 @@
 
 import { expect } from 'chai';
 import {
-  AsyncTransportHandle,
   ComponentSet,
   ComponentStatus,
   FileResponse,
@@ -24,6 +23,7 @@ import {
   RequestStatus,
   RetrieveResult,
 } from '../../../src';
+import { AsyncTransportHandle } from '../../../src/client/transports/types';
 
 function createRetrieveStatus(overrides: Partial<MetadataApiRetrieveStatus> = {}): MetadataApiRetrieveStatus {
   return {
@@ -67,11 +67,11 @@ describe('RetrieveResult transport integration', () => {
     const result = new RetrieveResult(createRetrieveStatus(), new ComponentSet());
 
     const asyncHandle: AsyncTransportHandle = {
-      transportName: 'connectApi',
+      transportName: 'herokuCompute',
       status: 'Pending',
       message: 'Retrieve extension pending',
       checkStatus: async (): Promise<AsyncTransportHandle> => ({
-        transportName: 'connectApi',
+        transportName: 'herokuCompute',
         status: 'Succeeded' as const,
         checkStatus: async (): Promise<AsyncTransportHandle> => ({} as unknown as AsyncTransportHandle),
       }),
@@ -81,7 +81,7 @@ describe('RetrieveResult transport integration', () => {
 
     const handles = result.getAsyncTransportHandles();
     expect(handles).to.have.lengthOf(1);
-    expect(handles[0].transportName).to.equal('connectApi');
+    expect(handles[0].transportName).to.equal('herokuCompute');
     expect(handles[0].status).to.equal('Pending');
   });
 

@@ -15,6 +15,7 @@
  */
 
 import { Connection, SfProject } from '@salesforce/core';
+import { TransportName } from '../../registry/types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { FileResponse } from '../types';
 
@@ -38,14 +39,14 @@ export type TransportResult = {
 };
 
 export type AsyncTransportHandle = {
-  transportName: string;
+  transportName: TransportName;
   status: TransportStatus;
   message?: string;
   checkStatus(): Promise<AsyncTransportHandle>;
 };
 
 export type TransportProvider = {
-  readonly name: string;
+  readonly name: TransportName;
   describe(): TransportDescription;
   handles(component: SourceComponent): boolean;
   beforeDeploy?(context: TransportContext): Promise<TransportResult>;

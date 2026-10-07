@@ -15,6 +15,7 @@
  */
 
 import { Lifecycle, Logger, SfError } from '@salesforce/core';
+import { TransportName } from '../../registry/types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { FileResponse } from '../types';
 import { AsyncTransportHandle, TransportContext, TransportProvider, TransportResult } from './types';
@@ -47,7 +48,7 @@ export type TransportPipelineResult = {
 };
 
 export type TransportStageEvent = {
-  transportName: string;
+  transportName: TransportName;
   label: string;
   operation: 'deploy' | 'retrieve';
   stage: 'start' | 'complete' | 'error';

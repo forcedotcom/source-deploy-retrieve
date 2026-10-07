@@ -38,7 +38,7 @@ import {
 const registryAccess = new RegistryAccess();
 
 function createMockTransport(overrides: {
-  name: string;
+  name?: 'herokuCompute';
   deployPhase: 'before-metadata' | 'after-metadata';
   retrievePhase: 'before-metadata' | 'after-metadata';
   typeNames: string[];
@@ -49,9 +49,9 @@ function createMockTransport(overrides: {
   shouldThrow?: 'deploy' | 'retrieve';
 }): TransportProvider {
   const transport: TransportProvider = {
-    name: overrides.name,
+    name: overrides.name ?? 'herokuCompute',
     describe(): TransportDescription {
-      return { label: `Mock ${overrides.name}`, endpoint: `https://example.com/${overrides.name}` };
+      return { label: 'Mock transport', endpoint: 'https://example.com/transport' };
     },
     handles(component: SourceComponent): boolean {
       return overrides.typeNames.includes(component.type.name);
@@ -114,7 +114,6 @@ describe('Transport integration', () => {
         filePath: 'force-app/main/default/objects/PreRetrieveApp.object-meta.xml',
       };
       const transport = createMockTransport({
-        name: 'datakitApi',
         deployPhase: 'after-metadata',
         retrievePhase: 'before-metadata',
         typeNames: ['CustomObject'],
@@ -136,7 +135,6 @@ describe('Transport integration', () => {
     it('should not run after-metadata retrieve transports in runBeforeMetadata', async () => {
       const retrieveSpy = sinon.spy();
       const transport = createMockTransport({
-        name: 'connectApi',
         deployPhase: 'before-metadata',
         retrievePhase: 'after-metadata',
         typeNames: ['ApexClass'],
@@ -157,7 +155,6 @@ describe('Transport integration', () => {
   describe('transport failure handling', () => {
     it('should propagate transport errors from runAfterMetadata for callers to catch', async () => {
       const transport = createMockTransport({
-        name: 'connectApi',
         deployPhase: 'before-metadata',
         retrievePhase: 'after-metadata',
         typeNames: ['ApexClass'],
@@ -178,7 +175,6 @@ describe('Transport integration', () => {
 
     it('should propagate transport errors from runBeforeMetadata for callers to catch', async () => {
       const transport = createMockTransport({
-        name: 'connectApi',
         deployPhase: 'before-metadata',
         retrievePhase: 'after-metadata',
         typeNames: ['ApexClass'],

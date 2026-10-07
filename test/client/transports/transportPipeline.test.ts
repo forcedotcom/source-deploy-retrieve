@@ -250,17 +250,17 @@ describe('TransportPipeline', () => {
 
     it('should collect async handles from transports', async () => {
       const asyncTransport: TransportProvider = {
-        name: 'connectApi',
+        name: 'herokuCompute',
         describe: () => ({ label: 'Connect API', endpoint: '/connect/compute' }),
         handles: () => true,
         beforeDeploy: async () => ({
           fileResponses: [],
           asyncResult: {
-            transportName: 'connectApi',
+            transportName: 'herokuCompute',
             status: 'Pending' as const,
             message: 'Deploy extension pending',
             checkStatus: async (): Promise<AsyncTransportHandle> => ({
-              transportName: 'connectApi',
+              transportName: 'herokuCompute',
               status: 'Succeeded' as const,
               checkStatus: async (): Promise<AsyncTransportHandle> => ({} as unknown as AsyncTransportHandle),
             }),
@@ -274,7 +274,7 @@ describe('TransportPipeline', () => {
       const result = await pipeline.runBeforeMetadata(mockContext, groups);
 
       expect(result.asyncHandles).to.have.lengthOf(1);
-      expect(result.asyncHandles[0].transportName).to.equal('connectApi');
+      expect(result.asyncHandles[0].transportName).to.equal('herokuCompute');
       expect(result.asyncHandles[0].status).to.equal('Pending');
     });
   });

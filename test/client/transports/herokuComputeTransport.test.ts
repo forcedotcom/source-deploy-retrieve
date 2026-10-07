@@ -57,12 +57,10 @@ describe('HerokuComputeTransport', () => {
   const transport = new HerokuComputeTransport();
 
   describe('metadata', () => {
-    it('should have correct name and phase', () => {
+    it('should have the Heroku Compute provider name', () => {
       expect(transport.name).to.equal('herokuCompute');
-      expect(transport.phase).to.deep.equal({
-        deploy: 'before-metadata',
-        retrieve: 'after-metadata',
-      });
+      expect(typeof transport.beforeDeploy).to.equal('function');
+      expect(typeof transport.afterRetrieve).to.equal('function');
     });
 
     it('should describe itself correctly', () => {
@@ -102,7 +100,7 @@ describe('HerokuComputeTransport', () => {
       });
 
       try {
-        await transport.deploy(context);
+        await transport.beforeDeploy(context);
         expect.fail('should have thrown');
       } catch (err) {
         expect((err as Error).message).to.include('API version 68.0');
@@ -122,7 +120,7 @@ describe('HerokuComputeTransport', () => {
         components: [createComputeComponent('MyApp', '/mock/app')],
       });
 
-      const result = await transport.deploy(context);
+      const result = await transport.beforeDeploy(context);
       expect(result.fileResponses).to.have.lengthOf(1);
 
       stub.restore();
@@ -156,7 +154,7 @@ describe('HerokuComputeTransport', () => {
         components: [createComputeComponent('MyApp', '/mock/app')],
       });
 
-      const result = await transport.deploy(context);
+      const result = await transport.beforeDeploy(context);
 
       expect(packageStub.calledOnce).to.be.true;
       expect(packageStub.firstCall.args[0]).to.equal('/mock/app');
@@ -177,7 +175,7 @@ describe('HerokuComputeTransport', () => {
         components: [createComputeComponent('App1', '/mock/app1'), createComputeComponent('App2', '/mock/app2')],
       });
 
-      const result = await transport.deploy(context);
+      const result = await transport.beforeDeploy(context);
 
       expect(packageStub.calledTwice).to.be.true;
       expect(requestStub.calledTwice).to.be.true;
@@ -199,7 +197,7 @@ describe('HerokuComputeTransport', () => {
       });
 
       try {
-        await transport.deploy(context);
+        await transport.beforeDeploy(context);
         expect.fail('should have thrown');
       } catch (err) {
         const sfErr = err as SfError;
@@ -225,7 +223,7 @@ describe('HerokuComputeTransport', () => {
       });
 
       try {
-        await transport.deploy(context);
+        await transport.beforeDeploy(context);
         expect.fail('should have thrown');
       } catch (err) {
         expect((err as Error).message).to.include('Heroku Compute upload failed');
@@ -245,7 +243,7 @@ describe('HerokuComputeTransport', () => {
       });
 
       try {
-        await transport.retrieve(context);
+        await transport.afterRetrieve(context);
         expect.fail('should have thrown');
       } catch (err) {
         const sfErr = err as SfError;
@@ -272,7 +270,7 @@ describe('HerokuComputeTransport', () => {
         components: [component],
       });
 
-      return transport.deploy(context).then(
+      return transport.beforeDeploy(context).then(
         () => expect.fail('should have thrown'),
         (err: unknown) => {
           const sfErr = err as SfError;

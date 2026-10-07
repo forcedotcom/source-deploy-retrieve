@@ -81,7 +81,6 @@ async function downloadSource(connection: Connection, appIdOrName: string): Prom
 
 export class HerokuComputeTransport implements TransportProvider {
   public readonly name = 'herokuCompute';
-  public readonly phase = { deploy: 'before-metadata' as const, retrieve: 'after-metadata' as const };
   private readonly logger = Logger.childFromRoot('HerokuComputeTransport');
 
   // eslint-disable-next-line class-methods-use-this
@@ -89,12 +88,11 @@ export class HerokuComputeTransport implements TransportProvider {
     return { label: 'Heroku Compute', endpoint: ENDPOINT };
   }
 
-  // eslint-disable-next-line class-methods-use-this
   public handles(component: SourceComponent): boolean {
-    return component.type.strategies?.transport === 'herokuCompute' || component.type.name === 'PlatformComputeApp';
+    return component.type.strategies?.transport === this.name;
   }
 
-  public async deploy(context: TransportContext): Promise<TransportResult> {
+  public async beforeDeploy(context: TransportContext): Promise<TransportResult> {
     validateApiVersion(context.connection);
     const fileResponses: FileResponse[] = [];
 
@@ -137,7 +135,7 @@ export class HerokuComputeTransport implements TransportProvider {
     return this.checkForFailures(fileResponses, 'upload');
   }
 
-  public async retrieve(context: TransportContext): Promise<TransportResult> {
+  public async afterRetrieve(context: TransportContext): Promise<TransportResult> {
     validateApiVersion(context.connection);
     const fileResponses: FileResponse[] = [];
 

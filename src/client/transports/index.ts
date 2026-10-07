@@ -20,7 +20,6 @@ export {
   TransportResult,
   AsyncTransportHandle,
   TransportStatus,
-  TransportPhase,
   TransportDescription,
 } from './types';
 export {

@@ -464,7 +464,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     if (pipeline?.hasTransports(allComponents)) {
       return this.retrieveWithPipeline(operationOptions, allComponents, pipeline);
     }
-    }
 
     const mdapiRetrieve = new MetadataApiRetrieve(operationOptions);
     await mdapiRetrieve.start();

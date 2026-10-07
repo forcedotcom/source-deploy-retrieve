@@ -17,7 +17,7 @@
 import { Lifecycle, Logger, SfError } from '@salesforce/core';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { FileResponse } from '../types';
-import { AsyncTransportHandle, TransportContext, TransportPhase, TransportProvider, TransportResult } from './types';
+import { AsyncTransportHandle, TransportContext, TransportProvider, TransportResult } from './types';
 import { HerokuComputeTransport } from './herokuComputeTransport';
 
 export type TransportGroup = {
@@ -35,7 +35,7 @@ export type TransportPlan = {
 };
 
 export type TransportPlanPhase = {
-  phase: TransportPhase | 'metadata-api';
+  phase: 'before-metadata' | 'metadata-api' | 'after-metadata';
   label: string;
   endpoint: string;
   components: Array<{ fullName: string; type: string }>;
@@ -100,8 +100,8 @@ export class TransportPipeline {
     const { metadataApi, transports } = this.groupByTransport(components);
     const phases: TransportPlanPhase[] = [];
 
-    const beforeMetadata = transports.filter((g) => g.transport.phase[operation] === 'before-metadata');
-    const afterMetadata = transports.filter((g) => g.transport.phase[operation] === 'after-metadata');
+    const beforeMetadata = transports.filter((group) => getStep(group.transport, operation, 'before') !== undefined);
+    const afterMetadata = transports.filter((group) => getStep(group.transport, operation, 'after') !== undefined);
 
     for (const group of beforeMetadata) {
       const desc = group.transport.describe();
@@ -138,8 +138,7 @@ export class TransportPipeline {
     groups: TransportGroup[],
     operation: 'deploy' | 'retrieve' = 'deploy'
   ): Promise<TransportPipelineResult> {
-    const beforeMetadata = groups.filter((g) => g.transport.phase[operation] === 'before-metadata');
-    return this.runTransportGroups(beforeMetadata, context, operation);
+    return this.runTransportGroups(groups, context, operation, 'before');
   }
 
   public async runAfterMetadata(
@@ -147,8 +146,7 @@ export class TransportPipeline {
     groups: TransportGroup[],
     operation: 'deploy' | 'retrieve' = 'deploy'
   ): Promise<TransportPipelineResult> {
-    const afterMetadata = groups.filter((g) => g.transport.phase[operation] === 'after-metadata');
-    return this.runTransportGroups(afterMetadata, context, operation);
+    return this.runTransportGroups(groups, context, operation, 'after');
   }
 
   public hasTransports(components: SourceComponent[]): boolean {
@@ -171,13 +169,16 @@ export class TransportPipeline {
   private async runTransportGroups(
     groups: TransportGroup[],
     context: TransportContext,
-    operation: 'deploy' | 'retrieve'
+    operation: 'deploy' | 'retrieve',
+    timing: 'before' | 'after'
   ): Promise<TransportPipelineResult> {
     const allFileResponses: FileResponse[] = [];
     const allAsyncHandles: AsyncTransportHandle[] = [];
     const lifecycle = Lifecycle.getInstance();
 
     for (const group of groups) {
+      const step = getStep(group.transport, operation, timing);
+      if (!step) continue;
       this.logger.debug(
         `Running transport '${group.transport.name}' (${operation}) for ${group.components.length} component(s)`
       );
@@ -202,7 +203,7 @@ export class TransportPipeline {
 
       try {
         // eslint-disable-next-line no-await-in-loop
-        const result: TransportResult = await group.transport[operation](transportContext);
+        const result: TransportResult = await step(transportContext);
         allFileResponses.push(...result.fileResponses);
         if (result.asyncResult) {
           allAsyncHandles.push(result.asyncResult);
@@ -226,4 +227,29 @@ export class TransportPipeline {
 
     return { fileResponses: allFileResponses, asyncHandles: allAsyncHandles };
   }
+}
+
+function getStep(
+  transport: TransportProvider,
+  operation: 'deploy' | 'retrieve',
+  timing: 'before' | 'after'
+): ((context: TransportContext) => Promise<TransportResult>) | undefined {
+  if (operation === 'deploy' && timing === 'before') {
+    return transport.beforeDeploy
+      ? async (context): Promise<TransportResult> => transport.beforeDeploy!(context)
+      : undefined;
+  }
+  if (operation === 'deploy') {
+    return transport.afterDeploy
+      ? async (context): Promise<TransportResult> => transport.afterDeploy!(context)
+      : undefined;
+  }
+  if (timing === 'before') {
+    return transport.beforeRetrieve
+      ? async (context): Promise<TransportResult> => transport.beforeRetrieve!(context)
+      : undefined;
+  }
+  return transport.afterRetrieve
+    ? async (context): Promise<TransportResult> => transport.afterRetrieve!(context)
+    : undefined;
 }

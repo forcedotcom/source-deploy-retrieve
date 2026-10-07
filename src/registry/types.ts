@@ -173,7 +173,7 @@ export type MetadataType = {
       | 'uiBundle';
     decomposition?: 'topLevel' | 'folderPerType';
     recomposition?: 'startEmpty';
-    transport?: 'herokuCompute' | 'presignedUrl' | 'datakitApi';
+    transport?: 'herokuCompute';
   };
 };
 

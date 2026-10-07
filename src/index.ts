@@ -29,7 +29,6 @@ export {
   TransportResult,
   AsyncTransportHandle,
   TransportStatus,
-  TransportPhase,
   TransportDescription,
   TransportPipeline,
   TransportGroup,

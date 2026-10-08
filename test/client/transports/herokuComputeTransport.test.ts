@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { join } from 'node:path';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { Connection, SfError, SfProject } from '@salesforce/core';
@@ -273,8 +274,8 @@ describe('HerokuComputeTransport', () => {
 
         await transport.afterRetrieve(context);
 
-        expect(unpack.firstCall.args[1]).to.equal('/packages/first/platformComputeApps/FirstApp');
-        expect(unpack.secondCall.args[1]).to.equal('/packages/second/platformComputeApps/SecondApp');
+        expect(unpack.firstCall.args[1]).to.equal(join('/packages/first', 'platformComputeApps', 'FirstApp'));
+        expect(unpack.secondCall.args[1]).to.equal(join('/packages/second', 'platformComputeApps', 'SecondApp'));
       } finally {
         unpack.restore();
       }
@@ -296,10 +297,10 @@ describe('HerokuComputeTransport', () => {
 
         const result = await transport.afterRetrieve(context);
 
-        expect(unpack.firstCall.args[1]).to.equal('/custom/output/platformComputeApps/RemoteApp');
+        expect(unpack.firstCall.args[1]).to.equal(join('/custom/output', 'platformComputeApps', 'RemoteApp'));
         expect(unpack.secondCall.args[1]).to.equal('/local/app');
         expect(result.fileResponses.map((response) => response.filePath)).to.deep.equal([
-          '/custom/output/platformComputeApps/RemoteApp',
+          join('/custom/output', 'platformComputeApps', 'RemoteApp'),
           '/local/app',
         ]);
       } finally {

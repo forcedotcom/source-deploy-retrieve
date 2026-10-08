@@ -25,6 +25,8 @@ type TransportResult = DeployResult | RetrieveResult;
 
 export class TransportCoordinator {
   private beforeMetadataResults: TransportPipelineResult = { fileResponses: [], asyncHandles: [] };
+  private readonly beforeAdded = new WeakSet<TransportResult>();
+  private readonly afterStarted = new WeakSet<TransportResult>();
 
   public constructor(
     private readonly pipeline: TransportPipeline,
@@ -39,7 +41,13 @@ export class TransportCoordinator {
   }
 
   public async processResult(result: TransportResult, status: RequestStatus): Promise<void> {
+    if (!this.beforeAdded.has(result)) {
+      this.beforeAdded.add(result);
+      result.addTransportResults(this.beforeMetadataResults.fileResponses, this.beforeMetadataResults.asyncHandles);
+    }
     if (status !== RequestStatus.Succeeded) return;
+    if (this.afterStarted.has(result)) return;
+    this.afterStarted.add(result);
 
     if (this.operation === 'retrieve' && result instanceof RetrieveResult) {
       const extractedByKey = new Map(
@@ -56,9 +64,6 @@ export class TransportCoordinator {
     }
 
     const afterMetadataResults = await this.pipeline.runAfterMetadata(this.context, this.groups, this.operation);
-    result.addTransportResults(
-      [...this.beforeMetadataResults.fileResponses, ...afterMetadataResults.fileResponses],
-      [...this.beforeMetadataResults.asyncHandles, ...afterMetadataResults.asyncHandles]
-    );
+    result.addTransportResults(afterMetadataResults.fileResponses, afterMetadataResults.asyncHandles);
   }
 }

@@ -229,6 +229,26 @@ describe('HerokuComputeTransport', () => {
   });
 
   describe('retrieve', () => {
+    it('rejects an oversized response before converting the binary string to a Buffer', async () => {
+      const request = sinon.stub().resolves('x'.repeat(40 * 1024 * 1024 + 1));
+      const unpack = sinon.spy(computeSourceBundle, 'unpackComputeBundle');
+      try {
+        const context = createMockContext({
+          connection: { version: '68.0', request } as unknown as Connection,
+          components: [createComputeComponent('MyApp', '/mock/app')],
+        });
+        try {
+          await transport.afterRetrieve(context);
+          expect.fail('should reject response');
+        } catch (err) {
+          expect((err as Error).message).to.include('compressed size limit');
+          expect(unpack.called).to.be.false;
+        }
+      } finally {
+        unpack.restore();
+      }
+    });
+
     it('routes manifest-only members to their associated package output directories', async () => {
       const unpack = sinon.stub(computeSourceBundle, 'unpackComputeBundle').resolves({ fileCount: 2 });
       try {

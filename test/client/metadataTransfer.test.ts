@@ -15,7 +15,7 @@
  */
 import { fail } from 'node:assert';
 import { SinonStub } from 'sinon';
-import { AuthInfo, Connection, Messages } from '@salesforce/core';
+import { AuthInfo, Connection, Messages, SfError } from '@salesforce/core';
 import { assert, expect } from 'chai';
 import {
   Duration,
@@ -212,6 +212,22 @@ describe('MetadataTransfer', () => {
       calls.push('returned');
 
       expect(calls).to.deep.equal(['processor', 'returned']);
+    });
+
+    it('preserves result processor SfError data in the wrapped error', async () => {
+      const cause = new SfError('processor failed', 'ProcessorError');
+      cause.setData({ fileResponses: [{ fullName: 'MyApp' }] });
+      operation.addResultProcessor(async () => {
+        throw cause;
+      });
+
+      try {
+        await operation.pollStatus();
+        fail('should have thrown an error');
+      } catch (error) {
+        assert(error instanceof SfError);
+        expect(error.data).to.deep.equal({ id: undefined, causeErrorData: cause.data });
+      }
     });
 
     it('should exit and fire "cancel" event when done = true and request status is "Canceled"', async () => {

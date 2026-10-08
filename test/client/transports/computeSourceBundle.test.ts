@@ -14,14 +14,29 @@
  * limitations under the License.
  */
 
-import { access, mkdir, readFile, writeFile, rm, symlink } from 'node:fs/promises';
+import { access, chmod, mkdir, readFile, writeFile, rm, symlink } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { createGzip } from 'node:zlib';
+import { createGzip, gzipSync } from 'node:zlib';
 import { buffer as streamToBuffer } from 'node:stream/consumers';
+import { promises as fsPromises } from 'node:fs';
 import { expect } from 'chai';
+import sinon from 'sinon';
 import tarStream from 'tar-stream';
 import { packageComputeBundle, unpackComputeBundle } from '../../../src/client/transports/computeSourceBundle';
+
+async function archive(entries: Array<{ name: string; data: Buffer }>): Promise<Buffer> {
+  const pack = tarStream.pack();
+  const output = streamToBuffer(pack.pipe(createGzip()));
+  for (const entry of entries) {
+    // eslint-disable-next-line no-await-in-loop
+    await new Promise<void>((resolve, reject) =>
+      pack.entry({ name: entry.name }, entry.data, (err) => (err ? reject(err) : resolve()))
+    );
+  }
+  pack.finalize();
+  return output;
+}
 
 describe('computeSourceBundle', () => {
   let tempDir: string;
@@ -38,6 +53,116 @@ describe('computeSourceBundle', () => {
   });
 
   describe('packageComputeBundle', () => {
+    it('stops walking other directories once the source entry cap is exceeded', async () => {
+      await writeFile(join(appDir, 'api-spec.yaml'), 'spec');
+      const first = join(appDir, 'a');
+      const later = join(appDir, 'z');
+      await mkdir(first);
+      await mkdir(later);
+      await Promise.all(Array.from({ length: 1001 }, (_, i) => writeFile(join(first, `${i}.py`), 'x')));
+      const readdir = sinon.spy(fsPromises, 'readdir');
+      try {
+        let error: Error | undefined;
+        try {
+          await packageComputeBundle(appDir, 'MyApp');
+        } catch (err) {
+          error = err as Error;
+        }
+        expect(error?.message).to.include('entry count limit');
+        expect(readdir.getCalls().some(({ args }) => args[0] === later)).to.be.false;
+      } finally {
+        readdir.restore();
+      }
+    });
+
+    it('rejects source entry count beyond the unpack limit', async () => {
+      await writeFile(join(appDir, 'api-spec.yaml'), 'spec');
+      await Promise.all(Array.from({ length: 1001 }, (_, i) => writeFile(join(appDir, `${i}.py`), 'x')));
+      try {
+        await packageComputeBundle(appDir, 'MyApp');
+        expect.fail('should reject count');
+      } catch (err) {
+        expect((err as Error).message).to.include('entry count limit');
+      }
+    });
+
+    it('accepts a source entry exactly at the per-entry limit', async () => {
+      await writeFile(join(appDir, 'api-spec.yaml'), 'spec');
+      await writeFile(join(appDir, 'large.py'), Buffer.alloc(16 * 1024 * 1024));
+      const bundle = await packageComputeBundle(appDir, 'MyApp');
+      await unpackComputeBundle(bundle.buffer, join(tempDir, 'boundary-output'));
+      expect(bundle.fileCount).to.equal(2);
+    });
+
+    it('rejects a source entry above the per-entry limit', async () => {
+      await writeFile(join(appDir, 'api-spec.yaml'), 'spec');
+      await writeFile(join(appDir, 'large.py'), Buffer.alloc(16 * 1024 * 1024 + 1));
+      try {
+        await packageComputeBundle(appDir, 'MyApp');
+        expect.fail('should reject size');
+      } catch (err) {
+        expect((err as Error).message).to.include('entry size limit');
+      }
+    });
+
+    it('rejects aggregate source entry bytes above the unpack limit', async () => {
+      await writeFile(join(appDir, 'api-spec.yaml'), 'spec');
+      await Promise.all([0, 1, 2].map((i) => writeFile(join(appDir, `${i}.py`), Buffer.alloc(14 * 1024 * 1024))));
+      try {
+        await packageComputeBundle(appDir, 'MyApp');
+        expect.fail('should reject size');
+      } catch (err) {
+        expect((err as Error).message).to.include('total size limit');
+      }
+    });
+
+    it('rejects an outer api-spec entry above the unpack per-entry limit', async () => {
+      await writeFile(join(appDir, 'api-spec.yaml'), Buffer.alloc(16 * 1024 * 1024 + 1));
+      try {
+        await packageComputeBundle(appDir, 'MyApp');
+        expect.fail('should reject outer entry size');
+      } catch (err) {
+        expect((err as Error).message).to.include('api-spec.yaml entry size limit');
+      }
+    });
+
+    it('does not traverse dot-directories even when nested', async () => {
+      await writeFile(join(appDir, 'api-spec.yaml'), 'spec');
+      await mkdir(join(appDir, 'lib', '.hidden'), { recursive: true });
+      await writeFile(join(appDir, 'lib', '.hidden', 'secret'), 'secret');
+      await chmod(join(appDir, 'lib', '.hidden'), 0);
+      try {
+        const bundle = await packageComputeBundle(appDir, 'MyApp');
+        expect(bundle.fileCount).to.equal(1);
+      } finally {
+        await chmod(join(appDir, 'lib', '.hidden'), 0o700);
+      }
+    });
+
+    it('excludes dotfiles, VCS trees, and secrets without .forceignore', async () => {
+      await writeFile(join(appDir, 'api-spec.yaml'), 'openapi: 3.0.0');
+      await writeFile(join(appDir, 'main.py'), 'safe');
+      await writeFile(join(appDir, '.env'), 'SECRET=1');
+      await mkdir(join(appDir, '.git', 'objects'), { recursive: true });
+      await writeFile(join(appDir, '.git', 'objects', 'secret'), 'secret');
+      await mkdir(join(appDir, 'lib', '.hidden'), { recursive: true });
+      await writeFile(join(appDir, 'lib', '.hidden', 'secret'), 'secret');
+
+      const bundle = await packageComputeBundle(appDir, 'MyApp');
+      expect(bundle.fileCount).to.equal(2);
+      const output = join(tempDir, 'safe-output');
+      await unpackComputeBundle(bundle.buffer, output);
+      expect(await readFile(join(output, 'main.py'), 'utf8')).to.equal('safe');
+      for (const path of ['.env', '.git/objects/secret', 'lib/.hidden/secret']) {
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          await access(join(output, path));
+          expect.fail(`${path} should not be bundled`);
+        } catch (err) {
+          expect((err as NodeJS.ErrnoException).code).to.equal('ENOENT');
+        }
+      }
+    });
     it('should package app directory into a bundle', async () => {
       await writeFile(join(appDir, 'api-spec.yaml'), 'openapi: 3.0.0\ninfo:\n  title: test');
       await writeFile(join(appDir, 'MyApp.compute-meta.xml'), '<PlatformComputeApp/>');
@@ -84,6 +209,94 @@ describe('computeSourceBundle', () => {
   });
 
   describe('unpackComputeBundle', () => {
+    it('rejects an oversized compressed download buffer', async () => {
+      try {
+        await unpackComputeBundle(Buffer.alloc(40 * 1024 * 1024 + 1), join(tempDir, 'out'));
+        expect.fail('should reject size');
+      } catch (err) {
+        expect((err as Error).message).to.include('size limit');
+      }
+    });
+
+    it('rejects oversized decompressed outer gzip as a size limit', async () => {
+      try {
+        await unpackComputeBundle(gzipSync(Buffer.alloc(64 * 1024 * 1024 + 1)), join(tempDir, 'out'));
+        expect.fail('should reject size');
+      } catch (err) {
+        expect((err as Error).message).to.include('size limit');
+      }
+    });
+
+    it('rejects oversized decompressed inner gzip as a size limit', async () => {
+      const bundle = await archive([
+        { name: 'api-spec.yaml', data: Buffer.from('spec') },
+        { name: 'source.tar.gz', data: gzipSync(Buffer.alloc(64 * 1024 * 1024 + 1)) },
+      ]);
+      try {
+        await unpackComputeBundle(bundle, join(tempDir, 'out'));
+        expect.fail('should reject size');
+      } catch (err) {
+        expect((err as Error).message).to.include('size limit');
+      }
+    });
+
+    it('rejects an oversized tar entry', async () => {
+      const inner = await archive([{ name: 'huge.py', data: Buffer.alloc(16 * 1024 * 1024 + 1) }]);
+      const outer = await archive([
+        { name: 'api-spec.yaml', data: Buffer.from('spec') },
+        { name: 'source.tar.gz', data: inner },
+      ]);
+      try {
+        await unpackComputeBundle(outer, join(tempDir, 'out'));
+        expect.fail('should reject size');
+      } catch (err) {
+        expect((err as Error).message).to.include('size limit');
+      }
+    });
+
+    it('applies the source entry size limit even to a file named source.tar.gz', async () => {
+      const inner = await archive([{ name: 'source.tar.gz', data: Buffer.alloc(16 * 1024 * 1024 + 1) }]);
+      const outer = await archive([
+        { name: 'api-spec.yaml', data: Buffer.from('spec') },
+        { name: 'source.tar.gz', data: inner },
+      ]);
+      try {
+        await unpackComputeBundle(outer, join(tempDir, 'out'));
+        expect.fail('should reject size');
+      } catch (err) {
+        expect((err as Error).message).to.include('size limit');
+      }
+    });
+
+    it('rejects aggregate tar entry bytes above the limit', async () => {
+      const inner = await archive([0, 1, 2].map((i) => ({ name: `${i}.py`, data: Buffer.alloc(16 * 1024 * 1024) })));
+      const outer = await archive([
+        { name: 'api-spec.yaml', data: Buffer.from('spec') },
+        { name: 'source.tar.gz', data: inner },
+      ]);
+      try {
+        await unpackComputeBundle(outer, join(tempDir, 'out'));
+        expect.fail('should reject size');
+      } catch (err) {
+        expect((err as Error).message).to.include('size limit');
+      }
+    });
+
+    it('rejects an excessive inner tar entry count', async () => {
+      const inner = await archive(
+        Array.from({ length: 1001 }, (_, i) => ({ name: `${i}.py`, data: Buffer.from('x') }))
+      );
+      const outer = await archive([
+        { name: 'api-spec.yaml', data: Buffer.from('spec') },
+        { name: 'source.tar.gz', data: inner },
+      ]);
+      try {
+        await unpackComputeBundle(outer, join(tempDir, 'out'));
+        expect.fail('should reject count');
+      } catch (err) {
+        expect((err as Error).message).to.include('entry count limit');
+      }
+    });
     it('rejects an existing app and output file below a symlinked ancestor without overwriting outside', async () => {
       await writeFile(join(appDir, 'api-spec.yaml'), 'openapi: 3.0.0');
       await writeFile(join(appDir, 'main.py'), 'new');

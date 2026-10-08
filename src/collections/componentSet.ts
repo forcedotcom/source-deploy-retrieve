@@ -790,6 +790,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       typeof options.usernameOrConnection === 'string'
         ? await Connection.create({ authInfo: await AuthInfo.create({ username: options.usernameOrConnection }) })
         : options.usernameOrConnection;
+    if (typeof options.usernameOrConnection === 'string' && this.apiVersion && this.apiVersion !== connection.version) {
+      connection.setApiVersion(this.apiVersion);
+    }
 
     const transportContext = {
       components,
@@ -827,6 +830,13 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
             authInfo: await AuthInfo.create({ username: operationOptions.usernameOrConnection }),
           })
         : operationOptions.usernameOrConnection;
+    if (
+      typeof operationOptions.usernameOrConnection === 'string' &&
+      this.apiVersion &&
+      this.apiVersion !== connection.version
+    ) {
+      connection.setApiVersion(this.apiVersion);
+    }
 
     const transportContext = {
       components,

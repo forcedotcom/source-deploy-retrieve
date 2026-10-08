@@ -16,11 +16,13 @@
 
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { Connection, SfProject } from '@salesforce/core';
+import { AuthInfo, Connection, SfProject } from '@salesforce/core';
 import {
   ComponentSet,
   ComponentStatus,
+  DeployResult,
   FileResponse,
+  MetadataApiDeployStatus,
   MetadataApiRetrieveStatus,
   RegistryAccess,
   RequestStatus,
@@ -28,6 +30,7 @@ import {
   SourceComponent,
 } from '../../../src';
 import { TransportPipeline } from '../../../src/client/transports/transportPipeline';
+import { TransportCoordinator } from '../../../src/client/transports/transportCoordinator';
 import { MetadataApiRetrieve } from '../../../src/client/metadataApiRetrieve';
 import { MetadataApiDeploy } from '../../../src/client/metadataApiDeploy';
 import {
@@ -96,6 +99,30 @@ function createRetrieveStatus(overrides: Partial<MetadataApiRetrieveStatus> = {}
   };
 }
 
+function createDeployStatus(status: RequestStatus): MetadataApiDeployStatus {
+  return {
+    id: '0Af000000000000',
+    status,
+    success: false,
+    done: true,
+    checkOnly: false,
+    createdBy: '005000000000000',
+    createdByName: 'Test User',
+    createdDate: '2026-01-01T00:00:00.000Z',
+    details: {},
+    ignoreWarnings: false,
+    lastModifiedDate: '2026-01-01T00:00:00.000Z',
+    numberComponentErrors: 0,
+    numberComponentsDeployed: 0,
+    numberComponentsTotal: 0,
+    numberTestErrors: 0,
+    numberTestsCompleted: 0,
+    numberTestsTotal: 0,
+    runTestsEnabled: false,
+    rollbackOnError: true,
+  };
+}
+
 const mockContext: TransportContext = {
   components: [],
   connection: {} as Connection,
@@ -105,6 +132,90 @@ const mockContext: TransportContext = {
 
 describe('Transport integration', () => {
   afterEach(() => sinon.restore());
+
+  for (const status of [RequestStatus.Failed, RequestStatus.Canceled]) {
+    it(`retains before-deploy results on ${status} without running after-metadata transports`, async () => {
+      const response: FileResponse = {
+        fullName: 'MyApp',
+        type: 'PlatformComputeApp',
+        state: ComponentStatus.Changed,
+        filePath: '/app/main.py',
+      };
+      const handle = {
+        transportName: 'herokuCompute' as const,
+        status: 'Pending' as const,
+        checkStatus: async () => handle,
+      };
+      const pipeline = new TransportPipeline();
+      sinon.stub(pipeline, 'runBeforeMetadata').resolves({ fileResponses: [response], asyncHandles: [handle] });
+      const after = sinon.stub(pipeline, 'runAfterMetadata').resolves({ fileResponses: [], asyncHandles: [] });
+      const coordinator = new TransportCoordinator(pipeline, [], mockContext, 'deploy');
+      await coordinator.runBeforeMetadata();
+      const result = new DeployResult(createDeployStatus(status));
+
+      await coordinator.processResult(result, status);
+
+      expect(result.getFileResponses()).to.deep.include(response);
+      expect(result.getAsyncTransportHandles()).to.deep.equal([handle]);
+      expect(after.called).to.be.false;
+    });
+  }
+
+  for (const status of [RequestStatus.Failed, RequestStatus.Succeeded]) {
+    it(`processes the same ${status} result only once`, async () => {
+      const response: FileResponse = {
+        fullName: 'MyApp',
+        type: 'PlatformComputeApp',
+        state: ComponentStatus.Changed,
+        filePath: '/app/main.py',
+      };
+      const handle = {
+        transportName: 'herokuCompute' as const,
+        status: 'Pending' as const,
+        checkStatus: async () => handle,
+      };
+      const pipeline = new TransportPipeline();
+      sinon.stub(pipeline, 'runBeforeMetadata').resolves({ fileResponses: [response], asyncHandles: [handle] });
+      const after = sinon.stub(pipeline, 'runAfterMetadata').resolves({ fileResponses: [], asyncHandles: [] });
+      const coordinator = new TransportCoordinator(pipeline, [], mockContext, 'deploy');
+      await coordinator.runBeforeMetadata();
+      const result = new DeployResult(createDeployStatus(status));
+
+      await coordinator.processResult(result, status);
+      await coordinator.processResult(result, status);
+
+      expect(result.getAsyncTransportHandles()).to.deep.equal([handle]);
+      expect(result.getFileResponses()).to.deep.include(response);
+      expect(after.callCount).to.equal(status === RequestStatus.Succeeded ? 1 : 0);
+    });
+  }
+
+  it('allows a failed status to transition to success without repeating before results', async () => {
+    const response: FileResponse = {
+      fullName: 'MyApp',
+      type: 'PlatformComputeApp',
+      state: ComponentStatus.Changed,
+      filePath: '/app/main.py',
+    };
+    const handle = {
+      transportName: 'herokuCompute' as const,
+      status: 'Pending' as const,
+      checkStatus: async () => handle,
+    };
+    const pipeline = new TransportPipeline();
+    sinon.stub(pipeline, 'runBeforeMetadata').resolves({ fileResponses: [response], asyncHandles: [handle] });
+    const after = sinon.stub(pipeline, 'runAfterMetadata').resolves({ fileResponses: [], asyncHandles: [] });
+    const coordinator = new TransportCoordinator(pipeline, [], mockContext, 'deploy');
+    await coordinator.runBeforeMetadata();
+    const result = new DeployResult(createDeployStatus(RequestStatus.Failed));
+
+    await coordinator.processResult(result, RequestStatus.Failed);
+    await coordinator.processResult(result, RequestStatus.Succeeded);
+    await coordinator.processResult(result, RequestStatus.Succeeded);
+
+    expect(result.getAsyncTransportHandles()).to.deep.equal([handle]);
+    expect(after.calledOnce).to.be.true;
+  });
 
   describe('retrieve before-metadata transports', () => {
     it('should run before-metadata retrieve transports via runBeforeMetadata', async () => {
@@ -250,6 +361,35 @@ describe('Transport integration', () => {
       sinon.stub(MetadataApiRetrieve.prototype, 'start').resolves({ id: 'retrieve' });
       sinon.stub(MetadataApiDeploy.prototype, 'start').resolves({ id: 'deploy' });
     });
+
+    for (const operation of ['deploy', 'retrieve'] as const) {
+      it(`sets the username connection API version before the ${operation} provider runs`, async () => {
+        const type = registryAccess.getTypeByName('PlatformComputeApp');
+        const component = new SourceComponent({ name: 'MyApp', type, content: '/local/app' });
+        const set = new ComponentSet([component]);
+        set.apiVersion = '69.0';
+        const builtConnection = {
+          version: '68.0',
+          setApiVersion(version: string): void {
+            builtConnection.version = version;
+          },
+          getAuthInfoFields: () => ({ orgId: '00D' }),
+        } as unknown as Connection;
+        sinon.stub(AuthInfo, 'create').resolves({} as AuthInfo);
+        sinon.stub(Connection, 'create').resolves(builtConnection);
+        const provider = createMockTransport({
+          deployPhase: 'before-metadata',
+          retrievePhase: 'before-metadata',
+          typeNames: ['PlatformComputeApp'],
+          deploySpy: sinon.spy((ctx: TransportContext) => expect(ctx.connection.version).to.equal('69.0')),
+          retrieveSpy: sinon.spy((ctx: TransportContext) => expect(ctx.connection.version).to.equal('69.0')),
+        });
+        set.transportPipeline = new TransportPipeline([provider]);
+
+        if (operation === 'deploy') await set.deploy({ usernameOrConnection: 'test@example.com' });
+        else await set.retrieve({ usernameOrConnection: 'test@example.com', output: '/out' });
+      });
+    }
 
     it('preserves both source locations for the same metadata member when grouping', async () => {
       const type = registryAccess.getTypeByName('PlatformComputeApp');

@@ -22,7 +22,7 @@ import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../common/constants';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { ComponentStatus, FileResponse } from '../types';
 import { TransportContext, TransportDescription, TransportProvider, TransportResult } from './types';
-import { packageComputeBundle, unpackComputeBundle } from './computeSourceBundle';
+import { MAX_COMPRESSED_BYTES, packageComputeBundle, unpackComputeBundle } from './computeSourceBundle';
 
 type ComputeSourceUploadResponse = {
   platformComputeId: string;
@@ -70,12 +70,17 @@ async function uploadSource(
 }
 
 // jsforce decodes to UTF-8 by default — lossy for gzip bytes.
-// encoding: 'binary' (latin1) preserves byte values 1:1.
+// encoding: 'binary' (latin1) preserves byte values 1:1. Connection.request
+// buffers the complete response; this guard prevents a second oversized Buffer
+// allocation, while unpackComputeBundle limits the archive after download.
 async function downloadSource(connection: Connection, appIdOrName: string): Promise<Buffer> {
   const body = await connection.request<string>(
     { method: 'GET', url: `/connect/compute/${encodeURIComponent(appIdOrName)}/source` },
     { encoding: 'binary' }
   );
+  if (body.length > MAX_COMPRESSED_BYTES) {
+    throw new Error(`Compute source bundle: compressed size limit (${MAX_COMPRESSED_BYTES} bytes) exceeded`);
+  }
   return Buffer.from(body, 'binary');
 }
 

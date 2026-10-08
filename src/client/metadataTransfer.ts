@@ -182,7 +182,7 @@ export abstract class MetadataTransfer<
           // this keeps SfError data for failures in post deploy/retrieve.
           error.setData({
             id: this.id,
-            causeErrorData: error.data,
+            causeErrorData: err.data as AnyJson,
           });
 
           error.actions = err.actions;

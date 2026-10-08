@@ -17,7 +17,7 @@
 import { Connection, SfProject } from '@salesforce/core';
 import { TransportName } from '../../registry/types';
 import { SourceComponent } from '../../resolve/sourceComponent';
-import { FileResponse } from '../types';
+import { FileResponse, PackageOptions } from '../types';
 
 export type TransportStatus = 'Pending' | 'InProgress' | 'Succeeded' | 'Failed' | 'Unknown';
 
@@ -31,6 +31,10 @@ export type TransportContext = {
   connection: Connection;
   project: SfProject;
   orgId: string;
+  output?: string;
+  packageOptions?: PackageOptions;
+  /** Package name for each manifest-only transport member (`type#fullName`). */
+  transportPackageNames?: Record<string, string>;
 };
 
 export type TransportResult = {

@@ -229,6 +229,64 @@ describe('HerokuComputeTransport', () => {
   });
 
   describe('retrieve', () => {
+    it('routes manifest-only members to their associated package output directories', async () => {
+      const unpack = sinon.stub(computeSourceBundle, 'unpackComputeBundle').resolves({ fileCount: 2 });
+      try {
+        const request = sinon.stub().resolves(Buffer.from('bundle').toString('binary'));
+        const type = registryAccess.getTypeByName('PlatformComputeApp');
+        const context = createMockContext({
+          output: '/unpackaged',
+          packageOptions: [
+            { name: 'FirstPackage', outputDir: '/packages/first' },
+            { name: 'SecondPackage', outputDir: '/packages/second' },
+          ],
+          transportPackageNames: {
+            'PlatformComputeApp#FirstApp': 'FirstPackage',
+            'PlatformComputeApp#SecondApp': 'SecondPackage',
+          },
+          connection: { version: '68.0', request } as unknown as Connection,
+          components: [
+            new SourceComponent({ name: 'FirstApp', type }),
+            new SourceComponent({ name: 'SecondApp', type }),
+          ],
+        });
+
+        await transport.afterRetrieve(context);
+
+        expect(unpack.firstCall.args[1]).to.equal('/packages/first/platformComputeApps/FirstApp');
+        expect(unpack.secondCall.args[1]).to.equal('/packages/second/platformComputeApps/SecondApp');
+      } finally {
+        unpack.restore();
+      }
+    });
+
+    it('uses explicit output for manifest-only content but preserves existing content paths', async () => {
+      const unpack = sinon.stub(computeSourceBundle, 'unpackComputeBundle').resolves({ fileCount: 2 });
+      try {
+        const request = sinon.stub().resolves(Buffer.from('bundle').toString('binary'));
+        const type = registryAccess.getTypeByName('PlatformComputeApp');
+        const context = createMockContext({
+          output: '/custom/output',
+          connection: { version: '68.0', request } as unknown as Connection,
+          components: [
+            new SourceComponent({ name: 'RemoteApp', type }),
+            createComputeComponent('LocalApp', '/local/app'),
+          ],
+        });
+
+        const result = await transport.afterRetrieve(context);
+
+        expect(unpack.firstCall.args[1]).to.equal('/custom/output/platformComputeApps/RemoteApp');
+        expect(unpack.secondCall.args[1]).to.equal('/local/app');
+        expect(result.fileResponses.map((response) => response.filePath)).to.deep.equal([
+          '/custom/output/platformComputeApps/RemoteApp',
+          '/local/app',
+        ]);
+      } finally {
+        unpack.restore();
+      }
+    });
+
     it('should throw with error details on download failure', async () => {
       const stub = sinon.stub();
       stub.rejects(new Error('404 not found'));

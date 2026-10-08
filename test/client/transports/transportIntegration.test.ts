@@ -28,6 +28,8 @@ import {
   SourceComponent,
 } from '../../../src';
 import { TransportPipeline } from '../../../src/client/transports/transportPipeline';
+import { MetadataApiRetrieve } from '../../../src/client/metadataApiRetrieve';
+import { MetadataApiDeploy } from '../../../src/client/metadataApiDeploy';
 import {
   TransportContext,
   TransportDescription,
@@ -236,6 +238,216 @@ describe('Transport integration', () => {
 
       expect(cs.transportPipeline).to.equal(customPipeline);
       expect(() => cs.transportPipeline?.hasTransports([component])).to.throw('No transport provider is registered');
+    });
+  });
+
+  describe('ComponentSet transport selection', () => {
+    const connection = { getAuthInfoFields: () => ({ orgId: '00D' }) } as Connection;
+    const project = {} as SfProject;
+
+    beforeEach(() => {
+      sinon.stub(SfProject, 'resolve').resolves(project);
+      sinon.stub(MetadataApiRetrieve.prototype, 'start').resolves({ id: 'retrieve' });
+      sinon.stub(MetadataApiDeploy.prototype, 'start').resolves({ id: 'deploy' });
+    });
+
+    it('preserves both source locations for the same metadata member when grouping', async () => {
+      const type = registryAccess.getTypeByName('PlatformComputeApp');
+      const first = new SourceComponent({ name: 'SharedApp', type, content: '/first/SharedApp' });
+      const second = new SourceComponent({ name: 'SharedApp', type, content: '/second/SharedApp' });
+      const set = new ComponentSet([{ fullName: 'SharedApp', type }, first, second]);
+      const pipeline = new TransportPipeline([
+        createMockTransport({
+          deployPhase: 'before-metadata',
+          retrievePhase: 'after-metadata',
+          typeNames: ['PlatformComputeApp'],
+        }),
+      ]);
+      set.transportPipeline = pipeline;
+      const group = sinon.spy(pipeline, 'groupByTransport');
+
+      await set.retrieve({ output: '/out', usernameOrConnection: connection });
+
+      expect(group.firstCall.returnValue.transports[0].components).to.deep.equal([first, second]);
+    });
+
+    it('selects both local and manifest-only members and prefers content for duplicates without changing MDAPI members', async () => {
+      const type = registryAccess.getTypeByName('PlatformComputeApp');
+      const local = new SourceComponent({ name: 'LocalApp', type, content: '/local/app' });
+      const set = new ComponentSet();
+      set.add({ fullName: 'LocalApp', type });
+      set.add({ fullName: 'RemoteApp', type });
+      set.add(local);
+      const pipeline = new TransportPipeline([
+        createMockTransport({
+          deployPhase: 'before-metadata',
+          retrievePhase: 'after-metadata',
+          typeNames: ['PlatformComputeApp'],
+        }),
+      ]);
+      set.transportPipeline = pipeline;
+      const group = sinon.spy(pipeline, 'groupByTransport');
+      expect((await set.getObject()).Package.types).to.deep.include({
+        name: 'PlatformComputeApp',
+        members: ['LocalApp', 'RemoteApp'],
+      });
+
+      await set.retrieve({ output: '/out', usernameOrConnection: connection });
+
+      expect(group.calledOnce).to.be.true;
+      const grouped = group.firstCall.returnValue.transports[0].components;
+      expect(grouped.map((c) => c.fullName)).to.have.members(['LocalApp', 'RemoteApp']);
+      expect(grouped).to.have.lengthOf(2);
+      expect(grouped.find((c) => c.fullName === 'LocalApp')).to.equal(local);
+      expect(grouped.find((c) => c.fullName === 'RemoteApp')?.content).to.be.undefined;
+      expect((await set.getObject()).Package.types).to.deep.include({
+        name: 'PlatformComputeApp',
+        members: ['LocalApp', 'RemoteApp'],
+      });
+    });
+
+    it('skips transport by metadata type while retaining all MDAPI members', async () => {
+      const type = registryAccess.getTypeByName('PlatformComputeApp');
+      const set = new ComponentSet([new SourceComponent({ name: 'MyApp', type, content: '/local/app' })]);
+      const pipeline = new TransportPipeline([
+        createMockTransport({
+          deployPhase: 'before-metadata',
+          retrievePhase: 'after-metadata',
+          typeNames: ['PlatformComputeApp'],
+        }),
+      ]);
+      set.transportPipeline = pipeline;
+      const group = sinon.spy(pipeline, 'groupByTransport');
+      const run = sinon.spy(pipeline, 'runBeforeMetadata');
+
+      const result = await set.retrieve({
+        output: '/out',
+        usernameOrConnection: connection,
+        skipTransports: ['PlatformComputeApp'],
+      });
+
+      expect(group.called).to.be.false;
+      expect(run.called).to.be.false;
+      expect((await set.getObject()).Package.types).to.deep.include({ name: 'PlatformComputeApp', members: ['MyApp'] });
+      expect(result).to.be.instanceOf(MetadataApiRetrieve);
+    });
+
+    it('does not activate a skipped provider when other metadata types remain', async () => {
+      const compute = registryAccess.getTypeByName('PlatformComputeApp');
+      const apex = registryAccess.getTypeByName('ApexClass');
+      const set = new ComponentSet([
+        new SourceComponent({ name: 'MyApp', type: compute }),
+        new SourceComponent({ name: 'MyClass', type: apex }),
+      ]);
+      const pipeline = new TransportPipeline();
+      set.transportPipeline = pipeline;
+      const group = sinon.spy(pipeline, 'groupByTransport');
+      await set.retrieve({ output: '/out', usernameOrConnection: connection, skipTransports: ['PlatformComputeApp'] });
+      expect(group.called).to.be.false;
+      expect((await set.getObject()).Package.types).to.deep.include({ name: 'PlatformComputeApp', members: ['MyApp'] });
+    });
+
+    it('does not construct a builtin pipeline for skipped transport types alongside regular metadata', async () => {
+      const compute = registryAccess.getTypeByName('PlatformComputeApp');
+      const apex = registryAccess.getTypeByName('ApexClass');
+      const set = new ComponentSet([
+        new SourceComponent({ name: 'MyApp', type: compute }),
+        new SourceComponent({ name: 'MyClass', type: apex }),
+      ]);
+      const builtin = sinon.spy(TransportPipeline, 'withBuiltinTransports');
+
+      await set.retrieve({ output: '/out', usernameOrConnection: connection, skipTransports: ['PlatformComputeApp'] });
+
+      expect(builtin.called).to.be.false;
+    });
+
+    it('does not run a secondary transport for metadata format', async () => {
+      const type = registryAccess.getTypeByName('PlatformComputeApp');
+      const set = new ComponentSet([new SourceComponent({ name: 'MyApp', type, content: '/local/app' })]);
+      const pipeline = new TransportPipeline();
+      set.transportPipeline = pipeline;
+      await set.retrieve({ output: '/out', format: 'metadata', usernameOrConnection: connection });
+      expect((await set.getObject()).Package.types).to.deep.include({ name: 'PlatformComputeApp', members: ['MyApp'] });
+    });
+
+    it('does not run a secondary transport for checkOnly but still starts MDAPI with that option', async () => {
+      const type = registryAccess.getTypeByName('PlatformComputeApp');
+      const set = new ComponentSet([new SourceComponent({ name: 'MyApp', type, content: '/local/app' })]);
+      const pipeline = new TransportPipeline();
+      set.transportPipeline = pipeline;
+      const result = await set.deploy({ usernameOrConnection: connection, apiOptions: { checkOnly: true } });
+      expect(result).to.be.instanceOf(MetadataApiDeploy);
+      expect((result as unknown as { options: { apiOptions: { checkOnly: boolean } } }).options.apiOptions.checkOnly).to
+        .be.true;
+    });
+
+    it('passes explicit output as the source fallback for manifest-only retrieve', async () => {
+      const type = registryAccess.getTypeByName('PlatformComputeApp');
+      const set = new ComponentSet();
+      set.add({ fullName: 'RemoteApp', type });
+      const pipeline = new TransportPipeline([
+        createMockTransport({
+          deployPhase: 'before-metadata',
+          retrievePhase: 'after-metadata',
+          typeNames: ['PlatformComputeApp'],
+        }),
+      ]);
+      set.transportPipeline = pipeline;
+      const run = sinon.spy(pipeline, 'runBeforeMetadata');
+      expect((await set.getObject()).Package.types).to.deep.include({
+        name: 'PlatformComputeApp',
+        members: ['RemoteApp'],
+      });
+      await set.retrieve({ output: '/custom/output', usernameOrConnection: connection });
+      expect((run.firstCall.args[0] as TransportContext & { output?: string }).output).to.equal('/custom/output');
+      expect(run.firstCall.args[0].components[0].content).to.be.undefined;
+    });
+
+    it('passes package association through the retrieve transport context', async () => {
+      const type = registryAccess.getTypeByName('PlatformComputeApp');
+      const set = new ComponentSet([{ fullName: 'RemoteApp', type }]);
+      const pipeline = new TransportPipeline([
+        createMockTransport({
+          deployPhase: 'before-metadata',
+          retrievePhase: 'after-metadata',
+          typeNames: ['PlatformComputeApp'],
+        }),
+      ]);
+      set.transportPipeline = pipeline;
+      const run = sinon.spy(pipeline, 'runBeforeMetadata');
+      const packageOptions = [{ name: 'NamedPackage', outputDir: '/package/output' }];
+      const transportPackageNames = { 'PlatformComputeApp#RemoteApp': 'NamedPackage' };
+
+      await set.retrieve({
+        output: '/unpackaged',
+        packageOptions,
+        transportPackageNames,
+        usernameOrConnection: connection,
+      });
+
+      expect(run.firstCall.args[0].packageOptions).to.equal(packageOptions);
+      expect(run.firstCall.args[0].transportPackageNames).to.equal(transportPackageNames);
+    });
+
+    it('selects manifest-only members supplied to the constructor', async () => {
+      const type = registryAccess.getTypeByName('PlatformComputeApp');
+      const set = new ComponentSet([{ fullName: 'ConstructorApp', type }]);
+      const pipeline = new TransportPipeline([
+        createMockTransport({
+          deployPhase: 'before-metadata',
+          retrievePhase: 'after-metadata',
+          typeNames: ['PlatformComputeApp'],
+        }),
+      ]);
+      set.transportPipeline = pipeline;
+      const group = sinon.spy(pipeline, 'groupByTransport');
+
+      await set.retrieve({ output: '/custom/output', usernameOrConnection: connection });
+
+      expect(group.calledOnce).to.be.true;
+      expect(group.firstCall.args[0].map((component: SourceComponent) => component.fullName)).to.deep.equal([
+        'ConstructorApp',
+      ]);
     });
   });
 

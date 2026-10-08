@@ -141,7 +141,24 @@ export class HerokuComputeTransport implements TransportProvider {
 
     for (const component of context.components) {
       try {
-        const contentPath = component.content ?? resolveContentPath(component, context.project);
+        const packageName = context.transportPackageNames?.[`${component.type.name}#${component.fullName}`];
+        const packageOutput = packageName
+          ? context.packageOptions
+              ?.map((option) => (typeof option === 'string' ? { name: option, outputDir: option } : option))
+              .find((option) => option.name === packageName)
+          : undefined;
+        if (!component.content && packageName && !packageOutput) {
+          throw new Error(`No package option found for '${packageName}' (component '${component.fullName}')`);
+        }
+        const contentPath =
+          component.content ??
+          (packageOutput || context.output
+            ? join(
+                packageOutput?.outputDir ?? packageOutput?.name ?? context.output!,
+                component.type.directoryName,
+                component.fullName
+              )
+            : resolveContentPath(component, context.project));
         this.logger.debug('retrieving compute source for %s into %s', component.fullName, contentPath);
 
         // eslint-disable-next-line no-await-in-loop

@@ -411,7 +411,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       );
     }
 
-    const pipeline = this.transportPipeline;
+    const pipeline = options.apiOptions?.checkOnly ? undefined : this.transportPipeline;
     if (pipeline?.hasTransports(toDeploy)) {
       return this.deployWithPipeline(options, toDeploy, pipeline);
     }
@@ -455,14 +455,26 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       );
     }
 
-    const pipeline = this.transportPipeline;
-    const toRetrieve = Array.from(this.getSourceComponents());
-    // For retrieve, also include manifest-only components (e.g., -m flag
-    // where the component doesn't exist locally yet) so the transport
-    // pipeline can handle them.
-    const allComponents = toRetrieve.length > 0 ? toRetrieve : this.getManifestSourceComponents();
-    if (pipeline?.hasTransports(allComponents)) {
-      return this.retrieveWithPipeline(operationOptions, allComponents, pipeline);
+    if (options.format !== 'metadata') {
+      const sourceComponents = this.getSourceComponents().toArray();
+      const sourceMembers = new Set(
+        sourceComponents.map((component) => `${component.type.name}#${component.fullName}`)
+      );
+      const selected = this.getManifestSourceComponents().filter(
+        (component) => !sourceMembers.has(`${component.type.name}#${component.fullName}`)
+      );
+      const skipped = new Set(options.skipTransports);
+      const transportComponents = [...selected, ...sourceComponents].filter(
+        (component) => !skipped.has(component.type.name)
+      );
+      if (transportComponents.length > 0) {
+        const pipeline = transportComponents.some((component) => component.type.strategies?.transport)
+          ? this.transportPipeline
+          : undefined;
+        if (pipeline?.hasTransports(transportComponents)) {
+          return this.retrieveWithPipeline(operationOptions, transportComponents, pipeline);
+        }
+      }
     }
 
     const mdapiRetrieve = new MetadataApiRetrieve(operationOptions);
@@ -821,6 +833,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       connection,
       project: await SfProject.resolve(this.projectDirectory),
       orgId: connection.getAuthInfoFields().orgId ?? '',
+      output: operationOptions.output,
+      packageOptions: operationOptions.packageOptions,
+      transportPackageNames: operationOptions.transportPackageNames,
     };
 
     const coordinator = new TransportCoordinator(pipeline, transports, transportContext, 'retrieve');
@@ -836,6 +851,15 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   private getManifestSourceComponents(): SourceComponent[] {
     const seen = new Set<string>();
     const results: SourceComponent[] = [];
+    for (const component of this) {
+      if (!(component instanceof SourceComponent) && component.type.strategies?.transport) {
+        const key = `${component.type.name}#${component.fullName}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          results.push(new SourceComponent({ type: component.type, name: component.fullName }));
+        }
+      }
+    }
     for (const [, members] of this.manifestComponents) {
       for (const [, comp] of members) {
         const key = `${comp.type.name}#${comp.fullName}`;
@@ -851,6 +875,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   private hasTransportEligibleTypes(): boolean {
     for (const comp of this.getSourceComponents()) {
       if (comp.type.strategies?.transport) return true;
+    }
+    for (const component of this) {
+      if (component.type.strategies?.transport) return true;
     }
     // Also check manifestComponents for components without local source
     // (e.g., -m retrieves where the component doesn't exist on disk yet)

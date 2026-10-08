@@ -423,4 +423,6 @@ export type MetadataApiRetrieveOptions = MetadataTransferOptions &
      * secondary transport (Connect API, presigned URL, etc.) will not run.
      */
     skipTransports?: string[];
+    /** Explicit package association for manifest-only transport members, keyed by `type#fullName`. */
+    transportPackageNames?: Record<string, string>;
   };

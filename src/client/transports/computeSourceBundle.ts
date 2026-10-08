@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { access, mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
-import { dirname, join, relative, resolve, sep } from 'node:path';
+import { access, lstat, mkdir, readdir, readFile, realpath, writeFile } from 'node:fs/promises';
+import { dirname, join, parse, relative, resolve, sep } from 'node:path';
 import { createGzip, gunzipSync } from 'node:zlib';
 import { buffer as streamToBuffer } from 'node:stream/consumers';
 import tarStream from 'tar-stream';
@@ -83,11 +83,13 @@ export async function unpackComputeBundle(buffer: Buffer, appDir: string): Promi
     throw new Error(`Malformed compute source bundle: missing ${missing}`);
   }
 
+  const resolvedAppDir = resolve(appDir);
+  await rejectSymlinks(resolvedAppDir);
   await mkdir(appDir, { recursive: true });
+  await rejectSymlinks(join(resolvedAppDir, 'api-spec.yaml'));
   await writeFile(join(appDir, 'api-spec.yaml'), apiSpec);
 
   const sourceEntries = await untarGzip(sourceTarGz);
-  const resolvedAppDir = resolve(appDir);
   await Promise.all(
     Object.entries(sourceEntries).map(async ([relativePath, data]) => {
       const filePath = resolve(appDir, relativePath);
@@ -95,12 +97,38 @@ export async function unpackComputeBundle(buffer: Buffer, appDir: string): Promi
       if (filePath !== resolvedAppDir && !filePath.startsWith(resolvedAppDir + sep)) {
         throw new Error(`Malformed compute source bundle: unsafe entry path "${relativePath}"`);
       }
+      await rejectSymlinks(filePath);
       await mkdir(dirname(filePath), { recursive: true });
+      await rejectSymlinks(filePath);
       await writeFile(filePath, data);
     })
   );
 
   return { fileCount: Object.keys(sourceEntries).length + 1 };
+}
+
+async function rejectSymlinks(filePath: string): Promise<void> {
+  let current = resolve(filePath);
+  const root = parse(current).root;
+  // The filesystem root is trusted; inspect every component beneath it, including
+  // ancestors of an already-existing app or output file.
+  while (current !== root) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      const stat = await lstat(current);
+      if (stat.isSymbolicLink()) {
+        // macOS exposes /var as a system alias for /private/var. Do not reject
+        // ordinary output paths in its temporary directory for that alias.
+        // eslint-disable-next-line no-await-in-loop
+        if (!(process.platform === 'darwin' && current === '/var' && (await realpath(current)) === '/private/var')) {
+          throw new Error(`Malformed compute source bundle: symlink in output path "${current}"`);
+        }
+      }
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
+    }
+    current = dirname(current);
+  }
 }
 
 function untarGzip(buffer: Buffer): Promise<Record<string, Buffer>> {

@@ -24,6 +24,7 @@ import { SfError } from '@salesforce/core/sfError';
 import { envVars } from '@salesforce/core/envVars';
 import { ensureArray } from '@salesforce/kit';
 import { RegistryAccess } from '../registry';
+import { SourceComponent } from '../resolve';
 import { ReplacementEvent } from '../convert/types';
 import { MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
@@ -437,6 +438,49 @@ export class MetadataApiDeploy extends MetadataTransfer<
   }
 }
 
+// The Metadata API strips parent folders from fullName on nested inFolder deletes.
+const findDeleteMessagesByFullNameSuffix = (
+  messageMap: Map<string, DeployMessage[]>,
+  component: SourceComponent,
+  cs: ComponentSet
+): DeployMessage[] | undefined => {
+  if (!component.type.folderType) return undefined;
+  const typeName = component.type.name;
+  const localFullName = component.fullName;
+  for (const [key, msgs] of messageMap) {
+    if (!key.startsWith(`${typeName}#`)) continue;
+    const messageFullName = key.slice(typeName.length + 1);
+    if (
+      localFullName.endsWith(`/${messageFullName}`) &&
+      msgs.some((m) => m.deleted === 'true' || m.deleted === true) &&
+      cs.getComponentFilenamesByNameAndType({ fullName: messageFullName, type: typeName }).length === 0
+    ) {
+      return msgs;
+    }
+  }
+  return undefined;
+};
+
+const findComponentByFullNameSuffix = (
+  cs: ComponentSet,
+  shortName: string,
+  typeName: string
+): { fullName: string; fileNames: string[] } | undefined => {
+  for (const component of cs.getSourceComponents()) {
+    if (component.type.name !== typeName) continue;
+    if (component.fullName.endsWith(`/${shortName}`)) {
+      const fileNames = cs.getComponentFilenamesByNameAndType({
+        fullName: component.fullName,
+        type: component.type.name,
+      });
+      if (fileNames.length > 0) {
+        return { fullName: component.fullName, fileNames };
+      }
+    }
+  }
+  return undefined;
+};
+
 /**
  * If a component fails to delete because it doesn't exist in the org, you get a message like
  * key: 'ApexClass#destructiveChanges.xml'
@@ -459,9 +503,20 @@ const deleteNotFoundToFileResponses =
       )
       .flatMap((message) => {
         const fullName = message.problem.replace(`No ${message.componentType} named: `, '').replace(' found', '');
-        return cs
-          ? cs.getComponentFilenamesByNameAndType({ fullName, type: message.componentType }).map((fileName) => ({
-              fullName,
+        if (!cs) return [];
+        const fileNames = cs.getComponentFilenamesByNameAndType({ fullName, type: message.componentType });
+        if (fileNames.length > 0) {
+          return fileNames.map((fileName) => ({
+            fullName,
+            type: message.componentType,
+            filePath: fileName,
+            state: ComponentStatus.Deleted,
+          }));
+        }
+        const match = findComponentByFullNameSuffix(cs, fullName, message.componentType);
+        return match
+          ? match.fileNames.map((fileName) => ({
+              fullName: match.fullName,
               type: message.componentType,
               filePath: fileName,
               state: ComponentStatus.Deleted,
@@ -606,10 +661,11 @@ const buildFileResponsesFromComponentSet =
           return [...perFileResponses, ...parentResponses];
         }
 
-        return createResponses(cs.projectDirectory)(
-          deployedComponent,
-          responseMessages.get(toKey(deployedComponent)) ?? []
-        ).concat(
+        const deployMessages =
+          responseMessages.get(toKey(deployedComponent)) ??
+          findDeleteMessagesByFullNameSuffix(responseMessages, deployedComponent, cs) ??
+          [];
+        return createResponses(cs.projectDirectory)(deployedComponent, deployMessages).concat(
           deployedComponent.type.children
             ? deployedComponent.getChildren().flatMap((child) => {
                 const childMessages = responseMessages.get(toKey(child));

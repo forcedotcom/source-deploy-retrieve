@@ -1,3 +1,12 @@
+## [13.4.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.4.4...13.4.5) (2026-10-09)
+
+
+### Bug Fixes
+
+* **deps:** bump ip-address from 10.2.0 to 10.7.2 ([#1842](https://github.com/forcedotcom/source-deploy-retrieve/issues/1842)) ([5bde79d](https://github.com/forcedotcom/source-deploy-retrieve/commit/5bde79d71780acf660cf8ff21c699375f29640f2))
+
+
+
 ## [13.4.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.4.3...13.4.4) (2026-10-06)
 
 

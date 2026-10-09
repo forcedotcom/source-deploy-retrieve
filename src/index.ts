@@ -24,6 +24,7 @@ export {
   MetadataApiRetrieve,
   MetadataApiRetrieveOptions,
   RetrieveResult,
+  TransportStageEvent,
   ComponentDeployment,
   ComponentRetrieval,
   ComponentDiagnostic,

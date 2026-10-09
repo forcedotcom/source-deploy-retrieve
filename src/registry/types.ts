@@ -173,8 +173,11 @@ export type MetadataType = {
       | 'uiBundle';
     decomposition?: 'topLevel' | 'folderPerType';
     recomposition?: 'startEmpty';
+    transport?: TransportName;
   };
 };
+
+export type TransportName = 'herokuCompute';
 
 /**
  * Mapping of metadata type ids -> Metadata type definitions.

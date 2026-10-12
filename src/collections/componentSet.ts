@@ -30,6 +30,8 @@ import { objectHasSomeRealValues } from '../utils/decomposed';
 import { MetadataApiDeploy, MetadataApiDeployOptions } from '../client/metadataApiDeploy';
 import { MetadataApiRetrieve } from '../client/metadataApiRetrieve';
 import type { MetadataApiRetrieveOptions } from '../client/types';
+import { TransportPipeline } from '../client/transports/transportPipeline';
+import { TransportCoordinator } from '../client/transports/transportCoordinator';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common/constants';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MetadataResolver } from '../resolve/metadataResolver';
@@ -89,6 +91,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public fullName?: string;
   public forceIgnoredPaths?: Set<string>;
   public botVersionFilters?: Array<{ botName: string; versionFilter: 'all' | 'highest' | number }>;
+  private manualTransportPipeline?: TransportPipeline;
+  private hasManualPipeline = false;
   private logger: Logger;
   private readonly registry: RegistryAccess;
   // all components stored here, regardless of what manifest they belong to
@@ -144,6 +148,16 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
   public get destructiveChangesPost(): DecodeableMap<string, DecodeableMap<string, SourceComponent>> {
     return this.destructiveComponents[DestructiveChangesType.POST];
+  }
+
+  public get transportPipeline(): TransportPipeline | undefined {
+    if (this.hasManualPipeline) return this.manualTransportPipeline;
+    return this.hasTransportEligibleTypes() ? TransportPipeline.withBuiltinTransports() : undefined;
+  }
+
+  public set transportPipeline(pipeline: TransportPipeline | undefined) {
+    this.manualTransportPipeline = pipeline;
+    this.hasManualPipeline = true;
   }
 
   /**
@@ -397,6 +411,11 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       );
     }
 
+    const pipeline = options.apiOptions?.checkOnly ? undefined : this.transportPipeline;
+    if (pipeline?.hasTransports(toDeploy)) {
+      return this.deployWithPipeline(options, toDeploy, pipeline);
+    }
+
     const operationOptions = Object.assign({}, options, {
       components: this,
       registry: this.registry,
@@ -434,6 +453,28 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       this.logger.debug(
         `Received conflicting apiVersion values for retrieve. Using option=${this.apiVersion}, Ignoring apiVersion on connection=${options.usernameOrConnection.version}.`
       );
+    }
+
+    if (options.format !== 'metadata') {
+      const sourceComponents = this.getSourceComponents().toArray();
+      const sourceMembers = new Set(
+        sourceComponents.map((component) => `${component.type.name}#${component.fullName}`)
+      );
+      const selected = this.getManifestSourceComponents().filter(
+        (component) => !sourceMembers.has(`${component.type.name}#${component.fullName}`)
+      );
+      const skipped = new Set(options.skipTransports);
+      const transportComponents = [...selected, ...sourceComponents].filter(
+        (component) => !skipped.has(component.type.name)
+      );
+      if (transportComponents.length > 0) {
+        const pipeline = transportComponents.some((component) => component.type.strategies?.transport)
+          ? this.transportPipeline
+          : undefined;
+        if (pipeline?.hasTransports(transportComponents)) {
+          return this.retrieveWithPipeline(operationOptions, transportComponents, pipeline);
+        }
+      }
     }
 
     const mdapiRetrieve = new MetadataApiRetrieve(operationOptions);
@@ -736,6 +777,126 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       destructiveChangesTypes.push(DestructiveChangesType.POST);
     }
     return destructiveChangesTypes;
+  }
+
+  private async deployWithPipeline(
+    options: DeploySetOptions,
+    components: SourceComponent[],
+    pipeline: TransportPipeline
+  ): Promise<MetadataApiDeploy> {
+    const { transports } = pipeline.groupByTransport(components);
+
+    const connection =
+      typeof options.usernameOrConnection === 'string'
+        ? await Connection.create({ authInfo: await AuthInfo.create({ username: options.usernameOrConnection }) })
+        : options.usernameOrConnection;
+    if (typeof options.usernameOrConnection === 'string' && this.apiVersion && this.apiVersion !== connection.version) {
+      connection.setApiVersion(this.apiVersion);
+    }
+
+    const transportContext = {
+      components,
+      connection,
+      project: await SfProject.resolve(this.projectDirectory),
+      orgId: connection.getAuthInfoFields().orgId ?? '',
+    };
+
+    const coordinator = new TransportCoordinator(pipeline, transports, transportContext, 'deploy');
+    await coordinator.runBeforeMetadata();
+
+    const operationOptions = Object.assign({}, options, {
+      components: this,
+      registry: this.registry,
+      apiVersion: this.apiVersion,
+    });
+
+    const mdapiDeploy = new MetadataApiDeploy(operationOptions);
+    mdapiDeploy.addResultProcessor((result, status) => coordinator.processResult(result, status.status));
+    await mdapiDeploy.start();
+
+    return mdapiDeploy;
+  }
+
+  private async retrieveWithPipeline(
+    operationOptions: MetadataApiRetrieveOptions,
+    components: SourceComponent[],
+    pipeline: TransportPipeline
+  ): Promise<MetadataApiRetrieve> {
+    const { transports } = pipeline.groupByTransport(components);
+
+    const connection =
+      typeof operationOptions.usernameOrConnection === 'string'
+        ? await Connection.create({
+            authInfo: await AuthInfo.create({ username: operationOptions.usernameOrConnection }),
+          })
+        : operationOptions.usernameOrConnection;
+    if (
+      typeof operationOptions.usernameOrConnection === 'string' &&
+      this.apiVersion &&
+      this.apiVersion !== connection.version
+    ) {
+      connection.setApiVersion(this.apiVersion);
+    }
+
+    const transportContext = {
+      components,
+      connection,
+      project: await SfProject.resolve(this.projectDirectory),
+      orgId: connection.getAuthInfoFields().orgId ?? '',
+      output: operationOptions.output,
+      packageOptions: operationOptions.packageOptions,
+      transportPackageNames: operationOptions.transportPackageNames,
+    };
+
+    const coordinator = new TransportCoordinator(pipeline, transports, transportContext, 'retrieve');
+    await coordinator.runBeforeMetadata();
+
+    const mdapiRetrieve = new MetadataApiRetrieve(operationOptions);
+    mdapiRetrieve.addResultProcessor((result, status) => coordinator.processResult(result, status.status));
+
+    await mdapiRetrieve.start();
+    return mdapiRetrieve;
+  }
+
+  private getManifestSourceComponents(): SourceComponent[] {
+    const seen = new Set<string>();
+    const results: SourceComponent[] = [];
+    for (const component of this) {
+      if (!(component instanceof SourceComponent) && component.type.strategies?.transport) {
+        const key = `${component.type.name}#${component.fullName}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          results.push(new SourceComponent({ type: component.type, name: component.fullName }));
+        }
+      }
+    }
+    for (const [, members] of this.manifestComponents) {
+      for (const [, comp] of members) {
+        const key = `${comp.type.name}#${comp.fullName}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          results.push(comp);
+        }
+      }
+    }
+    return results;
+  }
+
+  private hasTransportEligibleTypes(): boolean {
+    for (const comp of this.getSourceComponents()) {
+      if (comp.type.strategies?.transport) return true;
+    }
+    for (const component of this) {
+      if (component.type.strategies?.transport) return true;
+    }
+    // Also check manifestComponents for components without local source
+    // (e.g., -m retrieves where the component doesn't exist on disk yet)
+    for (const [, members] of this.manifestComponents) {
+      for (const [, comp] of members) {
+        if (comp.type.strategies?.transport) return true;
+      }
+    }
+    return false;
   }
 
   /**

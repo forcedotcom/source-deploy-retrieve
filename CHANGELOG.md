@@ -1,3 +1,12 @@
+## [13.4.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.4.5...13.4.6) (2026-10-12)
+
+
+### Bug Fixes
+
+* **W-24411539:**  match nested inFolder deletes with truncated fullName ([#1846](https://github.com/forcedotcom/source-deploy-retrieve/issues/1846)) ([2d91506](https://github.com/forcedotcom/source-deploy-retrieve/commit/2d91506587a710ea96b224cca0bb298f6dcca6a5))
+
+
+
 ## [13.4.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.4.4...13.4.5) (2026-10-09)
 
 

@@ -777,6 +777,59 @@ describe('validateUiBundleJson (direct unit tests)', () => {
       expectConfigError(() => validate([{ name: 'a', path: '*.html' }]), 'glob wildcard');
     });
 
+    it('throws for whitespace-only name', () => {
+      expectConfigError(() => validate([{ name: '   ', path: 'index.html' }]), 'mcpResources[0].name');
+    });
+
+    it('throws for whitespace-only path', () => {
+      expectConfigError(() => validate([{ name: 'a', path: '   ' }]), 'mcpResources[0].path');
+    });
+
+    it('trims name and path', () => {
+      expect(() => validate([{ name: ' a ', path: ' /index.html ' }])).to.not.throw();
+    });
+
+    it('throws for duplicate names after trimming', () => {
+      expectConfigError(
+        () =>
+          validate([
+            { name: 'a', path: 'index.html' },
+            { name: 'a ', path: 'index.html' },
+          ]),
+        'mcpResources[1].name'
+      );
+    });
+
+    it('applies path rules after trimming', () => {
+      expectConfigError(() => validate([{ name: 'a', path: ' //index.html' }]), 'multiple leading slashes');
+    });
+
+    it('throws for path with multiple leading slashes', () => {
+      expectConfigError(() => validate([{ name: 'a', path: '//index.html' }]), 'multiple leading slashes');
+    });
+
+    it('throws for path containing .. within a segment', () => {
+      expectConfigError(() => validate([{ name: 'a', path: 'app..html' }]), 'consecutive dots');
+    });
+
+    it('throws for path with a . segment', () => {
+      expectConfigError(() => validate([{ name: 'a', path: './index.html' }]), 'current directory segment');
+      expectConfigError(() => validate([{ name: 'a', path: 'sub/./index.html' }]), 'current directory segment');
+      expectConfigError(() => validate([{ name: 'a', path: 'sub/.' }]), 'current directory segment');
+    });
+
+    it('accepts dotted file names', () => {
+      const dottedTree = treeWith({ [join(CONTENT_PATH, 'dist', 'app.v2.html')]: '' });
+      expect(() =>
+        validateUiBundleJson(
+          toBuffer({ outputDir: 'dist', mcpResources: [{ name: 'a', path: 'app.v2.html' }] }),
+          DESCRIPTOR_PATH,
+          CONTENT_PATH,
+          dottedTree
+        )
+      ).to.not.throw();
+    });
+
     it('throws for duplicate names', () => {
       expectConfigError(
         () =>

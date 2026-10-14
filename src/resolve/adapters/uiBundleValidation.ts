@@ -570,21 +570,46 @@ function validateMcpResourceItem(item: unknown, i: number): string {
   if (unknown !== undefined) {
     throw createConfigError(msgs.getMessage('ui_bundle_unknown_prop', [key, unknown, 'name, path']));
   }
-  // Unlike routing entries, both fields are required.
-  if (typeof obj.name !== 'string' || obj.name.length === 0) {
+  // Unlike routing entries, both fields are required. Core trims both and skips blank values.
+  if (typeof obj.name !== 'string' || obj.name.trim().length === 0) {
     throw createConfigError(msgs.getMessage('ui_bundle_non_empty_string', [`${key}.name`]));
   }
-  if (typeof obj.path !== 'string' || obj.path.length === 0) {
+  if (typeof obj.path !== 'string' || obj.path.trim().length === 0) {
     throw createConfigError(msgs.getMessage('ui_bundle_non_empty_string', [`${key}.path`]));
   }
-  const strippedPath = stripLeadingSep(obj.path);
+  const path = obj.path.trim();
+  const strippedPath = stripLeadingSep(path);
   if (strippedPath.length === 0) {
     throw createConfigError(msgs.getMessage('ui_bundle_empty_value', [`${key}.path`]), [
       'Provide a file path like "index.html".',
     ]);
   }
   assertSafePath(strippedPath, `${key}.path`);
-  return obj.name;
+  const reason = mcpPathMismatch(path);
+  if (reason) {
+    throw createConfigError(msgs.getMessage('ui_bundle_path_unsafe', [`${key}.path`, path, reason]), [
+      `Fix "${path}": use a plain relative file path like "index.html".`,
+    ]);
+  }
+  return obj.name.trim();
+}
+
+/**
+ * Returns a reason if Core would resolve the trimmed MCP resource path differently than the local file check.
+ * Core (Headless360UiBundleAugmenter.buildContentPath) strips one leading "/", rejects any "..",
+ * and looks the path up verbatim, so it must not rely on normalization.
+ */
+function mcpPathMismatch(value: string): string | undefined {
+  if (value.startsWith('//')) {
+    return 'multiple leading slashes';
+  }
+  if (value.includes('..')) {
+    return 'consecutive dots (..)';
+  }
+  if (/(?:^|\/)\.(?:\/|$)/.test(value)) {
+    return 'a current directory segment (.)';
+  }
+  return undefined;
 }
 
 /** Throws if the resolved path lands outside the parent directory. */
@@ -687,7 +712,7 @@ function validateFileExistence(
   if (obj.mcpResources) {
     for (let i = 0; i < obj.mcpResources.length; i++) {
       // validateMcpResources guarantees path is a non-empty string.
-      const target = obj.mcpResources[i].path!;
+      const target = obj.mcpResources[i].path!.trim();
       const stripped = stripLeadingSep(target);
       const resourcePath = join(basePath, stripped);
       assertNoTraversal(resourcePath, basePath, `mcpResources[${i}].path`, target);

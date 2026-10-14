@@ -44,7 +44,7 @@ ui-bundle.json must contain at least one property.
 
 # ui_bundle_empty_object.actions
 
-Add a property: outputDir, routing, or headers.
+Add a property: outputDir, routing, headers, or mcpResources.
 
 # ui_bundle_unknown_props
 
@@ -73,6 +73,10 @@ ui-bundle.json '%s' contains unknown property '%s'. Allowed: %s.
 # ui_bundle_non_empty_string
 
 ui-bundle.json '%s' must be a non-empty string.
+
+# ui_bundle_duplicate_value
+
+ui-bundle.json '%s' value "%s" is already used by %s.
 
 # ui_bundle_path_unsafe
 

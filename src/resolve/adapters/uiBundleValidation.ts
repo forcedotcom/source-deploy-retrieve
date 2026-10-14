@@ -57,10 +57,16 @@ export type UiBundleRouting = {
   fileBasedRouting?: boolean;
 };
 
+export type UiBundleMcpResource = {
+  name?: string;
+  path?: string;
+};
+
 export type UiBundleConfig = {
   outputDir?: string;
   routing?: UiBundleRouting;
   headers?: UiBundleHeaderRule[];
+  mcpResources?: UiBundleMcpResource[];
 };
 
 /** Basic shape check — use after field-level validation to narrow the type. */
@@ -69,7 +75,7 @@ export function isUiBundleConfig(value: unknown): value is UiBundleConfig {
 }
 
 // Keep in sync with server-side validation (WebApplicationFileProcessor.java).
-const ALLOWED_TOP_LEVEL = new Set(['outputDir', 'routing', 'headers']);
+const ALLOWED_TOP_LEVEL = new Set(['outputDir', 'routing', 'headers', 'mcpResources']);
 const ROUTING_ALLOWED = new Set(['rewrites', 'redirects', 'fallback', 'trailingSlash', 'fileBasedRouting']);
 const TRAILING_SLASH_VALUES = new Set(['always', 'never', 'auto']);
 const REDIRECT_STATUS_CODES = new Set([301, 302, 307, 308]);
@@ -226,9 +232,10 @@ export function validateUiBundleJson(
   if (disallowed.length > 0) {
     const list = disallowed.map((k) => `'${k}'`).join(', ');
     const word = disallowed.length === 1 ? 'property' : 'properties';
-    throw createConfigError(msgs.getMessage('ui_bundle_unknown_props', [word, list, 'outputDir, routing, headers']), [
-      `Remove ${list} from ui-bundle.json.`,
-    ]);
+    throw createConfigError(
+      msgs.getMessage('ui_bundle_unknown_props', [word, list, [...ALLOWED_TOP_LEVEL].join(', ')]),
+      [`Remove ${list} from ui-bundle.json.`]
+    );
   }
 
   const outputDir = rawObj.outputDir !== undefined ? validateOutputDir(rawObj.outputDir) : undefined;
@@ -241,10 +248,14 @@ export function validateUiBundleJson(
     validateHeaders(rawObj.headers);
   }
 
+  if (rawObj.mcpResources !== undefined) {
+    validateMcpResources(rawObj.mcpResources);
+  }
+
   // Safe to cast after field-level checks pass.
   const obj = rawObj as UiBundleConfig;
 
-  if (outputDir ?? obj.routing) {
+  if (outputDir ?? obj.routing ?? obj.mcpResources) {
     validateFileExistence(obj, outputDir, contentPath, tree);
   }
 }
@@ -522,6 +533,60 @@ function validateHeaderKeyValue(item: unknown, i: number, j: number): void {
   }
 }
 
+function validateMcpResources(value: unknown): void {
+  if (!Array.isArray(value)) {
+    throw createConfigError(
+      msgs.getMessage('ui_bundle_type_mismatch', ['mcpResources', 'an array', describeType(value)])
+    );
+  }
+  if (value.length === 0) {
+    throw createConfigError(msgs.getMessage('ui_bundle_min_items', ['mcpResources', 'item']), [
+      'Add a { "name": "...", "path": "..." } entry or remove the empty mcpResources array.',
+    ]);
+  }
+  // Names form the resource URI ui://ui-bundle/<namespace>/<bundle>/<name>; the server silently drops duplicates.
+  const seenNames = new Map<string, number>();
+  for (let i = 0; i < value.length; i++) {
+    const name = validateMcpResourceItem(value[i], i);
+    const firstIndex = seenNames.get(name);
+    if (firstIndex !== undefined) {
+      throw createConfigError(
+        msgs.getMessage('ui_bundle_duplicate_value', [`mcpResources[${i}].name`, name, `mcpResources[${firstIndex}]`]),
+        ['Give each MCP resource a unique name.']
+      );
+    }
+    seenNames.set(name, i);
+  }
+}
+
+/** Validates one mcpResources entry and returns its name. */
+function validateMcpResourceItem(item: unknown, i: number): string {
+  const key = `mcpResources[${i}]`;
+  if (typeof item !== 'object' || item === null || Array.isArray(item)) {
+    throw createConfigError(msgs.getMessage('ui_bundle_type_mismatch', [key, 'an object', describeType(item)]));
+  }
+  const obj = item as Record<string, unknown>;
+  const unknown = Object.keys(obj).filter((k) => k !== 'name' && k !== 'path');
+  if (unknown.length > 0) {
+    throw createConfigError(msgs.getMessage('ui_bundle_unknown_prop', [key, unknown[0], 'name, path']));
+  }
+  // Unlike routing entries, both fields are required.
+  if (typeof obj.name !== 'string' || obj.name.length === 0) {
+    throw createConfigError(msgs.getMessage('ui_bundle_non_empty_string', [`${key}.name`]));
+  }
+  if (typeof obj.path !== 'string' || obj.path.length === 0) {
+    throw createConfigError(msgs.getMessage('ui_bundle_non_empty_string', [`${key}.path`]));
+  }
+  const strippedPath = stripLeadingSep(obj.path);
+  if (strippedPath.length === 0) {
+    throw createConfigError(msgs.getMessage('ui_bundle_empty_value', [`${key}.path`]), [
+      'Provide a file path like "index.html".',
+    ]);
+  }
+  assertSafePath(strippedPath, `${key}.path`);
+  return obj.name;
+}
+
 /** Throws if the resolved path lands outside the parent directory. */
 function assertNoTraversal(resolvedPath: string, parentDir: string, configKey: string, rawValue: string): void {
   const normalizedResolved = resolve(resolvedPath);
@@ -533,7 +598,7 @@ function assertNoTraversal(resolvedPath: string, parentDir: string, configKey: s
   }
 }
 
-/** Verify that referenced paths (outputDir, fallback, rewrite targets) actually exist. */
+/** Verify that referenced paths (outputDir, fallback, rewrite targets, MCP resource files) actually exist. */
 function validateFileExistence(
   obj: UiBundleConfig,
   outputDir: string | undefined,
@@ -615,6 +680,22 @@ function validateFileExistence(
             [`Create the file "${stripped}" inside "${baseLabel}", or update the rewrite path.`]
           );
         }
+      }
+    }
+  }
+
+  if (obj.mcpResources) {
+    for (let i = 0; i < obj.mcpResources.length; i++) {
+      // validateMcpResources guarantees path is a non-empty string.
+      const target = obj.mcpResources[i].path as string;
+      const stripped = stripLeadingSep(target);
+      const resourcePath = join(basePath, stripped);
+      assertNoTraversal(resourcePath, basePath, `mcpResources[${i}].path`, target);
+      if (!tree.exists(resourcePath) || tree.isDirectory(resourcePath)) {
+        throw createFileError(
+          msgs.getMessage('ui_bundle_file_not_found', [`mcpResources[${i}].path`, target, resourcePath]),
+          [`Create the file "${stripped}" inside "${baseLabel}", or update the MCP resource path.`]
+        );
       }
     }
   }

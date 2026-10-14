@@ -596,8 +596,7 @@ function validateMcpResourceItem(item: unknown, i: number): string {
 
 /**
  * Returns a reason if Core would resolve the trimmed MCP resource path differently than the local file check.
- * Core (Headless360UiBundleAugmenter.buildContentPath) strips one leading "/", rejects any "..",
- * and looks the path up verbatim, so it must not rely on normalization.
+ * Core strips one leading "/", rejects any "..", and looks the path up verbatim, so it must not rely on normalization.
  */
 function mcpPathMismatch(value: string): string | undefined {
   if (value.startsWith('//')) {

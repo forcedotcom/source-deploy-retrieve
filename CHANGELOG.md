@@ -1,3 +1,12 @@
+# [13.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.4.6...13.5.0) (2026-10-14)
+
+
+### Features
+
+* add AttestSettings and AttestPolicy to MD registry ([#1851](https://github.com/forcedotcom/source-deploy-retrieve/issues/1851)) ([73a818b](https://github.com/forcedotcom/source-deploy-retrieve/commit/73a818b408bdf5e5fa83163a1eae8a878a766c83))
+
+
+
 ## [13.4.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.4.5...13.4.6) (2026-10-12)
 
 

@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v68 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 814/952 supported metadata types.
+Currently, there are 816/956 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -211,6 +211,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ComputeExtension|✅||
 |ConnectedApp|✅||
 |ConnectedAppSettings|✅||
+|ConsentPreferenceFormDef|❌|Not supported, but support could be added (but not for tracking)|
 |ConsentTemplate|❌|Not supported, but support could be added|
 |ConstraintOptDef|❌|Not supported, but support could be added|
 |ContentAsset|✅||
@@ -404,7 +405,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExternalDocStorageConfig|✅||
 |ExternalServiceRegistration|✅||
 |ExternalStoragePrvdConfig|✅||
-|ExtlClntAppAttestConfigurablePolicies|❌|Not supported, but support could be added (but not for tracking)|
+|ExtlClntAppAttestConfigurablePolicies|⚠️|Supports deploy/retrieve but not source tracking|
 |ExtlClntAppAttestSettings|✅||
 |ExtlClntAppCanvasSettings|✅||
 |ExtlClntAppConfigurablePolicies|✅||
@@ -804,6 +805,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SecurityHubSettings|✅||
 |SecuritySettings|✅||
 |SecuritySignalWorkspace|❌|Not supported, but support could be added (but not for tracking)|
+|SelfServiceSettings|✅||
 |SelfSvcPortalTopic|❌|Not supported, but support could be added|
 |SensitiveDataRuleElmntGrp|❌|Not supported, but support could be added|
 |SequenceServiceSettings|✅||
@@ -849,6 +851,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SocialCustomerServiceSettings|✅||
 |SourceTrackingSettings|✅||
 |SpiffSettings|✅||
+|SrvcMgmtCollabAppFldDef|❌|Not supported, but support could be added|
+|SrvcMgmtCollabAppObjDef|❌|Not supported, but support could be added|
 |SrvcMgmtObjCollabAppCnfg|❌|Not supported, but support could be added|
 |StageAssignment|✅||
 |StageDefinition|✅||

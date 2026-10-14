@@ -566,9 +566,9 @@ function validateMcpResourceItem(item: unknown, i: number): string {
     throw createConfigError(msgs.getMessage('ui_bundle_type_mismatch', [key, 'an object', describeType(item)]));
   }
   const obj = item as Record<string, unknown>;
-  const unknown = Object.keys(obj).filter((k) => k !== 'name' && k !== 'path');
-  if (unknown.length > 0) {
-    throw createConfigError(msgs.getMessage('ui_bundle_unknown_prop', [key, unknown[0], 'name, path']));
+  const unknown = Object.keys(obj).find((k) => k !== 'name' && k !== 'path');
+  if (unknown !== undefined) {
+    throw createConfigError(msgs.getMessage('ui_bundle_unknown_prop', [key, unknown, 'name, path']));
   }
   // Unlike routing entries, both fields are required.
   if (typeof obj.name !== 'string' || obj.name.length === 0) {
@@ -687,7 +687,7 @@ function validateFileExistence(
   if (obj.mcpResources) {
     for (let i = 0; i < obj.mcpResources.length; i++) {
       // validateMcpResources guarantees path is a non-empty string.
-      const target = obj.mcpResources[i].path as string;
+      const target = obj.mcpResources[i].path!;
       const stripped = stripLeadingSep(target);
       const resourcePath = join(basePath, stripped);
       assertNoTraversal(resourcePath, basePath, `mcpResources[${i}].path`, target);

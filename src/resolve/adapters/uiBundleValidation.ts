@@ -58,8 +58,8 @@ export type UiBundleRouting = {
 };
 
 export type UiBundleMcpResource = {
-  name?: string;
-  path?: string;
+  name: string;
+  path: string;
 };
 
 export type UiBundleConfig = {
@@ -254,10 +254,10 @@ export function validateUiBundleJson(
   const mcpResources = rawObj.mcpResources !== undefined ? validateMcpResources(rawObj.mcpResources) : undefined;
 
   // Safe to cast after field-level checks pass.
-  const obj: UiBundleConfig = { ...(rawObj as UiBundleConfig), mcpResources };
+  const obj = rawObj as UiBundleConfig;
 
-  if (outputDir ?? obj.routing ?? obj.mcpResources) {
-    validateFileExistence(obj, outputDir, contentPath, tree);
+  if (outputDir ?? obj.routing ?? mcpResources) {
+    validateFileExistence(obj, outputDir, mcpResources, contentPath, tree);
   }
 }
 
@@ -566,7 +566,7 @@ function validateMcpResources(value: unknown): UiBundleMcpResource[] {
 }
 
 /** Validates one mcpResources entry and returns it with name and path trimmed. */
-function validateMcpResourceItem(item: unknown, i: number): { name: string; path: string } {
+function validateMcpResourceItem(item: unknown, i: number): UiBundleMcpResource {
   const key = `mcpResources[${i}]`;
   if (typeof item !== 'object' || item === null || Array.isArray(item)) {
     throw createConfigError(msgs.getMessage('ui_bundle_type_mismatch', [key, 'an object', describeType(item)]));
@@ -658,6 +658,7 @@ function assertNoTraversal(resolvedPath: string, parentDir: string, configKey: s
 function validateFileExistence(
   obj: UiBundleConfig,
   outputDir: string | undefined,
+  mcpResources: UiBundleMcpResource[] | undefined,
   contentPath: SourcePath,
   tree: TreeContainer
 ): void {
@@ -740,10 +741,10 @@ function validateFileExistence(
     }
   }
 
-  if (obj.mcpResources) {
-    for (let i = 0; i < obj.mcpResources.length; i++) {
+  if (mcpResources) {
+    for (let i = 0; i < mcpResources.length; i++) {
       // validateMcpResources guarantees a trimmed, non-empty path.
-      const target = obj.mcpResources[i].path!;
+      const target = mcpResources[i].path;
       const stripped = stripLeadingSep(target);
       const resourcePath = join(basePath, stripped);
       assertNoTraversal(resourcePath, basePath, `mcpResources[${i}].path`, target);

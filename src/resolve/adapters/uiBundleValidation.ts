@@ -81,6 +81,9 @@ const TRAILING_SLASH_VALUES = new Set(['always', 'never', 'auto']);
 const REDIRECT_STATUS_CODES = new Set([301, 302, 307, 308]);
 const MAX_RECURSION_DEPTH = 20;
 const MAX_UI_BUNDLE_JSON_BYTES = 102_400; // 100 KB
+// MCP resource names form the URI segment in ui://ui-bundle/<namespace>/<bundle>/<name>.
+const MCP_RESOURCE_NAME = /^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/;
+const MAX_MCP_RESOURCE_PATH_LENGTH = 512;
 
 // Matches ".." as a standalone path segment.
 const DOT_DOT_SEGMENT = /(?:^|[/\\])\.\.[/\\]|(?:^|[/\\])\.\.$/;
@@ -248,12 +251,10 @@ export function validateUiBundleJson(
     validateHeaders(rawObj.headers);
   }
 
-  if (rawObj.mcpResources !== undefined) {
-    validateMcpResources(rawObj.mcpResources);
-  }
+  const mcpResources = rawObj.mcpResources !== undefined ? validateMcpResources(rawObj.mcpResources) : undefined;
 
   // Safe to cast after field-level checks pass.
-  const obj = rawObj as UiBundleConfig;
+  const obj: UiBundleConfig = { ...(rawObj as UiBundleConfig), mcpResources };
 
   if (outputDir ?? obj.routing ?? obj.mcpResources) {
     validateFileExistence(obj, outputDir, contentPath, tree);
@@ -533,7 +534,8 @@ function validateHeaderKeyValue(item: unknown, i: number, j: number): void {
   }
 }
 
-function validateMcpResources(value: unknown): void {
+/** Validates mcpResources and returns the entries with name and path trimmed. */
+function validateMcpResources(value: unknown): UiBundleMcpResource[] {
   if (!Array.isArray(value)) {
     throw createConfigError(
       msgs.getMessage('ui_bundle_type_mismatch', ['mcpResources', 'an array', describeType(value)])
@@ -544,10 +546,12 @@ function validateMcpResources(value: unknown): void {
       'Add a { "name": "...", "path": "..." } entry or remove the empty mcpResources array.',
     ]);
   }
-  // Names form the resource URI ui://ui-bundle/<namespace>/<bundle>/<name>; the server silently drops duplicates.
+  // Names must be unique within a bundle; the server rejects duplicates.
   const seenNames = new Map<string, number>();
+  const resources: UiBundleMcpResource[] = [];
   for (let i = 0; i < value.length; i++) {
-    const name = validateMcpResourceItem(value[i], i);
+    const resource = validateMcpResourceItem(value[i], i);
+    const name = resource.name;
     const firstIndex = seenNames.get(name);
     if (firstIndex !== undefined) {
       throw createConfigError(
@@ -556,11 +560,13 @@ function validateMcpResources(value: unknown): void {
       );
     }
     seenNames.set(name, i);
+    resources.push(resource);
   }
+  return resources;
 }
 
-/** Validates one mcpResources entry and returns its name. */
-function validateMcpResourceItem(item: unknown, i: number): string {
+/** Validates one mcpResources entry and returns it with name and path trimmed. */
+function validateMcpResourceItem(item: unknown, i: number): { name: string; path: string } {
   const key = `mcpResources[${i}]`;
   if (typeof item !== 'object' || item === null || Array.isArray(item)) {
     throw createConfigError(msgs.getMessage('ui_bundle_type_mismatch', [key, 'an object', describeType(item)]));
@@ -570,14 +576,25 @@ function validateMcpResourceItem(item: unknown, i: number): string {
   if (unknown !== undefined) {
     throw createConfigError(msgs.getMessage('ui_bundle_unknown_prop', [key, unknown, 'name, path']));
   }
-  // Unlike routing entries, both fields are required. Core trims both and skips blank values.
-  if (typeof obj.name !== 'string' || obj.name.trim().length === 0) {
+  // Unlike routing entries, both fields are required. Core trims both before validating.
+  const name = typeof obj.name === 'string' ? obj.name.trim() : '';
+  if (name.length === 0) {
     throw createConfigError(msgs.getMessage('ui_bundle_non_empty_string', [`${key}.name`]));
   }
-  if (typeof obj.path !== 'string' || obj.path.trim().length === 0) {
+  if (!MCP_RESOURCE_NAME.test(name)) {
+    throw createConfigError(msgs.getMessage('ui_bundle_mcp_resource_name_invalid', [`${key}.name`, name]), [
+      'Use a name like "hello" or "order-summary.v2".',
+    ]);
+  }
+  const path = typeof obj.path === 'string' ? obj.path.trim() : '';
+  if (path.length === 0) {
     throw createConfigError(msgs.getMessage('ui_bundle_non_empty_string', [`${key}.path`]));
   }
-  const path = obj.path.trim();
+  if (path.length > MAX_MCP_RESOURCE_PATH_LENGTH) {
+    throw createConfigError(
+      msgs.getMessage('ui_bundle_value_too_long', [`${key}.path`, MAX_MCP_RESOURCE_PATH_LENGTH, path.length])
+    );
+  }
   const strippedPath = stripLeadingSep(path);
   if (strippedPath.length === 0) {
     throw createConfigError(msgs.getMessage('ui_bundle_empty_value', [`${key}.path`]), [
@@ -591,16 +608,31 @@ function validateMcpResourceItem(item: unknown, i: number): string {
       `Fix "${path}": use a plain relative file path like "index.html".`,
     ]);
   }
-  return obj.name.trim();
+  if (!path.toLowerCase().endsWith('.html')) {
+    throw createConfigError(msgs.getMessage('ui_bundle_mcp_resource_not_html', [`${key}.path`, path]), [
+      'Point the MCP resource at a single .html file.',
+    ]);
+  }
+  return { name, path };
 }
 
 /**
  * Returns a reason if Core would resolve the trimmed MCP resource path differently than the local file check.
- * Core strips one leading "/", rejects any "..", and looks the path up verbatim, so it must not rely on normalization.
+ * Core strips one leading "/", rejects any "..", "//", "#", and ":", and looks the path up verbatim, so it must not rely
+ * on normalization.
  */
 function mcpPathMismatch(value: string): string | undefined {
   if (value.startsWith('//')) {
     return 'multiple leading slashes';
+  }
+  if (value.includes('//')) {
+    return 'consecutive slashes (//)';
+  }
+  if (value.includes('#')) {
+    return 'a fragment marker (#)';
+  }
+  if (value.includes(':')) {
+    return 'a colon (:)';
   }
   if (value.includes('..')) {
     return 'consecutive dots (..)';
@@ -710,8 +742,8 @@ function validateFileExistence(
 
   if (obj.mcpResources) {
     for (let i = 0; i < obj.mcpResources.length; i++) {
-      // validateMcpResources guarantees path is a non-empty string.
-      const target = obj.mcpResources[i].path!.trim();
+      // validateMcpResources guarantees a trimmed, non-empty path.
+      const target = obj.mcpResources[i].path!;
       const stripped = stripLeadingSep(target);
       const resourcePath = join(basePath, stripped);
       assertNoTraversal(resourcePath, basePath, `mcpResources[${i}].path`, target);

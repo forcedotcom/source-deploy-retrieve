@@ -841,6 +841,71 @@ describe('validateUiBundleJson (direct unit tests)', () => {
       );
     });
 
+    it('throws for name with characters that are not URI-safe', () => {
+      expectConfigError(() => validate([{ name: 'my resource', path: 'index.html' }]), 'mcpResources[0].name');
+      expectConfigError(() => validate([{ name: 'a/b', path: 'index.html' }]), 'mcpResources[0].name');
+    });
+
+    it('throws for name that does not start with a letter or digit', () => {
+      expectConfigError(() => validate([{ name: '-a', path: 'index.html' }]), 'mcpResources[0].name');
+      expectConfigError(() => validate([{ name: '.a', path: 'index.html' }]), 'mcpResources[0].name');
+    });
+
+    it('accepts an 80-character name and rejects 81', () => {
+      expect(() => validate([{ name: 'a'.repeat(80), path: 'index.html' }])).to.not.throw();
+      expectConfigError(() => validate([{ name: 'a'.repeat(81), path: 'index.html' }]), 'mcpResources[0].name');
+    });
+
+    it('accepts name with digits, underscore, dot, and dash', () => {
+      expect(() => validate([{ name: '0rder_summary.v2-x', path: 'index.html' }])).to.not.throw();
+    });
+
+    it('throws for path longer than 512 characters after trimming', () => {
+      const long = `${'a'.repeat(508)}.html`;
+      expectConfigError(() => validate([{ name: 'a', path: ` ${long} ` }]), 'at most 512 characters');
+    });
+
+    it('applies the 512-character limit to the trimmed path', () => {
+      const tree512 = treeWith({ [join(CONTENT_PATH, 'dist', `${'a'.repeat(507)}.html`)]: '' });
+      expect(() =>
+        validateUiBundleJson(
+          toBuffer({ outputDir: 'dist', mcpResources: [{ name: 'a', path: `  ${'a'.repeat(507)}.html  ` }] }),
+          DESCRIPTOR_PATH,
+          CONTENT_PATH,
+          tree512
+        )
+      ).to.not.throw();
+    });
+
+    it('throws for path that is not an .html file', () => {
+      expectConfigError(() => validate([{ name: 'a', path: 'app.js' }]), '.html file');
+      expectConfigError(() => validate([{ name: 'a', path: 'sub' }]), '.html file');
+    });
+
+    it('accepts .html extension in any case', () => {
+      const upperTree = treeWith({ [join(CONTENT_PATH, 'dist', 'INDEX.HTML')]: '' });
+      expect(() =>
+        validateUiBundleJson(
+          toBuffer({ outputDir: 'dist', mcpResources: [{ name: 'a', path: 'INDEX.HTML' }] }),
+          DESCRIPTOR_PATH,
+          CONTENT_PATH,
+          upperTree
+        )
+      ).to.not.throw();
+    });
+
+    it('throws for path with consecutive slashes', () => {
+      expectConfigError(() => validate([{ name: 'a', path: 'sub//index.html' }]), 'consecutive slashes');
+    });
+
+    it('throws for path with a fragment marker', () => {
+      expectConfigError(() => validate([{ name: 'a', path: 'index.html#top' }]), 'fragment marker');
+    });
+
+    it('throws for path with a colon', () => {
+      expectConfigError(() => validate([{ name: 'a', path: 'c:index.html' }]), 'colon');
+    });
+
     it('accepts multiple resources with distinct names', () => {
       expect(() =>
         validate([
@@ -953,10 +1018,10 @@ describe('validateUiBundleJson (direct unit tests)', () => {
     });
 
     it('throws when mcpResources path is a directory', () => {
-      const tree = treeWith({ [join(CONTENT_PATH, 'dist', 'sub', 'nested.html')]: '' });
+      const tree = treeWith({ [join(CONTENT_PATH, 'dist', 'sub.html', 'nested.html')]: '' });
       expectFileError(() =>
         validateUiBundleJson(
-          toBuffer({ outputDir: 'dist', mcpResources: [{ name: 'a', path: 'sub' }] }),
+          toBuffer({ outputDir: 'dist', mcpResources: [{ name: 'a', path: 'sub.html' }] }),
           DESCRIPTOR_PATH,
           CONTENT_PATH,
           tree

@@ -786,7 +786,7 @@ describe('validateUiBundleJson (direct unit tests)', () => {
     });
 
     it('trims name and path', () => {
-      expect(() => validate([{ name: ' a ', path: ' /index.html ' }])).to.not.throw();
+      expect(() => validate([{ name: ' a ', path: ' index.html ' }])).to.not.throw();
     });
 
     it('throws for duplicate names after trimming', () => {
@@ -801,11 +801,15 @@ describe('validateUiBundleJson (direct unit tests)', () => {
     });
 
     it('applies path rules after trimming', () => {
-      expectConfigError(() => validate([{ name: 'a', path: ' //index.html' }]), 'multiple leading slashes');
+      expectConfigError(() => validate([{ name: 'a', path: ' /index.html' }]), 'absolute path');
+    });
+
+    it('throws for path with a leading slash', () => {
+      expectConfigError(() => validate([{ name: 'a', path: '/index.html' }]), 'absolute path');
     });
 
     it('throws for path with multiple leading slashes', () => {
-      expectConfigError(() => validate([{ name: 'a', path: '//index.html' }]), 'multiple leading slashes');
+      expectConfigError(() => validate([{ name: 'a', path: '//index.html' }]), 'absolute path');
     });
 
     it('throws for path containing .. within a segment', () => {
@@ -910,7 +914,7 @@ describe('validateUiBundleJson (direct unit tests)', () => {
       expect(() =>
         validate([
           { name: 'a', path: 'index.html' },
-          { name: 'b', path: '/index.html' },
+          { name: 'b', path: 'index.html' },
         ])
       ).to.not.throw();
     });
@@ -1053,16 +1057,28 @@ describe('validateUiBundleJson (direct unit tests)', () => {
       ).to.not.throw();
     });
 
-    it('checks mcpResources path against the bundle root when outputDir is absent', () => {
-      const tree = treeWith();
+    it('resolves mcpResources path under dist, not the bundle root, when outputDir is absent', () => {
+      const tree = treeWith({ [join(CONTENT_PATH, 'hello.html')]: '' });
       expectFileError(() =>
         validateUiBundleJson(
-          toBuffer({ mcpResources: [{ name: 'a', path: 'missing.html' }] }),
+          toBuffer({ mcpResources: [{ name: 'a', path: 'hello.html' }] }),
           DESCRIPTOR_PATH,
           CONTENT_PATH,
           tree
         )
       );
+    });
+
+    it('succeeds when mcpResources path exists under dist and outputDir is absent', () => {
+      const tree = treeWith({ [join(CONTENT_PATH, 'dist', 'hello.html')]: '' });
+      expect(() =>
+        validateUiBundleJson(
+          toBuffer({ mcpResources: [{ name: 'a', path: 'hello.html' }] }),
+          DESCRIPTOR_PATH,
+          CONTENT_PATH,
+          tree
+        )
+      ).to.not.throw();
     });
 
     it('succeeds with outputDir that has nested files', () => {

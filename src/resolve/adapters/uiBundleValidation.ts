@@ -84,6 +84,8 @@ const MAX_UI_BUNDLE_JSON_BYTES = 102_400; // 100 KB
 // MCP resource names form the URI segment in ui://ui-bundle/<namespace>/<bundle>/<name>.
 const MCP_RESOURCE_NAME = /^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/;
 const MAX_MCP_RESOURCE_PATH_LENGTH = 512;
+// Core's outputDir when ui-bundle.json omits it.
+const MCP_DEFAULT_OUTPUT_DIR = 'dist';
 
 // Matches ".." as a standalone path segment.
 const DOT_DOT_SEGMENT = /(?:^|[/\\])\.\.[/\\]|(?:^|[/\\])\.\.$/;
@@ -595,13 +597,8 @@ function validateMcpResourceItem(item: unknown, i: number): UiBundleMcpResource 
       msgs.getMessage('ui_bundle_value_too_long', [`${key}.path`, MAX_MCP_RESOURCE_PATH_LENGTH, path.length])
     );
   }
-  const strippedPath = stripLeadingSep(path);
-  if (strippedPath.length === 0) {
-    throw createConfigError(msgs.getMessage('ui_bundle_empty_value', [`${key}.path`]), [
-      'Provide a file path like "index.html".',
-    ]);
-  }
-  assertSafePath(strippedPath, `${key}.path`);
+  // Unlike routing paths, a leading "/" is not stripped; Core rejects it as absolute.
+  assertSafePath(path, `${key}.path`);
   const reason = mcpPathMismatch(path);
   if (reason) {
     throw createConfigError(msgs.getMessage('ui_bundle_path_unsafe', [`${key}.path`, path, reason]), [
@@ -618,13 +615,9 @@ function validateMcpResourceItem(item: unknown, i: number): UiBundleMcpResource 
 
 /**
  * Returns a reason if Core would resolve the trimmed MCP resource path differently than the local file check.
- * Core strips one leading "/", rejects any "..", "//", "#", and ":", and looks the path up verbatim, so it must not rely
- * on normalization.
+ * Core rejects "//", "#", ":", and ".." segments, and looks the path up verbatim, so it must not rely on normalization.
  */
 function mcpPathMismatch(value: string): string | undefined {
-  if (value.startsWith('//')) {
-    return 'multiple leading slashes';
-  }
   if (value.includes('//')) {
     return 'consecutive slashes (//)';
   }
@@ -742,18 +735,31 @@ function validateFileExistence(
   }
 
   if (mcpResources) {
-    for (let i = 0; i < mcpResources.length; i++) {
-      // validateMcpResources guarantees a trimmed, non-empty path.
-      const target = mcpResources[i].path;
-      const stripped = stripLeadingSep(target);
-      const resourcePath = join(basePath, stripped);
-      assertNoTraversal(resourcePath, basePath, `mcpResources[${i}].path`, target);
-      if (!tree.exists(resourcePath) || tree.isDirectory(resourcePath)) {
-        throw createFileError(
-          msgs.getMessage('ui_bundle_file_not_found', [`mcpResources[${i}].path`, target, resourcePath]),
-          [`Create the file "${stripped}" inside "${baseLabel}", or update the MCP resource path.`]
-        );
-      }
+    validateMcpResourceFiles(mcpResources, outputDir, basePath, contentPath, tree);
+  }
+}
+
+/** Verify that each MCP resource path is an existing file under outputDir. */
+function validateMcpResourceFiles(
+  mcpResources: UiBundleMcpResource[],
+  outputDir: string | undefined,
+  outputDirPath: SourcePath,
+  contentPath: SourcePath,
+  tree: TreeContainer
+): void {
+  // Core resolves MCP resource paths under its default outputDir when none is set, not the bundle root.
+  const basePath = outputDir ? outputDirPath : join(contentPath, MCP_DEFAULT_OUTPUT_DIR);
+  const baseLabel = outputDir ?? MCP_DEFAULT_OUTPUT_DIR;
+  for (let i = 0; i < mcpResources.length; i++) {
+    // validateMcpResources guarantees a trimmed, non-empty, relative path.
+    const target = mcpResources[i].path;
+    const resourcePath = join(basePath, target);
+    assertNoTraversal(resourcePath, basePath, `mcpResources[${i}].path`, target);
+    if (!tree.exists(resourcePath) || tree.isDirectory(resourcePath)) {
+      throw createFileError(
+        msgs.getMessage('ui_bundle_file_not_found', [`mcpResources[${i}].path`, target, resourcePath]),
+        [`Create the file "${target}" inside "${baseLabel}", or update the MCP resource path.`]
+      );
     }
   }
 }

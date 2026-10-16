@@ -1,3 +1,12 @@
+# [13.6.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.5.0...13.6.0) (2026-10-16)
+
+
+### Features
+
+* support mcpResources in ui-bundle.json @W-24473443@ ([#1850](https://github.com/forcedotcom/source-deploy-retrieve/issues/1850)) ([b0fbd42](https://github.com/forcedotcom/source-deploy-retrieve/commit/b0fbd4245119a9db6c65cfb98b0781917d0f1ccd))
+
+
+
 # [13.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.4.6...13.5.0) (2026-10-14)
 
 

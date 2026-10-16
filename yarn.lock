@@ -805,7 +805,7 @@
     ts-retry-promise "^0.8.1"
     zod "^4.1.12"
 
-"@salesforce/core@^9.3.6":
+"@salesforce/core@^9.3.7":
   version "9.3.7"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-9.3.7.tgz#39d530d0cadb977dde0332b781eb30ba7859fedb"
   integrity sha512-m73MC3wOlLTmA0F4j1KYbmKc0T6kAXAZXjdIwjnp1tGacg25O7ps+YZBxVFVhTk8rScx9e0ex1jWQ726jrCn4Q==

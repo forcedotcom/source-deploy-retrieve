@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792000703268,
+  "lastUpdate": 1792181684891,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -119322,6 +119322,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 12936,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lpomerleau@salesforce.com",
+            "name": "Laura Pomerleau",
+            "username": "lpomerleau"
+          },
+          "committer": {
+            "email": "lpomerleau@salesforce.com",
+            "name": "Laura Pomerleau",
+            "username": "lpomerleau"
+          },
+          "distinct": true,
+          "id": "a970abd44e022fb58f31c68fbee16aeea6d7df3e",
+          "message": "fix: align mcpResources path resolution with Core\n\nReject a leading '/' in mcpResources paths instead of stripping it; Core\ntreats it as absolute and fails the deploy. Resolve resource files under\n'dist' when outputDir is absent, matching Core's default, instead of the\nbundle root.\n\nCo-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>",
+          "timestamp": "2026-10-16T13:27:40-04:00",
+          "tree_id": "263e4b36d30356ce4e9ee90128e9c7c87159718e",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/a970abd44e022fb58f31c68fbee16aeea6d7df3e"
+        },
+        "date": 1792181672346,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 268,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2598,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2634,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 4216,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 479,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 6600,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7619,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 6943,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 844,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 11735,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 14239,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 13049,
             "unit": "ms"
           }
         ]

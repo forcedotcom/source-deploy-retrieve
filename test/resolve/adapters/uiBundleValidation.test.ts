@@ -910,6 +910,21 @@ describe('validateUiBundleJson (direct unit tests)', () => {
       expectConfigError(() => validate([{ name: 'a', path: 'c:index.html' }]), 'colon');
     });
 
+    it('reports every path problem in one error', () => {
+      expectConfigError(
+        () => validate([{ name: 'a', path: './foo//bar..html#section' }]),
+        'consecutive slashes (//), a fragment marker (#), consecutive dots (..), a current directory segment (.)'
+      );
+      expectConfigError(
+        () => validate([{ name: 'a', path: '/sub//index.html' }]),
+        'absolute path, consecutive slashes (//)'
+      );
+    });
+
+    it('reports a .. segment once, as traversal', () => {
+      expectConfigError(() => validate([{ name: 'a', path: '../index.html' }]), 'contains path traversal (..).');
+    });
+
     it('accepts multiple resources with distinct names', () => {
       expect(() =>
         validate([

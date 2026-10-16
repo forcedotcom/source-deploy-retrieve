@@ -598,10 +598,9 @@ function validateMcpResourceItem(item: unknown, i: number): UiBundleMcpResource 
     );
   }
   // Unlike routing paths, a leading "/" is not stripped; Core rejects it as absolute.
-  assertSafePath(path, `${key}.path`);
-  const reason = mcpPathMismatch(path);
-  if (reason) {
-    throw createConfigError(msgs.getMessage('ui_bundle_path_unsafe', [`${key}.path`, path, reason]), [
+  const reasons = mcpPathProblems(path);
+  if (reasons.length > 0) {
+    throw createConfigError(msgs.getMessage('ui_bundle_path_unsafe', [`${key}.path`, path, reasons.join(', ')]), [
       `Fix "${path}": use a plain relative file path like "index.html".`,
     ]);
   }
@@ -614,26 +613,30 @@ function validateMcpResourceItem(item: unknown, i: number): UiBundleMcpResource 
 }
 
 /**
- * Returns a reason if Core would resolve the trimmed MCP resource path differently than the local file check.
+ * Returns reasons if Core would resolve the trimmed MCP resource path differently than the local file check.
  * Core rejects "//", "#", ":", and ".." segments, and looks the path up verbatim, so it must not rely on normalization.
  */
-function mcpPathMismatch(value: string): string | undefined {
+function mcpPathProblems(value: string): string[] {
+  const traversal = containsPathTraversal(value);
+  const reasons = traversal ? [traversal] : [];
   if (value.includes('//')) {
-    return 'consecutive slashes (//)';
+    reasons.push('consecutive slashes (//)');
   }
   if (value.includes('#')) {
-    return 'a fragment marker (#)';
+    reasons.push('a fragment marker (#)');
   }
   if (value.includes(':')) {
-    return 'a colon (:)';
+    reasons.push('a colon (:)');
   }
-  if (value.includes('..')) {
-    return 'consecutive dots (..)';
+  // A ".." segment is already reported as traversal.
+  if (value.includes('..') && !DOT_DOT_SEGMENT.test(value)) {
+    reasons.push('consecutive dots (..)');
   }
-  if (/(?:^|\/)\.(?:\/|$)/.test(value)) {
-    return 'a current directory segment (.)';
+  // "." and "./" are already reported as current directory references.
+  if (value !== '.' && value !== './' && /(?:^|\/)\.(?:\/|$)/.test(value)) {
+    reasons.push('a current directory segment (.)');
   }
-  return undefined;
+  return reasons;
 }
 
 /** Throws if the resolved path lands outside the parent directory. */

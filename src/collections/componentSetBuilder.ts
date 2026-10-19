@@ -372,14 +372,23 @@ const getOrgComponentFilter = (
               normalizedTypeName = registry.getTypeByName(component.type).name;
             } catch {
               // If type not found in registry, use original type name
-              normalizedTypeName = component.type;
             }
           }
           const mdMapEntry = mdMap.get(normalizedTypeName);
           // using minimatch versus RegExp provides better (more expected) matching results
           return (
             !!mdMapEntry &&
-            mdMapEntry.some((mdName) => typeof component.fullName === 'string' && minimatch(component.fullName, mdName))
+            mdMapEntry.some((mdName) => {
+              if (typeof component.fullName !== 'string') return false;
+
+              if (minimatch(component.fullName, mdName)) return true;
+
+              // Some namespaced metadata has a parent-qualified full name, such as
+              // Account.namespace__Field__c. Match a namespace-only selector against
+              // listMetadata's namespacePrefix without broadening the metadata type.
+              const namespace = mdName.match(/^([a-zA-Z][a-zA-Z0-9]{0,14})__\*$/)?.[1];
+              return namespace !== undefined && component.namespacePrefix === namespace;
+            })
           );
         }
         return false;

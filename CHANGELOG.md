@@ -1,3 +1,12 @@
+# [13.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.6.0...13.7.0) (2026-10-20)
+
+
+### Features
+
+* @W-24139919 Add missing type from source ([#1853](https://github.com/forcedotcom/source-deploy-retrieve/issues/1853)) ([1b2f603](https://github.com/forcedotcom/source-deploy-retrieve/commit/1b2f603d14215d94ae67b917fc0ab0a420bd8ff1))
+
+
+
 # [13.6.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.5.0...13.6.0) (2026-10-16)
 
 

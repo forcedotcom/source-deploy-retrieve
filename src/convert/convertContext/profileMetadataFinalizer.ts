@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 import { JsonMap } from '@salesforce/ts-types';
-import { XML_NS_KEY, XML_NS_URL } from '../../common/constants';
-import { SourceComponent } from '../../resolve/sourceComponent';
+import { XML_NS_KEY, XML_NS_URL } from '../../common';
+import { SourceComponent } from '../../resolve';
 import { getXmlDestination } from '../transformers/defaultMetadataTransformer';
 import { JsToXml } from '../streams';
 import { WriterFormat } from '../types';

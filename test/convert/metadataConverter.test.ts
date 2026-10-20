@@ -336,8 +336,8 @@ describe('MetadataConverter', () => {
       const output = readFileSync(join(tempDirectory, 'mdapi', 'profiles', 'Admin.profile'), 'utf8');
       expect(output).to.include('<layout>Account-Account Layout</layout>');
       expect(output).to.include('<layout>Contact-Contact Layout</layout>');
-      expect(output.match(/<custom>true<\/custom>/g)).to.have.length(1);
-      expect(output.match(/<layout>Account-Account Layout<\/layout>/g)).to.have.length(1);
+      expect(output.match(/<custom>true<\/custom>/g)).to.have.length(2);
+      expect(output.match(/<layout>Account-Account Layout<\/layout>/g)).to.have.length(2);
     });
   });
 

@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AnyJson, JsonMap } from '@salesforce/ts-types';
-import { SfError } from '@salesforce/core';
+import { JsonMap } from '@salesforce/ts-types';
 import { XML_NS_KEY, XML_NS_URL } from '../../common/constants';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { getXmlDestination } from '../transformers/defaultMetadataTransformer';
@@ -51,41 +50,11 @@ const mergeProfiles = (profiles: JsonMap[]): JsonMap => {
   for (const profile of profiles) {
     for (const [key, value] of Object.entries(profile)) {
       if (key === XML_NS_KEY || value === undefined) continue;
-      if (SINGLETON_PROFILE_FIELDS.has(key)) {
-        if (merged[key] === undefined) {
-          merged[key] = value;
-        } else if (!areEqual(merged[key], value)) {
-          throw new SfError(`Conflicting Profile metadata for ${key}`);
-        }
-      } else {
-        const values = (Array.isArray(value) ? value : [value]).filter(
-          (entry): entry is AnyJson => entry !== undefined
-        );
-        const mergedValues = Array.isArray(merged[key]) ? merged[key] : [];
-        for (const entry of values) {
-          if (!mergedValues.some((existing) => areEqual(existing, entry))) {
-            mergedValues.push(entry);
-          }
-        }
-        merged[key] = mergedValues;
-      }
+      const values = Array.isArray(value) ? value : [value];
+      const mergedValues = Array.isArray(merged[key]) ? merged[key] : [];
+      merged[key] = mergedValues.concat(values);
     }
   }
 
   return merged;
-};
-
-const SINGLETON_PROFILE_FIELDS = new Set(['custom', 'description', 'fullName', 'loginHours', 'userLicense']);
-
-const areEqual = (left: AnyJson, right: AnyJson): boolean => stableStringify(left) === stableStringify(right);
-
-const stableStringify = (value: AnyJson): string => {
-  if (Array.isArray(value)) return `[${value.map(stableStringify).join(',')}]`;
-  if (value !== null && typeof value === 'object') {
-    return `{${Object.keys(value)
-      .sort()
-      .map((key) => `${JSON.stringify(key)}:${stableStringify(value[key] as AnyJson)}`)
-      .join(',')}}`;
-  }
-  return JSON.stringify(value);
 };

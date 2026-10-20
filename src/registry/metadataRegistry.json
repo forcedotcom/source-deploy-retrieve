@@ -3914,6 +3914,10 @@
       "id": "profile",
       "inFolder": false,
       "name": "Profile",
+      "strategies": {
+        "adapter": "default",
+        "transformer": "profile"
+      },
       "strictDirectoryName": false,
       "suffix": "profile"
     },

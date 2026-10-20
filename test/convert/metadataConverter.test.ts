@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 import { dirname, join } from 'node:path';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { fail } from 'node:assert';
 import { Messages, SfError } from '@salesforce/core';
 import { SinonStub } from 'sinon';
@@ -267,17 +269,17 @@ describe('MetadataConverter', () => {
 
     it('should write the fullName entry when packageName is provided', async () => {
       const timestamp = 123_456;
-      const packageName = 'examplePackage';
-      const packagePath = join(outputDirectory, packageName);
+      const examplePackageName = 'examplePackage';
+      const packagePath = join(outputDirectory, examplePackageName);
       $$.SANDBOX.stub(Date, 'now').returns(timestamp);
       const cs = new ComponentSet(components);
-      cs.fullName = packageName;
+      cs.fullName = examplePackageName;
       const expectedContents = await cs.getPackageXml();
 
       await converter.convert(components, 'metadata', {
         type: 'directory',
         outputDirectory,
-        packageName,
+        packageName: examplePackageName,
       });
 
       expect(writeFileStub.calledBefore(pipelineStub)).to.be.true;
@@ -291,6 +293,51 @@ describe('MetadataConverter', () => {
       await converter.convert(components, 'source', { type: 'directory', outputDirectory });
 
       expect(writeFileStub.notCalled).to.be.true;
+    });
+  });
+
+  describe('Profile metadata', () => {
+    let tempDirectory: string;
+
+    beforeEach(() => {
+      tempDirectory = mkdtempSync(join(tmpdir(), 'sdr-profile-'));
+      $$.SANDBOX.restore();
+    });
+
+    afterEach(() => rmSync(tempDirectory, { recursive: true, force: true }));
+
+    it('merges profile fragments from multiple source locations', async () => {
+      const firstProfile = join(tempDirectory, 'first', 'profiles', 'Admin.profile-meta.xml');
+      const secondProfile = join(tempDirectory, 'second', 'profiles', 'Admin.profile-meta.xml');
+      for (const profile of [firstProfile, secondProfile]) {
+        fs.mkdirSync(dirname(profile), { recursive: true });
+      }
+      writeFileSync(
+        firstProfile,
+        '<?xml version="1.0" encoding="UTF-8"?><Profile xmlns="http://soap.sforce.com/2006/04/metadata"><custom>true</custom><layoutAssignments><layout>Account-Account Layout</layout><recordType>Account.Business</recordType></layoutAssignments></Profile>'
+      );
+      writeFileSync(
+        secondProfile,
+        '<?xml version="1.0" encoding="UTF-8"?><Profile xmlns="http://soap.sforce.com/2006/04/metadata"><custom>true</custom><layoutAssignments><layout>Account-Account Layout</layout><recordType>Account.Business</recordType></layoutAssignments><layoutAssignments><layout>Contact-Contact Layout</layout><recordType>Contact.Business</recordType></layoutAssignments></Profile>'
+      );
+
+      const profileType = registry.types.profile;
+      const profileComponents = [
+        new SourceComponent({ name: 'Admin', type: profileType, xml: firstProfile }),
+        new SourceComponent({ name: 'Admin', type: profileType, xml: secondProfile }),
+      ];
+
+      await new MetadataConverter().convert(profileComponents, 'metadata', {
+        type: 'directory',
+        outputDirectory: tempDirectory,
+        packageName: 'mdapi',
+      });
+
+      const output = readFileSync(join(tempDirectory, 'mdapi', 'profiles', 'Admin.profile'), 'utf8');
+      expect(output).to.include('<layout>Account-Account Layout</layout>');
+      expect(output).to.include('<layout>Contact-Contact Layout</layout>');
+      expect(output.match(/<custom>true<\/custom>/g)).to.have.length(1);
+      expect(output.match(/<layout>Account-Account Layout<\/layout>/g)).to.have.length(1);
     });
   });
 

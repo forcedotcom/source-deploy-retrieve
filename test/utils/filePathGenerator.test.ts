@@ -46,6 +46,11 @@ const testData = {
     typeName: 'Flow',
     expectedFilePaths: [getFilePath('flows/MyFlow.flow-meta.xml')],
   },
+  defaultWithTransformer: {
+    fullName: 'Admin',
+    typeName: 'Profile',
+    expectedFilePaths: [getFilePath('profiles/Admin.profile-meta.xml')],
+  },
   matchingContent: {
     fullName: 'MyClass',
     typeName: 'ApexClass',
@@ -325,6 +330,10 @@ describe('generating virtual tree from component name/type', () => {
 
   it('works for default type (flow)', () => {
     runTest(testData.default);
+  });
+
+  it('works for default type with a transformer (profile)', () => {
+    runTest(testData.defaultWithTransformer);
   });
 
   describe('no strategy, with folders (report)', () => {

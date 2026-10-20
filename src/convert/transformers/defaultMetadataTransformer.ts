@@ -112,7 +112,7 @@ const getContentSourceDestination = (
 };
 
 // assumes component has xml
-const getXmlDestination = (
+export const getXmlDestination = (
   targetFormat: SfdxFileFormat,
   component: SourceComponent,
   mergeWith?: SourceComponent

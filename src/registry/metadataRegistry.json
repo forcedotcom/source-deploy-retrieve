@@ -609,7 +609,8 @@
     "meetingPlaybookDefinition": "meetingplaybookdefinition",
     "idpConfiguration": "idpconfiguration",
     "ecaAttest": "extlclntappattestsettings",
-    "ecaAttestPlcy": "extlclntappattestconfigurablepolicies"
+    "ecaAttestPlcy": "extlclntappattestconfigurablepolicies",
+    "genOpPlanEligibilityConfig": "genopplaneligibilityconfig"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -792,7 +793,9 @@
       "inFolder": false,
       "strictDirectoryName": true,
       "versionSeparator": "#",
-      "strategies": { "adapter": "bundle" }
+      "strategies": {
+        "adapter": "bundle"
+      }
     },
     "aiagentscorerdefinition": {
       "directoryName": "aiAgentScorerDefinitions",
@@ -5438,6 +5441,14 @@
       "name": "ExtlClntAppAttestConfigurablePolicies",
       "suffix": "ecaAttestPlcy",
       "directoryName": "extlClntAppAttestPolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "genopplaneligibilityconfig": {
+      "id": "genopplaneligibilityconfig",
+      "name": "GenOpPlanEligibilityConfig",
+      "suffix": "genOpPlanEligibilityConfig",
+      "directoryName": "GenOpPlanEligibilityConfig",
       "inFolder": false,
       "strictDirectoryName": false
     }

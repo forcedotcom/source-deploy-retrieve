@@ -32,6 +32,7 @@ import {
   parseBotVersionFullName,
 } from '../resolve/pseudoTypes/agentResolver';
 import { DestructiveChangesType, FromConnectionOptions } from './types';
+import { resolveDataspaceQualifiedComponents } from './d360Dependencies';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -230,6 +231,7 @@ export class ComponentSetBuilder {
       }
 
       resolvedComponents.toArray().map(addToComponentSet(componentSet));
+      resolveDataspaceQualifiedComponents(componentSet, directoryPaths, registry);
     }
 
     // Resolve metadata entries with an org connection

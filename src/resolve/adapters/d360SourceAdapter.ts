@@ -28,6 +28,24 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 /** Filename suffix of the per-component metadata sidecar (`<name>.meta.json`). */
 export const METADATA_SIDECAR_SUFFIX = '.meta.json';
 
+/** Folder that wraps dataspace-scoped components: `d360/dataspace/<dataspace>/<typeDir>/`. */
+const DATASPACE_FOLDER = 'dataspace';
+
+/** Joins the dataspace and the component name in a dataspace-scoped fullName: `<dataspace>.<name>`. */
+const DATASPACE_NAME_SEPARATOR = '.';
+
+/** The fullName of a component in a dataspace: `<dataspace>.<name>`. */
+export const toDataspaceQualifiedName = (dataspace: string, name: string): string =>
+  `${dataspace}${DATASPACE_NAME_SEPARATOR}${name}`;
+
+/** Split `<dataspace>.<name>` into its parts, or return undefined when the name has no dataspace. */
+export const parseDataspaceQualifiedName = (fullName: string): { dataspace: string; name: string } | undefined => {
+  const index = fullName.indexOf(DATASPACE_NAME_SEPARATOR);
+  return index > 0 && index < fullName.length - 1
+    ? { dataspace: fullName.slice(0, index), name: fullName.slice(index + 1) }
+    : undefined;
+};
+
 /**
  * Handles any Data Cloud dataspace-scoped type whose layout nests a pair of JSON files per
  * component under a `d360/dataspace/<dataspace>/<typeDir>/` wrapper. This adapter is type-agnostic:
@@ -109,14 +127,14 @@ export class D360SourceAdapter extends MixedContentSourceAdapter {
 
   /**
    * Build `<dataspace>.<name>` from a path shaped like
-   * `.../dataSpaces/<dataspace>/<typeDir>/<name>.json`. The dataspace is the path segment
-   * immediately preceding the type's directory.
+   * `.../d360/dataspace/<dataspace>/<typeDir>/<name>.json`. Types that aren't dataspace-scoped
+   * sit directly under `d360/<typeDir>/` and keep their bare `<name>`.
    */
   private calculateD360Name(contentPath: SourcePath): string {
     const pathParts = contentPath.split(sep);
     const typeFolderIndex = pathParts.lastIndexOf(this.type.directoryName);
-    const dataspace = typeFolderIndex > 0 ? pathParts[typeFolderIndex - 1] : undefined;
+    const isDataspaceScoped = typeFolderIndex > 1 && pathParts[typeFolderIndex - 2] === DATASPACE_FOLDER;
     const shortName = baseName(contentPath);
-    return dataspace ? `${dataspace}.${shortName}` : shortName;
+    return isDataspaceScoped ? toDataspaceQualifiedName(pathParts[typeFolderIndex - 1], shortName) : shortName;
   }
 }

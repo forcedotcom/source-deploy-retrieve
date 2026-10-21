@@ -51,9 +51,15 @@
     "botBlocks": "botblock",
     "botTemplates": "bottemplate",
     "bots": "bot",
-    "calculatedInsight": "calculatedinsight",
+    "calculatedInsights": "calculatedinsight",
     "contentTypes": "contenttypebundle",
-    "mktDataModelObject": "datamodelobject",
+    "dataModelObjects": "datamodelobject",
+    "dataModelObjectMappings": "datamodelobjectmapping",
+    "dataLakeObjects": "datalakeobject",
+    "dataspaceMembers": "dataspacemember",
+    "secondaryIndexes": "secondaryindex",
+    "dataStreamBundles": "datastreambundle",
+    "dataConnections": "dataconnection",
     "documents": "document",
     "emailservices": "emailservicesfunction",
     "experiencePropertyTypeBundles": "experiencepropertytypebundle",
@@ -5430,7 +5436,7 @@
       "id": "calculatedinsight",
       "name": "CalculatedInsight",
       "suffix": "json",
-      "directoryName": "calculatedInsight",
+      "directoryName": "calculatedInsights",
       "inFolder": false,
       "strictDirectoryName": true,
       "strategies": {
@@ -5442,7 +5448,82 @@
       "id": "datamodelobject",
       "name": "DataModelObject",
       "suffix": "json",
-      "directoryName": "mktDataModelObject",
+      "directoryName": "dataModelObjects",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "datalakeobject": {
+      "id": "datalakeobject",
+      "name": "DataLakeObject",
+      "suffix": "json",
+      "directoryName": "dataLakeObjects",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "dataspacemember": {
+      "id": "dataspacemember",
+      "name": "DataspaceMember",
+      "suffix": "json",
+      "directoryName": "dataspaceMembers",
+      "inFolder": false,
+      "excludeFromManifest": true,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "datamodelobjectmapping": {
+      "id": "datamodelobjectmapping",
+      "name": "DataModelObjectMapping",
+      "suffix": "json",
+      "directoryName": "dataModelObjectMappings",
+      "inFolder": false,
+      "excludeFromManifest": true,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "secondaryindex": {
+      "id": "secondaryindex",
+      "name": "SecondaryIndex",
+      "suffix": "json",
+      "directoryName": "secondaryIndexes",
+      "inFolder": false,
+      "excludeFromManifest": true,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "datastreambundle": {
+      "id": "datastreambundle",
+      "name": "DataStreamBundle",
+      "suffix": "json",
+      "directoryName": "dataStreamBundles",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "dataconnection": {
+      "id": "dataconnection",
+      "name": "DataConnection",
+      "suffix": "json",
+      "directoryName": "dataConnections",
       "inFolder": false,
       "strictDirectoryName": true,
       "strategies": {

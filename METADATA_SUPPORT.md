@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v68 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 817/960 supported metadata types.
+Currently, there are 817/961 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -196,6 +196,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CnfgMgmtSvcMapLyot|❌|Not supported, but support could be added|
 |CodeBuilderSettings|✅||
 |CollectionsDashboardSettings|✅||
+|CommBlockOutTime|❌|Not supported, but support could be added (but not for tracking)|
 |CommandAction|✅||
 |CommerceSettings|✅||
 |CommissionStatementConfig|❌|Not supported, but support could be added|

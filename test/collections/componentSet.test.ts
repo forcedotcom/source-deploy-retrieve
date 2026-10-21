@@ -751,6 +751,34 @@ describe('ComponentSet', () => {
       expect(getCurrentApiVersionStub.calledOnce).to.be.true;
     });
 
+    it('should leave types marked excludeFromManifest out of the manifest', async () => {
+      const set = new ComponentSet(
+        [
+          { fullName: 'default.myDlo', type: registry.types.datalakeobject },
+          { fullName: 'default.myDlo', type: registry.types.dataspacemember },
+          { fullName: 'default.myDlo_map', type: registry.types.datamodelobjectmapping },
+          { fullName: 'default.myIndex', type: registry.types.secondaryindex },
+        ],
+        registryAccess
+      );
+      expect((await set.getObject()).Package.types).to.deep.equal([
+        { name: registry.types.datalakeobject.name, members: ['default.myDlo'] },
+      ]);
+    });
+
+    it('should leave components added without a manifest entry out of the manifest', async () => {
+      const set = new ComponentSet([], registryAccess);
+      const dlo = new SourceComponent({ name: 'default.myDlo', type: registry.types.datalakeobject });
+      const dmo = new SourceComponent({ name: 'default.myDmo', type: registry.types.datamodelobject });
+      set.add(dlo);
+      set.addWithoutManifestEntry(dmo);
+
+      expect(set.has(dmo)).to.be.true;
+      expect((await set.getObject()).Package.types).to.deep.equal([
+        { name: registry.types.datalakeobject.name, members: ['default.myDlo'] },
+      ]);
+    });
+
     it('should allow the componentSet to set the apiVersion', async () => {
       const resolveSpy = $$.SANDBOX.spy(SfProject.prototype, 'resolveProjectConfig');
       const set = ComponentSet.fromSource({

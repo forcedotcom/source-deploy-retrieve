@@ -48,22 +48,19 @@ describe('MetadataTransfer', () => {
       post: $$.SANDBOX.stub().returns({ id: '1' }),
       cancel: $$.SANDBOX.stub().returns(true),
     };
-     
+
     public async checkStatus(): Promise<MetadataRequestStatus> {
       return this.lifecycle.checkStatus();
     }
 
-     
     public async cancel(): Promise<void> {
       this.canceled = this.lifecycle.cancel();
     }
 
-     
     protected async pre(): Promise<{ id: string }> {
       return this.lifecycle.pre();
     }
 
-     
     protected async post(): Promise<MetadataTransferResult> {
       return this.lifecycle.post();
     }
@@ -225,7 +222,7 @@ describe('MetadataTransfer', () => {
         callOrder.push('firstCall2');
         return { done: false };
       });
-       
+
       checkStatus.onSecondCall().callsFake(async () => {
         callOrder.push('secondCall1');
         return { done: true };
@@ -243,7 +240,7 @@ describe('MetadataTransfer', () => {
       // until the timeout is exceeded.
       const { checkStatus } = operation.lifecycle;
       let callCount = 0;
-       
+
       checkStatus.callsFake(async () => {
         callCount += 1;
         if (callCount > 22) {
@@ -313,6 +310,15 @@ describe('MetadataTransfer', () => {
 
       await operation.pollStatus();
       expect(checkStatus.callCount).to.equal(3);
+    });
+
+    it('should tolerate aborted metadata API requests', async () => {
+      const { checkStatus } = operation.lifecycle;
+      checkStatus.onFirstCall().throws(new Error('The user aborted a request'));
+      checkStatus.onSecondCall().resolves({ done: true });
+
+      await operation.pollStatus();
+      expect(checkStatus.callCount).to.equal(2);
     });
 
     it('should stop after reaching consecutive error retry limit', async () => {

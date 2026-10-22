@@ -264,6 +264,7 @@ export abstract class MetadataTransfer<
       'ECONNRESET',
       'socket hang up',
       'connection timeout',
+      'The user aborted a request',
       'INVALID_QUERY_LOCATOR',
       'ERROR_HTTP_502',
       'ERROR_HTTP_503',

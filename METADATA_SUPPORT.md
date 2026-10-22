@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v68 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 814/951 supported metadata types.
+Currently, there are 817/961 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -196,6 +196,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | CnfgMgmtSvcMapLyot                           | ❌      | Not supported, but support could be added                        |
 | CodeBuilderSettings                          | ✅      |                                                                  |
 | CollectionsDashboardSettings                 | ✅      |                                                                  |
+| CommBlockOutTime                             | ❌      | Not supported, but support could be added (but not for tracking) |
 | CommandAction                                | ✅      |                                                                  |
 | CommerceSettings                             | ✅      |                                                                  |
 | CommissionStatementConfig                    | ❌      | Not supported, but support could be added                        |
@@ -211,6 +212,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | ComputeExtension                             | ✅      |                                                                  |
 | ConnectedApp                                 | ✅      |                                                                  |
 | ConnectedAppSettings                         | ✅      |                                                                  |
+| ConsentPreferenceFormDef                     | ❌      | Not supported, but support could be added (but not for tracking) |
 | ConsentTemplate                              | ❌      | Not supported, but support could be added                        |
 | ConstraintOptDef                             | ❌      | Not supported, but support could be added                        |
 | ContentAsset                                 | ✅      |                                                                  |
@@ -404,7 +406,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | ExternalDocStorageConfig                     | ✅      |                                                                  |
 | ExternalServiceRegistration                  | ✅      |                                                                  |
 | ExternalStoragePrvdConfig                    | ✅      |                                                                  |
-| ExtlClntAppAttestConfigurablePolicies        | ❌      | Not supported, but support could be added (but not for tracking) |
+| ExtlClntAppAttestConfigurablePolicies        | ⚠️      | Supports deploy/retrieve but not source tracking                 |
 | ExtlClntAppAttestSettings                    | ✅      |                                                                  |
 | ExtlClntAppCanvasSettings                    | ✅      |                                                                  |
 | ExtlClntAppConfigurablePolicies              | ✅      |                                                                  |
@@ -462,11 +464,13 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | GenAiPromptTemplateActv                      | ✅      |                                                                  |
 | GenComputingSummaryDef                       | ❌      | Not supported, but support could be added                        |
 | GenOpAgentConfig                             | ❌      | Not supported, but support could be added                        |
-| GenOpPlanEligibilityConfig                   | ❌      | Not supported, but support could be added                        |
+| GenOpPlanEligibilityConfig                   | ✅      |                                                                  |
 | GeneralConfigSettings                        | ✅      |                                                                  |
 | GenerativeCampaignsSettings                  | ✅      |                                                                  |
 | GeocodeSettings                              | ✅      |                                                                  |
 | GiftEntryGridTemplate                        | ✅      |                                                                  |
+| GlobalConsentPurpose                         | ❌      | Not supported, but support could be added                        |
+| GlobalConsentStatus                          | ❌      | Not supported, but support could be added                        |
 | GlobalValueSet                               | ✅      |                                                                  |
 | GlobalValueSetTranslation                    | ✅      |                                                                  |
 | GoogleAppsSettings                           | ✅      |                                                                  |
@@ -642,6 +646,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | OauthOidcSettings                            | ✅      |                                                                  |
 | OauthTokenExchangeHandler                    | ✅      |                                                                  |
 | ObjIntegProviderDefMapping                   | ✅      |                                                                  |
+| ObjectFieldValueMapping                      | ❌      | Not supported, but support could be added                        |
 | ObjectHierarchyRelationship                  | ✅      |                                                                  |
 | ObjectLinkingSettings                        | ✅      |                                                                  |
 | ObjectMappingSettings                        | ✅      |                                                                  |
@@ -762,6 +767,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | ReferralManagementSettings                   | ✅      |                                                                  |
 | ReferralMarketingConfig                      | ❌      | Not supported, but support could be added                        |
 | ReferralMarketingSettings                    | ✅      |                                                                  |
+| ReferralReceiverConfiguration                | ❌      | Not supported, but support could be added                        |
 | RegisteredExternalService                    | ✅      |                                                                  |
 | RelatedRecordAccessDef                       | ❌      | Not supported, but support could be added                        |
 | RelatedRecordAssocCriteria                   | ✅      |                                                                  |
@@ -804,6 +810,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | SecurityHubSettings                          | ✅      |                                                                  |
 | SecuritySettings                             | ✅      |                                                                  |
 | SecuritySignalWorkspace                      | ❌      | Not supported, but support could be added (but not for tracking) |
+| SelfServiceSettings                          | ✅      |                                                                  |
 | SelfSvcPortalTopic                           | ❌      | Not supported, but support could be added                        |
 | SensitiveDataRuleElmntGrp                    | ❌      | Not supported, but support could be added                        |
 | SequenceServiceSettings                      | ✅      |                                                                  |
@@ -849,6 +856,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | SocialCustomerServiceSettings                | ✅      |                                                                  |
 | SourceTrackingSettings                       | ✅      |                                                                  |
 | SpiffSettings                                | ✅      |                                                                  |
+| SrvcMgmtCollabAppFldDef                      | ❌      | Not supported, but support could be added                        |
+| SrvcMgmtCollabAppObjDef                      | ❌      | Not supported, but support could be added                        |
 | SrvcMgmtObjCollabAppCnfg                     | ❌      | Not supported, but support could be added                        |
 | StageAssignment                              | ✅      |                                                                  |
 | StageDefinition                              | ✅      |                                                                  |
@@ -925,6 +934,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | VehicleAssetEmssnSrcCnfg                     | ✅      |                                                                  |
 | ViewDefinition                               | ✅      |                                                                  |
 | VirtualVisitConfig                           | ✅      |                                                                  |
+| VoceEngmtMediaLblObjAsgnt                    | ❌      | Not supported, but support could be added                        |
 | VoiceEngagementMediaFile                     | ❌      | Not supported, but support could be added                        |
 | VoiceEngagementMediaUsage                    | ❌      | Not supported, but support could be added                        |
 | VoiceEngmtMediaFileAsgnt                     | ❌      | Not supported, but support could be added                        |

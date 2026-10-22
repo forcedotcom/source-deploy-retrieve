@@ -57,10 +57,16 @@ export type UiBundleRouting = {
   fileBasedRouting?: boolean;
 };
 
+export type UiBundleMcpResource = {
+  name: string;
+  path: string;
+};
+
 export type UiBundleConfig = {
   outputDir?: string;
   routing?: UiBundleRouting;
   headers?: UiBundleHeaderRule[];
+  mcpResources?: UiBundleMcpResource[];
 };
 
 /** Basic shape check — use after field-level validation to narrow the type. */
@@ -69,12 +75,17 @@ export function isUiBundleConfig(value: unknown): value is UiBundleConfig {
 }
 
 // Keep in sync with server-side validation (WebApplicationFileProcessor.java).
-const ALLOWED_TOP_LEVEL = new Set(['outputDir', 'routing', 'headers']);
+const ALLOWED_TOP_LEVEL = new Set(['outputDir', 'routing', 'headers', 'mcpResources']);
 const ROUTING_ALLOWED = new Set(['rewrites', 'redirects', 'fallback', 'trailingSlash', 'fileBasedRouting']);
 const TRAILING_SLASH_VALUES = new Set(['always', 'never', 'auto']);
 const REDIRECT_STATUS_CODES = new Set([301, 302, 307, 308]);
 const MAX_RECURSION_DEPTH = 20;
 const MAX_UI_BUNDLE_JSON_BYTES = 102_400; // 100 KB
+// MCP resource names form the URI segment in ui://ui-bundle/<namespace>/<bundle>/<name>.
+const MCP_RESOURCE_NAME = /^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/;
+const MAX_MCP_RESOURCE_PATH_LENGTH = 512;
+// Core's outputDir when ui-bundle.json omits it.
+const MCP_DEFAULT_OUTPUT_DIR = 'dist';
 
 // Matches ".." as a standalone path segment.
 const DOT_DOT_SEGMENT = /(?:^|[/\\])\.\.[/\\]|(?:^|[/\\])\.\.$/;
@@ -226,9 +237,10 @@ export function validateUiBundleJson(
   if (disallowed.length > 0) {
     const list = disallowed.map((k) => `'${k}'`).join(', ');
     const word = disallowed.length === 1 ? 'property' : 'properties';
-    throw createConfigError(msgs.getMessage('ui_bundle_unknown_props', [word, list, 'outputDir, routing, headers']), [
-      `Remove ${list} from ui-bundle.json.`,
-    ]);
+    throw createConfigError(
+      msgs.getMessage('ui_bundle_unknown_props', [word, list, [...ALLOWED_TOP_LEVEL].join(', ')]),
+      [`Remove ${list} from ui-bundle.json.`]
+    );
   }
 
   const outputDir = rawObj.outputDir !== undefined ? validateOutputDir(rawObj.outputDir) : undefined;
@@ -241,11 +253,13 @@ export function validateUiBundleJson(
     validateHeaders(rawObj.headers);
   }
 
+  const mcpResources = rawObj.mcpResources !== undefined ? validateMcpResources(rawObj.mcpResources) : undefined;
+
   // Safe to cast after field-level checks pass.
   const obj = rawObj as UiBundleConfig;
 
-  if (outputDir ?? obj.routing) {
-    validateFileExistence(obj, outputDir, contentPath, tree);
+  if (outputDir ?? obj.routing ?? mcpResources) {
+    validateFileExistence(obj, outputDir, mcpResources, contentPath, tree);
   }
 }
 
@@ -522,6 +536,109 @@ function validateHeaderKeyValue(item: unknown, i: number, j: number): void {
   }
 }
 
+/** Validates mcpResources and returns the entries with name and path trimmed. */
+function validateMcpResources(value: unknown): UiBundleMcpResource[] {
+  if (!Array.isArray(value)) {
+    throw createConfigError(
+      msgs.getMessage('ui_bundle_type_mismatch', ['mcpResources', 'an array', describeType(value)])
+    );
+  }
+  if (value.length === 0) {
+    throw createConfigError(msgs.getMessage('ui_bundle_min_items', ['mcpResources', 'item']), [
+      'Add a { "name": "...", "path": "..." } entry or remove the empty mcpResources array.',
+    ]);
+  }
+  // Names must be unique within a bundle; the server rejects duplicates.
+  const seenNames = new Map<string, number>();
+  const resources: UiBundleMcpResource[] = [];
+  for (let i = 0; i < value.length; i++) {
+    const resource = validateMcpResourceItem(value[i], i);
+    const name = resource.name;
+    const firstIndex = seenNames.get(name);
+    if (firstIndex !== undefined) {
+      throw createConfigError(
+        msgs.getMessage('ui_bundle_duplicate_value', [`mcpResources[${i}].name`, name, `mcpResources[${firstIndex}]`]),
+        ['Give each MCP resource a unique name.']
+      );
+    }
+    seenNames.set(name, i);
+    resources.push(resource);
+  }
+  return resources;
+}
+
+/** Validates one mcpResources entry and returns it with name and path trimmed. */
+function validateMcpResourceItem(item: unknown, i: number): UiBundleMcpResource {
+  const key = `mcpResources[${i}]`;
+  if (typeof item !== 'object' || item === null || Array.isArray(item)) {
+    throw createConfigError(msgs.getMessage('ui_bundle_type_mismatch', [key, 'an object', describeType(item)]));
+  }
+  const obj = item as Record<string, unknown>;
+  const unknown = Object.keys(obj).find((k) => k !== 'name' && k !== 'path');
+  if (unknown !== undefined) {
+    throw createConfigError(msgs.getMessage('ui_bundle_unknown_prop', [key, unknown, 'name, path']));
+  }
+  // Unlike routing entries, both fields are required. Core trims both before validating.
+  const name = typeof obj.name === 'string' ? obj.name.trim() : '';
+  if (name.length === 0) {
+    throw createConfigError(msgs.getMessage('ui_bundle_non_empty_string', [`${key}.name`]));
+  }
+  if (!MCP_RESOURCE_NAME.test(name)) {
+    throw createConfigError(msgs.getMessage('ui_bundle_mcp_resource_name_invalid', [`${key}.name`, name]), [
+      'Use a name like "hello" or "order-summary.v2".',
+    ]);
+  }
+  const path = typeof obj.path === 'string' ? obj.path.trim() : '';
+  if (path.length === 0) {
+    throw createConfigError(msgs.getMessage('ui_bundle_non_empty_string', [`${key}.path`]));
+  }
+  if (path.length > MAX_MCP_RESOURCE_PATH_LENGTH) {
+    throw createConfigError(
+      msgs.getMessage('ui_bundle_value_too_long', [`${key}.path`, MAX_MCP_RESOURCE_PATH_LENGTH, path.length])
+    );
+  }
+  // Unlike routing paths, a leading "/" is not stripped; Core rejects it as absolute.
+  const reasons = mcpPathProblems(path);
+  if (reasons.length > 0) {
+    throw createConfigError(msgs.getMessage('ui_bundle_path_unsafe', [`${key}.path`, path, reasons.join(', ')]), [
+      `Fix "${path}": use a plain relative file path like "index.html".`,
+    ]);
+  }
+  if (!path.toLowerCase().endsWith('.html')) {
+    throw createConfigError(msgs.getMessage('ui_bundle_mcp_resource_not_html', [`${key}.path`, path]), [
+      'Point the MCP resource at a single .html file.',
+    ]);
+  }
+  return { name, path };
+}
+
+/**
+ * Returns reasons if Core would resolve the trimmed MCP resource path differently than the local file check.
+ * Core rejects "//", "#", ":", and ".." segments, and looks the path up verbatim, so it must not rely on normalization.
+ */
+function mcpPathProblems(value: string): string[] {
+  const traversal = containsPathTraversal(value);
+  const reasons = traversal ? [traversal] : [];
+  if (value.includes('//')) {
+    reasons.push('consecutive slashes (//)');
+  }
+  if (value.includes('#')) {
+    reasons.push('a fragment marker (#)');
+  }
+  if (value.includes(':')) {
+    reasons.push('a colon (:)');
+  }
+  // A ".." segment is already reported as traversal.
+  if (value.includes('..') && !DOT_DOT_SEGMENT.test(value)) {
+    reasons.push('consecutive dots (..)');
+  }
+  // "." and "./" are already reported as current directory references.
+  if (value !== '.' && value !== './' && /(?:^|\/)\.(?:\/|$)/.test(value)) {
+    reasons.push('a current directory segment (.)');
+  }
+  return reasons;
+}
+
 /** Throws if the resolved path lands outside the parent directory. */
 function assertNoTraversal(resolvedPath: string, parentDir: string, configKey: string, rawValue: string): void {
   const normalizedResolved = resolve(resolvedPath);
@@ -533,10 +650,11 @@ function assertNoTraversal(resolvedPath: string, parentDir: string, configKey: s
   }
 }
 
-/** Verify that referenced paths (outputDir, fallback, rewrite targets) actually exist. */
+/** Verify that referenced paths (outputDir, fallback, rewrite targets, MCP resource files) actually exist. */
 function validateFileExistence(
   obj: UiBundleConfig,
   outputDir: string | undefined,
+  mcpResources: UiBundleMcpResource[] | undefined,
   contentPath: SourcePath,
   tree: TreeContainer
 ): void {
@@ -616,6 +734,35 @@ function validateFileExistence(
           );
         }
       }
+    }
+  }
+
+  if (mcpResources) {
+    validateMcpResourceFiles(mcpResources, outputDir, basePath, contentPath, tree);
+  }
+}
+
+/** Verify that each MCP resource path is an existing file under outputDir. */
+function validateMcpResourceFiles(
+  mcpResources: UiBundleMcpResource[],
+  outputDir: string | undefined,
+  outputDirPath: SourcePath,
+  contentPath: SourcePath,
+  tree: TreeContainer
+): void {
+  // Core resolves MCP resource paths under its default outputDir when none is set, not the bundle root.
+  const basePath = outputDir ? outputDirPath : join(contentPath, MCP_DEFAULT_OUTPUT_DIR);
+  const baseLabel = outputDir ?? MCP_DEFAULT_OUTPUT_DIR;
+  for (let i = 0; i < mcpResources.length; i++) {
+    // validateMcpResources guarantees a trimmed, non-empty, relative path.
+    const target = mcpResources[i].path;
+    const resourcePath = join(basePath, target);
+    assertNoTraversal(resourcePath, basePath, `mcpResources[${i}].path`, target);
+    if (!tree.exists(resourcePath) || tree.isDirectory(resourcePath)) {
+      throw createFileError(
+        msgs.getMessage('ui_bundle_file_not_found', [`mcpResources[${i}].path`, target, resourcePath]),
+        [`Create the file "${target}" inside "${baseLabel}", or update the MCP resource path.`]
+      );
     }
   }
 }

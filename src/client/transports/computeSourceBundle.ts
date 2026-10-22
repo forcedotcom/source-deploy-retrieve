@@ -18,7 +18,7 @@ import { access, lstat, mkdir, readdir, readFile, realpath, writeFile } from 'no
 import { dirname, join, parse, relative, resolve, sep } from 'node:path';
 import { createGzip, gunzipSync } from 'node:zlib';
 import { buffer as streamToBuffer } from 'node:stream/consumers';
-import tarStream from 'tar-stream';
+import * as tarStream from 'tar-stream';
 import { Logger, SfError } from '@salesforce/core';
 import { ForceIgnore } from '../../resolve/forceIgnore';
 

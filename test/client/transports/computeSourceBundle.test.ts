@@ -22,7 +22,7 @@ import { buffer as streamToBuffer } from 'node:stream/consumers';
 import { promises as fsPromises } from 'node:fs';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import tarStream from 'tar-stream';
+import * as tarStream from 'tar-stream';
 import { packageComputeBundle, unpackComputeBundle } from '../../../src/client/transports/computeSourceBundle';
 
 async function archive(entries: Array<{ name: string; data: Buffer }>): Promise<Buffer> {

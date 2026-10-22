@@ -609,7 +609,10 @@
     "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
     "meetingPlaybookDefinition": "meetingplaybookdefinition",
     "idpConfiguration": "idpconfiguration",
-    "compute": "platformcomputeapp"
+    "compute": "platformcomputeapp",
+    "ecaAttest": "extlclntappattestsettings",
+    "ecaAttestPlcy": "extlclntappattestconfigurablepolicies",
+    "genOpPlanEligibilityConfig": "genopplaneligibilityconfig"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5438,6 +5441,30 @@
       },
       "strictDirectoryName": true,
       "suffix": "compute"
+    },
+    "extlclntappattestsettings": {
+      "id": "extlclntappattestsettings",
+      "name": "ExtlClntAppAttestSettings",
+      "suffix": "ecaAttest",
+      "directoryName": "extlClntAppAttestSettings",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntappattestconfigurablepolicies": {
+      "id": "extlclntappattestconfigurablepolicies",
+      "name": "ExtlClntAppAttestConfigurablePolicies",
+      "suffix": "ecaAttestPlcy",
+      "directoryName": "extlClntAppAttestPolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "genopplaneligibilityconfig": {
+      "id": "genopplaneligibilityconfig",
+      "name": "GenOpPlanEligibilityConfig",
+      "suffix": "genOpPlanEligibilityConfig",
+      "directoryName": "GenOpPlanEligibilityConfig",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   }
 }

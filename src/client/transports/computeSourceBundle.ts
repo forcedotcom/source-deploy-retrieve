@@ -52,12 +52,15 @@ export async function packageComputeBundle(appDir: string, name: string): Promis
   }
 
   const metaFileName = `${name}.compute-meta.xml`;
-  const excluded = new Set(['api-spec.yaml', metaFileName, 'project.toml', '.forceignore']);
+  const excluded = new Set([metaFileName, '.forceignore']);
+  // Both files are consumed at build/runtime, so a broad .forceignore must not
+  // remove them from the nested source archive.
+  const alwaysIncluded = new Set(['api-spec.yaml', 'project.toml']);
   const forceIgnore = ForceIgnore.findAndCreate(appDir);
 
   const sourceRelativePaths = await listFilesRecursive(
     appDir,
-    (file) => !excluded.has(file) && forceIgnore.accepts(join(appDir, file))
+    (file) => !excluded.has(file) && (alwaysIncluded.has(file) || forceIgnore.accepts(join(appDir, file)))
   );
   logger.debug('packaging %s: %d files after exclusions/.forceignore', appDir, sourceRelativePaths.length);
 
@@ -108,9 +111,9 @@ export async function packageComputeBundle(appDir: string, name: string): Promis
   if (buffer.length > MAX_COMPRESSED_BYTES) {
     throw new Error(`Compute source bundle: compressed size limit (${MAX_COMPRESSED_BYTES} bytes) exceeded`);
   }
-  logger.debug('packaged %s into %d bytes (%d files)', appDir, buffer.length, sourceEntries.length + 1);
+  logger.debug('packaged %s into %d bytes (%d files)', appDir, buffer.length, sourceEntries.length);
 
-  return { buffer, fileCount: sourceEntries.length + 1 };
+  return { buffer, fileCount: sourceEntries.length };
 }
 
 export async function unpackComputeBundle(buffer: Buffer, appDir: string): Promise<UnpackedBundle> {
@@ -143,7 +146,7 @@ export async function unpackComputeBundle(buffer: Buffer, appDir: string): Promi
     })
   );
 
-  return { fileCount: Object.keys(sourceEntries).length + 1 };
+  return { fileCount: new Set([...Object.keys(sourceEntries), 'api-spec.yaml']).size };
 }
 
 async function rejectSymlinks(filePath: string): Promise<void> {

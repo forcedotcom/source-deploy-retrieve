@@ -942,7 +942,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         this.logger.warn(messages.getMessage('missingApiVersion'));
       }
     }
-    return version;
+    const hasPlatformComputeApp = Array.from(this).some((component) => component.type.name === 'PlatformComputeApp');
+    return hasPlatformComputeApp && +version < 68 ? '68.0' : version;
   }
 }
 

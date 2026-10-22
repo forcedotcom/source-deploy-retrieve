@@ -31,22 +31,11 @@ type ComputeSourceUploadResponse = {
   uploadedAt: string;
 };
 
-const MIN_API_VERSION = '68.0';
 const ENDPOINT = '/connect/compute/source';
 
 function resolveContentPath(component: SourceComponent, project: SfProject): string {
   const packageDir = project.getDefaultPackage().fullPath;
   return join(packageDir, DEFAULT_PACKAGE_ROOT_SFDX, component.type.directoryName, component.fullName);
-}
-
-function validateApiVersion(connection: Connection): void {
-  const version = connection.version;
-  if (!version || parseFloat(version) < parseFloat(MIN_API_VERSION)) {
-    throw new SfError(
-      `PlatformComputeApp requires API version ${MIN_API_VERSION} or later (current: ${version ?? 'unknown'})`,
-      'InsufficientApiVersion'
-    );
-  }
 }
 
 async function uploadSource(
@@ -98,7 +87,6 @@ export class HerokuComputeTransport implements TransportProvider {
   }
 
   public async beforeDeploy(context: TransportContext): Promise<TransportResult> {
-    validateApiVersion(context.connection);
     const fileResponses: FileResponse[] = [];
 
     for (const component of context.components) {
@@ -141,7 +129,6 @@ export class HerokuComputeTransport implements TransportProvider {
   }
 
   public async afterRetrieve(context: TransportContext): Promise<TransportResult> {
-    validateApiVersion(context.connection);
     const fileResponses: FileResponse[] = [];
 
     for (const component of context.components) {

@@ -89,23 +89,8 @@ describe('HerokuComputeTransport', () => {
     });
   });
 
-  describe('API version validation', () => {
-    it('should throw when API version is below minimum', async () => {
-      const context = createMockContext({
-        connection: { version: '67.0', request: sinon.stub() } as unknown as Connection,
-        components: [createComputeComponent('MyApp', '/mock/app')],
-      });
-
-      try {
-        await transport.beforeDeploy(context);
-        expect.fail('should have thrown');
-      } catch (err) {
-        expect((err as Error).message).to.include('API version 68.0');
-        expect((err as Error).message).to.include('current: 67.0');
-      }
-    });
-
-    it('should not throw when API version meets minimum', async () => {
+  describe('API version compatibility', () => {
+    it('should upload using a lower configured connection version', async () => {
       const stub = sinon.stub(computeSourceBundle, 'packageComputeBundle');
       stub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
 
@@ -113,12 +98,13 @@ describe('HerokuComputeTransport', () => {
       requestStub.resolves({ platformComputeId: 'id', buildId: 'b1', sourceBlobSize: 100, uploadedAt: 'now' });
 
       const context = createMockContext({
-        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        connection: { version: '67.0', request: requestStub } as unknown as Connection,
         components: [createComputeComponent('MyApp', '/mock/app')],
       });
 
       const result = await transport.beforeDeploy(context);
       expect(result.fileResponses).to.have.lengthOf(1);
+      expect(requestStub.calledOnce).to.be.true;
 
       stub.restore();
     });

@@ -179,17 +179,22 @@ describe('computeSourceBundle', () => {
       expect(result.fileCount).to.equal(3);
     });
 
-    it('should exclude meta XML, api-spec, project.toml, and .forceignore from source tar', async () => {
+    it('should include build-critical files in source tar even when forceignored', async () => {
       await writeFile(join(appDir, 'api-spec.yaml'), 'openapi: 3.0.0');
       await writeFile(join(appDir, 'MyApp.compute-meta.xml'), '<PlatformComputeApp/>');
       await writeFile(join(appDir, 'project.toml'), '[project]\nname = "test"');
-      await writeFile(join(appDir, '.forceignore'), '*.log');
+      await writeFile(join(appDir, '.forceignore'), '*.log\n*.yaml\nproject.toml');
       await writeFile(join(appDir, 'main.py'), 'print("hello")');
 
       const result = await packageComputeBundle(appDir, 'MyApp');
 
-      // Only main.py is in source + api-spec = 2
-      expect(result.fileCount).to.equal(2);
+      // api-spec.yaml, project.toml, and main.py are distinct source files.
+      expect(result.fileCount).to.equal(3);
+
+      const output = join(tempDir, 'build-critical-output');
+      await unpackComputeBundle(result.buffer, output);
+      expect(await readFile(join(output, 'api-spec.yaml'), 'utf8')).to.equal('openapi: 3.0.0');
+      expect(await readFile(join(output, 'project.toml'), 'utf8')).to.equal('[project]\nname = "test"');
     });
 
     it('should respect .forceignore patterns', async () => {

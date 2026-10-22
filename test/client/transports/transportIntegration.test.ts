@@ -362,6 +362,14 @@ describe('Transport integration', () => {
       sinon.stub(MetadataApiDeploy.prototype, 'start').resolves({ id: 'deploy' });
     });
 
+    it('floors the PlatformComputeApp manifest version at 68.0', async () => {
+      const type = registryAccess.getTypeByName('PlatformComputeApp');
+      const set = new ComponentSet([new SourceComponent({ name: 'MyApp', type, content: '/local/app' })]);
+      set.sourceApiVersion = '67.0';
+
+      expect((await set.getObject()).Package.version).to.equal('68.0');
+    });
+
     for (const operation of ['deploy', 'retrieve'] as const) {
       it(`sets the username connection API version before the ${operation} provider runs`, async () => {
         const type = registryAccess.getTypeByName('PlatformComputeApp');

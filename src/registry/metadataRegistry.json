@@ -65,6 +65,7 @@
     "mktDataSources": "datasource",
     "objectTranslations": "customobjecttranslation",
     "objects": "customobject",
+    "platformComputeApps": "platformcomputeapp",
     "restrictionRules": "restrictionrule",
     "siteDotComSites": "sitedotcom",
     "sites": "customsite",
@@ -608,6 +609,7 @@
     "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
     "meetingPlaybookDefinition": "meetingplaybookdefinition",
     "idpConfiguration": "idpconfiguration",
+    "compute": "platformcomputeapp",
     "ecaAttest": "extlclntappattestsettings",
     "ecaAttestPlcy": "extlclntappattestconfigurablepolicies",
     "genOpPlanEligibilityConfig": "genopplaneligibilityconfig"
@@ -5427,6 +5429,18 @@
         "adapter": "bundle"
       },
       "supportsPartialDelete": true
+    },
+    "platformcomputeapp": {
+      "directoryName": "platformComputeApps",
+      "id": "platformcomputeapp",
+      "inFolder": false,
+      "name": "PlatformComputeApp",
+      "strategies": {
+        "adapter": "bundle",
+        "transport": "herokuCompute"
+      },
+      "strictDirectoryName": true,
+      "suffix": "compute"
     },
     "extlclntappattestsettings": {
       "id": "extlclntappattestsettings",

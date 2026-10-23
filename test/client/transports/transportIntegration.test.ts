@@ -147,8 +147,12 @@ describe('Transport integration', () => {
         checkStatus: async () => handle,
       };
       const pipeline = new TransportPipeline();
-      sinon.stub(pipeline, 'runBeforeMetadata').resolves({ fileResponses: [response], asyncHandles: [handle] });
-      const after = sinon.stub(pipeline, 'runAfterMetadata').resolves({ fileResponses: [], asyncHandles: [] });
+      sinon
+        .stub(pipeline, 'runBeforeMetadata')
+        .resolves({ fileResponses: [response], asyncHandles: [handle], operationResults: [] });
+      const after = sinon
+        .stub(pipeline, 'runAfterMetadata')
+        .resolves({ fileResponses: [], asyncHandles: [], operationResults: [] });
       const coordinator = new TransportCoordinator(pipeline, [], mockContext, 'deploy');
       await coordinator.runBeforeMetadata();
       const result = new DeployResult(createDeployStatus(status));
@@ -175,8 +179,12 @@ describe('Transport integration', () => {
         checkStatus: async () => handle,
       };
       const pipeline = new TransportPipeline();
-      sinon.stub(pipeline, 'runBeforeMetadata').resolves({ fileResponses: [response], asyncHandles: [handle] });
-      const after = sinon.stub(pipeline, 'runAfterMetadata').resolves({ fileResponses: [], asyncHandles: [] });
+      sinon
+        .stub(pipeline, 'runBeforeMetadata')
+        .resolves({ fileResponses: [response], asyncHandles: [handle], operationResults: [] });
+      const after = sinon
+        .stub(pipeline, 'runAfterMetadata')
+        .resolves({ fileResponses: [], asyncHandles: [], operationResults: [] });
       const coordinator = new TransportCoordinator(pipeline, [], mockContext, 'deploy');
       await coordinator.runBeforeMetadata();
       const result = new DeployResult(createDeployStatus(status));
@@ -203,8 +211,12 @@ describe('Transport integration', () => {
       checkStatus: async () => handle,
     };
     const pipeline = new TransportPipeline();
-    sinon.stub(pipeline, 'runBeforeMetadata').resolves({ fileResponses: [response], asyncHandles: [handle] });
-    const after = sinon.stub(pipeline, 'runAfterMetadata').resolves({ fileResponses: [], asyncHandles: [] });
+    sinon
+      .stub(pipeline, 'runBeforeMetadata')
+      .resolves({ fileResponses: [response], asyncHandles: [handle], operationResults: [] });
+    const after = sinon
+      .stub(pipeline, 'runAfterMetadata')
+      .resolves({ fileResponses: [], asyncHandles: [], operationResults: [] });
     const coordinator = new TransportCoordinator(pipeline, [], mockContext, 'deploy');
     await coordinator.runBeforeMetadata();
     const result = new DeployResult(createDeployStatus(RequestStatus.Failed));

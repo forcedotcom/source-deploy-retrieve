@@ -16,7 +16,7 @@
 
 import { join } from 'node:path';
 import FormData from 'form-data';
-import { Logger, SfError } from '@salesforce/core';
+import { Lifecycle, Logger, SfError } from '@salesforce/core';
 import type { Connection, SfProject } from '@salesforce/core';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../common/constants';
 import { SourceComponent } from '../../resolve/sourceComponent';
@@ -95,7 +95,10 @@ export class HerokuComputeTransport implements TransportProvider {
   public async beforeDeploy(context: TransportContext): Promise<TransportResult> {
     const fileResponses: FileResponse[] = [];
     const operationResults: TransportOperationResult[] = [];
-
+    void Lifecycle.getInstance().emitTelemetry({
+      eventName: 'heroku_compute_pre_deploy',
+      library: 'SDR',
+    });
     for (const component of context.components) {
       try {
         this.assertComputeComponent(component);
@@ -142,7 +145,10 @@ export class HerokuComputeTransport implements TransportProvider {
 
   public async afterRetrieve(context: TransportContext): Promise<TransportResult> {
     const fileResponses: FileResponse[] = [];
-
+    void Lifecycle.getInstance().emitTelemetry({
+      eventName: 'heroku_compute_post_retrieve',
+      library: 'SDR',
+    });
     for (const component of context.components) {
       try {
         const packageName = context.transportPackageNames?.[`${component.type.name}#${component.fullName}`];

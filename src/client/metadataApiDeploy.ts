@@ -29,7 +29,7 @@ import { ReplacementEvent } from '../convert/types';
 import { MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
-import { AsyncTransportHandle } from './transports/types';
+import { AsyncTransportHandle, TransportOperationResult } from './transports/types';
 import {
   AsyncResult,
   ComponentStatus,
@@ -60,6 +60,7 @@ export class DeployResult implements MetadataTransferResult {
   private fileResponses?: FileResponse[];
   private transportFileResponses: FileResponse[] = [];
   private asyncTransportHandles: AsyncTransportHandle[] = [];
+  private transportOperationResults: TransportOperationResult[] = [];
 
   public constructor(
     public readonly response: MetadataApiDeployStatus,
@@ -87,14 +88,23 @@ export class DeployResult implements MetadataTransferResult {
     return this.fileResponses;
   }
 
-  public addTransportResults(fileResponses: FileResponse[], asyncHandles: AsyncTransportHandle[] = []): void {
+  public addTransportResults(
+    fileResponses: FileResponse[],
+    asyncHandles: AsyncTransportHandle[] = [],
+    operationResults: TransportOperationResult[] = []
+  ): void {
     this.transportFileResponses.push(...fileResponses);
     this.asyncTransportHandles.push(...asyncHandles);
+    this.transportOperationResults.push(...operationResults);
     this.fileResponses = undefined;
   }
 
   public getAsyncTransportHandles(): AsyncTransportHandle[] {
     return this.asyncTransportHandles;
+  }
+
+  public getTransportOperationResults(): TransportOperationResult[] {
+    return this.transportOperationResults;
   }
 }
 

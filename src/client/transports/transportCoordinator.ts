@@ -24,7 +24,11 @@ type TransportOperation = 'deploy' | 'retrieve';
 type TransportResult = DeployResult | RetrieveResult;
 
 export class TransportCoordinator {
-  private beforeMetadataResults: TransportPipelineResult = { fileResponses: [], asyncHandles: [] };
+  private beforeMetadataResults: TransportPipelineResult = {
+    fileResponses: [],
+    asyncHandles: [],
+    operationResults: [],
+  };
   private readonly beforeAdded = new WeakSet<TransportResult>();
   private readonly afterStarted = new WeakSet<TransportResult>();
 
@@ -43,7 +47,11 @@ export class TransportCoordinator {
   public async processResult(result: TransportResult, status: RequestStatus): Promise<void> {
     if (!this.beforeAdded.has(result)) {
       this.beforeAdded.add(result);
-      result.addTransportResults(this.beforeMetadataResults.fileResponses, this.beforeMetadataResults.asyncHandles);
+      result.addTransportResults(
+        this.beforeMetadataResults.fileResponses,
+        this.beforeMetadataResults.asyncHandles,
+        this.beforeMetadataResults.operationResults
+      );
     }
     if (status !== RequestStatus.Succeeded) return;
     if (this.afterStarted.has(result)) return;
@@ -64,6 +72,10 @@ export class TransportCoordinator {
     }
 
     const afterMetadataResults = await this.pipeline.runAfterMetadata(this.context, this.groups, this.operation);
-    result.addTransportResults(afterMetadataResults.fileResponses, afterMetadataResults.asyncHandles);
+    result.addTransportResults(
+      afterMetadataResults.fileResponses,
+      afterMetadataResults.asyncHandles,
+      afterMetadataResults.operationResults
+    );
   }
 }

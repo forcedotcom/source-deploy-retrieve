@@ -40,6 +40,14 @@ export type TransportContext = {
 export type TransportResult = {
   fileResponses: FileResponse[];
   asyncResult?: AsyncTransportHandle;
+  operationResults?: TransportOperationResult[];
+};
+
+export type TransportOperationResult = {
+  transportLabel: string;
+  operation: string;
+  status: TransportStatus;
+  message?: string;
 };
 
 export type AsyncTransportHandle = {

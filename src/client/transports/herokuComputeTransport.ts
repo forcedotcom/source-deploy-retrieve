@@ -21,7 +21,13 @@ import type { Connection, SfProject } from '@salesforce/core';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../common/constants';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { ComponentStatus, FileResponse } from '../types';
-import { TransportContext, TransportDescription, TransportProvider, TransportResult } from './types';
+import {
+  TransportContext,
+  TransportDescription,
+  TransportOperationResult,
+  TransportProvider,
+  TransportResult,
+} from './types';
 import { MAX_COMPRESSED_BYTES, packageComputeBundle, unpackComputeBundle } from './computeSourceBundle';
 
 type ComputeSourceUploadResponse = {
@@ -88,6 +94,7 @@ export class HerokuComputeTransport implements TransportProvider {
 
   public async beforeDeploy(context: TransportContext): Promise<TransportResult> {
     const fileResponses: FileResponse[] = [];
+    const operationResults: TransportOperationResult[] = [];
 
     for (const component of context.components) {
       try {
@@ -113,6 +120,11 @@ export class HerokuComputeTransport implements TransportProvider {
           state: ComponentStatus.Changed,
           filePath: component.content,
         });
+        operationResults.push({
+          transportLabel: this.describe().label,
+          operation: `Upload ${component.fullName}`,
+          status: 'Succeeded',
+        });
       } catch (err) {
         fileResponses.push({
           fullName: component.fullName,
@@ -125,7 +137,7 @@ export class HerokuComputeTransport implements TransportProvider {
       }
     }
 
-    return this.checkForFailures(fileResponses, 'upload');
+    return { ...this.checkForFailures(fileResponses, 'upload'), operationResults };
   }
 
   public async afterRetrieve(context: TransportContext): Promise<TransportResult> {

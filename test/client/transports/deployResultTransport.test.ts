@@ -127,6 +127,18 @@ describe('DeployResult transport integration', () => {
     expect(handles[0].status).to.equal('Pending');
   });
 
+  it('should include multiple transport operation results', () => {
+    const result = new DeployResult(createDeployStatus());
+    const operationResults = [
+      { transportLabel: 'Heroku Compute', operation: 'Upload App1', status: 'Succeeded' as const },
+      { transportLabel: 'Heroku Compute', operation: 'Upload App2', status: 'Succeeded' as const },
+    ];
+
+    result.addTransportResults([], [], operationResults);
+
+    expect(result.getTransportOperationResults()).to.deep.equal(operationResults);
+  });
+
   it('should invalidate cached responses when transport results are added', () => {
     const result = new DeployResult(createDeployStatus());
 

@@ -18,7 +18,13 @@ import { Lifecycle, Logger, SfError } from '@salesforce/core';
 import { TransportName } from '../../registry/types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { FileResponse } from '../types';
-import { AsyncTransportHandle, TransportContext, TransportProvider, TransportResult } from './types';
+import {
+  AsyncTransportHandle,
+  TransportContext,
+  TransportOperationResult,
+  TransportProvider,
+  TransportResult,
+} from './types';
 import { HerokuComputeTransport } from './herokuComputeTransport';
 
 export type TransportGroup = {
@@ -45,6 +51,7 @@ export type TransportPlanPhase = {
 export type TransportPipelineResult = {
   fileResponses: FileResponse[];
   asyncHandles: AsyncTransportHandle[];
+  operationResults: TransportOperationResult[];
 };
 
 export type TransportStageEvent = {
@@ -175,6 +182,7 @@ export class TransportPipeline {
   ): Promise<TransportPipelineResult> {
     const allFileResponses: FileResponse[] = [];
     const allAsyncHandles: AsyncTransportHandle[] = [];
+    const allOperationResults: TransportOperationResult[] = [];
     const lifecycle = Lifecycle.getInstance();
 
     for (const group of groups) {
@@ -209,6 +217,7 @@ export class TransportPipeline {
         if (result.asyncResult) {
           allAsyncHandles.push(result.asyncResult);
         }
+        allOperationResults.push(...(result.operationResults ?? []));
         // eslint-disable-next-line no-await-in-loop
         await lifecycle.emit('transportStage', { ...eventBase, stage: 'complete' });
       } catch (err) {
@@ -226,7 +235,7 @@ export class TransportPipeline {
       }
     }
 
-    return { fileResponses: allFileResponses, asyncHandles: allAsyncHandles };
+    return { fileResponses: allFileResponses, asyncHandles: allAsyncHandles, operationResults: allOperationResults };
   }
 }
 

@@ -38,7 +38,7 @@ import {
 import { extract } from './retrieveExtract';
 import { getPackageOptions } from './retrieveExtract';
 import { MetadataApiRetrieveOptions } from './types';
-import { AsyncTransportHandle } from './transports/types';
+import { AsyncTransportHandle, TransportOperationResult } from './transports/types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -51,6 +51,7 @@ export class RetrieveResult implements MetadataTransferResult {
   private fileResponses?: FileResponse[];
   private transportFileResponses: FileResponse[] = [];
   private asyncTransportHandles: AsyncTransportHandle[] = [];
+  private transportOperationResults: TransportOperationResult[] = [];
 
   /**
    * @param response The metadata retrieve response from the server
@@ -135,14 +136,23 @@ export class RetrieveResult implements MetadataTransferResult {
     return this.fileResponses;
   }
 
-  public addTransportResults(fileResponses: FileResponse[], asyncHandles: AsyncTransportHandle[] = []): void {
+  public addTransportResults(
+    fileResponses: FileResponse[],
+    asyncHandles: AsyncTransportHandle[] = [],
+    operationResults: TransportOperationResult[] = []
+  ): void {
     this.transportFileResponses.push(...fileResponses);
     this.asyncTransportHandles.push(...asyncHandles);
+    this.transportOperationResults.push(...operationResults);
     this.fileResponses = undefined;
   }
 
   public getAsyncTransportHandles(): AsyncTransportHandle[] {
     return this.asyncTransportHandles;
+  }
+
+  public getTransportOperationResults(): TransportOperationResult[] {
+    return this.transportOperationResults;
   }
 }
 

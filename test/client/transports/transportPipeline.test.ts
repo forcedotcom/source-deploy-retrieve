@@ -277,5 +277,30 @@ describe('TransportPipeline', () => {
       expect(result.asyncHandles[0].transportName).to.equal('herokuCompute');
       expect(result.asyncHandles[0].status).to.equal('Pending');
     });
+
+    it('should collect multiple operation results from transports', async () => {
+      const transport: TransportProvider = {
+        name: 'herokuCompute',
+        describe: () => ({ label: 'Heroku Compute', endpoint: '/connect/compute' }),
+        handles: () => true,
+        beforeDeploy: async () => ({
+          fileResponses: [],
+          operationResults: [
+            { transportLabel: 'Heroku Compute', operation: 'Upload App1', status: 'Succeeded' },
+            { transportLabel: 'Heroku Compute', operation: 'Upload App2', status: 'Succeeded' },
+          ],
+        }),
+      };
+      const pipeline = new TransportPipeline([transport]);
+
+      const groups = [{ transport, components: [createMockComponent('ApexClass', 'MyClass')] }];
+
+      const result = await pipeline.runBeforeMetadata(mockContext, groups);
+
+      expect(result.operationResults).to.deep.equal([
+        { transportLabel: 'Heroku Compute', operation: 'Upload App1', status: 'Succeeded' },
+        { transportLabel: 'Heroku Compute', operation: 'Upload App2', status: 'Succeeded' },
+      ]);
+    });
   });
 });

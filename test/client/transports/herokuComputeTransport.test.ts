@@ -145,6 +145,9 @@ describe('HerokuComputeTransport', () => {
       expect(requestStub.firstCall.args[0]).to.have.property('method', 'POST');
       expect(result.fileResponses).to.have.lengthOf(1);
       expect(result.fileResponses[0]).to.include({ fullName: 'MyApp', type: 'PlatformComputeApp' });
+      expect(result.operationResults).to.deep.equal([
+        { transportLabel: 'Heroku Compute', operation: 'Upload MyApp', status: 'Succeeded' },
+      ]);
     });
 
     it('should deploy multiple components in sequence', async () => {
@@ -163,6 +166,10 @@ describe('HerokuComputeTransport', () => {
       expect(packageStub.calledTwice).to.be.true;
       expect(requestStub.calledTwice).to.be.true;
       expect(result.fileResponses).to.have.lengthOf(2);
+      expect(result.operationResults).to.deep.equal([
+        { transportLabel: 'Heroku Compute', operation: 'Upload App1', status: 'Succeeded' },
+        { transportLabel: 'Heroku Compute', operation: 'Upload App2', status: 'Succeeded' },
+      ]);
     });
 
     it('should process all components and throw aggregate error when one fails', async () => {

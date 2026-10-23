@@ -58,6 +58,9 @@ export {
   DeployVersionData,
   DeployZipData,
   RetrieveVersionData,
+  TransportOperationResult,
+  TransportPlan,
+  TransportPlanPhase,
 } from './client';
 export {
   MetadataConverter,

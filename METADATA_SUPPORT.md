@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v68 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 817/964 supported metadata types.
+Currently, there are 817/967 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -51,11 +51,14 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AgentforceSessionTracingSettings|✅||
 |AgenticCtxtDecorDefinition|❌|Not supported, but support could be added|
 |Ai4mSettings|✅||
+|AiAgentBundleAssignment|❌|Not supported, but support could be added|
 |AiAgentDefinition|✅||
 |AiAgentDefinitionPlanner|❌|Not supported, but support could be added|
 |AiAgentDefinitionVersion|✅||
 |AiAgentScorerDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |AiAuthoringBundle|✅||
+|AiBundle|❌|Not supported, but support could be added|
+|AiBundleVersion|❌|Not supported, but support could be added|
 |AiEvaluationDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |AiPlannerVoiceAvatarDef|❌|Not supported, but support could be added|
 |AiPlannerVoiceDef|❌|Not supported, but support could be added (but not for tracking)|

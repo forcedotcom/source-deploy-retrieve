@@ -1,3 +1,12 @@
+## [13.7.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.7.0...13.7.1) (2026-10-23)
+
+
+### Bug Fixes
+
+* retrieve namespace-qualified metadata @W-18220202@ ([#1852](https://github.com/forcedotcom/source-deploy-retrieve/issues/1852)) ([0d23153](https://github.com/forcedotcom/source-deploy-retrieve/commit/0d23153a4c7fc12c1110f5b713d6a9a1ab4a635a))
+
+
+
 # [13.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.6.0...13.7.0) (2026-10-20)
 
 

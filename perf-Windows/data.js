@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792782347098,
+  "lastUpdate": 1793026539582,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -115898,6 +115898,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 26977,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lpomerleau@salesforce.com",
+            "name": "Laura Pomerleau",
+            "username": "lpomerleau"
+          },
+          "committer": {
+            "email": "lpomerleau@salesforce.com",
+            "name": "Laura Pomerleau",
+            "username": "lpomerleau"
+          },
+          "distinct": true,
+          "id": "4a4ef29b978ea8bcad3e272bea54575889941c3b",
+          "message": "feat: validate mcpResources in mcp-resources.json @W-24592777@\n\nCore reads MCP resource declarations from a separate mcp-resources.json\nnext to ui-bundle.json, with paths relative to the bundle root. Move SDR\ndeploy validation to match and reject mcpResources in ui-bundle.json.\n\nCo-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>",
+          "timestamp": "2026-10-26T10:33:50-04:00",
+          "tree_id": "9003e6b0ebfbcc4f697073c14819a89edb814bdf",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/4a4ef29b978ea8bcad3e272bea54575889941c3b"
+        },
+        "date": 1793026517591,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 665,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4165,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 3878,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 7597,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 983,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 11802,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10923,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 13740,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1683,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 21119,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 20007,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 24939,
             "unit": "ms"
           }
         ]

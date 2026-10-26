@@ -61,6 +61,11 @@ describe('expandD360ComponentSet', () => {
         ...component('DataLakeObject', 'pinnedDlo__dll', undefined, [
           { componentType: 'DataModelObject', name: 'myDmo__dlm', dataspaceName: 'other' },
         ]),
+        // Retrieved once per dataspace, so its sidecar names the peers of both.
+        ...component('DataLakeObject', 'sharedDlo__dll', undefined, [
+          { componentType: 'DataModelObject', name: 'myDmo__dlm', dataspaceName: 'default' },
+          { componentType: 'DataModelObject', name: 'myDmo__dlm', dataspaceName: 'other' },
+        ]),
       ],
     },
     { dirPath: join(D360_DIR, 'dataspace'), children: ['default', 'other'] },
@@ -131,6 +136,52 @@ describe('expandD360ComponentSet', () => {
       'DataModelObject:default.myDmo__dlm',
       'DataspaceMember:default.myDlo__dll',
     ]);
+  });
+
+  it('should skip peers named for another dataspace than the requested one', () => {
+    const type = registry.getTypeByName('DataLakeObject');
+    const requested = new ComponentSet([], registry);
+    requested.add({ type, fullName: 'default.sharedDlo__dll' });
+    requested.addWithoutManifestEntry(full.getSourceComponents({ type, fullName: 'sharedDlo__dll' }).first()!);
+
+    expect(members(expandD360ComponentSet(full, requested, registry))).to.deep.equal([
+      'DataLakeObject:sharedDlo__dll',
+      'DataModelObject:default.myDmo__dlm',
+    ]);
+  });
+
+  it('should send the sidecar with only the peers of the requested dataspace', () => {
+    const type = registry.getTypeByName('DataLakeObject');
+    const requested = new ComponentSet([], registry);
+    requested.add({ type, fullName: 'default.sharedDlo__dll' });
+    requested.addWithoutManifestEntry(full.getSourceComponents({ type, fullName: 'sharedDlo__dll' }).first()!);
+
+    const dlo = expandD360ComponentSet(full, requested, registry)
+      .getSourceComponents({ type, fullName: 'sharedDlo__dll' })
+      .first()!;
+    const sidecar = dlo.content!.replace(/\.json$/, '.meta.json');
+    const parse = (data: Buffer): { retrieveWith: Array<{ dataspaceName?: string }> } =>
+      JSON.parse(data.toString()) as { retrieveWith: Array<{ dataspaceName?: string }> };
+
+    expect(parse(dlo.tree.readFileSync(sidecar)).retrieveWith.map((ref) => ref.dataspaceName)).to.deep.equal([
+      'default',
+    ]);
+    expect(
+      parse(full.getSourceComponents({ type, fullName: 'sharedDlo__dll' }).first()!.tree.readFileSync(sidecar))
+        .retrieveWith
+    ).to.have.length(2);
+  });
+
+  it('should send the sidecar as is for a component requested by its bare name', () => {
+    const type = registry.getTypeByName('DataLakeObject');
+    const original = full.getSourceComponents({ type, fullName: 'sharedDlo__dll' }).first()!;
+    const requested = new ComponentSet([original], registry);
+
+    expect(
+      expandD360ComponentSet(full, requested, registry)
+        .getSourceComponents({ type, fullName: 'sharedDlo__dll' })
+        .first()
+    ).to.equal(original);
   });
 
   it('should pull peers from each requested dataspace', () => {

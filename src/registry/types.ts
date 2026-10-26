@@ -168,10 +168,10 @@ export type MetadataType = {
       | 'nonDecomposed'
       | 'standard'
       | 'decomposedLabels'
-       | 'decomposedPermissionSet'
-       | 'decomposeExternalServiceRegistration'
-       | 'uiBundle'
-       | 'profile';
+      | 'decomposedPermissionSet'
+      | 'decomposeExternalServiceRegistration'
+      | 'uiBundle'
+      | 'profile';
     decomposition?: 'topLevel' | 'folderPerType';
     recomposition?: 'startEmpty';
   };

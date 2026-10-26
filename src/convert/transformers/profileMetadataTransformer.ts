@@ -14,12 +14,29 @@
  * limitations under the License.
  */
 import { SourceComponent } from '../../resolve/sourceComponent';
+import { ComponentSet } from '../../collections/componentSet';
 import { WriteInfo } from '../types';
 import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
 
 export class ProfileMetadataTransformer extends DefaultMetadataTransformer {
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     await this.context.profileMetadata.add(component);
+    return [];
+  }
+
+  public async toSourceFormat({
+    component,
+    mergeWith,
+    mergeSet,
+  }: {
+    component: SourceComponent;
+    mergeWith?: SourceComponent;
+    mergeSet?: ComponentSet;
+  }): Promise<WriteInfo[]> {
+    if (!mergeSet || !mergeWith) {
+      return super.toSourceFormat({ component, mergeWith });
+    }
+    await this.context.profileMetadata.addSource(component, mergeWith);
     return [];
   }
 }

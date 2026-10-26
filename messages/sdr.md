@@ -26,6 +26,10 @@ Could not find parent type for %s (%s)
 
 Component conversion failed: %s
 
+# error_profile_singleton_conflict
+
+Profile %s has conflicting values for singleton tag %s in source paths %s and %s.
+
 # error_invalid_test_level
 
 TestLevel cannot be '%s' unless API version is %s or later

@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { Readable } from 'node:stream';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../common/constants';
 import { SourcePath } from '../../common/types';
 import { trimUntil } from '../../utils/path';
@@ -50,31 +52,87 @@ export class D360MetadataTransformer extends BaseMetadataTransformer {
     return getWriteInfos(component, 'metadata');
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await, class-methods-use-this
   public async toSourceFormat({ component }: { component: SourceComponent }): Promise<WriteInfo[]> {
-    return getWriteInfos(component, 'source');
+    const infos = getWriteInfos(component, 'source');
+    const { defaultDirectory } = this;
+    if (!defaultDirectory) {
+      return infos;
+    }
+    const sidecars = new Map(getSidecars(component).map((sidecar) => [getD360Destination(sidecar, 'source'), sidecar]));
+    return Promise.all(
+      infos.map(async (info) => {
+        const sidecar = sidecars.get(info.output);
+        return sidecar
+          ? mergeWithLocalSidecar((await component.tree.readFile(sidecar)).toString('utf8'), info, defaultDirectory)
+          : info;
+      })
+    );
   }
 }
 
+/** The `<name>.meta.json` sidecar of each payload file the component has one for. */
+const getSidecars = (component: SourceComponent): SourcePath[] =>
+  component
+    .walkContent()
+    .map((path) => path.replace(/\.json$/, METADATA_SIDECAR_SUFFIX))
+    .filter((sidecar) => sidecar.endsWith(METADATA_SIDECAR_SUFFIX) && component.tree.exists(sidecar));
+
 const getWriteInfos = (component: SourceComponent, targetFormat: 'source' | 'metadata'): WriteInfo[] =>
-  // walkContent() yields only the payload file(s); for each we also emit its sibling
-  // `<name>.meta.json` sidecar when present, so both halves of the pair are written.
-  component.walkContent().flatMap((path) => {
-    const infos: WriteInfo[] = [
-      {
-        source: getReplacementStreamForReadable(component, path),
-        output: getD360Destination(path, targetFormat),
-      },
-    ];
-    const sidecar = path.replace(/\.json$/, METADATA_SIDECAR_SUFFIX);
-    if (sidecar !== path && component.tree.exists(sidecar)) {
-      infos.push({
-        source: getReplacementStreamForReadable(component, sidecar),
-        output: getD360Destination(sidecar, targetFormat),
-      });
-    }
-    return infos;
-  });
+  // walkContent() yields only the payload file(s), so their sidecars are added to write both halves of each pair.
+  [...component.walkContent(), ...getSidecars(component)].map((path) => ({
+    source: getReplacementStreamForReadable(component, path),
+    output: getD360Destination(path, targetFormat),
+  }));
+
+/**
+ * Merge a retrieved sidecar into the one already in the project, if any. The retrieved sidecar is
+ * written unchanged when there is no local one or nothing in it needs keeping.
+ */
+const mergeWithLocalSidecar = async (
+  retrieved: string,
+  info: WriteInfo,
+  defaultDirectory: string
+): Promise<WriteInfo> => {
+  let local: string;
+  try {
+    local = await readFile(join(defaultDirectory, info.output), 'utf8');
+  } catch {
+    return info;
+  }
+  const merged = mergeSidecars(local, retrieved);
+  return merged === retrieved ? info : { output: info.output, source: Readable.from(merged) };
+};
+
+type SidecarRef = { componentType?: string; name?: string; dataspaceName?: string };
+type Sidecar = { dataspaceName?: string; retrieveWith?: SidecarRef[] };
+
+/**
+ * A component outside any dataspace (e.g. a Data Lake Object) has one sidecar on disk but can be
+ * retrieved once per dataspace, and each retrieve only reports the peers of the dataspace it was run
+ * for. Rather than letting the latest retrieve overwrite the others, keep the existing peers of every
+ * dataspace the new retrieve didn't cover and take the rest from the new sidecar.
+ */
+export const mergeSidecars = (existingJson: string, incomingJson: string): string => {
+  let existing: Sidecar;
+  let incoming: Sidecar;
+  try {
+    existing = JSON.parse(existingJson) as Sidecar;
+    incoming = JSON.parse(incomingJson) as Sidecar;
+  } catch {
+    return incomingJson;
+  }
+  const incomingPeers = incoming.retrieveWith ?? [];
+  const covered = new Set([incoming.dataspaceName, ...incomingPeers.map((ref) => ref.dataspaceName)].filter(Boolean));
+  const keyOf = (ref: SidecarRef): string => `${ref.componentType ?? ''}|${ref.dataspaceName ?? ''}|${ref.name ?? ''}`;
+  const incomingKeys = new Set(incomingPeers.map(keyOf));
+  const kept = (existing.retrieveWith ?? []).filter(
+    (ref) => ref.dataspaceName && !covered.has(ref.dataspaceName) && !incomingKeys.has(keyOf(ref))
+  );
+  if (!kept.length) {
+    return incomingJson;
+  }
+  return `${JSON.stringify({ ...incoming, retrieveWith: [...kept, ...incomingPeers] }, null, 2)}\n`;
+};
 
 /**
  * Build the destination path preserving the `d360/dataspace/<ds>/<typeDir>/<name>.json` structure.

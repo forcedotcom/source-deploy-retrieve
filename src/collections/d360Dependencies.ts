@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Readable } from 'node:stream';
 import { RegistryAccess } from '../registry/registryAccess';
 import { SourceComponent } from '../resolve/sourceComponent';
+import { TreeContainer } from '../resolve/treeContainers';
 import { MetadataComponent } from '../resolve/types';
+import { SourcePath } from '../common/types';
 import {
   METADATA_SIDECAR_SUFFIX,
   parseDataspaceQualifiedName,
@@ -137,6 +140,74 @@ export const resolveDataspaceQualifiedComponents = (
   }
 };
 
+/** Serves one file from memory and reads everything else from the tree it wraps. */
+class OverlayTreeContainer extends TreeContainer {
+  public constructor(
+    private readonly base: TreeContainer,
+    private readonly path: string,
+    private readonly data: Buffer
+  ) {
+    super();
+  }
+
+  public exists(fsPath: SourcePath): boolean {
+    return fsPath === this.path || this.base.exists(fsPath);
+  }
+
+  public isDirectory(fsPath: SourcePath): boolean {
+    return fsPath !== this.path && this.base.isDirectory(fsPath);
+  }
+
+  public readDirectory(fsPath: SourcePath): string[] {
+    return this.base.readDirectory(fsPath);
+  }
+
+  public readFile(fsPath: SourcePath): Promise<Buffer> {
+    return fsPath === this.path ? Promise.resolve(this.data) : this.base.readFile(fsPath);
+  }
+
+  public readFileSync(fsPath: SourcePath): Buffer {
+    return fsPath === this.path ? this.data : this.base.readFileSync(fsPath);
+  }
+
+  public stream(fsPath: SourcePath): Readable {
+    return fsPath === this.path ? Readable.from([this.data]) : this.base.stream(fsPath);
+  }
+}
+
+/**
+ * A component outside every dataspace keeps one sidecar for all the dataspaces it was retrieved from,
+ * and its `retrieveWith` mixes their peers. Deploying it for some of them sends a copy of the sidecar
+ * listing only the peers in those dataspaces or outside every dataspace, so the org isn't asked for
+ * peers the deploy doesn't include. The local file is left as is.
+ */
+const withSidecarFor = (
+  component: SourceComponent,
+  dataspaces: Set<string | undefined> | undefined
+): SourceComponent => {
+  // Not walked, or walked outside any dataspace too, so every peer is part of the deploy.
+  if (!dataspaces || dataspaces.has(undefined)) {
+    return component;
+  }
+  const path = getSidecarPath(component);
+  const sidecar = readSidecar(component);
+  if (!path || sidecar?.dataspaceName || !Array.isArray(sidecar?.retrieveWith)) {
+    return component;
+  }
+  const retrieveWith = sidecar.retrieveWith.filter((ref) => !ref.dataspaceName || dataspaces.has(ref.dataspaceName));
+  if (retrieveWith.length === sidecar.retrieveWith.length) {
+    return component;
+  }
+  const data = Buffer.from(`${JSON.stringify({ ...sidecar, retrieveWith }, null, 2)}\n`);
+  const { name, type, xml, parent, content, parentType } = component;
+  const copy = new SourceComponent(
+    { name, type, xml, parent, content, parentType },
+    new OverlayTreeContainer(component.tree, path, data)
+  );
+  copy.replacements = component.replacements;
+  return copy;
+};
+
 /**
  * Index every Data Cloud component in `full` by its sidecar type + componentName, the key space
  * `retrieveWith` references. A key can match several components, one per dataspace.
@@ -159,10 +230,11 @@ const indexCandidates = (
   }
   const getDataspace = (component: SourceComponent): string | undefined => dataspaceOf.get(memberKey(component));
 
-  // A reference that names its dataspace matches only there. Otherwise, while walking a dataspace, only
-  // peers in it or outside every dataspace qualify; with no dataspace to walk, all of them do.
+  // A reference that names its dataspace matches only there, and is skipped while walking another
+  // dataspace. Otherwise, while walking a dataspace, only peers in it or outside every dataspace
+  // qualify; with no dataspace to walk, all of them do.
   const findPeers = (ref: ComponentRef, dataspace: string | undefined): SourceComponent[] => {
-    if (!ref.componentType || !ref.name) {
+    if (!ref.componentType || !ref.name || (dataspace && ref.dataspaceName && ref.dataspaceName !== dataspace)) {
       return [];
     }
     const candidates = byRef.get(refKey(ref.componentType, ref.name)) ?? [];
@@ -200,39 +272,36 @@ export const expandD360ComponentSet = (
 ): ComponentSet => {
   const { findPeers, getDataspace } = indexCandidates(full);
 
-  const result = new ComponentSet([], registry);
-  const added = new Set<string>();
-  // A component is walked once per dataspace, since it can be requested for several of them.
-  const visited = new Set<string>();
+  // Members are collected first and added once the walk is done, since how a component outside every
+  // dataspace is sent depends on all the dataspaces it was walked in.
+  const members = new Map<string, { component: SourceComponent; inManifest: boolean }>();
+  const qualifiedNames: MetadataComponent[] = [];
+  const walkedIn = new Map<string, Set<string | undefined>>();
   const worklist: Array<{ component: SourceComponent; dataspace: string | undefined }> = [];
+  // A component is walked once per dataspace, since it can be requested for several of them.
   const visit = (component: SourceComponent, dataspace: string | undefined): void => {
-    const key = `${memberKey(component)}|${dataspace ?? ''}`;
-    if (!visited.has(key)) {
-      visited.add(key);
+    const dataspaces = walkedIn.get(memberKey(component)) ?? new Set<string | undefined>();
+    if (!dataspaces.has(dataspace)) {
+      walkedIn.set(memberKey(component), dataspaces.add(dataspace));
       worklist.push({ component, dataspace });
     }
   };
 
   // Seed with everything the user requested; non-Data Cloud members are kept as-is.
   for (const component of requested.getSourceComponents()) {
-    if (added.has(memberKey(component))) {
+    if (members.has(memberKey(component))) {
       continue;
     }
-    added.add(memberKey(component));
     const dataspaces =
       isD360(component) && !getDataspace(component) ? getRequestedDataspaces(requested, component) : [];
-    if (dataspaces.length) {
-      // Requested as `<dataspace>.<name>`: keep that name in the manifest and walk only those dataspaces.
-      result.addWithoutManifestEntry(component);
-      for (const dataspace of dataspaces) {
-        result.add({ type: component.type, fullName: toDataspaceQualifiedName(dataspace, component.fullName) });
-        visit(component, dataspace);
-      }
-    } else {
-      result.add(component);
-      if (isD360(component)) {
-        visit(component, getDataspace(component));
-      }
+    // Requested as `<dataspace>.<name>`: keep that name in the manifest and walk only those dataspaces.
+    members.set(memberKey(component), { component, inManifest: !dataspaces.length });
+    for (const dataspace of dataspaces) {
+      qualifiedNames.push({ type: component.type, fullName: toDataspaceQualifiedName(dataspace, component.fullName) });
+      visit(component, dataspace);
+    }
+    if (!dataspaces.length && isD360(component)) {
+      visit(component, getDataspace(component));
     }
   }
 
@@ -241,17 +310,27 @@ export const expandD360ComponentSet = (
     const { component, dataspace } = worklist.pop()!;
     for (const ref of readSidecar(component)?.retrieveWith ?? []) {
       for (const peer of findPeers(ref, dataspace)) {
-        if (!added.has(memberKey(peer))) {
-          added.add(memberKey(peer));
+        if (!members.has(memberKey(peer))) {
           // Peers travel as files only. The Metadata API deploys them as part of the requested
           // component, so package.xml lists just what the user asked for, the same as on retrieve.
-          result.addWithoutManifestEntry(peer);
+          members.set(memberKey(peer), { component: peer, inManifest: false });
         }
         // A peer outside every dataspace keeps walking in the dataspace it was reached from.
         visit(peer, getDataspace(peer) ?? dataspace);
       }
     }
   }
+
+  const result = new ComponentSet([], registry);
+  for (const [key, { component, inManifest }] of members) {
+    const sent = withSidecarFor(component, walkedIn.get(key));
+    if (inManifest) {
+      result.add(sent);
+    } else {
+      result.addWithoutManifestEntry(sent);
+    }
+  }
+  qualifiedNames.forEach((member) => result.add(member));
 
   return result;
 };

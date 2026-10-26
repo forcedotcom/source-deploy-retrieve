@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792781987527,
+  "lastUpdate": 1793026176751,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -121170,6 +121170,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 12989,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lpomerleau@salesforce.com",
+            "name": "Laura Pomerleau",
+            "username": "lpomerleau"
+          },
+          "committer": {
+            "email": "lpomerleau@salesforce.com",
+            "name": "Laura Pomerleau",
+            "username": "lpomerleau"
+          },
+          "distinct": true,
+          "id": "4a4ef29b978ea8bcad3e272bea54575889941c3b",
+          "message": "feat: validate mcpResources in mcp-resources.json @W-24592777@\n\nCore reads MCP resource declarations from a separate mcp-resources.json\nnext to ui-bundle.json, with paths relative to the bundle root. Move SDR\ndeploy validation to match and reject mcpResources in ui-bundle.json.\n\nCo-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>",
+          "timestamp": "2026-10-26T10:33:50-04:00",
+          "tree_id": "9003e6b0ebfbcc4f697073c14819a89edb814bdf",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/4a4ef29b978ea8bcad3e272bea54575889941c3b"
+        },
+        "date": 1793026163750,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 261,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2507,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2601,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 4108,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 496,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 6872,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7978,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 7282,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 878,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 12477,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 14681,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 13262,
             "unit": "ms"
           }
         ]

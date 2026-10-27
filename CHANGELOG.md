@@ -1,3 +1,12 @@
+## [13.8.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.8.0...13.8.1) (2026-10-27)
+
+
+### Bug Fixes
+
+* **deps:** bump undici from 8.7.0 to 8.12.3 ([#1861](https://github.com/forcedotcom/source-deploy-retrieve/issues/1861)) ([8ab2e07](https://github.com/forcedotcom/source-deploy-retrieve/commit/8ab2e0732dafe0db01dd78f898f2095bdddb53e0))
+
+
+
 # [13.8.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.7.1...13.8.0) (2026-10-26)
 
 

@@ -67,7 +67,7 @@ describe('TransportPipeline', () => {
       const mockTransport = createMockTransport('herokuCompute', 'before-metadata');
       const pipeline = new TransportPipeline([mockTransport]);
 
-      const apexClass = createMockComponent('PlatformComputeApp', 'MyApp');
+      const apexClass = createMockComponent('ComputeApp', 'MyApp');
       const customObject = createMockComponent('CustomObject', 'MyObject__c');
 
       const result = pipeline.groupByTransport([apexClass, customObject]);
@@ -84,8 +84,8 @@ describe('TransportPipeline', () => {
     it('should group all configured components for the registry transport', () => {
       const pipeline = new TransportPipeline([createMockTransport('herokuCompute', 'before-metadata')]);
 
-      const apexClass = createMockComponent('PlatformComputeApp', 'MyApp');
-      const customObject = createMockComponent('PlatformComputeApp', 'OtherApp');
+      const apexClass = createMockComponent('ComputeApp', 'MyApp');
+      const customObject = createMockComponent('ComputeApp', 'OtherApp');
       const apexTrigger = createMockComponent('ApexTrigger', 'MyTrigger');
 
       const result = pipeline.groupByTransport([apexClass, customObject, apexTrigger]);
@@ -99,7 +99,7 @@ describe('TransportPipeline', () => {
   describe('hasTransports', () => {
     it('should throw when a registry-configured transport provider is missing', () => {
       const pipeline = new TransportPipeline();
-      const app = createMockComponent('PlatformComputeApp', 'MyApp');
+      const app = createMockComponent('ComputeApp', 'MyApp');
 
       expect(() => pipeline.hasTransports([app])).to.throw('No transport provider is registered');
     });
@@ -115,7 +115,7 @@ describe('TransportPipeline', () => {
     it('should return true when a component matches a transport', () => {
       const pipeline = new TransportPipeline([createMockTransport('herokuCompute', 'before-metadata')]);
 
-      const apexClass = createMockComponent('PlatformComputeApp', 'MyApp');
+      const apexClass = createMockComponent('ComputeApp', 'MyApp');
 
       expect(pipeline.hasTransports([apexClass])).to.be.true;
     });
@@ -125,7 +125,7 @@ describe('TransportPipeline', () => {
     it('should produce a plan with correct phase ordering', () => {
       const pipeline = new TransportPipeline([createMockTransport('herokuCompute', 'before-metadata')]);
 
-      const apexClass = createMockComponent('PlatformComputeApp', 'MyApp');
+      const apexClass = createMockComponent('ComputeApp', 'MyApp');
       const customObject = createMockComponent('CustomObject', 'MyObject__c');
       const apexTrigger = createMockComponent('ApexTrigger', 'MyTrigger');
 
@@ -160,7 +160,7 @@ describe('TransportPipeline', () => {
     it('should run only before-metadata transports in runBeforeMetadata', async () => {
       const beforeResponse: FileResponse = {
         fullName: 'MyApp',
-        type: 'PlatformComputeApp',
+        type: 'ComputeApp',
         state: ComponentStatus.Changed,
         filePath: 'force-app/main/default/compute/MyApp/main.py',
       };
@@ -205,7 +205,7 @@ describe('TransportPipeline', () => {
     it('should use retrieve phase ordering when operation is retrieve', async () => {
       const retrieveResponse: FileResponse = {
         fullName: 'MyApp',
-        type: 'PlatformComputeApp',
+        type: 'ComputeApp',
         state: ComponentStatus.Changed,
         filePath: 'force-app/main/default/compute/MyApp/main.py',
       };
@@ -232,7 +232,7 @@ describe('TransportPipeline', () => {
       transport.afterRetrieve = async (): Promise<TransportResult> => ({ fileResponses: [] });
       const pipeline = new TransportPipeline([transport]);
 
-      const apexClass = createMockComponent('PlatformComputeApp', 'MyApp');
+      const apexClass = createMockComponent('ComputeApp', 'MyApp');
       const customObject = createMockComponent('CustomObject', 'MyObject__c');
 
       const deployPlan = pipeline.explain([apexClass, customObject], 'deploy');

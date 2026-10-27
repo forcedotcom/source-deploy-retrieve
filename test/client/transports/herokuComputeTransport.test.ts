@@ -27,7 +27,7 @@ import * as computeSourceBundle from '../../../src/client/transports/computeSour
 const registryAccess = new RegistryAccess();
 
 function createComputeComponent(fullName: string, appDir: string): SourceComponent {
-  const type = registryAccess.getTypeByName('PlatformComputeApp');
+  const type = registryAccess.getTypeByName('ComputeApp');
   return new SourceComponent({ name: fullName, type, content: appDir, xml: `${appDir}/${fullName}.compute-meta.xml` });
 }
 
@@ -68,7 +68,7 @@ describe('HerokuComputeTransport', () => {
   });
 
   describe('handles', () => {
-    it('should handle PlatformComputeApp by type name', () => {
+    it('should handle ComputeApp by type name', () => {
       const component = createComputeComponent('MyApp', '/mock/app');
       expect(transport.handles(component)).to.be.true;
     });
@@ -144,7 +144,7 @@ describe('HerokuComputeTransport', () => {
       expect(requestStub.calledOnce).to.be.true;
       expect(requestStub.firstCall.args[0]).to.have.property('method', 'POST');
       expect(result.fileResponses).to.have.lengthOf(1);
-      expect(result.fileResponses[0]).to.include({ fullName: 'MyApp', type: 'PlatformComputeApp' });
+      expect(result.fileResponses[0]).to.include({ fullName: 'MyApp', type: 'ComputeApp' });
       expect(result.operationResults).to.deep.equal([
         { transportLabel: 'Heroku Compute', operation: 'Upload MyApp', status: 'Succeeded' },
       ]);
@@ -247,7 +247,7 @@ describe('HerokuComputeTransport', () => {
       const unpack = sinon.stub(computeSourceBundle, 'unpackComputeBundle').resolves({ fileCount: 2 });
       try {
         const request = sinon.stub().resolves(Buffer.from('bundle').toString('binary'));
-        const type = registryAccess.getTypeByName('PlatformComputeApp');
+        const type = registryAccess.getTypeByName('ComputeApp');
         const context = createMockContext({
           output: '/unpackaged',
           packageOptions: [
@@ -255,8 +255,8 @@ describe('HerokuComputeTransport', () => {
             { name: 'SecondPackage', outputDir: '/packages/second' },
           ],
           transportPackageNames: {
-            'PlatformComputeApp#FirstApp': 'FirstPackage',
-            'PlatformComputeApp#SecondApp': 'SecondPackage',
+            'ComputeApp#FirstApp': 'FirstPackage',
+            'ComputeApp#SecondApp': 'SecondPackage',
           },
           connection: { version: '68.0', request } as unknown as Connection,
           components: [
@@ -278,7 +278,7 @@ describe('HerokuComputeTransport', () => {
       const unpack = sinon.stub(computeSourceBundle, 'unpackComputeBundle').resolves({ fileCount: 2 });
       try {
         const request = sinon.stub().resolves(Buffer.from('bundle').toString('binary'));
-        const type = registryAccess.getTypeByName('PlatformComputeApp');
+        const type = registryAccess.getTypeByName('ComputeApp');
         const context = createMockContext({
           output: '/custom/output',
           connection: { version: '68.0', request } as unknown as Connection,
@@ -331,7 +331,7 @@ describe('HerokuComputeTransport', () => {
     });
 
     it('should collect failure for component with no content path', () => {
-      const type = registryAccess.getTypeByName('PlatformComputeApp');
+      const type = registryAccess.getTypeByName('ComputeApp');
       const component = new SourceComponent({ name: 'NoPath', type });
 
       const context = createMockContext({

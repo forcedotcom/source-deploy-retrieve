@@ -49,7 +49,7 @@ describe('RetrieveResult transport integration', () => {
     const transportResponses: FileResponse[] = [
       {
         fullName: 'MyApp',
-        type: 'PlatformComputeApp',
+        type: 'ComputeApp',
         state: ComponentStatus.Changed,
         filePath: 'force-app/main/default/compute/MyApp/main.py',
       },
@@ -60,7 +60,7 @@ describe('RetrieveResult transport integration', () => {
     const fileResponses = result.getFileResponses();
     expect(fileResponses).to.have.lengthOf(1);
     expect(fileResponses[0].fullName).to.equal('MyApp');
-    expect(fileResponses[0].type).to.equal('PlatformComputeApp');
+    expect(fileResponses[0].type).to.equal('ComputeApp');
   });
 
   it('should include async transport handles', () => {
@@ -94,7 +94,7 @@ describe('RetrieveResult transport integration', () => {
     result.addTransportResults([
       {
         fullName: 'MyApp',
-        type: 'PlatformComputeApp',
+        type: 'ComputeApp',
         state: ComponentStatus.Changed,
         filePath: 'force-app/main/default/compute/MyApp/main.py',
       },

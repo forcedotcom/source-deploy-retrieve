@@ -55,7 +55,7 @@ describe('DeployResult transport integration', () => {
     const transportResponses: FileResponse[] = [
       {
         fullName: 'MyApp',
-        type: 'PlatformComputeApp',
+        type: 'ComputeApp',
         state: ComponentStatus.Changed,
         filePath: 'force-app/main/default/compute/MyApp/main.py',
       },
@@ -89,7 +89,7 @@ describe('DeployResult transport integration', () => {
     const transportResponses: FileResponse[] = [
       {
         fullName: 'MyApp',
-        type: 'PlatformComputeApp',
+        type: 'ComputeApp',
         state: ComponentStatus.Changed,
         filePath: 'force-app/main/default/compute/MyApp/main.py',
       },
@@ -102,7 +102,7 @@ describe('DeployResult transport integration', () => {
 
     const types = fileResponses.map((r) => r.type);
     expect(types).to.include('ApexClass');
-    expect(types).to.include('PlatformComputeApp');
+    expect(types).to.include('ComputeApp');
   });
 
   it('should include async transport handles', () => {
@@ -150,7 +150,7 @@ describe('DeployResult transport integration', () => {
     result.addTransportResults([
       {
         fullName: 'MyApp',
-        type: 'PlatformComputeApp',
+        type: 'ComputeApp',
         state: ComponentStatus.Changed,
         filePath: 'force-app/main/default/compute/MyApp/main.py',
       },

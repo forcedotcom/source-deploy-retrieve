@@ -699,7 +699,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | PlanningMeasureDef                           | ❌      | Not supported, but support could be added                        |
 | PlanningMeasureGroup                         | ❌      | Not supported, but support could be added                        |
 | PlatformCachePartition                       | ✅      |                                                                  |
-| PlatformComputeApp                           | ❌      | Not supported, but support could be added                        |
+| ComputeApp                                   | ❌      | Not supported, but support could be added                        |
 | PlatformEventChannel                         | ✅      |                                                                  |
 | PlatformEventChannelMember                   | ✅      |                                                                  |
 | PlatformEventMigration                       | ❌      | Not supported, but support could be added                        |

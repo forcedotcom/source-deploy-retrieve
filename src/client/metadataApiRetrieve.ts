@@ -129,9 +129,7 @@ export class RetrieveResult implements MetadataTransferResult {
 
     responses.push(...this.transportFileResponses);
 
-    // MDAPI extraction and required transport retrieval can report the same source file.
-    // A serialized structural key preserves one response without adding a dependency.
-    this.fileResponses = [...new Map(responses.map((v) => [JSON.stringify(v), v])).values()];
+    this.fileResponses = responses;
 
     return this.fileResponses;
   }

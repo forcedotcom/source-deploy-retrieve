@@ -177,7 +177,9 @@ export type MetadataType = {
   };
 };
 
-export type TransportName = 'herokuCompute';
+export const transportNames = ['herokuCompute'] as const;
+
+export type TransportName = (typeof transportNames)[number];
 
 /**
  * Mapping of metadata type ids -> Metadata type definitions.

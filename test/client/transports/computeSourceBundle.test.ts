@@ -165,7 +165,7 @@ describe('computeSourceBundle', () => {
     });
     it('should package app directory into a bundle', async () => {
       await writeFile(join(appDir, 'api-spec.yaml'), 'openapi: 3.0.0\ninfo:\n  title: test');
-      await writeFile(join(appDir, 'MyApp.compute-meta.xml'), '<PlatformComputeApp/>');
+      await writeFile(join(appDir, 'MyApp.compute-meta.xml'), '<ComputeApp/>');
       await writeFile(join(appDir, 'main.py'), 'print("hello")');
       await mkdir(join(appDir, 'lib'), { recursive: true });
       await writeFile(join(appDir, 'lib', 'utils.py'), 'def helper(): pass');
@@ -181,7 +181,7 @@ describe('computeSourceBundle', () => {
 
     it('should include build-critical files in source tar even when forceignored', async () => {
       await writeFile(join(appDir, 'api-spec.yaml'), 'openapi: 3.0.0');
-      await writeFile(join(appDir, 'MyApp.compute-meta.xml'), '<PlatformComputeApp/>');
+      await writeFile(join(appDir, 'MyApp.compute-meta.xml'), '<ComputeApp/>');
       await writeFile(join(appDir, 'project.toml'), '[project]\nname = "test"');
       await writeFile(join(appDir, '.forceignore'), '*.log\n*.yaml\nproject.toml');
       await writeFile(join(appDir, 'main.py'), 'print("hello")');
@@ -199,7 +199,7 @@ describe('computeSourceBundle', () => {
 
     it('should respect .forceignore patterns', async () => {
       await writeFile(join(appDir, 'api-spec.yaml'), 'openapi: 3.0.0');
-      await writeFile(join(appDir, 'MyApp.compute-meta.xml'), '<PlatformComputeApp/>');
+      await writeFile(join(appDir, 'MyApp.compute-meta.xml'), '<ComputeApp/>');
       await writeFile(join(appDir, '.forceignore'), '*.log\n__pycache__/');
       await writeFile(join(appDir, 'main.py'), 'print("hello")');
       await writeFile(join(appDir, 'debug.log'), 'log entry');
@@ -418,7 +418,7 @@ describe('computeSourceBundle', () => {
 
     it('should round-trip pack and unpack', async () => {
       await writeFile(join(appDir, 'api-spec.yaml'), 'openapi: 3.0.0\ninfo:\n  title: test');
-      await writeFile(join(appDir, 'MyApp.compute-meta.xml'), '<PlatformComputeApp/>');
+      await writeFile(join(appDir, 'MyApp.compute-meta.xml'), '<ComputeApp/>');
       await writeFile(join(appDir, 'main.py'), 'print("hello")');
       await mkdir(join(appDir, 'lib'), { recursive: true });
       await writeFile(join(appDir, 'lib', 'utils.py'), 'def helper(): pass');

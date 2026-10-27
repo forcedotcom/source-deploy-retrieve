@@ -48,7 +48,7 @@ export async function packageComputeBundle(appDir: string, name: string): Promis
   try {
     await access(apiSpecPath);
   } catch {
-    throw new SfError(`PlatformComputeApp '${name}' is missing required api-spec.yaml in ${appDir}`, 'MissingApiSpec');
+    throw new SfError(`ComputeApp '${name}' is missing required api-spec.yaml in ${appDir}`, 'MissingApiSpec');
   }
 
   const metaFileName = `${name}.compute-meta.xml`;

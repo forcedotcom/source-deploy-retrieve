@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 import { dirname, join } from 'node:path';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { fail } from 'node:assert';
 import { Messages, SfError } from '@salesforce/core';
 import { SinonStub } from 'sinon';
@@ -267,17 +269,17 @@ describe('MetadataConverter', () => {
 
     it('should write the fullName entry when packageName is provided', async () => {
       const timestamp = 123_456;
-      const packageName = 'examplePackage';
-      const packagePath = join(outputDirectory, packageName);
+      const examplePackageName = 'examplePackage';
+      const packagePath = join(outputDirectory, examplePackageName);
       $$.SANDBOX.stub(Date, 'now').returns(timestamp);
       const cs = new ComponentSet(components);
-      cs.fullName = packageName;
+      cs.fullName = examplePackageName;
       const expectedContents = await cs.getPackageXml();
 
       await converter.convert(components, 'metadata', {
         type: 'directory',
         outputDirectory,
-        packageName,
+        packageName: examplePackageName,
       });
 
       expect(writeFileStub.calledBefore(pipelineStub)).to.be.true;
@@ -291,6 +293,250 @@ describe('MetadataConverter', () => {
       await converter.convert(components, 'source', { type: 'directory', outputDirectory });
 
       expect(writeFileStub.notCalled).to.be.true;
+    });
+  });
+
+  describe('Profile metadata', () => {
+    let tempDirectory: string;
+
+    beforeEach(() => {
+      tempDirectory = mkdtempSync(join(tmpdir(), 'sdr-profile-'));
+      $$.SANDBOX.restore();
+    });
+
+    afterEach(() => rmSync(tempDirectory, { recursive: true, force: true }));
+
+    it('merges profile fragments from multiple source locations', async () => {
+      const firstProfile = join(tempDirectory, 'first', 'profiles', 'Admin.profile-meta.xml');
+      const secondProfile = join(tempDirectory, 'second', 'profiles', 'Admin.profile-meta.xml');
+      for (const profile of [firstProfile, secondProfile]) {
+        fs.mkdirSync(dirname(profile), { recursive: true });
+      }
+      writeFileSync(
+        firstProfile,
+        '<?xml version="1.0" encoding="UTF-8"?><Profile xmlns="http://soap.sforce.com/2006/04/metadata"><custom>true</custom><layoutAssignments><layout>Account-Account Layout</layout><recordType>Account.Business</recordType></layoutAssignments></Profile>'
+      );
+      writeFileSync(
+        secondProfile,
+        '<?xml version="1.0" encoding="UTF-8"?><Profile xmlns="http://soap.sforce.com/2006/04/metadata"><custom>true</custom><layoutAssignments><recordType>Account.Business</recordType><layout>Account-Account Layout</layout></layoutAssignments><layoutAssignments><layout>Contact-Contact Layout</layout><recordType>Contact.Business</recordType></layoutAssignments><layoutAssignments><layout>Account-Other Layout</layout><recordType>Account.Business</recordType></layoutAssignments></Profile>'
+      );
+
+      const profileType = registry.types.profile;
+      const profileComponents = [
+        new SourceComponent({ name: 'Admin', type: profileType, xml: firstProfile }),
+        new SourceComponent({ name: 'Admin', type: profileType, xml: secondProfile }),
+      ];
+
+      await new MetadataConverter().convert(profileComponents, 'metadata', {
+        type: 'directory',
+        outputDirectory: tempDirectory,
+        packageName: 'mdapi',
+      });
+
+      const output = readFileSync(join(tempDirectory, 'mdapi', 'profiles', 'Admin.profile'), 'utf8');
+      expect(output).to.include('<layout>Account-Account Layout</layout>');
+      expect(output).to.include('<layout>Contact-Contact Layout</layout>');
+      expect(output.match(/<custom>true<\/custom>/g)).to.have.length(1);
+      expect(output.match(/<layout>Account-Account Layout<\/layout>/g)).to.have.length(1);
+      expect(output.indexOf('Account-Account Layout')).to.be.lessThan(output.indexOf('Contact-Contact Layout'));
+      expect(output.indexOf('Contact-Contact Layout')).to.be.lessThan(output.indexOf('Account-Other Layout'));
+    });
+
+    const writeProfile = (directory: string, body: string, metadata = false): SourceComponent => {
+      const xml = join(tempDirectory, directory, 'profiles', `Admin.profile${metadata ? '' : '-meta.xml'}`);
+      fs.mkdirSync(dirname(xml), { recursive: true });
+      writeFileSync(xml, `<Profile xmlns="http://soap.sforce.com/2006/04/metadata">${body}</Profile>`);
+      return new SourceComponent({ name: 'Admin', type: registry.types.profile, xml });
+    };
+
+    for (const [tag, first, second] of [
+      ['custom', 'true', 'false'],
+      ['description', 'First', 'Second'],
+      ['loginHours', '<mondayStart>0</mondayStart>', '<mondayStart>60</mondayStart>'],
+      ['userLicense', 'Salesforce', 'Salesforce Platform'],
+    ]) {
+      it(`rejects conflicting singleton ${tag} with Profile and source paths`, async () => {
+        const fragments = [
+          writeProfile('first', `<${tag}>${first}</${tag}>`),
+          writeProfile('second', `<${tag}>${second}</${tag}>`),
+        ];
+        let error: unknown;
+        try {
+          await new MetadataConverter().convert(fragments, 'metadata', {
+            type: 'directory',
+            outputDirectory: tempDirectory,
+            packageName: 'mdapi',
+          });
+        } catch (e) {
+          error = e;
+        }
+        assert(error instanceof Error, 'conflicting singleton must fail conversion');
+        expect(error.name).to.equal('ConversionError');
+        for (const detail of ['Admin', tag, ...fragments.map((fragment) => fragment.xml)]) {
+          expect(error.message).to.include(detail);
+        }
+      });
+    }
+
+    for (const existingDefault of [false, true]) {
+      it(`updates owned entries and routes new retrieved entries to ${
+        existingDefault ? 'existing' : 'new'
+      } default Profile`, async () => {
+        const custom = '<custom>true</custom>';
+        const account =
+          '<layoutAssignments><layout>Account-Account Layout</layout><recordType>Account.Business</recordType></layoutAssignments>';
+        const updatedAccount =
+          '<layoutAssignments><layout>Account-Updated Layout</layout><recordType>Account.Business</recordType></layoutAssignments>';
+        const contact = '<layoutAssignments><layout>Contact-Contact Layout</layout></layoutAssignments>';
+        const incoming = writeProfile(
+          'retrieved',
+          `${custom}${updatedAccount}${contact}<description>New</description>`,
+          true
+        );
+        const fragments = [writeProfile('first', custom + account), writeProfile('second', custom + contact)];
+        if (existingDefault)
+          writeProfile(join('default', 'main', 'default'), `${custom}<userLicense>Salesforce</userLicense>`);
+        const defaultDirectory = join(tempDirectory, 'default');
+        const result = await new MetadataConverter().convert([incoming], 'source', {
+          type: 'merge',
+          mergeWith: fragments,
+          defaultDirectory,
+        });
+        const firstOutput = readFileSync(fragments[0].xml!, 'utf8');
+        const secondOutput = readFileSync(fragments[1].xml!, 'utf8');
+        expect(firstOutput).to.include('<layout>Account-Updated Layout</layout>');
+        expect(firstOutput).not.to.include('Account-Account Layout');
+        expect(secondOutput).to.include('<layout>Contact-Contact Layout</layout>');
+        expect(firstOutput.match(/<custom>/g)).to.have.length(1);
+        expect(secondOutput.match(/<custom>/g)).to.have.length(1);
+        const destination = join(defaultDirectory, 'main', 'default', 'profiles', 'Admin.profile-meta.xml');
+        expect(result.converted?.map((component) => component.xml)).to.have.members([fragments[0].xml, destination]);
+        const output = readFileSync(destination, 'utf8');
+        expect(output).to.include('<description>New</description>');
+        expect(output).not.to.include('<layoutAssignments>');
+        expect(output.match(/<custom>/g) ?? []).to.have.length(existingDefault ? 1 : 0);
+        if (existingDefault) expect(output).to.include('<userLicense>Salesforce</userLicense>');
+      });
+    }
+
+    it('round-trips retrieved Profile fragments without duplicate singleton tags', async () => {
+      const incoming = writeProfile(
+        'retrieved',
+        '<custom>true</custom><layoutAssignments><layout>Account-Updated Layout</layout><recordType>Account.Business</recordType></layoutAssignments><description>New</description>',
+        true
+      );
+      const fragments = [
+        writeProfile(
+          'first',
+          '<custom>true</custom><layoutAssignments><layout>Account-Account Layout</layout><recordType>Account.Business</recordType></layoutAssignments>'
+        ),
+        writeProfile('second', '<custom>true</custom><userLicense>Salesforce</userLicense>'),
+      ];
+      const defaultDirectory = join(tempDirectory, 'default');
+      await new MetadataConverter().convert([incoming], 'source', {
+        type: 'merge',
+        mergeWith: fragments,
+        defaultDirectory,
+      });
+      expect(readFileSync(fragments[0].xml!, 'utf8')).to.include('<layout>Account-Updated Layout</layout>');
+      const defaultProfileXml = join(tempDirectory, 'third', 'profiles', 'Admin.profile-meta.xml');
+      fs.mkdirSync(dirname(defaultProfileXml), { recursive: true });
+      writeFileSync(
+        defaultProfileXml,
+        readFileSync(join(defaultDirectory, 'main', 'default', 'profiles', 'Admin.profile-meta.xml'))
+      );
+      const defaultProfile = new SourceComponent({
+        name: 'Admin',
+        type: registry.types.profile,
+        xml: defaultProfileXml,
+      });
+      const retrievedFragments = fragments.map(
+        ({ xml }) => new SourceComponent({ name: 'Admin', type: registry.types.profile, xml })
+      );
+      await new MetadataConverter().convert([...retrievedFragments, defaultProfile], 'metadata', {
+        type: 'directory',
+        outputDirectory: tempDirectory,
+        packageName: 'round-trip',
+      });
+      const output = readFileSync(join(tempDirectory, 'round-trip', 'profiles', 'Admin.profile'), 'utf8');
+      expect(output.match(/<custom>true<\/custom>/g)).to.have.length(1);
+      expect(output).to.include('<layout>Account-Updated Layout</layout>');
+      expect(output).to.include('<description>New</description>');
+      expect(output).to.include('<userLicense>Salesforce</userLicense>');
+    });
+
+    it('updates every Profile fragment that owns a changed singleton', async () => {
+      const incoming = writeProfile('retrieved', '<custom>false</custom>', true);
+      const fragments = [
+        writeProfile('first', '<custom>true</custom>'),
+        writeProfile('second', '<custom>true</custom>'),
+      ];
+      const defaultDirectory = join(tempDirectory, 'default');
+      const result = await new MetadataConverter().convert([incoming], 'source', {
+        type: 'merge',
+        mergeWith: fragments,
+        defaultDirectory,
+      });
+      for (const fragment of fragments) {
+        const output = readFileSync(fragment.xml!, 'utf8');
+        expect(output).to.include('<custom>false</custom>');
+        expect(output).not.to.include('<custom>true</custom>');
+      }
+      expect(result.converted?.map((component) => component.xml)).to.have.members(fragments.map(({ xml }) => xml));
+      expect(existsSync(join(defaultDirectory, 'main', 'default', 'profiles', 'Admin.profile-meta.xml'))).to.be.false;
+    });
+
+    it('keeps distinct record type layout assignments when one changes', async () => {
+      const incoming = writeProfile(
+        'retrieved',
+        '<layoutAssignments><layout>Account-Business Updated</layout><recordType>Account.Business</recordType></layoutAssignments><layoutAssignments><layout>Account-Person Layout</layout><recordType>Account.Person</recordType></layoutAssignments>',
+        true
+      );
+      const fragment = writeProfile(
+        'first',
+        '<layoutAssignments><layout>Account-Business Layout</layout><recordType>Account.Business</recordType></layoutAssignments><layoutAssignments><layout>Account-Person Layout</layout><recordType>Account.Person</recordType></layoutAssignments>'
+      );
+      await new MetadataConverter().convert([incoming], 'source', {
+        type: 'merge',
+        mergeWith: [fragment],
+        defaultDirectory: join(tempDirectory, 'default'),
+      });
+      const output = readFileSync(fragment.xml!, 'utf8');
+      expect(output).to.include('<layout>Account-Business Updated</layout>');
+      expect(output).to.include('<recordType>Account.Business</recordType>');
+      expect(output).to.include('<layout>Account-Person Layout</layout>');
+      expect(output).to.include('<recordType>Account.Person</recordType>');
+    });
+
+    it('does not write or create a default Profile when all retrieved entries are owned', async () => {
+      const fragments = [
+        writeProfile('first', '<custom>true</custom>'),
+        writeProfile('second', '<description>Owned</description>'),
+      ];
+      const originals = fragments.map((fragment) => readFileSync(fragment.xml!, 'utf8'));
+      const incoming = writeProfile('retrieved', '<custom>true</custom><description>Owned</description>', true);
+      const defaultDirectory = join(tempDirectory, 'default');
+      const result = await new MetadataConverter().convert([incoming], 'source', {
+        type: 'merge',
+        mergeWith: fragments,
+        defaultDirectory,
+      });
+      expect(result.converted).to.deep.equal([]);
+      expect(existsSync(join(defaultDirectory, 'main', 'default', 'profiles', 'Admin.profile-meta.xml'))).to.be.false;
+      fragments.forEach((fragment, index) => expect(readFileSync(fragment.xml!, 'utf8')).to.equal(originals[index]));
+    });
+
+    it('writes the conventional default Profile when no local Profile matches', async () => {
+      const incoming = writeProfile('retrieved', '<custom>true</custom><description>New</description>', true);
+      const defaultDirectory = join(tempDirectory, 'default');
+      const result = await new MetadataConverter().convert([incoming], 'source', {
+        type: 'merge',
+        mergeWith: [],
+        defaultDirectory,
+      });
+      const destination = join(defaultDirectory, 'main', 'default', 'profiles', 'Admin.profile-meta.xml');
+      expect(result.converted?.map((component) => component.xml)).to.deep.equal([destination]);
+      expect(readFileSync(destination, 'utf8')).to.include('<custom>true</custom>');
     });
   });
 

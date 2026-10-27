@@ -170,7 +170,8 @@ export type MetadataType = {
       | 'decomposedLabels'
       | 'decomposedPermissionSet'
       | 'decomposeExternalServiceRegistration'
-      | 'uiBundle';
+      | 'uiBundle'
+      | 'profile';
     decomposition?: 'topLevel' | 'folderPerType';
     recomposition?: 'startEmpty';
   };

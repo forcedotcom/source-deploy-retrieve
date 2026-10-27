@@ -65,7 +65,7 @@
     "mktDataSources": "datasource",
     "objectTranslations": "customobjecttranslation",
     "objects": "customobject",
-    "platformComputeApps": "computeapp",
+    "ComputeApps": "computeapp",
     "restrictionRules": "restrictionrule",
     "siteDotComSites": "sitedotcom",
     "sites": "customsite",
@@ -5431,7 +5431,7 @@
       "supportsPartialDelete": true
     },
     "computeapp": {
-      "directoryName": "platformComputeApps",
+      "directoryName": "ComputeApps",
       "id": "computeapp",
       "inFolder": false,
       "name": "ComputeApp",

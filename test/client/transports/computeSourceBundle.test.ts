@@ -44,7 +44,7 @@ describe('computeSourceBundle', () => {
 
   beforeEach(async () => {
     tempDir = join(tmpdir(), `sdr-bundle-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    appDir = join(tempDir, 'force-app', 'platformComputeApps', 'MyApp');
+    appDir = join(tempDir, 'force-app', 'ComputeApps', 'MyApp');
     await mkdir(appDir, { recursive: true });
   });
 
@@ -307,7 +307,7 @@ describe('computeSourceBundle', () => {
       await writeFile(join(appDir, 'main.py'), 'new');
       const bundle = await packageComputeBundle(appDir, 'MyApp');
       const outside = join(tempDir, 'outside');
-      const outsideApp = join(outside, 'platformComputeApps', 'MyApp');
+      const outsideApp = join(outside, 'ComputeApps', 'MyApp');
       await mkdir(outsideApp, { recursive: true });
       await writeFile(join(outsideApp, 'api-spec.yaml'), 'original spec');
       await writeFile(join(outsideApp, 'main.py'), 'original source');
@@ -316,7 +316,7 @@ describe('computeSourceBundle', () => {
 
       let error: Error | undefined;
       try {
-        await unpackComputeBundle(bundle.buffer, join(outputLink, 'platformComputeApps', 'MyApp'));
+        await unpackComputeBundle(bundle.buffer, join(outputLink, 'ComputeApps', 'MyApp'));
       } catch (err) {
         error = err as Error;
       }
@@ -356,7 +356,7 @@ describe('computeSourceBundle', () => {
       await mkdir(outside);
       const outputLink = join(tempDir, 'output-link');
       await symlink(outside, outputLink);
-      const output = join(outputLink, 'platformComputeApps', 'MyApp');
+      const output = join(outputLink, 'ComputeApps', 'MyApp');
 
       try {
         await unpackComputeBundle(bundle.buffer, output);
@@ -365,7 +365,7 @@ describe('computeSourceBundle', () => {
         expect((err as Error).message).to.include('symlink');
       }
       try {
-        await access(join(outside, 'platformComputeApps', 'MyApp', 'api-spec.yaml'));
+        await access(join(outside, 'ComputeApps', 'MyApp', 'api-spec.yaml'));
         expect.fail('should not write outside');
       } catch (err) {
         expect((err as Error).message).to.not.include('should not write outside');

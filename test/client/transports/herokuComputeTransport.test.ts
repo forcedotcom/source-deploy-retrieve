@@ -267,8 +267,8 @@ describe('HerokuComputeTransport', () => {
 
         await transport.afterRetrieve(context);
 
-        expect(unpack.firstCall.args[1]).to.equal(join('/packages/first', 'platformComputeApps', 'FirstApp'));
-        expect(unpack.secondCall.args[1]).to.equal(join('/packages/second', 'platformComputeApps', 'SecondApp'));
+        expect(unpack.firstCall.args[1]).to.equal(join('/packages/first', 'ComputeApps', 'FirstApp'));
+        expect(unpack.secondCall.args[1]).to.equal(join('/packages/second', 'ComputeApps', 'SecondApp'));
       } finally {
         unpack.restore();
       }
@@ -290,10 +290,10 @@ describe('HerokuComputeTransport', () => {
 
         const result = await transport.afterRetrieve(context);
 
-        expect(unpack.firstCall.args[1]).to.equal(join('/custom/output', 'platformComputeApps', 'RemoteApp'));
+        expect(unpack.firstCall.args[1]).to.equal(join('/custom/output', 'ComputeApps', 'RemoteApp'));
         expect(unpack.secondCall.args[1]).to.equal('/local/app');
         expect(result.fileResponses.map((response) => response.filePath)).to.deep.equal([
-          join('/custom/output', 'platformComputeApps', 'RemoteApp'),
+          join('/custom/output', 'ComputeApps', 'RemoteApp'),
           '/local/app',
         ]);
       } finally {
@@ -326,8 +326,8 @@ describe('HerokuComputeTransport', () => {
 
   describe('component validation', () => {
     it('should accept components with a content path', () => {
-      const component = createComputeComponent('MyApp', '/project/force-app/platformComputeApps/MyApp');
-      expect(component.content).to.equal('/project/force-app/platformComputeApps/MyApp');
+      const component = createComputeComponent('MyApp', '/project/force-app/ComputeApps/MyApp');
+      expect(component.content).to.equal('/project/force-app/ComputeApps/MyApp');
     });
 
     it('should collect failure for component with no content path', () => {

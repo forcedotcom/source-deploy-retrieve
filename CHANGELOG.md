@@ -1,3 +1,12 @@
+## [13.8.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.8.1...13.8.2) (2026-10-27)
+
+
+### Bug Fixes
+
+* **deps:** bump fast-uri from 3.1.8 to 3.1.9 ([#1860](https://github.com/forcedotcom/source-deploy-retrieve/issues/1860)) ([5d70b88](https://github.com/forcedotcom/source-deploy-retrieve/commit/5d70b88649f6d6ae6805c08911f7fba71f1d9a79))
+
+
+
 ## [13.8.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.8.0...13.8.1) (2026-10-27)
 
 

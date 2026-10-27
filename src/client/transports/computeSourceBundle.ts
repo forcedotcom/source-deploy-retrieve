@@ -51,7 +51,7 @@ export async function packageComputeBundle(appDir: string, name: string): Promis
     throw new SfError(`ComputeApp '${name}' is missing required api-spec.yaml in ${appDir}`, 'MissingApiSpec');
   }
 
-  const metaFileName = `${name}.compute-meta.xml`;
+  const metaFileName = `${name}.computeApp-meta.xml`;
   const excluded = new Set([metaFileName, '.forceignore']);
   // Both files are consumed at build/runtime, so a broad .forceignore must not
   // remove them from the nested source archive.

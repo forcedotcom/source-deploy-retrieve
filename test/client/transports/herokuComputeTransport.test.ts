@@ -28,7 +28,12 @@ const registryAccess = new RegistryAccess();
 
 function createComputeComponent(fullName: string, appDir: string): SourceComponent {
   const type = registryAccess.getTypeByName('ComputeApp');
-  return new SourceComponent({ name: fullName, type, content: appDir, xml: `${appDir}/${fullName}.compute-meta.xml` });
+  return new SourceComponent({
+    name: fullName,
+    type,
+    content: appDir,
+    xml: `${appDir}/${fullName}.computeApp-meta.xml`,
+  });
 }
 
 function createMockContext(overrides: Partial<TransportContext> = {}): TransportContext {
@@ -54,15 +59,15 @@ describe('ComputeAppTransport', () => {
   const transport = new ComputeAppTransport();
 
   describe('metadata', () => {
-    it('should have the Heroku Compute provider name', () => {
-      expect(transport.name).to.equal('ComputeApp');
+    it('should have the herokuCompute provider name', () => {
+      expect(transport.name).to.equal('herokuCompute');
       expect(typeof transport.beforeDeploy).to.equal('function');
       expect(typeof transport.afterRetrieve).to.equal('function');
     });
 
     it('should describe itself correctly', () => {
       const desc = transport.describe();
-      expect(desc.label).to.equal('Heroku Compute');
+      expect(desc.label).to.equal('Elastic Compute');
       expect(desc.endpoint).to.equal('/connect/compute/source');
     });
   });
@@ -76,7 +81,7 @@ describe('ComputeAppTransport', () => {
     it('should handle components with ComputeApp transport strategy', () => {
       const type = {
         ...registryAccess.getTypeByName('ApexClass'),
-        strategies: { adapter: 'default' as const, transport: 'ComputeApp' as const },
+        strategies: { adapter: 'default' as const, transport: 'herokuCompute' as const },
       };
       const component = new SourceComponent({ name: 'Test', type });
       expect(transport.handles(component)).to.be.true;
@@ -146,7 +151,7 @@ describe('ComputeAppTransport', () => {
       expect(result.fileResponses).to.have.lengthOf(1);
       expect(result.fileResponses[0]).to.include({ fullName: 'MyApp', type: 'ComputeApp' });
       expect(result.operationResults).to.deep.equal([
-        { transportLabel: 'Heroku Compute', operation: 'Upload MyApp', status: 'Succeeded' },
+        { transportLabel: 'Elastic Compute', operation: 'Upload MyApp', status: 'Succeeded' },
       ]);
     });
 
@@ -167,8 +172,8 @@ describe('ComputeAppTransport', () => {
       expect(requestStub.calledTwice).to.be.true;
       expect(result.fileResponses).to.have.lengthOf(2);
       expect(result.operationResults).to.deep.equal([
-        { transportLabel: 'Heroku Compute', operation: 'Upload App1', status: 'Succeeded' },
-        { transportLabel: 'Heroku Compute', operation: 'Upload App2', status: 'Succeeded' },
+        { transportLabel: 'Elastic Compute', operation: 'Upload App1', status: 'Succeeded' },
+        { transportLabel: 'Elastic Compute', operation: 'Upload App2', status: 'Succeeded' },
       ]);
     });
 
@@ -191,7 +196,7 @@ describe('ComputeAppTransport', () => {
         expect.fail('should have thrown');
       } catch (err) {
         const sfErr = err as SfError;
-        expect(sfErr.message).to.include('Heroku Compute upload failed');
+        expect(sfErr.message).to.include('Elastic Compute upload failed');
         expect(sfErr.message).to.include('500 server error');
         // partial results attached to error.data
         const responses = sfErr.data as FileResponse[];
@@ -216,7 +221,7 @@ describe('ComputeAppTransport', () => {
         await transport.beforeDeploy(context);
         expect.fail('should have thrown');
       } catch (err) {
-        expect((err as Error).message).to.include('Heroku Compute upload failed');
+        expect((err as Error).message).to.include('Elastic Compute upload failed');
         expect((err as Error).message).to.include('MyApp');
       }
     });
@@ -267,8 +272,8 @@ describe('ComputeAppTransport', () => {
 
         await transport.afterRetrieve(context);
 
-        expect(unpack.firstCall.args[1]).to.equal(join('/packages/first', 'ComputeApps', 'FirstApp'));
-        expect(unpack.secondCall.args[1]).to.equal(join('/packages/second', 'ComputeApps', 'SecondApp'));
+        expect(unpack.firstCall.args[1]).to.equal(join('/packages/first', 'computeApps', 'FirstApp'));
+        expect(unpack.secondCall.args[1]).to.equal(join('/packages/second', 'computeApps', 'SecondApp'));
       } finally {
         unpack.restore();
       }
@@ -290,10 +295,10 @@ describe('ComputeAppTransport', () => {
 
         const result = await transport.afterRetrieve(context);
 
-        expect(unpack.firstCall.args[1]).to.equal(join('/custom/output', 'ComputeApps', 'RemoteApp'));
+        expect(unpack.firstCall.args[1]).to.equal(join('/custom/output', 'computeApps', 'RemoteApp'));
         expect(unpack.secondCall.args[1]).to.equal('/local/app');
         expect(result.fileResponses.map((response) => response.filePath)).to.deep.equal([
-          join('/custom/output', 'ComputeApps', 'RemoteApp'),
+          join('/custom/output', 'computeApps', 'RemoteApp'),
           '/local/app',
         ]);
       } finally {
@@ -315,7 +320,7 @@ describe('ComputeAppTransport', () => {
         expect.fail('should have thrown');
       } catch (err) {
         const sfErr = err as SfError;
-        expect(sfErr.message).to.include('Heroku Compute download failed');
+        expect(sfErr.message).to.include('Elastic Compute download failed');
         expect(sfErr.message).to.include('MyApp');
         const responses = sfErr.data as FileResponse[];
         expect(responses).to.have.lengthOf(1);
@@ -326,8 +331,8 @@ describe('ComputeAppTransport', () => {
 
   describe('component validation', () => {
     it('should accept components with a content path', () => {
-      const component = createComputeComponent('MyApp', '/project/force-app/ComputeApps/MyApp');
-      expect(component.content).to.equal('/project/force-app/ComputeApps/MyApp');
+      const component = createComputeComponent('MyApp', '/project/force-app/computeApps/MyApp');
+      expect(component.content).to.equal('/project/force-app/computeApps/MyApp');
     });
 
     it('should collect failure for component with no content path', () => {
@@ -342,7 +347,7 @@ describe('ComputeAppTransport', () => {
         () => expect.fail('should have thrown'),
         (err: unknown) => {
           const sfErr = err as SfError;
-          expect(sfErr.message).to.include('Heroku Compute upload failed');
+          expect(sfErr.message).to.include('Elastic Compute upload failed');
           expect(sfErr.message).to.include('NoPath');
           const responses = sfErr.data as FileResponse[];
           expect(responses).to.have.lengthOf(1);

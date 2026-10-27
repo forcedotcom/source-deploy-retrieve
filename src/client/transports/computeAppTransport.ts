@@ -80,12 +80,12 @@ async function downloadSource(connection: Connection, appIdOrName: string): Prom
 }
 
 export class ComputeAppTransport implements TransportProvider {
-  public readonly name = 'ComputeApp';
+  public readonly name = 'herokuCompute';
   private readonly logger = Logger.childFromRoot('ComputeAppTransport');
 
   // eslint-disable-next-line class-methods-use-this
   public describe(): TransportDescription {
-    return { label: 'Heroku Compute', endpoint: ENDPOINT };
+    return { label: 'Elastic Compute', endpoint: ENDPOINT };
   }
 
   public handles(component: SourceComponent): boolean {
@@ -134,7 +134,7 @@ export class ComputeAppTransport implements TransportProvider {
           type: component.type.name,
           state: ComponentStatus.Failed,
           filePath: component.content ?? component.xml ?? '',
-          error: `Heroku Compute upload failed for '${component.fullName}': ${(err as Error).message}`,
+          error: `Elastic Compute upload failed for '${component.fullName}': ${(err as Error).message}`,
           problemType: 'Error',
         });
       }
@@ -189,7 +189,7 @@ export class ComputeAppTransport implements TransportProvider {
           type: component.type.name,
           state: ComponentStatus.Failed,
           filePath: component.content ?? component.xml ?? '',
-          error: `Heroku Compute download failed for '${component.fullName}': ${(err as Error).message}`,
+          error: `Elastic Compute download failed for '${component.fullName}': ${(err as Error).message}`,
           problemType: 'Error',
         });
       }
@@ -216,7 +216,7 @@ export class ComputeAppTransport implements TransportProvider {
     if (failures.length > 0) {
       const details = failures.map((f) => f.error ?? f.fullName).join('; ');
       const error = new SfError(
-        `Heroku Compute ${operation} failed: ${details}`,
+        `Elastic Compute ${operation} failed: ${details}`,
         `ComputeApp${operation.charAt(0).toUpperCase() + operation.slice(1)}Error`
       );
       error.data = fileResponses;

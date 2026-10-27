@@ -109,11 +109,11 @@ describe('DeployResult transport integration', () => {
     const result = new DeployResult(createDeployStatus());
 
     const asyncHandle: AsyncTransportHandle = {
-      transportName: 'ComputeApp',
+      transportName: 'herokuCompute',
       status: 'Pending',
       message: 'Deploy extension pending',
       checkStatus: async (): Promise<AsyncTransportHandle> => ({
-        transportName: 'ComputeApp',
+        transportName: 'herokuCompute',
         status: 'Succeeded' as const,
         checkStatus: async (): Promise<AsyncTransportHandle> => ({} as unknown as AsyncTransportHandle),
       }),
@@ -123,15 +123,15 @@ describe('DeployResult transport integration', () => {
 
     const handles = result.getAsyncTransportHandles();
     expect(handles).to.have.lengthOf(1);
-    expect(handles[0].transportName).to.equal('ComputeApp');
+    expect(handles[0].transportName).to.equal('herokuCompute');
     expect(handles[0].status).to.equal('Pending');
   });
 
   it('should include multiple transport operation results', () => {
     const result = new DeployResult(createDeployStatus());
     const operationResults = [
-      { transportLabel: 'Heroku Compute', operation: 'Upload App1', status: 'Succeeded' as const },
-      { transportLabel: 'Heroku Compute', operation: 'Upload App2', status: 'Succeeded' as const },
+      { transportLabel: 'Elastic Compute', operation: 'Upload App1', status: 'Succeeded' as const },
+      { transportLabel: 'Elastic Compute', operation: 'Upload App2', status: 'Succeeded' as const },
     ];
 
     result.addTransportResults([], [], operationResults);

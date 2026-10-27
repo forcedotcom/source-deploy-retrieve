@@ -44,7 +44,7 @@ describe('computeSourceBundle', () => {
 
   beforeEach(async () => {
     tempDir = join(tmpdir(), `sdr-bundle-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    appDir = join(tempDir, 'force-app', 'ComputeApps', 'MyApp');
+    appDir = join(tempDir, 'force-app', 'computeApps', 'MyApp');
     await mkdir(appDir, { recursive: true });
   });
 
@@ -165,7 +165,7 @@ describe('computeSourceBundle', () => {
     });
     it('should package app directory into a bundle', async () => {
       await writeFile(join(appDir, 'api-spec.yaml'), 'openapi: 3.0.0\ninfo:\n  title: test');
-      await writeFile(join(appDir, 'MyApp.compute-meta.xml'), '<ComputeApp/>');
+      await writeFile(join(appDir, 'MyApp.computeApp-meta.xml'), '<ComputeApp/>');
       await writeFile(join(appDir, 'main.py'), 'print("hello")');
       await mkdir(join(appDir, 'lib'), { recursive: true });
       await writeFile(join(appDir, 'lib', 'utils.py'), 'def helper(): pass');
@@ -181,7 +181,7 @@ describe('computeSourceBundle', () => {
 
     it('should include build-critical files in source tar even when forceignored', async () => {
       await writeFile(join(appDir, 'api-spec.yaml'), 'openapi: 3.0.0');
-      await writeFile(join(appDir, 'MyApp.compute-meta.xml'), '<ComputeApp/>');
+      await writeFile(join(appDir, 'MyApp.computeApp-meta.xml'), '<ComputeApp/>');
       await writeFile(join(appDir, 'project.toml'), '[project]\nname = "test"');
       await writeFile(join(appDir, '.forceignore'), '*.log\n*.yaml\nproject.toml');
       await writeFile(join(appDir, 'main.py'), 'print("hello")');
@@ -199,7 +199,7 @@ describe('computeSourceBundle', () => {
 
     it('should respect .forceignore patterns', async () => {
       await writeFile(join(appDir, 'api-spec.yaml'), 'openapi: 3.0.0');
-      await writeFile(join(appDir, 'MyApp.compute-meta.xml'), '<ComputeApp/>');
+      await writeFile(join(appDir, 'MyApp.computeApp-meta.xml'), '<ComputeApp/>');
       await writeFile(join(appDir, '.forceignore'), '*.log\n__pycache__/');
       await writeFile(join(appDir, 'main.py'), 'print("hello")');
       await writeFile(join(appDir, 'debug.log'), 'log entry');
@@ -307,7 +307,7 @@ describe('computeSourceBundle', () => {
       await writeFile(join(appDir, 'main.py'), 'new');
       const bundle = await packageComputeBundle(appDir, 'MyApp');
       const outside = join(tempDir, 'outside');
-      const outsideApp = join(outside, 'ComputeApps', 'MyApp');
+      const outsideApp = join(outside, 'computeApps', 'MyApp');
       await mkdir(outsideApp, { recursive: true });
       await writeFile(join(outsideApp, 'api-spec.yaml'), 'original spec');
       await writeFile(join(outsideApp, 'main.py'), 'original source');
@@ -316,7 +316,7 @@ describe('computeSourceBundle', () => {
 
       let error: Error | undefined;
       try {
-        await unpackComputeBundle(bundle.buffer, join(outputLink, 'ComputeApps', 'MyApp'));
+        await unpackComputeBundle(bundle.buffer, join(outputLink, 'computeApps', 'MyApp'));
       } catch (err) {
         error = err as Error;
       }
@@ -356,7 +356,7 @@ describe('computeSourceBundle', () => {
       await mkdir(outside);
       const outputLink = join(tempDir, 'output-link');
       await symlink(outside, outputLink);
-      const output = join(outputLink, 'ComputeApps', 'MyApp');
+      const output = join(outputLink, 'computeApps', 'MyApp');
 
       try {
         await unpackComputeBundle(bundle.buffer, output);
@@ -365,7 +365,7 @@ describe('computeSourceBundle', () => {
         expect((err as Error).message).to.include('symlink');
       }
       try {
-        await access(join(outside, 'ComputeApps', 'MyApp', 'api-spec.yaml'));
+        await access(join(outside, 'computeApps', 'MyApp', 'api-spec.yaml'));
         expect.fail('should not write outside');
       } catch (err) {
         expect((err as Error).message).to.not.include('should not write outside');
@@ -418,7 +418,7 @@ describe('computeSourceBundle', () => {
 
     it('should round-trip pack and unpack', async () => {
       await writeFile(join(appDir, 'api-spec.yaml'), 'openapi: 3.0.0\ninfo:\n  title: test');
-      await writeFile(join(appDir, 'MyApp.compute-meta.xml'), '<ComputeApp/>');
+      await writeFile(join(appDir, 'MyApp.computeApp-meta.xml'), '<ComputeApp/>');
       await writeFile(join(appDir, 'main.py'), 'print("hello")');
       await mkdir(join(appDir, 'lib'), { recursive: true });
       await writeFile(join(appDir, 'lib', 'utils.py'), 'def helper(): pass');

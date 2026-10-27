@@ -82,7 +82,7 @@ function createMockTransport(overrides: {
 function createMockComponent(typeName: string, fullName: string): SourceComponent {
   const type = {
     ...registryAccess.getTypeByName(typeName),
-    strategies: { adapter: 'default' as const, transport: 'ComputeApp' as const },
+    strategies: { adapter: 'default' as const, transport: 'herokuCompute' as const },
   };
   return new SourceComponent({ name: fullName, type });
 }
@@ -142,7 +142,7 @@ describe('Transport integration', () => {
         filePath: '/app/main.py',
       };
       const handle = {
-        transportName: 'ComputeApp' as const,
+        transportName: 'herokuCompute' as const,
         status: 'Pending' as const,
         checkStatus: async () => handle,
       };
@@ -174,7 +174,7 @@ describe('Transport integration', () => {
         filePath: '/app/main.py',
       };
       const handle = {
-        transportName: 'ComputeApp' as const,
+        transportName: 'herokuCompute' as const,
         status: 'Pending' as const,
         checkStatus: async () => handle,
       };
@@ -206,7 +206,7 @@ describe('Transport integration', () => {
       filePath: '/app/main.py',
     };
     const handle = {
-      transportName: 'ComputeApp' as const,
+      transportName: 'herokuCompute' as const,
       status: 'Pending' as const,
       checkStatus: async () => handle,
     };

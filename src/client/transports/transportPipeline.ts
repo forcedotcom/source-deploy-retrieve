@@ -94,7 +94,7 @@ export class TransportPipeline {
         group.components.push(component);
       }
       // all components go through metadata api — transport components
-      // also have metadata portions (.compute-meta.xml) that need MDAPI
+      // also have metadata portions (.computeApp-meta.xml) that need MDAPI
       metadataApi.push(component);
     }
 

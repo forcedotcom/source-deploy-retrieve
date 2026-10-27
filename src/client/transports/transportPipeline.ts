@@ -25,7 +25,7 @@ import {
   TransportProvider,
   TransportResult,
 } from './types';
-import { HerokuComputeTransport } from './herokuComputeTransport';
+import { ComputeAppTransport } from './computeAppTransport';
 
 export type TransportGroup = {
   transport: TransportProvider;
@@ -76,7 +76,7 @@ export class TransportPipeline {
   }
 
   public static withBuiltinTransports(): TransportPipeline {
-    return new TransportPipeline([new HerokuComputeTransport()]);
+    return new TransportPipeline([new ComputeAppTransport()]);
   }
 
   public groupByTransport(components: SourceComponent[]): GroupedComponents {

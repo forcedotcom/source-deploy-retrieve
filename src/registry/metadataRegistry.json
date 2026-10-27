@@ -5437,7 +5437,7 @@
       "name": "ComputeApp",
       "strategies": {
         "adapter": "bundle",
-        "transport": "herokuCompute"
+        "transport": "ComputeApp"
       },
       "strictDirectoryName": true,
       "suffix": "compute"

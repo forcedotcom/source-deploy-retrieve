@@ -79,9 +79,9 @@ async function downloadSource(connection: Connection, appIdOrName: string): Prom
   return Buffer.from(body, 'binary');
 }
 
-export class HerokuComputeTransport implements TransportProvider {
-  public readonly name = 'herokuCompute';
-  private readonly logger = Logger.childFromRoot('HerokuComputeTransport');
+export class ComputeAppTransport implements TransportProvider {
+  public readonly name = 'ComputeApp';
+  private readonly logger = Logger.childFromRoot('ComputeAppTransport');
 
   // eslint-disable-next-line class-methods-use-this
   public describe(): TransportDescription {
@@ -204,7 +204,7 @@ export class HerokuComputeTransport implements TransportProvider {
   ): asserts component is SourceComponent & { content: string } {
     if (!component.content) {
       throw new SfError(
-        `HerokuComputeTransport requires a content path for '${component.fullName}'`,
+        `ComputeAppTransport requires a content path for '${component.fullName}'`,
         'MissingComponentContent'
       );
     }
@@ -217,7 +217,7 @@ export class HerokuComputeTransport implements TransportProvider {
       const details = failures.map((f) => f.error ?? f.fullName).join('; ');
       const error = new SfError(
         `Heroku Compute ${operation} failed: ${details}`,
-        `HerokuCompute${operation.charAt(0).toUpperCase() + operation.slice(1)}Error`
+        `ComputeApp${operation.charAt(0).toUpperCase() + operation.slice(1)}Error`
       );
       error.data = fileResponses;
       throw error;

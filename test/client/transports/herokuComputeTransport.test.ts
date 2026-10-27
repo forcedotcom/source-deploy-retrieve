@@ -19,7 +19,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import { Connection, SfError, SfProject } from '@salesforce/core';
 import { FileResponse, RegistryAccess, SourceComponent } from '../../../src';
-import { HerokuComputeTransport } from '../../../src/client/transports/herokuComputeTransport';
+import { ComputeAppTransport } from '../../../src/client/transports/computeAppTransport';
 import { TransportPipeline } from '../../../src/client/transports/transportPipeline';
 import { TransportContext } from '../../../src/client/transports/types';
 import * as computeSourceBundle from '../../../src/client/transports/computeSourceBundle';
@@ -50,12 +50,12 @@ function createMockContext(overrides: Partial<TransportContext> = {}): Transport
   };
 }
 
-describe('HerokuComputeTransport', () => {
-  const transport = new HerokuComputeTransport();
+describe('ComputeAppTransport', () => {
+  const transport = new ComputeAppTransport();
 
   describe('metadata', () => {
     it('should have the Heroku Compute provider name', () => {
-      expect(transport.name).to.equal('herokuCompute');
+      expect(transport.name).to.equal('ComputeApp');
       expect(typeof transport.beforeDeploy).to.equal('function');
       expect(typeof transport.afterRetrieve).to.equal('function');
     });
@@ -73,10 +73,10 @@ describe('HerokuComputeTransport', () => {
       expect(transport.handles(component)).to.be.true;
     });
 
-    it('should handle components with herokuCompute transport strategy', () => {
+    it('should handle components with ComputeApp transport strategy', () => {
       const type = {
         ...registryAccess.getTypeByName('ApexClass'),
-        strategies: { adapter: 'default' as const, transport: 'herokuCompute' as const },
+        strategies: { adapter: 'default' as const, transport: 'ComputeApp' as const },
       };
       const component = new SourceComponent({ name: 'Test', type });
       expect(transport.handles(component)).to.be.true;
@@ -354,7 +354,7 @@ describe('HerokuComputeTransport', () => {
   });
 
   describe('withBuiltinTransports integration', () => {
-    it('should auto-register HerokuComputeTransport in pipeline', () => {
+    it('should auto-register ComputeAppTransport in pipeline', () => {
       const pipeline = TransportPipeline.withBuiltinTransports();
       const component = createComputeComponent('MyApp', '/mock/app');
       expect(pipeline.hasTransports([component])).to.be.true;

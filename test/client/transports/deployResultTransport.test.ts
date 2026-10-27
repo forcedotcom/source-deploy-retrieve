@@ -109,11 +109,11 @@ describe('DeployResult transport integration', () => {
     const result = new DeployResult(createDeployStatus());
 
     const asyncHandle: AsyncTransportHandle = {
-      transportName: 'herokuCompute',
+      transportName: 'ComputeApp',
       status: 'Pending',
       message: 'Deploy extension pending',
       checkStatus: async (): Promise<AsyncTransportHandle> => ({
-        transportName: 'herokuCompute',
+        transportName: 'ComputeApp',
         status: 'Succeeded' as const,
         checkStatus: async (): Promise<AsyncTransportHandle> => ({} as unknown as AsyncTransportHandle),
       }),
@@ -123,7 +123,7 @@ describe('DeployResult transport integration', () => {
 
     const handles = result.getAsyncTransportHandles();
     expect(handles).to.have.lengthOf(1);
-    expect(handles[0].transportName).to.equal('herokuCompute');
+    expect(handles[0].transportName).to.equal('ComputeApp');
     expect(handles[0].status).to.equal('Pending');
   });
 

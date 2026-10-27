@@ -43,7 +43,7 @@ import {
 const registryAccess = new RegistryAccess();
 
 function createMockTransport(overrides: {
-  name?: 'herokuCompute';
+  name?: 'ComputeApp';
   deployPhase: 'before-metadata' | 'after-metadata';
   retrievePhase: 'before-metadata' | 'after-metadata';
   typeNames: string[];
@@ -54,7 +54,7 @@ function createMockTransport(overrides: {
   shouldThrow?: 'deploy' | 'retrieve';
 }): TransportProvider {
   const transport: TransportProvider = {
-    name: overrides.name ?? 'herokuCompute',
+    name: overrides.name ?? 'ComputeApp',
     describe(): TransportDescription {
       return { label: 'Mock transport', endpoint: 'https://example.com/transport' };
     },
@@ -82,7 +82,7 @@ function createMockTransport(overrides: {
 function createMockComponent(typeName: string, fullName: string): SourceComponent {
   const type = {
     ...registryAccess.getTypeByName(typeName),
-    strategies: { adapter: 'default' as const, transport: 'herokuCompute' as const },
+    strategies: { adapter: 'default' as const, transport: 'ComputeApp' as const },
   };
   return new SourceComponent({ name: fullName, type });
 }
@@ -142,7 +142,7 @@ describe('Transport integration', () => {
         filePath: '/app/main.py',
       };
       const handle = {
-        transportName: 'herokuCompute' as const,
+        transportName: 'ComputeApp' as const,
         status: 'Pending' as const,
         checkStatus: async () => handle,
       };
@@ -174,7 +174,7 @@ describe('Transport integration', () => {
         filePath: '/app/main.py',
       };
       const handle = {
-        transportName: 'herokuCompute' as const,
+        transportName: 'ComputeApp' as const,
         status: 'Pending' as const,
         checkStatus: async () => handle,
       };
@@ -206,7 +206,7 @@ describe('Transport integration', () => {
       filePath: '/app/main.py',
     };
     const handle = {
-      transportName: 'herokuCompute' as const,
+      transportName: 'ComputeApp' as const,
       status: 'Pending' as const,
       checkStatus: async () => handle,
     };

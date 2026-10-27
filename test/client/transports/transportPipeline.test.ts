@@ -34,7 +34,7 @@ function createMockTransport(
   fileResponses: FileResponse[] = []
 ): TransportProvider {
   const transport: TransportProvider = {
-    name: 'herokuCompute',
+    name: 'ComputeApp',
     describe(): TransportDescription {
       return { label: `Mock ${name}`, endpoint: `https://example.com/${name}` };
     },
@@ -64,7 +64,7 @@ describe('TransportPipeline', () => {
     });
 
     it('should group components by transport when transports are registered', () => {
-      const mockTransport = createMockTransport('herokuCompute', 'before-metadata');
+      const mockTransport = createMockTransport('ComputeApp', 'before-metadata');
       const pipeline = new TransportPipeline([mockTransport]);
 
       const apexClass = createMockComponent('ComputeApp', 'MyApp');
@@ -76,13 +76,13 @@ describe('TransportPipeline', () => {
       expect(result.metadataApi).to.have.lengthOf(2);
       // Configured components also go through their registry transport.
       expect(result.transports).to.have.lengthOf(1);
-      expect(result.transports[0].transport.name).to.equal('herokuCompute');
+      expect(result.transports[0].transport.name).to.equal('ComputeApp');
       expect(result.transports[0].components).to.have.lengthOf(1);
       expect(result.transports[0].components[0].fullName).to.equal('MyApp');
     });
 
     it('should group all configured components for the registry transport', () => {
-      const pipeline = new TransportPipeline([createMockTransport('herokuCompute', 'before-metadata')]);
+      const pipeline = new TransportPipeline([createMockTransport('ComputeApp', 'before-metadata')]);
 
       const apexClass = createMockComponent('ComputeApp', 'MyApp');
       const customObject = createMockComponent('ComputeApp', 'OtherApp');
@@ -105,7 +105,7 @@ describe('TransportPipeline', () => {
     });
 
     it('should return false when no components match a transport', () => {
-      const pipeline = new TransportPipeline([createMockTransport('herokuCompute', 'before-metadata')]);
+      const pipeline = new TransportPipeline([createMockTransport('ComputeApp', 'before-metadata')]);
 
       const apexClass = createMockComponent('ApexClass', 'MyClass');
 
@@ -113,7 +113,7 @@ describe('TransportPipeline', () => {
     });
 
     it('should return true when a component matches a transport', () => {
-      const pipeline = new TransportPipeline([createMockTransport('herokuCompute', 'before-metadata')]);
+      const pipeline = new TransportPipeline([createMockTransport('ComputeApp', 'before-metadata')]);
 
       const apexClass = createMockComponent('ComputeApp', 'MyApp');
 
@@ -123,7 +123,7 @@ describe('TransportPipeline', () => {
 
   describe('explain', () => {
     it('should produce a plan with correct phase ordering', () => {
-      const pipeline = new TransportPipeline([createMockTransport('herokuCompute', 'before-metadata')]);
+      const pipeline = new TransportPipeline([createMockTransport('ComputeApp', 'before-metadata')]);
 
       const apexClass = createMockComponent('ComputeApp', 'MyApp');
       const customObject = createMockComponent('CustomObject', 'MyObject__c');
@@ -133,7 +133,7 @@ describe('TransportPipeline', () => {
 
       expect(plan.phases).to.have.lengthOf(2);
       expect(plan.phases[0].phase).to.equal('before-metadata');
-      expect(plan.phases[0].label).to.equal('Mock herokuCompute');
+      expect(plan.phases[0].label).to.equal('Mock ComputeApp');
       expect(plan.phases[1].phase).to.equal('metadata-api');
       expect(plan.phases[1].components).to.have.lengthOf(3);
     });
@@ -228,7 +228,7 @@ describe('TransportPipeline', () => {
     });
 
     it('should produce correct explain plan for retrieve operation', () => {
-      const transport = createMockTransport('herokuCompute', 'before-metadata');
+      const transport = createMockTransport('ComputeApp', 'before-metadata');
       transport.afterRetrieve = async (): Promise<TransportResult> => ({ fileResponses: [] });
       const pipeline = new TransportPipeline([transport]);
 
@@ -238,29 +238,29 @@ describe('TransportPipeline', () => {
       const deployPlan = pipeline.explain([apexClass, customObject], 'deploy');
       const retrievePlan = pipeline.explain([apexClass, customObject], 'retrieve');
 
-      // deploy: herokuCompute is before metadata.
+      // deploy: ComputeApp is before metadata.
       expect(deployPlan.phases[0].phase).to.equal('before-metadata');
-      expect(deployPlan.phases[0].label).to.equal('Mock herokuCompute');
+      expect(deployPlan.phases[0].label).to.equal('Mock ComputeApp');
 
-      // retrieve: herokuCompute is after metadata.
+      // retrieve: ComputeApp is after metadata.
       expect(retrievePlan.phases[0].phase).to.equal('metadata-api');
       expect(retrievePlan.phases[1].phase).to.equal('after-metadata');
-      expect(retrievePlan.phases[1].label).to.equal('Mock herokuCompute');
+      expect(retrievePlan.phases[1].label).to.equal('Mock ComputeApp');
     });
 
     it('should collect async handles from transports', async () => {
       const asyncTransport: TransportProvider = {
-        name: 'herokuCompute',
+        name: 'ComputeApp',
         describe: () => ({ label: 'Connect API', endpoint: '/connect/compute' }),
         handles: () => true,
         beforeDeploy: async () => ({
           fileResponses: [],
           asyncResult: {
-            transportName: 'herokuCompute',
+            transportName: 'ComputeApp',
             status: 'Pending' as const,
             message: 'Deploy extension pending',
             checkStatus: async (): Promise<AsyncTransportHandle> => ({
-              transportName: 'herokuCompute',
+              transportName: 'ComputeApp',
               status: 'Succeeded' as const,
               checkStatus: async (): Promise<AsyncTransportHandle> => ({} as unknown as AsyncTransportHandle),
             }),
@@ -274,13 +274,13 @@ describe('TransportPipeline', () => {
       const result = await pipeline.runBeforeMetadata(mockContext, groups);
 
       expect(result.asyncHandles).to.have.lengthOf(1);
-      expect(result.asyncHandles[0].transportName).to.equal('herokuCompute');
+      expect(result.asyncHandles[0].transportName).to.equal('ComputeApp');
       expect(result.asyncHandles[0].status).to.equal('Pending');
     });
 
     it('should collect multiple operation results from transports', async () => {
       const transport: TransportProvider = {
-        name: 'herokuCompute',
+        name: 'ComputeApp',
         describe: () => ({ label: 'Heroku Compute', endpoint: '/connect/compute' }),
         handles: () => true,
         beforeDeploy: async () => ({

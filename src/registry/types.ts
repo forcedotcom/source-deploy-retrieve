@@ -177,7 +177,7 @@ export type MetadataType = {
   };
 };
 
-export const transportNames = ['herokuCompute'] as const;
+export const transportNames = ['ComputeApp'] as const;
 
 export type TransportName = (typeof transportNames)[number];
 

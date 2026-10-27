@@ -34,7 +34,7 @@ function createMockTransport(
   fileResponses: FileResponse[] = []
 ): TransportProvider {
   const transport: TransportProvider = {
-    name: 'herokuCompute',
+    name: 'computeApp',
     describe(): TransportDescription {
       return { label: `Mock ${name}`, endpoint: `https://example.com/${name}` };
     },
@@ -76,7 +76,7 @@ describe('TransportPipeline', () => {
       expect(result.metadataApi).to.have.lengthOf(2);
       // Configured components also go through their registry transport.
       expect(result.transports).to.have.lengthOf(1);
-      expect(result.transports[0].transport.name).to.equal('herokuCompute');
+      expect(result.transports[0].transport.name).to.equal('computeApp');
       expect(result.transports[0].components).to.have.lengthOf(1);
       expect(result.transports[0].components[0].fullName).to.equal('MyApp');
     });
@@ -250,17 +250,17 @@ describe('TransportPipeline', () => {
 
     it('should collect async handles from transports', async () => {
       const asyncTransport: TransportProvider = {
-        name: 'herokuCompute',
+        name: 'computeApp',
         describe: () => ({ label: 'Connect API', endpoint: '/connect/compute' }),
         handles: () => true,
         beforeDeploy: async () => ({
           fileResponses: [],
           asyncResult: {
-            transportName: 'herokuCompute',
+            transportName: 'computeApp',
             status: 'Pending' as const,
             message: 'Deploy extension pending',
             checkStatus: async (): Promise<AsyncTransportHandle> => ({
-              transportName: 'herokuCompute',
+              transportName: 'computeApp',
               status: 'Succeeded' as const,
               checkStatus: async (): Promise<AsyncTransportHandle> => ({} as unknown as AsyncTransportHandle),
             }),
@@ -274,13 +274,13 @@ describe('TransportPipeline', () => {
       const result = await pipeline.runBeforeMetadata(mockContext, groups);
 
       expect(result.asyncHandles).to.have.lengthOf(1);
-      expect(result.asyncHandles[0].transportName).to.equal('herokuCompute');
+      expect(result.asyncHandles[0].transportName).to.equal('computeApp');
       expect(result.asyncHandles[0].status).to.equal('Pending');
     });
 
     it('should collect multiple operation results from transports', async () => {
       const transport: TransportProvider = {
-        name: 'herokuCompute',
+        name: 'computeApp',
         describe: () => ({ label: 'Elastic Compute', endpoint: '/connect/compute' }),
         handles: () => true,
         beforeDeploy: async () => ({

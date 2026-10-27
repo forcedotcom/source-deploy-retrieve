@@ -59,8 +59,8 @@ describe('ComputeAppTransport', () => {
   const transport = new ComputeAppTransport();
 
   describe('metadata', () => {
-    it('should have the herokuCompute provider name', () => {
-      expect(transport.name).to.equal('herokuCompute');
+    it('should have the computeApp provider name', () => {
+      expect(transport.name).to.equal('computeApp');
       expect(typeof transport.beforeDeploy).to.equal('function');
       expect(typeof transport.afterRetrieve).to.equal('function');
     });
@@ -81,7 +81,7 @@ describe('ComputeAppTransport', () => {
     it('should handle components with ComputeApp transport strategy', () => {
       const type = {
         ...registryAccess.getTypeByName('ApexClass'),
-        strategies: { adapter: 'default' as const, transport: 'herokuCompute' as const },
+        strategies: { adapter: 'default' as const, transport: 'computeApp' as const },
       };
       const component = new SourceComponent({ name: 'Test', type });
       expect(transport.handles(component)).to.be.true;

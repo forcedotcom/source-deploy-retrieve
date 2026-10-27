@@ -80,7 +80,7 @@ async function downloadSource(connection: Connection, appIdOrName: string): Prom
 }
 
 export class ComputeAppTransport implements TransportProvider {
-  public readonly name = 'herokuCompute';
+  public readonly name = 'computeApp';
   private readonly logger = Logger.childFromRoot('ComputeAppTransport');
 
   // eslint-disable-next-line class-methods-use-this

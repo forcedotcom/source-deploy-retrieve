@@ -152,9 +152,11 @@ export type MetadataApiDeployStatus = {
 
 export type DeployNotification = { messageCode: string; messageText: string };
 
+export type DeployExtensionStatus = 'New' | 'InProgress' | 'Succeeded' | 'Failed';
+
 export type DeployExtensionResult = {
   type: string;
-  status: string;
+  status: DeployExtensionStatus;
   message?: string;
 };
 

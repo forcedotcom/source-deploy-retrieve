@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v68 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 818/968 supported metadata types.
+Currently, there are 818/970 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -212,6 +212,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CommunityThemeDefinition|✅||
 |CompactLayout|✅||
 |CompanySettings|✅||
+|ComputeApp|❌|Not supported, but support could be added|
 |ComputeExtension|✅||
 |ConnectedApp|✅||
 |ConnectedAppSettings|✅||
@@ -436,8 +437,10 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |FileUploadAndDownloadSecuritySettings|✅||
 |FilesConnectSettings|✅||
 |FinancialAppUiConfig|❌|Not supported, but support could be added|
+|FinancialClientComponentConfig|❌|Not supported, but support could be added|
 |FinancialEvaluationDef|❌|Not supported, but support could be added|
 |FinancialPortfolioUiConfig|❌|Not supported, but support could be added|
+|FlexHierConfig|❌|Not supported, but support could be added (but not for tracking)|
 |FlexcardDefinition|✅||
 |FlexiPage|✅||
 |Flow|✅||
@@ -705,7 +708,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PlanningMeasureDef|❌|Not supported, but support could be added|
 |PlanningMeasureGroup|❌|Not supported, but support could be added|
 |PlatformCachePartition|✅||
-|PlatformComputeApp|❌|Not supported, but support could be added|
 |PlatformEventChannel|✅||
 |PlatformEventChannelMember|✅||
 |PlatformEventMigration|❌|Not supported, but support could be added|

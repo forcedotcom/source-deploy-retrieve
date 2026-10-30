@@ -1,3 +1,12 @@
+# [13.9.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.8.3...13.9.0) (2026-10-30)
+
+
+### Features
+
+* add deploy extension types and bump jsforce-node ([#1862](https://github.com/forcedotcom/source-deploy-retrieve/issues/1862)) ([3aff0a3](https://github.com/forcedotcom/source-deploy-retrieve/commit/3aff0a32d4ed39887e519e7d64ae3f392d1dd42b))
+
+
+
 ## [13.8.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.8.2...13.8.3) (2026-10-27)
 
 

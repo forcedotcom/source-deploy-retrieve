@@ -610,7 +610,8 @@
     "idpConfiguration": "idpconfiguration",
     "ecaAttest": "extlclntappattestsettings",
     "ecaAttestPlcy": "extlclntappattestconfigurablepolicies",
-    "genOpPlanEligibilityConfig": "genopplaneligibilityconfig"
+    "genOpPlanEligibilityConfig": "genopplaneligibilityconfig",
+    "debugLevel": "debuglevel"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5453,6 +5454,14 @@
       "name": "GenOpPlanEligibilityConfig",
       "suffix": "genOpPlanEligibilityConfig",
       "directoryName": "GenOpPlanEligibilityConfig",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "debuglevel": {
+      "id": "debuglevel",
+      "name": "DebugLevel",
+      "suffix": "debugLevel",
+      "directoryName": "debugLevels",
       "inFolder": false,
       "strictDirectoryName": false
     }

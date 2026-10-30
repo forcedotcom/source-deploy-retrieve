@@ -230,16 +230,17 @@ const indexCandidates = (
   }
   const getDataspace = (component: SourceComponent): string | undefined => dataspaceOf.get(memberKey(component));
 
-  // A reference that names its dataspace matches only there, and is skipped while walking another
-  // dataspace. Otherwise, while walking a dataspace, only peers in it or outside every dataspace
-  // qualify; with no dataspace to walk, all of them do.
+  // A reference that names its dataspace matches a peer in that dataspace, and also one outside every
+  // dataspace (a bare component serves every dataspace), but is skipped while walking another dataspace.
+  // Otherwise, while walking a dataspace, only peers in it or outside every dataspace qualify; with no
+  // dataspace to walk, all of them do.
   const findPeers = (ref: ComponentRef, dataspace: string | undefined): SourceComponent[] => {
     if (!ref.componentType || !ref.name || (dataspace && ref.dataspaceName && ref.dataspaceName !== dataspace)) {
       return [];
     }
     const candidates = byRef.get(refKey(ref.componentType, ref.name)) ?? [];
     if (ref.dataspaceName) {
-      return candidates.filter((candidate) => getDataspace(candidate) === ref.dataspaceName);
+      return candidates.filter((candidate) => [ref.dataspaceName, undefined].includes(getDataspace(candidate)));
     }
     return dataspace
       ? candidates.filter((candidate) => [dataspace, undefined].includes(getDataspace(candidate)))

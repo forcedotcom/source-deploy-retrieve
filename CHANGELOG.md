@@ -1,3 +1,12 @@
+# [13.10.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.9.0...13.10.0) (2026-10-30)
+
+
+### Features
+
+* **registry:** add DebugLevel metadata type ([#1863](https://github.com/forcedotcom/source-deploy-retrieve/issues/1863)) ([d014006](https://github.com/forcedotcom/source-deploy-retrieve/commit/d0140060cd0237df9c443e4abf4a8d9c5e4a6904))
+
+
+
 # [13.9.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.8.3...13.9.0) (2026-10-30)
 
 

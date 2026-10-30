@@ -220,6 +220,35 @@ describe('expandD360ComponentSet', () => {
       'DataspaceMember:default.myDlo__dll',
     ]);
   });
+
+  it('should pull a Data Lake Object a bundle references with a dataspace, though the DLO is stored bare', () => {
+    // The server names the DLO ref with the dataspace the bundle uses it in, but the DLO lives outside
+    // every dataspace, so its sidecar has none. The dataspace-named ref must still match the bare DLO.
+    const bundles = ComponentSet.fromSource({
+      fsPaths: ['force-app'],
+      tree: new VirtualTreeContainer([
+        { dirPath: 'force-app', children: ['d360'] },
+        { dirPath: D360_DIR, children: ['dataStreamBundles'] },
+        {
+          dirPath: join(D360_DIR, 'dataStreamBundles'),
+          children: component('DataStreamBundle', 'myStream', undefined, [
+            { componentType: 'DataLakeObject', name: 'myDlo__dll', dataspaceName: 'default' },
+          ]),
+        },
+      ]),
+      registry,
+    });
+    const project = new ComponentSet([...full.getSourceComponents(), ...bundles.getSourceComponents()], registry);
+    const type = registry.getTypeByName('DataStreamBundle');
+    const requested = new ComponentSet([{ type, fullName: 'default.myStream' }], registry);
+    requested.addWithoutManifestEntry(bundles.getSourceComponents({ type, fullName: 'myStream' }).first()!);
+    expect(members(expandD360ComponentSet(project, requested, registry))).to.deep.equal([
+      'DataLakeObject:myDlo__dll',
+      'DataModelObject:default.myDmo__dlm',
+      'DataStreamBundle:myStream',
+      'DataspaceMember:default.myDlo__dll',
+    ]);
+  });
 });
 
 describe('resolveDataspaceQualifiedComponents', () => {

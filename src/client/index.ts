@@ -36,6 +36,8 @@ export {
   RetrieveSuccess,
   MetadataApiDeployStatus,
   DeployNotification,
+  DeployExtensionStatus,
+  DeployExtensionResult,
   DeployDetails,
   RunTestResult,
   CodeCoverage,

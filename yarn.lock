@@ -650,7 +650,7 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@jsforce/jsforce-node@^3.10.17", "@jsforce/jsforce-node@^3.10.23":
+"@jsforce/jsforce-node@^3.10.17":
   version "3.10.24"
   resolved "https://registry.yarnpkg.com/@jsforce/jsforce-node/-/jsforce-node-3.10.24.tgz#e5e7a32dec73373c370c339295f18c7325b991fc"
   integrity sha512-EejRrqFmn5No4lCiHYPlN5UFRCLo7gEoflNNisxca8AMZFzEO+sdj/aUHGzjzXf4a9K2cbXNZ+4eL4lkiIEsGw==
@@ -669,6 +669,22 @@
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/@jsforce/jsforce-node/-/jsforce-node-3.12.0.tgz#2760066d181dba76dd748b0d9e9274e94bb40e98"
   integrity sha512-c13YUjHhXg7+oTK4g1loStb/psJ0Xy5TP6mQbtRgr4R5mOe9AmPcmHBSbxsn90Enep3J4/omt20AvMkhhtDFSw==
+  dependencies:
+    "@sindresorhus/is" "^4"
+    base64url "^3.0.1"
+    cross-spawn "^7.0.6"
+    csv-parse "^7.0.2"
+    csv-stringify "^6.8.3"
+    faye "^1.4.2"
+    form-data "^4.0.6"
+    multistream "^3.1.0"
+    undici "^8.11.0"
+    xml2js "^0.6.2"
+
+"@jsforce/jsforce-node@^3.13.1":
+  version "3.13.1"
+  resolved "https://registry.yarnpkg.com/@jsforce/jsforce-node/-/jsforce-node-3.13.1.tgz#f7780c42d711a59ec33ba961279b37c15e7d0e44"
+  integrity sha512-vpHhwc+Wcufk9vARzL4oxYSzg8ndNButSn88D6pMImjns7/NTkwPZ9qQwD2F/P4c+A0lwTyDl4Alry0BMgFsTg==
   dependencies:
     "@sindresorhus/is" "^4"
     base64url "^3.0.1"

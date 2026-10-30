@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v68 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 818/970 supported metadata types.
+Currently, there are 819/992 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -35,6 +35,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ActionableListDefinition|✅||
 |ActionsSettings|✅||
 |ActivationPlatform|✅||
+|ActivationTarget|❌|Not supported, but support could be added (but not for tracking)|
 |ActivitiesSettings|✅||
 |ActnblListKeyPrfmIndDef|✅||
 |AddressSettings|✅||
@@ -140,6 +141,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |BusinessProcessTypeDefinition|✅||
 |BusinessValueMetricsSettings|✅||
 |CMSConnectSource|✅||
+|CalculatedInsight|❌|Not supported, but support could be added (but not for tracking)|
 |CallCenter|✅||
 |CallCenterRoutingMap|✅||
 |CallCoachingMediaProvider|⚠️|Supports deploy/retrieve but not source tracking|
@@ -263,9 +265,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CustomerDataPlatformSettings|✅||
 |CustomerIntelligenceSettings|✅||
 |CustomizablePropensityScoringSettings|✅||
+|D360|❌|Not supported, but support could be added (but not for tracking)|
 |DCOpportunityScoringSettings|✅||
 |Dashboard|✅||
 |DashboardFolder|✅||
+|DataAction|❌|Not supported, but support could be added (but not for tracking)|
+|DataActionTarget|❌|Not supported, but support could be added (but not for tracking)|
 |DataCalcInsightTemplate|✅||
 |DataCategoryGroup|✅||
 |DataCleanRoomProvider|❌|Not supported, but support could be added|
@@ -273,12 +278,15 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DataConnectorIngestApi|✅||
 |DataConnectorS3|✅||
 |DataDotComSettings|✅||
+|DataGraph|❌|Not supported, but support could be added (but not for tracking)|
 |DataImportManagementSettings|✅||
 |DataKitObjectDependency|✅||
 |DataKitObjectTemplate|✅||
+|DataLakeObject|❌|Not supported, but support could be added (but not for tracking)|
 |DataMapperDefinition|✅||
 |DataMaskPolicy|❌|Not supported, but support could be added|
 |DataMaskSettings|✅||
+|DataModelObject|❌|Not supported, but support could be added (but not for tracking)|
 |DataObjectBuildOrgTemplate|✅||
 |DataObjectSearchIndexConf|⚠️|Supports deploy/retrieve but not source tracking|
 |DataPackageKitDefinition|✅||
@@ -288,10 +296,13 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DataSourceObject|✅||
 |DataSourceTenant|✅||
 |DataSrcDataModelFieldMap|✅||
+|DataStream|❌|Not supported, but support could be added (but not for tracking)|
+|DataStreamBundle|❌|Not supported, but support could be added (but not for tracking)|
 |DataStreamDefinition|✅||
 |DataStreamTemplate|✅||
+|DataTransform|❌|Not supported, but support could be added (but not for tracking)|
 |DataWeaveResource|✅||
-|DebugLevel|❌|Not supported, but support could be added|
+|DebugLevel|✅||
 |DecisionMatrixDefinition|✅||
 |DecisionMatrixDefinitionVersion|✅||
 |DecisionTable|✅||
@@ -496,6 +507,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |Icon|✅||
 |IdeasSettings|✅||
 |IdentityProviderSettings|✅||
+|IdentityResolution|❌|Not supported, but support could be added (but not for tracking)|
 |IdentityRsolDataSyncDef|❌|Not supported, but support could be added|
 |IdentityVerificationProcDef|✅||
 |IdpConfiguration|⚠️|Supports deploy/retrieve but not source tracking|
@@ -600,6 +612,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ManagedTopics|✅||
 |MapReportSettings|✅||
 |MapsAndLocationSettings|✅||
+|MarketSegment|❌|Not supported, but support could be added (but not for tracking)|
 |MarketSegmentDefinition|✅||
 |MarketingAppExtActivity|❌|Not supported, but support could be added|
 |MarketingAppExtension|✅||
@@ -777,6 +790,15 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ReferralMarketingSettings|✅||
 |ReferralReceiverConfiguration|❌|Not supported, but support could be added|
 |RegisteredExternalService|✅||
+|RegltCntntActnDef|❌|Not supported, but support could be added|
+|RegltCntntActnTgtDef|❌|Not supported, but support could be added|
+|RegltCntntPolicyDef|❌|Not supported, but support could be added|
+|RegltCntntProcDef|❌|Not supported, but support could be added|
+|RegltCntntProcStsDef|❌|Not supported, but support could be added|
+|RegltCntntRoleDef|❌|Not supported, but support could be added|
+|RegltCntntStsDef|❌|Not supported, but support could be added|
+|RegltCntntTypeDef|❌|Not supported, but support could be added|
+|RegltCntntTypeRoleDef|❌|Not supported, but support could be added|
 |RelatedRecordAccessDef|❌|Not supported, but support could be added|
 |RelatedRecordAssocCriteria|✅||
 |RelationshipGraphDefinition|✅||

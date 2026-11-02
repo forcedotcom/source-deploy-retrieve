@@ -106,8 +106,9 @@ export class ProfileMetadataFinalizer extends ConvertTransactionFinalizer<Profil
           }
         }
 
-        for (const [key, value] of Object.entries(await incoming)) {
-          if (key === XML_NS_KEY || value === undefined) continue;
+        const incomingProfile = await incoming;
+        for (const [key, value] of Object.entries(incomingProfile)) {
+          if (isRootAttribute(key) || value === undefined) continue;
           for (const entry of valuesOf(value)) {
             const owners = sourceProfiles.filter(({ profile }) =>
               valuesOf(profile[key]).some((local) => entriesMatch(key, local, entry))
@@ -125,12 +126,13 @@ export class ProfileMetadataFinalizer extends ConvertTransactionFinalizer<Profil
             }
           }
         }
-        return sourceProfiles
-          .filter(({ touched }) => touched)
-          .map(({ component: sourceComponent, profile }) => ({
-            component: sourceComponent,
-            writeInfos: [{ output: sourceComponent.xml as string, source: new JsToXml({ Profile: profile }) }],
-          }));
+        const touchedProfiles = sourceProfiles.filter(({ touched }) => touched);
+        // Retrieved entries may reference root namespace declarations (e.g. xsi:nil), so carry them over.
+        touchedProfiles.forEach(({ profile }) => copyRootAttributes(profile, incomingProfile));
+        return touchedProfiles.map(({ component: sourceComponent, profile }) => ({
+          component: sourceComponent,
+          writeInfos: [{ output: sourceComponent.xml as string, source: new JsToXml({ Profile: profile }) }],
+        }));
       })
     );
     results.push(...sourceResults.flat());
@@ -139,6 +141,13 @@ export class ProfileMetadataFinalizer extends ConvertTransactionFinalizer<Profil
 }
 
 const singletonTags = new Set(['custom', 'description', 'loginHours', 'userLicense']);
+// Keys with the parser's attribute prefix (xmlns, xmlns:xsi, ...) are attributes of <Profile>, not child tags.
+const isRootAttribute = (key: string): boolean => key.startsWith('@_');
+const copyRootAttributes = (target: JsonMap, source: JsonMap): void => {
+  for (const [key, value] of Object.entries(source)) {
+    if (isRootAttribute(key) && value !== undefined) target[key] ??= value;
+  }
+};
 const valuesOf = (value: JsonMap[string]): AnyJson[] =>
   value === undefined ? [] : Array.isArray(value) ? value : [value];
 const stringValue = (value: AnyJson | undefined): string | undefined => (typeof value === 'string' ? value : undefined);
@@ -218,8 +227,9 @@ const mergeProfiles = (profiles: ProfileFragment[], validateSingletons = true): 
   const owners = new Map<string, SourceComponent>();
 
   for (const { component, profile } of profiles) {
+    copyRootAttributes(merged, profile);
     for (const [key, value] of Object.entries(profile)) {
-      if (key === XML_NS_KEY || value === undefined) continue;
+      if (isRootAttribute(key) || value === undefined) continue;
       const mergedValues = valuesOf(merged[key]);
       for (const entry of valuesOf(value)) {
         if (mergedValues.some((existing) => isDeepStrictEqual(existing, entry))) continue;

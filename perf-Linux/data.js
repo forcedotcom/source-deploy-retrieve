@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793373626641,
+  "lastUpdate": 1793633239933,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -122178,6 +122178,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 11171,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "committer": {
+            "email": "willieruemmele@gmail.com",
+            "name": "Willie Ruemmele",
+            "username": "WillieRuemmele"
+          },
+          "distinct": true,
+          "id": "2125b70cd5ab378d8d658b17190a9fa723f6e55b",
+          "message": "fix: keep Profile root namespace attributes when merging @W-24745383@\n\nProfileMetadataFinalizer only treated `@_xmlns` as a root attribute, so other\nroot attributes such as `xmlns:xsi` were merged as child tags and serialized\nas `<@_xmlns:xsi>` elements, breaking deploys (forcedotcom/cli#3677).\n\nChanges:\n- Treat every `@_`-prefixed key on <Profile> as a root attribute in both the\n  metadata merge and the retrieve (source) merge paths\n- Carry incoming root namespace declarations onto local Profiles that receive\n  retrieved entries so prefixes like xsi:nil stay bound\n- Add regression tests for both paths",
+          "timestamp": "2026-11-02T08:24:22-07:00",
+          "tree_id": "f516e41791fbab195b621e313f48ddda950a17df",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/2125b70cd5ab378d8d658b17190a9fa723f6e55b"
+        },
+        "date": 1793633225326,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 397,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2220,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2453,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 3669,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 512,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 4582,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 4863,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 4659,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 853,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 7356,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 8768,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 8052,
             "unit": "ms"
           }
         ]

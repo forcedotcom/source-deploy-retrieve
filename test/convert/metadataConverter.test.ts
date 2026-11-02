@@ -342,12 +342,92 @@ describe('MetadataConverter', () => {
       expect(output.indexOf('Contact-Contact Layout')).to.be.lessThan(output.indexOf('Account-Other Layout'));
     });
 
-    const writeProfile = (directory: string, body: string, metadata = false): SourceComponent => {
+    const writeProfile = (directory: string, body: string, metadata = false, rootAttributes = ''): SourceComponent => {
       const xml = join(tempDirectory, directory, 'profiles', `Admin.profile${metadata ? '' : '-meta.xml'}`);
       fs.mkdirSync(dirname(xml), { recursive: true });
-      writeFileSync(xml, `<Profile xmlns="http://soap.sforce.com/2006/04/metadata">${body}</Profile>`);
+      writeFileSync(xml, `<Profile xmlns="http://soap.sforce.com/2006/04/metadata"${rootAttributes}>${body}</Profile>`);
       return new SourceComponent({ name: 'Admin', type: registry.types.profile, xml });
     };
+
+    const xsi = ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"';
+    const xsiRoot =
+      '<Profile xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
+
+    it('keeps root namespace declarations on the Profile element when merging fragments', async () => {
+      const fragments = [
+        writeProfile('first', '<custom>true</custom><description xsi:nil="true"/>', false, xsi),
+        writeProfile('second', '<userLicense>Salesforce</userLicense>', false, xsi),
+      ];
+      await new MetadataConverter().convert(fragments, 'metadata', {
+        type: 'directory',
+        outputDirectory: tempDirectory,
+        packageName: 'mdapi',
+      });
+      const output = readFileSync(join(tempDirectory, 'mdapi', 'profiles', 'Admin.profile'), 'utf8');
+      expect(output).to.include(xsiRoot);
+      expect(output).not.to.include('<@_');
+      expect(output).to.include('xsi:nil="true"');
+      expect(output.match(/xmlns:xsi=/g)).to.have.length(1);
+    });
+
+    it('keeps a root namespace declaration that only a later fragment declares', async () => {
+      const fragments = [
+        writeProfile('first', '<custom>true</custom>'),
+        writeProfile('second', '<description xsi:nil="true"/>', false, xsi),
+      ];
+      await new MetadataConverter().convert(fragments, 'metadata', {
+        type: 'directory',
+        outputDirectory: tempDirectory,
+        packageName: 'mdapi',
+      });
+      const output = readFileSync(join(tempDirectory, 'mdapi', 'profiles', 'Admin.profile'), 'utf8');
+      expect(output).to.include(xsiRoot);
+      expect(output).not.to.include('<@_');
+    });
+
+    it('keeps root namespace declarations on a new default Profile during a retrieve merge', async () => {
+      const incoming = writeProfile('retrieved', '<description xsi:nil="true"/>', true, xsi);
+      const defaultDirectory = join(tempDirectory, 'default');
+      await new MetadataConverter().convert([incoming], 'source', {
+        type: 'merge',
+        mergeWith: [writeProfile('first', '<custom>true</custom>')],
+        defaultDirectory,
+      });
+      const output = readFileSync(
+        join(defaultDirectory, 'main', 'default', 'profiles', 'Admin.profile-meta.xml'),
+        'utf8'
+      );
+      expect(output).to.include(xsiRoot);
+      expect(output).not.to.include('<@_');
+      expect(output).to.include('xsi:nil="true"');
+    });
+
+    it('declares namespaces used by retrieved entries on the local Profile that receives them', async () => {
+      const incoming = writeProfile('retrieved', '<description xsi:nil="true"/>', true, xsi);
+      const fragment = writeProfile('first', '<description>Old</description>');
+      await new MetadataConverter().convert([incoming], 'source', {
+        type: 'merge',
+        mergeWith: [fragment],
+        defaultDirectory: join(tempDirectory, 'default'),
+      });
+      const output = readFileSync(fragment.xml!, 'utf8');
+      expect(output).to.include(xsiRoot);
+      expect(output).not.to.include('<@_');
+      expect(output).to.include('xsi:nil="true"');
+    });
+
+    it('does not rewrite owned local Profiles that only differ by root namespace declarations', async () => {
+      const fragment = writeProfile('first', '<custom>true</custom>');
+      const original = readFileSync(fragment.xml!, 'utf8');
+      const incoming = writeProfile('retrieved', '<custom>true</custom>', true, xsi);
+      const result = await new MetadataConverter().convert([incoming], 'source', {
+        type: 'merge',
+        mergeWith: [fragment],
+        defaultDirectory: join(tempDirectory, 'default'),
+      });
+      expect(result.converted).to.deep.equal([]);
+      expect(readFileSync(fragment.xml!, 'utf8')).to.equal(original);
+    });
 
     for (const [tag, first, second] of [
       ['custom', 'true', 'false'],

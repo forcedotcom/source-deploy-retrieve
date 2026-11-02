@@ -1,3 +1,12 @@
+## [13.10.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.10.0...13.10.1) (2026-11-02)
+
+
+### Bug Fixes
+
+* keep Profile root namespace attributes when merging @W-24745383@ ([#1865](https://github.com/forcedotcom/source-deploy-retrieve/issues/1865)) ([2b63a51](https://github.com/forcedotcom/source-deploy-retrieve/commit/2b63a5125a0599bb8345e21dd36656d54c527d00)), closes [forcedotcom/cli#3677](https://github.com/forcedotcom/cli/issues/3677)
+
+
+
 # [13.10.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.9.0...13.10.0) (2026-10-30)
 
 

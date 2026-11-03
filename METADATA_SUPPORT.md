@@ -296,7 +296,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DataSourceObject|✅||
 |DataSourceTenant|✅||
 |DataSrcDataModelFieldMap|✅||
-|DataStream|❌|Not supported, but support could be added (but not for tracking)|
 |DataStreamBundle|❌|Not supported, but support could be added (but not for tracking)|
 |DataStreamDefinition|✅||
 |DataStreamTemplate|✅||
@@ -613,6 +612,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |MapReportSettings|✅||
 |MapsAndLocationSettings|✅||
 |MarketSegment|❌|Not supported, but support could be added (but not for tracking)|
+|MarketSegmentActivation|❌|Not supported, but support could be added (but not for tracking)|
 |MarketSegmentDefinition|✅||
 |MarketingAppExtActivity|❌|Not supported, but support could be added|
 |MarketingAppExtension|✅||
@@ -1061,6 +1061,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - MLPredictionDefinition
 - MLRecommendationDefinition
 - MobileSecurityPolicySet
+- NtfcnDefinition
 - Orchestration
 - OrchestrationContext
 - Portal

@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793634882739,
+  "lastUpdate": 1793727815251,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -122346,6 +122346,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 6751,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gdharamkar@salesforce.com",
+            "name": "GANGA RAMANA Dharamkar",
+            "username": "gdharamkar"
+          },
+          "committer": {
+            "email": "gdharamkar@salesforce.com",
+            "name": "GANGA RAMANA Dharamkar",
+            "username": "gdharamkar"
+          },
+          "distinct": true,
+          "id": "ea2fb166939eb6e68b87ae33d278f3c55d4a9467",
+          "message": "feat: add NtfcnDefinition metadata type to registry",
+          "timestamp": "2026-10-29T13:33:02+05:30",
+          "tree_id": "e30532791f60a7bb464d9798bba794b84aba3c62",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/ea2fb166939eb6e68b87ae33d278f3c55d4a9467"
+        },
+        "date": 1793727765513,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 345,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 1885,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 2160,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 2990,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 482,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 3607,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 5038,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 3810,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 707,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 6244,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 9174,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 6936,
             "unit": "ms"
           }
         ]

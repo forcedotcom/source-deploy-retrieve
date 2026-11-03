@@ -1,3 +1,12 @@
+# [13.11.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.10.1...13.11.0) (2026-11-03)
+
+
+### Features
+
+* add NtfcnDefinition metadata type to registry ([#1864](https://github.com/forcedotcom/source-deploy-retrieve/issues/1864)) ([726e504](https://github.com/forcedotcom/source-deploy-retrieve/commit/726e5042f559979426b0ae608fa11602a6286f89))
+
+
+
 ## [13.10.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.10.0...13.10.1) (2026-11-02)
 
 

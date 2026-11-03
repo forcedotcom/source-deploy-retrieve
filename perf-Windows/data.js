@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793633667250,
+  "lastUpdate": 1793728237899,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -116990,6 +116990,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 19201,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gdharamkar@salesforce.com",
+            "name": "GANGA RAMANA Dharamkar",
+            "username": "gdharamkar"
+          },
+          "committer": {
+            "email": "gdharamkar@salesforce.com",
+            "name": "GANGA RAMANA Dharamkar",
+            "username": "gdharamkar"
+          },
+          "distinct": true,
+          "id": "ea2fb166939eb6e68b87ae33d278f3c55d4a9467",
+          "message": "feat: add NtfcnDefinition metadata type to registry",
+          "timestamp": "2026-10-29T13:33:02+05:30",
+          "tree_id": "e30532791f60a7bb464d9798bba794b84aba3c62",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/ea2fb166939eb6e68b87ae33d278f3c55d4a9467"
+        },
+        "date": 1793728174434,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 708,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 4961,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 4013,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 8702,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1016,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 10562,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 11157,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 11764,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 2040,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 17369,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 14978,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 18409,
             "unit": "ms"
           }
         ]

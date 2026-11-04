@@ -134,7 +134,7 @@ export class ComputeAppTransport implements TransportProvider {
           type: component.type.name,
           state: ComponentStatus.Failed,
           filePath: component.content ?? component.xml ?? '',
-          error: `Elastic Compute upload failed for '${component.fullName}': ${(err as Error).message}`,
+          error: (err as Error).message,
           problemType: 'Error',
         });
       }
@@ -189,7 +189,7 @@ export class ComputeAppTransport implements TransportProvider {
           type: component.type.name,
           state: ComponentStatus.Failed,
           filePath: component.content ?? component.xml ?? '',
-          error: `Elastic Compute download failed for '${component.fullName}': ${(err as Error).message}`,
+          error: (err as Error).message,
           problemType: 'Error',
         });
       }
@@ -214,9 +214,9 @@ export class ComputeAppTransport implements TransportProvider {
   private checkForFailures(fileResponses: FileResponse[], operation: string): TransportResult {
     const failures = fileResponses.filter((r) => r.state === ComponentStatus.Failed);
     if (failures.length > 0) {
-      const details = failures.map((f) => f.error ?? f.fullName).join('; ');
+      const details = failures.map((f) => `'${f.fullName}': ${f.error ?? 'unknown error'}`).join('; ');
       const error = new SfError(
-        `Elastic Compute ${operation} failed: ${details}`,
+        `Elastic Compute ${operation} failed for ${details}`,
         `ComputeApp${operation.charAt(0).toUpperCase() + operation.slice(1)}Error`
       );
       error.data = fileResponses;

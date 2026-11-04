@@ -196,8 +196,7 @@ describe('ComputeAppTransport', () => {
         expect.fail('should have thrown');
       } catch (err) {
         const sfErr = err as SfError;
-        expect(sfErr.message).to.include('Elastic Compute upload failed');
-        expect(sfErr.message).to.include('500 server error');
+        expect(sfErr.message).to.equal("Elastic Compute upload failed for 'App2': 500 server error");
         // partial results attached to error.data
         const responses = sfErr.data as FileResponse[];
         expect(responses).to.have.lengthOf(2);
@@ -221,8 +220,32 @@ describe('ComputeAppTransport', () => {
         await transport.beforeDeploy(context);
         expect.fail('should have thrown');
       } catch (err) {
-        expect((err as Error).message).to.include('Elastic Compute upload failed');
-        expect((err as Error).message).to.include('MyApp');
+        // context is added once: no repeated "Elastic Compute upload failed" prefix around the server message
+        expect((err as Error).message).to.equal("Elastic Compute upload failed for 'MyApp': 500 server error");
+      }
+    });
+
+    it('should list every failed component once in the aggregate message', async () => {
+      packageStub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
+
+      const requestStub = sinon.stub();
+      requestStub.onFirstCall().rejects(new Error('boom 1'));
+      requestStub.onSecondCall().rejects(new Error('boom 2'));
+
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('App1', '/mock/app1'), createComputeComponent('App2', '/mock/app2')],
+      });
+
+      try {
+        await transport.beforeDeploy(context);
+        expect.fail('should have thrown');
+      } catch (err) {
+        expect((err as Error).message).to.equal(
+          "Elastic Compute upload failed for 'App1': boom 1; 'App2': boom 2"
+        );
+        const responses = (err as SfError).data as FileResponse[];
+        expect((responses[0] as { error: string }).error).to.equal('boom 1');
       }
     });
   });

@@ -25,24 +25,24 @@
     "node": ">=22.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^9.4.1",
-    "@salesforce/kit": "^4.0.0",
-    "@salesforce/ts-types": "^3.2.0",
-    "@salesforce/types": "^1.6.0",
+    "@salesforce/core": "^9.4.4",
+    "@salesforce/kit": "^4.0.9",
+    "@salesforce/ts-types": "^3.2.4",
+    "@salesforce/types": "^1.9.0",
     "fast-levenshtein": "^3.0.0",
-    "fast-xml-parser": "^5.7.3",
+    "fast-xml-parser": "^5.12.0",
     "got": "^11.8.6",
     "graceful-fs": "^4.2.11",
     "ignore": "^5.3.2",
-    "jszip": "^3.10.1",
+    "jszip": "^3.10.2",
     "mime": "2.6.0",
     "minimatch": "^9.0.9",
     "proxy-agent": "^6.5.0",
-    "yaml": "^2.9.0"
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@jsforce/jsforce-node": "^3.13.1",
-    "@salesforce/cli-plugins-testkit": "^5.3.66",
+    "@salesforce/cli-plugins-testkit": "^5.3.90",
     "@salesforce/dev-scripts": "^14.0.0",
     "@types/chai": "^4.3.17",
     "@types/deep-equal-in-any-order": "^1.0.1",

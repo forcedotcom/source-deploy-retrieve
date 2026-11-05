@@ -18,11 +18,37 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { XMLParser } from 'fast-xml-parser';
 import { Connection, Logger, SfError, validateSalesforceId } from '@salesforce/core';
-import type { BotVersion, GenAiPlanner, GenAiPlannerFunctionDef, GenAiPlugin } from '@salesforce/types/metadata';
+import {
+  BotVersion,
+  GenAiPlannerAttrMapping,
+  GenAiPlannerFunctionDef,
+  GenAiPlannerRuleExprAsgn,
+  GenAiPlannerRuleExprDef,
+  GenAiPlugin,
+  Metadata,
+  PlannerType,
+} from '@salesforce/types/metadata';
 import { ensureArray } from '@salesforce/kit';
 import { RegistryAccess } from '../../registry';
 import { ComponentSet } from '../../collections/componentSet';
 import { MetadataComponent } from '../types';
+
+/**
+ * @deprecated
+ * only available in api versions 60->63
+ */
+type GenAiPlanner = Metadata & {
+  attributeMappings: GenAiPlannerAttrMapping[];
+  botTemplate?: string;
+  capabilities?: string;
+  description?: string;
+  genAiFunctions: GenAiPlannerFunctionDef[];
+  genAiPlugins: GenAiPlannerFunctionDef[];
+  masterLabel: string;
+  plannerType: PlannerType;
+  ruleExpressionAssignments: GenAiPlannerRuleExprAsgn[];
+  ruleExpressions: GenAiPlannerRuleExprDef[];
+};
 
 type BotVersionExt = {
   '?xml': { '@_version': '1.0'; '@_encoding': 'UTF-8' };

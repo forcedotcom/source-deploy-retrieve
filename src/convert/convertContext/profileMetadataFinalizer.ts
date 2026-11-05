@@ -222,17 +222,47 @@ const appendEntry = (source: SourceProfile, tag: string, entry: AnyJson): void =
   source.touched = true;
 };
 
+// Deterministic key for deep equality of parsed XML values: object keys sorted, undefined kept distinct.
+const stableKey = (value: AnyJson | undefined): string => {
+  if (value === undefined) return 'u';
+  if (value === null || typeof value !== 'object') return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(stableKey).join(',')}]`;
+  return `{${Object.keys(value)
+    .sort()
+    .map((key) => `${JSON.stringify(key)}:${stableKey(value[key])}`)
+    .join(',')}}`;
+};
+
 const mergeProfiles = (profiles: ProfileFragment[], validateSingletons = true): JsonMap => {
   const merged: JsonMap = { [XML_NS_KEY]: XML_NS_URL };
+
+  if (profiles.length === 1) {
+    // One source piece: nothing to merge. Keep its entries as written (duplicates included), as before the finalizer.
+    const [{ profile }] = profiles;
+    copyRootAttributes(merged, profile);
+    for (const [key, value] of Object.entries(profile)) {
+      if (isRootAttribute(key) || value === undefined) continue;
+      merged[key] = valuesOf(value).slice();
+    }
+    return merged;
+  }
+
   const owners = new Map<string, SourceComponent>();
+  const seen = new Map<string, Set<string>>();
 
   for (const { component, profile } of profiles) {
     copyRootAttributes(merged, profile);
     for (const [key, value] of Object.entries(profile)) {
       if (isRootAttribute(key) || value === undefined) continue;
       const mergedValues = valuesOf(merged[key]);
+      let keys = seen.get(key);
+      if (!keys) {
+        keys = new Set(mergedValues.map(stableKey));
+        seen.set(key, keys);
+      }
       for (const entry of valuesOf(value)) {
-        if (mergedValues.some((existing) => isDeepStrictEqual(existing, entry))) continue;
+        const entryKey = stableKey(entry);
+        if (keys.has(entryKey)) continue;
         if (validateSingletons && singletonTags.has(key) && mergedValues.length) {
           throw new SfError(
             messages.getMessage('error_profile_singleton_conflict', [
@@ -245,6 +275,7 @@ const mergeProfiles = (profiles: ProfileFragment[], validateSingletons = true): 
           );
         }
         mergedValues.push(entry);
+        keys.add(entryKey);
         owners.set(key, component);
       }
       merged[key] = mergedValues;

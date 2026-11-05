@@ -394,6 +394,7 @@
     "navigationMenu": "navigationmenu",
     "network": "network",
     "networkBranding": "networkbranding",
+    "notificationDefinition": "ntfcndefinition",
     "notifications": "apexemailnotifications",
     "notiftype": "customnotificationtype",
     "oauthcustomscope": "oauthcustomscope",
@@ -3569,6 +3570,14 @@
       "name": "NotificationTypeConfig",
       "strictDirectoryName": false,
       "suffix": "config"
+    },
+    "ntfcndefinition": {
+      "directoryName": "notificationDefinitions",
+      "id": "ntfcndefinition",
+      "inFolder": false,
+      "name": "NtfcnDefinition",
+      "strictDirectoryName": false,
+      "suffix": "notificationDefinition"
     },
     "oauthcustomscope": {
       "directoryName": "oauthcustomscopes",

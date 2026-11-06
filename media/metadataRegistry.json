@@ -612,7 +612,8 @@
     "ecaAttest": "extlclntappattestsettings",
     "ecaAttestPlcy": "extlclntappattestconfigurablepolicies",
     "genOpPlanEligibilityConfig": "genopplaneligibilityconfig",
-    "debugLevel": "debuglevel"
+    "debugLevel": "debuglevel",
+    "experienceContainer": "experiencecontainer"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5471,6 +5472,14 @@
       "name": "DebugLevel",
       "suffix": "debugLevel",
       "directoryName": "debugLevels",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "experiencecontainer": {
+      "id": "experiencecontainer",
+      "name": "ExperienceContainer",
+      "suffix": "experienceContainer",
+      "directoryName": "experienceContainers",
       "inFolder": false,
       "strictDirectoryName": false
     }

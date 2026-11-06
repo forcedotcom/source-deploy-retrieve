@@ -60,6 +60,7 @@ export {
   RetrieveVersionData,
   TransportOperationResult,
   TransportPlan,
+  TransportPlanComponent,
   TransportPlanPhase,
 } from './client';
 export {

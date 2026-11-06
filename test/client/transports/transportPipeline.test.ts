@@ -16,7 +16,7 @@
 
 import { expect } from 'chai';
 import { Connection, SfProject } from '@salesforce/core';
-import { ComponentStatus, FileResponse, RegistryAccess, SourceComponent } from '../../../src';
+import { ComponentStatus, DestructiveChangesType, FileResponse, RegistryAccess, SourceComponent } from '../../../src';
 import { TransportPipeline } from '../../../src/client/transports/transportPipeline';
 import {
   AsyncTransportHandle,
@@ -300,6 +300,104 @@ describe('TransportPipeline', () => {
       expect(result.operationResults).to.deep.equal([
         { transportLabel: 'Elastic Compute', operation: 'Upload App1', status: 'Succeeded' },
         { transportLabel: 'Elastic Compute', operation: 'Upload App2', status: 'Succeeded' },
+      ]);
+    });
+  });
+
+  describe('deleted components', () => {
+    function createDeletedComponent(
+      typeName: string,
+      fullName: string,
+      destructiveType = DestructiveChangesType.POST
+    ): SourceComponent {
+      const component = createMockComponent(typeName, fullName);
+      component.setMarkedForDelete(destructiveType);
+      return component;
+    }
+
+    it('keeps deleted components in metadataApi but out of transport groups', () => {
+      const pipeline = new TransportPipeline([createMockTransport('ComputeApp', 'before-metadata')]);
+      const changed = createMockComponent('ComputeApp', 'ChangedApp');
+      const deleted = createDeletedComponent('ComputeApp', 'DeletedApp');
+
+      const result = pipeline.groupByTransport([changed, deleted]);
+
+      expect(result.metadataApi).to.deep.equal([changed, deleted]);
+      expect(result.transports).to.have.lengthOf(1);
+      expect(result.transports[0].components).to.deep.equal([changed]);
+    });
+
+    it('omits a transport group when all of its components are deleted', () => {
+      const pipeline = new TransportPipeline([createMockTransport('ComputeApp', 'before-metadata')]);
+      const deleted = createDeletedComponent('ComputeApp', 'DeletedApp');
+
+      const result = pipeline.groupByTransport([deleted]);
+
+      expect(result.metadataApi).to.deep.equal([deleted]);
+      expect(result.transports).to.have.lengthOf(0);
+    });
+
+    it('does not treat deleted components as needing a transport', () => {
+      const pipeline = new TransportPipeline([createMockTransport('ComputeApp', 'before-metadata')]);
+
+      expect(pipeline.hasTransports([createDeletedComponent('ComputeApp', 'DeletedApp')])).to.be.false;
+    });
+
+    it('does not require a registered provider for deleted components', () => {
+      const pipeline = new TransportPipeline();
+
+      expect(pipeline.hasTransports([createDeletedComponent('ComputeApp', 'DeletedApp')])).to.be.false;
+    });
+
+    for (const destructiveType of [DestructiveChangesType.PRE, DestructiveChangesType.POST]) {
+      it(`lists ${destructiveType} deletions only in the metadata-api phase`, () => {
+        const pipeline = new TransportPipeline([createMockTransport('ComputeApp', 'before-metadata')]);
+        const changed = createMockComponent('ComputeApp', 'ChangedApp');
+        const deleted = createDeletedComponent('ComputeApp', 'DeletedApp', destructiveType);
+
+        const plan = pipeline.explain([changed, deleted]);
+
+        expect(plan.phases.map((p) => p.phase)).to.deep.equal(['before-metadata', 'metadata-api']);
+        expect(plan.phases[0].components).to.deep.equal([{ fullName: 'ChangedApp', type: 'ComputeApp' }]);
+        expect(plan.phases[1].components).to.deep.equal([
+          { fullName: 'ChangedApp', type: 'ComputeApp' },
+          { fullName: 'DeletedApp', type: 'ComputeApp', destructiveChangesType: destructiveType },
+        ]);
+      });
+    }
+
+    it('omits transport phases when every transport component is deleted', () => {
+      const transport = createMockTransport('ComputeApp', 'before-metadata');
+      transport.afterRetrieve = async (): Promise<TransportResult> => ({ fileResponses: [] });
+      const pipeline = new TransportPipeline([transport]);
+      const deleted = createDeletedComponent('ComputeApp', 'DeletedApp');
+
+      for (const operation of ['deploy', 'retrieve'] as const) {
+        const plan = pipeline.explain([deleted], operation);
+
+        expect(plan.phases).to.deep.equal([
+          {
+            phase: 'metadata-api',
+            label: 'Metadata API',
+            endpoint: 'SOAP/REST',
+            components: [
+              { fullName: 'DeletedApp', type: 'ComputeApp', destructiveChangesType: DestructiveChangesType.POST },
+            ],
+          },
+        ]);
+      }
+    });
+
+    it('lists deleted non-transport components in the metadata-api phase', () => {
+      const pipeline = new TransportPipeline([createMockTransport('ComputeApp', 'before-metadata')]);
+      const app = createMockComponent('ComputeApp', 'MyApp');
+      const deletedClass = createDeletedComponent('ApexClass', 'OldClass', DestructiveChangesType.PRE);
+
+      const plan = pipeline.explain([app, deletedClass]);
+
+      expect(plan.phases[1].components).to.deep.equal([
+        { fullName: 'MyApp', type: 'ComputeApp' },
+        { fullName: 'OldClass', type: 'ApexClass', destructiveChangesType: DestructiveChangesType.PRE },
       ]);
     });
   });

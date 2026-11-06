@@ -15,6 +15,7 @@
  */
 
 import { Lifecycle, Logger, SfError } from '@salesforce/core';
+import type { DestructiveChangesType } from '../../collections/types';
 import { TransportName } from '../../registry/types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { FileResponse } from '../types';
@@ -45,7 +46,14 @@ export type TransportPlanPhase = {
   phase: 'before-metadata' | 'metadata-api' | 'after-metadata';
   label: string;
   endpoint: string;
-  components: Array<{ fullName: string; type: string }>;
+  components: TransportPlanComponent[];
+};
+
+export type TransportPlanComponent = {
+  fullName: string;
+  type: string;
+  /** Set when the component is deleted by the metadata API instead of deployed. */
+  destructiveChangesType?: DestructiveChangesType;
 };
 
 export type TransportPipelineResult = {
@@ -84,7 +92,8 @@ export class TransportPipeline {
     const transportMap = new Map<string, TransportGroup>();
 
     for (const component of components) {
-      const transport = this.findTransportFor(component);
+      // deletions only go through MDAPI destructive changes; transports never see them
+      const transport = component.isMarkedForDelete() ? undefined : this.findTransportFor(component);
       if (transport) {
         let group = transportMap.get(transport.name);
         if (!group) {
@@ -117,7 +126,7 @@ export class TransportPipeline {
         phase: 'before-metadata',
         label: desc.label,
         endpoint: desc.endpoint,
-        components: group.components.map((c) => ({ fullName: c.fullName, type: c.type.name })),
+        components: group.components.map(toPlanComponent),
       });
     }
 
@@ -125,7 +134,7 @@ export class TransportPipeline {
       phase: 'metadata-api',
       label: 'Metadata API',
       endpoint: 'SOAP/REST',
-      components: metadataApi.map((c) => ({ fullName: c.fullName, type: c.type.name })),
+      components: metadataApi.map(toPlanComponent),
     });
 
     for (const group of afterMetadata) {
@@ -134,7 +143,7 @@ export class TransportPipeline {
         phase: 'after-metadata',
         label: desc.label,
         endpoint: desc.endpoint,
-        components: group.components.map((c) => ({ fullName: c.fullName, type: c.type.name })),
+        components: group.components.map(toPlanComponent),
       });
     }
 
@@ -158,7 +167,9 @@ export class TransportPipeline {
   }
 
   public hasTransports(components: SourceComponent[]): boolean {
-    return components.some((component) => this.findTransportFor(component) !== undefined);
+    return components.some(
+      (component) => !component.isMarkedForDelete() && this.findTransportFor(component) !== undefined
+    );
   }
 
   private findTransportFor(component: SourceComponent): TransportProvider | undefined {
@@ -237,6 +248,15 @@ export class TransportPipeline {
 
     return { fileResponses: allFileResponses, asyncHandles: allAsyncHandles, operationResults: allOperationResults };
   }
+}
+
+function toPlanComponent(component: SourceComponent): TransportPlanComponent {
+  const destructiveChangesType = component.getDestructiveChangesType();
+  return {
+    fullName: component.fullName,
+    type: component.type.name,
+    ...(component.isMarkedForDelete() && destructiveChangesType ? { destructiveChangesType } : {}),
+  };
 }
 
 function getStep(

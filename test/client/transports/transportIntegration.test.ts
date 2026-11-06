@@ -29,6 +29,7 @@ import {
   RequestStatus,
   RetrieveResult,
   SourceComponent,
+  VirtualTreeContainer,
 } from '../../../src';
 import { TransportPipeline } from '../../../src/client/transports/transportPipeline';
 import { TransportCoordinator } from '../../../src/client/transports/transportCoordinator';
@@ -369,11 +370,12 @@ describe('Transport integration', () => {
   describe('ComponentSet transport selection', () => {
     const connection = { getAuthInfoFields: () => ({ orgId: '00D' }) } as Connection;
     const project = {} as SfProject;
+    let deployStart: sinon.SinonStub;
 
     beforeEach(() => {
       sinon.stub(SfProject, 'resolve').resolves(project);
       sinon.stub(MetadataApiRetrieve.prototype, 'start').resolves({ id: 'retrieve' });
-      sinon.stub(MetadataApiDeploy.prototype, 'start').resolves({ id: 'deploy' });
+      deployStart = sinon.stub(MetadataApiDeploy.prototype, 'start').resolves({ id: 'deploy' });
     });
 
     it('floors the ComputeApp manifest version at 68.0', async () => {
@@ -639,6 +641,95 @@ describe('Transport integration', () => {
         expect(result).to.be.instanceOf(MetadataApiDeploy);
         expect(beforeDeploy.called).to.be.false;
         expect(request.called).to.be.false;
+      });
+
+      it('only passes non-deleted ComputeApps to after-deploy transports once MDAPI succeeds', async () => {
+        const type = registryAccess.getTypeByName('ComputeApp');
+        const changed = new SourceComponent({ name: 'ChangedApp', type, content: '/local/ChangedApp' });
+        const deploySpy = sinon.spy();
+        const set = new ComponentSet([changed, deletedComputeApp('DeletedApp', DestructiveChangesType.POST)]);
+        set.transportPipeline = new TransportPipeline([
+          createMockTransport({
+            deployPhase: 'after-metadata',
+            retrievePhase: 'after-metadata',
+            typeNames: ['ComputeApp'],
+            deploySpy,
+          }),
+        ]);
+        const addProcessor = sinon.spy(MetadataApiDeploy.prototype, 'addResultProcessor');
+
+        await set.deploy({ usernameOrConnection: connection });
+        expect(deploySpy.called).to.be.false;
+        const processor = addProcessor.firstCall.args[0];
+        const status = createDeployStatus(RequestStatus.Succeeded);
+        await processor(new DeployResult(status), status);
+
+        expect(deploySpy.calledOnce).to.be.true;
+        expect((deploySpy.firstCall.args[0] as TransportContext).components).to.deep.equal([changed]);
+      });
+
+      it('keeps deleted ComputeApps in the MDAPI destructive manifest', async () => {
+        const type = registryAccess.getTypeByName('ComputeApp');
+        const changed = new SourceComponent({ name: 'ChangedApp', type, content: '/local/ChangedApp' });
+        const set = new ComponentSet([changed, deletedComputeApp('DeletedApp', DestructiveChangesType.POST)]);
+        set.transportPipeline = new TransportPipeline([
+          createMockTransport({
+            deployPhase: 'before-metadata',
+            retrievePhase: 'after-metadata',
+            typeNames: ['ComputeApp'],
+          }),
+        ]);
+        const result = await set.deploy({ usernameOrConnection: connection });
+
+        expect(deployStart.calledOnce).to.be.true;
+        const deployed = (result as unknown as { components: ComponentSet }).components;
+        expect(deployed).to.equal(set);
+        expect((await deployed.getObject()).Package.types).to.deep.include({
+          name: 'ComputeApp',
+          members: ['ChangedApp'],
+        });
+        expect((await deployed.getObject(DestructiveChangesType.POST)).Package.types).to.deep.include({
+          name: 'ComputeApp',
+          members: ['DeletedApp'],
+        });
+      });
+
+      it('does not run deploy transports for ComputeApps deleted through a destructive manifest', async () => {
+        const manifest = (members: string): Buffer =>
+          Buffer.from(
+            `<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">${members}<version>68.0</version></Package>`
+          );
+        const tree = new VirtualTreeContainer([
+          {
+            dirPath: '.',
+            children: [
+              { name: 'package.xml', data: manifest('') },
+              {
+                name: 'destructiveChangesPost.xml',
+                data: manifest('<types><members>DeletedApp</members><name>ComputeApp</name></types>'),
+              },
+            ],
+          },
+        ]);
+        const set = await ComponentSet.fromManifest({
+          manifestPath: 'package.xml',
+          destructivePost: 'destructiveChangesPost.xml',
+          tree,
+        });
+        const deploySpy = sinon.spy();
+        set.transportPipeline = new TransportPipeline([
+          createMockTransport({
+            deployPhase: 'before-metadata',
+            retrievePhase: 'after-metadata',
+            typeNames: ['ComputeApp'],
+            deploySpy,
+          }),
+        ]);
+
+        await set.deploy({ usernameOrConnection: connection });
+
+        expect(deploySpy.called).to.be.false;
+        expect(deployStart.calledOnce).to.be.true;
       });
     });
 

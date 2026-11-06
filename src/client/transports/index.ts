@@ -14,5 +14,10 @@
  * limitations under the License.
  */
 
-export type { TransportPlan, TransportPlanPhase, TransportStageEvent } from './transportPipeline';
+export type {
+  TransportPlan,
+  TransportPlanComponent,
+  TransportPlanPhase,
+  TransportStageEvent,
+} from './transportPipeline';
 export type { TransportOperationResult } from './types';

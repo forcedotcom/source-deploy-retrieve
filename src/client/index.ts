@@ -22,7 +22,13 @@ export {
   ScopedPostDeploy,
 } from './metadataApiDeploy';
 export { MetadataApiRetrieve, RetrieveResult, ScopedPostRetrieve, ScopedPreRetrieve } from './metadataApiRetrieve';
-export type { TransportOperationResult, TransportPlan, TransportPlanPhase, TransportStageEvent } from './transports';
+export type {
+  TransportOperationResult,
+  TransportPlan,
+  TransportPlanComponent,
+  TransportPlanPhase,
+  TransportStageEvent,
+} from './transports';
 export {
   ComponentDeployment,
   ComponentRetrieval,

@@ -21,6 +21,7 @@ import {
   ComponentSet,
   ComponentStatus,
   DeployResult,
+  DestructiveChangesType,
   FileResponse,
   MetadataApiDeployStatus,
   MetadataApiRetrieveStatus,
@@ -33,6 +34,7 @@ import { TransportPipeline } from '../../../src/client/transports/transportPipel
 import { TransportCoordinator } from '../../../src/client/transports/transportCoordinator';
 import { MetadataApiRetrieve } from '../../../src/client/metadataApiRetrieve';
 import { MetadataApiDeploy } from '../../../src/client/metadataApiDeploy';
+import { ComputeAppTransport } from '../../../src/client/transports/computeAppTransport';
 import {
   TransportContext,
   TransportDescription,
@@ -539,6 +541,105 @@ describe('Transport integration', () => {
       expect(result).to.be.instanceOf(MetadataApiDeploy);
       expect((result as unknown as { options: { apiOptions: { checkOnly: boolean } } }).options.apiOptions.checkOnly).to
         .be.true;
+    });
+
+    describe('deletions', () => {
+      function deletedComputeApp(name: string, destructiveType: DestructiveChangesType): SourceComponent {
+        const component = new SourceComponent({
+          name,
+          type: registryAccess.getTypeByName('ComputeApp'),
+          content: `/local/${name}`,
+        });
+        component.setMarkedForDelete(destructiveType);
+        return component;
+      }
+
+      for (const destructiveType of [DestructiveChangesType.PRE, DestructiveChangesType.POST]) {
+        it(`does not run deploy transports for a ComputeApp marked for ${destructiveType} delete`, async () => {
+          const deploySpy = sinon.spy();
+          const set = new ComponentSet([deletedComputeApp('DeletedApp', destructiveType)]);
+          set.transportPipeline = new TransportPipeline([
+            createMockTransport({
+              deployPhase: 'before-metadata',
+              retrievePhase: 'after-metadata',
+              typeNames: ['ComputeApp'],
+              deploySpy,
+            }),
+          ]);
+
+          const result = await set.deploy({ usernameOrConnection: connection });
+
+          expect(deploySpy.called).to.be.false;
+          expect(result).to.be.instanceOf(MetadataApiDeploy);
+          expect(set.getTypesOfDestructiveChanges()).to.deep.equal([destructiveType]);
+        });
+      }
+
+      it('does not run after-deploy transports for a ComputeApp marked for delete', async () => {
+        const deploySpy = sinon.spy();
+        const set = new ComponentSet([deletedComputeApp('DeletedApp', DestructiveChangesType.POST)]);
+        const pipeline = new TransportPipeline([
+          createMockTransport({
+            deployPhase: 'after-metadata',
+            retrievePhase: 'after-metadata',
+            typeNames: ['ComputeApp'],
+            deploySpy,
+          }),
+        ]);
+        set.transportPipeline = pipeline;
+        const after = sinon.spy(pipeline, 'runAfterMetadata');
+
+        await set.deploy({ usernameOrConnection: connection });
+
+        expect(after.called).to.be.false;
+        expect(deploySpy.called).to.be.false;
+      });
+
+      it('only passes non-deleted ComputeApps to the deploy transport', async () => {
+        const type = registryAccess.getTypeByName('ComputeApp');
+        const changed = new SourceComponent({ name: 'ChangedApp', type, content: '/local/ChangedApp' });
+        const deploySpy = sinon.spy();
+        const set = new ComponentSet([changed, deletedComputeApp('DeletedApp', DestructiveChangesType.POST)]);
+        set.transportPipeline = new TransportPipeline([
+          createMockTransport({
+            deployPhase: 'before-metadata',
+            retrievePhase: 'after-metadata',
+            typeNames: ['ComputeApp'],
+            deploySpy,
+          }),
+        ]);
+
+        await set.deploy({ usernameOrConnection: connection });
+
+        expect(deploySpy.calledOnce).to.be.true;
+        const ctx = deploySpy.firstCall.args[0] as TransportContext;
+        expect(ctx.components).to.deep.equal([changed]);
+      });
+
+      it('does not require a registered provider when the only transport components are deleted', async () => {
+        const set = new ComponentSet([deletedComputeApp('DeletedApp', DestructiveChangesType.POST)]);
+        set.transportPipeline = new TransportPipeline();
+
+        const result = await set.deploy({ usernameOrConnection: connection });
+
+        expect(result).to.be.instanceOf(MetadataApiDeploy);
+      });
+
+      it('does not hit the Compute endpoint with the builtin transport when deleting a ComputeApp', async () => {
+        const request = sinon.stub().rejects(new Error('should not be called'));
+        const builtinConnection = {
+          getAuthInfoFields: () => ({ orgId: '00D' }),
+          request,
+        } as unknown as Connection;
+        const beforeDeploy = sinon.spy(ComputeAppTransport.prototype, 'beforeDeploy');
+        const set = new ComponentSet([deletedComputeApp('DeletedApp', DestructiveChangesType.POST)]);
+
+        const result = await set.deploy({ usernameOrConnection: builtinConnection });
+
+        expect(result).to.be.instanceOf(MetadataApiDeploy);
+        expect(beforeDeploy.called).to.be.false;
+        expect(request.called).to.be.false;
+      });
     });
 
     it('passes explicit output as the source fallback for manifest-only retrieve', async () => {

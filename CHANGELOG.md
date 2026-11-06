@@ -1,3 +1,12 @@
+## [13.11.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.11.0...13.11.1) (2026-11-06)
+
+
+### Bug Fixes
+
+* **deps:** bump minimatch from 9.0.9 to 11.0.1 ([#1871](https://github.com/forcedotcom/source-deploy-retrieve/issues/1871)) ([b0744b9](https://github.com/forcedotcom/source-deploy-retrieve/commit/b0744b90a7434f00f26189fc9401ca300d1f68dc))
+
+
+
 # [13.11.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.10.1...13.11.0) (2026-11-03)
 
 

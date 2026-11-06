@@ -945,6 +945,50 @@ describe('ComponentSetBuilder', () => {
         expect(compSet.has(apexClassWildcardMatch)).to.equal(true);
       });
 
+      it('should match a namespace-only metadata selector using namespacePrefix without matching other types', async () => {
+        fromConnectionStub.resolves(componentSet);
+        await ComponentSetBuilder.build({
+          sourcepath: undefined,
+          metadata: {
+            metadataEntries: ['CustomField:npsp__*'],
+            directoryPaths: [path.resolve('force-app')],
+          },
+          manifest: undefined,
+          org: {
+            username: testOrg.username,
+            exclude: [],
+          },
+        });
+
+        const filter = fromConnectionStub.firstCall.firstArg.componentFilter as (component: {
+          type: string;
+          fullName: string;
+          namespacePrefix?: string;
+        }) => boolean;
+
+        expect(
+          filter({
+            type: 'CustomField',
+            fullName: 'Account.npsp__Funding_Focus__c',
+            namespacePrefix: 'npsp',
+          })
+        ).to.equal(true);
+        expect(
+          filter({
+            type: 'CustomField',
+            fullName: 'Account.other__Funding_Focus__c',
+            namespacePrefix: 'other',
+          })
+        ).to.equal(false);
+        expect(
+          filter({
+            type: 'CustomObject',
+            fullName: 'npsp__Address__c',
+            namespacePrefix: 'npsp',
+          })
+        ).to.equal(false);
+      });
+
       it('should exclude folder type when excluding a type that is stored in folders', async () => {
         const packageDir1 = path.resolve('force-app');
         const registry = new RegistryAccess();

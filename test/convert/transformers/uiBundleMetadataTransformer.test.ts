@@ -86,6 +86,32 @@ describe('UiBundleMetadataTransformer', () => {
     });
   });
 
+  describe('toMetadataFormat (deploy) validates mcp-resources.json', () => {
+    const writeMcpResources = (mcpResources: unknown): void =>
+      writeFileSync(join(appDir, 'mcp-resources.json'), JSON.stringify({ mcpResources }));
+
+    it('resolves resource paths from the bundle root, not outputDir', async () => {
+      mkdirSync(join(appDir, 'build'), { recursive: true });
+      writeFileSync(join(appDir, 'build', 'hello.html'), '<html/>');
+      writeFileSync(join(appDir, 'ui-bundle.json'), JSON.stringify({ outputDir: 'build' }));
+      writeMcpResources([{ name: 'hello', path: 'build/hello.html' }]);
+      const transformer = new UiBundleMetadataTransformer(registryAccess);
+      const infos = await transformer.toMetadataFormat(buildComponent());
+      expect(infos.length).to.be.greaterThan(0);
+    });
+
+    it('throws for an invalid mcp-resources.json', async () => {
+      writeFileSync(join(appDir, 'mcp-resources.json'), '{"unclosed');
+      const transformer = new UiBundleMetadataTransformer(registryAccess);
+      try {
+        await transformer.toMetadataFormat(buildComponent());
+        expect.fail('expected toMetadataFormat to throw');
+      } catch (err) {
+        expect((err as Error).message).to.match(/mcp-resources\.json is not valid JSON/);
+      }
+    });
+  });
+
   describe('toSourceFormat (retrieve) skips validation', () => {
     it('does not throw for an invalid descriptor', async () => {
       writeFileSync(join(appDir, 'ui-bundle.json'), '{"unclosed');

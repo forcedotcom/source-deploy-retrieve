@@ -395,6 +395,7 @@
     "navigationMenu": "navigationmenu",
     "network": "network",
     "networkBranding": "networkbranding",
+    "notificationDefinition": "ntfcndefinition",
     "notifications": "apexemailnotifications",
     "notiftype": "customnotificationtype",
     "oauthcustomscope": "oauthcustomscope",
@@ -612,7 +613,9 @@
     "computeApp": "computeapp",
     "ecaAttest": "extlclntappattestsettings",
     "ecaAttestPlcy": "extlclntappattestconfigurablepolicies",
-    "genOpPlanEligibilityConfig": "genopplaneligibilityconfig"
+    "genOpPlanEligibilityConfig": "genopplaneligibilityconfig",
+    "debugLevel": "debuglevel",
+    "experienceContainer": "experiencecontainer"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -3571,6 +3574,14 @@
       "strictDirectoryName": false,
       "suffix": "config"
     },
+    "ntfcndefinition": {
+      "directoryName": "notificationDefinitions",
+      "id": "ntfcndefinition",
+      "inFolder": false,
+      "name": "NtfcnDefinition",
+      "strictDirectoryName": false,
+      "suffix": "notificationDefinition"
+    },
     "oauthcustomscope": {
       "directoryName": "oauthcustomscopes",
       "id": "oauthcustomscope",
@@ -3919,6 +3930,10 @@
       "id": "profile",
       "inFolder": false,
       "name": "Profile",
+      "strategies": {
+        "adapter": "default",
+        "transformer": "profile"
+      },
       "strictDirectoryName": false,
       "suffix": "profile"
     },
@@ -5463,6 +5478,22 @@
       "name": "GenOpPlanEligibilityConfig",
       "suffix": "genOpPlanEligibilityConfig",
       "directoryName": "GenOpPlanEligibilityConfig",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "debuglevel": {
+      "id": "debuglevel",
+      "name": "DebugLevel",
+      "suffix": "debugLevel",
+      "directoryName": "debugLevels",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "experiencecontainer": {
+      "id": "experiencecontainer",
+      "name": "ExperienceContainer",
+      "suffix": "experienceContainer",
+      "directoryName": "experienceContainers",
       "inFolder": false,
       "strictDirectoryName": false
     }

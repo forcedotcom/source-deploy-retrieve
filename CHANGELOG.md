@@ -1,3 +1,69 @@
+# [13.12.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.11.1...13.12.0) (2026-11-06)
+
+### Features
+
+- **registry:** add ExperienceContainer metadata type @W-24799147@ ([#1868](https://github.com/forcedotcom/source-deploy-retrieve/issues/1868)) ([d096bbe](https://github.com/forcedotcom/source-deploy-retrieve/commit/d096bbec9589955631b02df56f10b03b8f757480))
+
+## [13.11.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.11.0...13.11.1) (2026-11-06)
+
+### Bug Fixes
+
+- **deps:** bump minimatch from 9.0.9 to 11.0.1 ([#1871](https://github.com/forcedotcom/source-deploy-retrieve/issues/1871)) ([b0744b9](https://github.com/forcedotcom/source-deploy-retrieve/commit/b0744b90a7434f00f26189fc9401ca300d1f68dc))
+
+# [13.11.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.10.1...13.11.0) (2026-11-03)
+
+### Features
+
+- add NtfcnDefinition metadata type to registry ([#1864](https://github.com/forcedotcom/source-deploy-retrieve/issues/1864)) ([726e504](https://github.com/forcedotcom/source-deploy-retrieve/commit/726e5042f559979426b0ae608fa11602a6286f89))
+
+## [13.10.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.10.0...13.10.1) (2026-11-02)
+
+### Bug Fixes
+
+- keep Profile root namespace attributes when merging @W-24745383@ ([#1865](https://github.com/forcedotcom/source-deploy-retrieve/issues/1865)) ([2b63a51](https://github.com/forcedotcom/source-deploy-retrieve/commit/2b63a5125a0599bb8345e21dd36656d54c527d00)), closes [forcedotcom/cli#3677](https://github.com/forcedotcom/cli/issues/3677)
+
+# [13.10.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.9.0...13.10.0) (2026-10-30)
+
+### Features
+
+- **registry:** add DebugLevel metadata type ([#1863](https://github.com/forcedotcom/source-deploy-retrieve/issues/1863)) ([d014006](https://github.com/forcedotcom/source-deploy-retrieve/commit/d0140060cd0237df9c443e4abf4a8d9c5e4a6904))
+
+# [13.9.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.8.3...13.9.0) (2026-10-30)
+
+### Features
+
+- add deploy extension types and bump jsforce-node ([#1862](https://github.com/forcedotcom/source-deploy-retrieve/issues/1862)) ([3aff0a3](https://github.com/forcedotcom/source-deploy-retrieve/commit/3aff0a32d4ed39887e519e7d64ae3f392d1dd42b))
+
+## [13.8.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.8.2...13.8.3) (2026-10-27)
+
+### Bug Fixes
+
+- merge split profile metadata @W-17719068@ ([#1854](https://github.com/forcedotcom/source-deploy-retrieve/issues/1854)) ([6e9258b](https://github.com/forcedotcom/source-deploy-retrieve/commit/6e9258b6fb9c9609926c1f7ca6c0b401e8a3e3f0))
+
+## [13.8.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.8.1...13.8.2) (2026-10-27)
+
+### Bug Fixes
+
+- **deps:** bump fast-uri from 3.1.8 to 3.1.9 ([#1860](https://github.com/forcedotcom/source-deploy-retrieve/issues/1860)) ([5d70b88](https://github.com/forcedotcom/source-deploy-retrieve/commit/5d70b88649f6d6ae6805c08911f7fba71f1d9a79))
+
+## [13.8.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.8.0...13.8.1) (2026-10-27)
+
+### Bug Fixes
+
+- **deps:** bump undici from 8.7.0 to 8.12.3 ([#1861](https://github.com/forcedotcom/source-deploy-retrieve/issues/1861)) ([8ab2e07](https://github.com/forcedotcom/source-deploy-retrieve/commit/8ab2e0732dafe0db01dd78f898f2095bdddb53e0))
+
+# [13.8.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.7.1...13.8.0) (2026-10-26)
+
+### Features
+
+- validate mcpResources in mcp-resources.json @W-24592777@ ([#1859](https://github.com/forcedotcom/source-deploy-retrieve/issues/1859)) ([9acd74d](https://github.com/forcedotcom/source-deploy-retrieve/commit/9acd74de20fa90ef3802eae0d53ad2d41ca89680))
+
+## [13.7.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.7.0...13.7.1) (2026-10-23)
+
+### Bug Fixes
+
+- retrieve namespace-qualified metadata @W-18220202@ ([#1852](https://github.com/forcedotcom/source-deploy-retrieve/issues/1852)) ([0d23153](https://github.com/forcedotcom/source-deploy-retrieve/commit/0d23153a4c7fc12c1110f5b713d6a9a1ab4a635a))
+
 # [13.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.6.0...13.7.0) (2026-10-20)
 
 ### Features

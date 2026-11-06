@@ -153,9 +153,6 @@
     }
   },
   "test/convert/metadataConverter.test.ts": {
-    "@typescript-eslint/no-shadow": {
-      "count": 1
-    },
     "@typescript-eslint/no-unsafe-member-access": {
       "count": 12
     }

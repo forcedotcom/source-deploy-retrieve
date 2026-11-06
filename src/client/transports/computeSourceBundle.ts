@@ -207,7 +207,10 @@ function untarGzip(buffer: Buffer, outer: boolean): Promise<Record<string, Buffe
         return;
       }
       const entryLimit = outer && header.name === 'source.tar.gz' ? MAX_COMPRESSED_BYTES : MAX_ENTRY_BYTES;
-      if (header.size > entryLimit || totalBytes + header.size > MAX_TOTAL_ENTRY_BYTES) {
+      if (
+        (header.size && header.size > entryLimit) ||
+        (header.size && totalBytes + header.size > MAX_TOTAL_ENTRY_BYTES)
+      ) {
         reject(
           new Error(
             `Malformed compute source bundle: entry size limit (${entryLimit} bytes) or total size limit (${MAX_TOTAL_ENTRY_BYTES} bytes) exceeded`

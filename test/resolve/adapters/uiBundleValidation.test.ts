@@ -17,10 +17,15 @@ import { join } from 'node:path';
 import { assert, expect } from 'chai';
 import { SfError } from '@salesforce/core/sfError';
 import { VirtualTreeContainer } from '../../../src/resolve/treeContainers';
-import { validateUiBundleJson, isUiBundleConfig } from '../../../src/resolve/adapters/uiBundleValidation';
+import {
+  validateUiBundleJson,
+  validateMcpResourcesJson,
+  isUiBundleConfig,
+} from '../../../src/resolve/adapters/uiBundleValidation';
 
 const CONTENT_PATH = join('force-app', 'main', 'default', 'uiBundles', 'MyApp');
 const DESCRIPTOR_PATH = join(CONTENT_PATH, 'ui-bundle.json');
+const MCP_RESOURCES_PATH = join(CONTENT_PATH, 'mcp-resources.json');
 
 /** Build a tree where outputDir exists and has at least one file. */
 function treeWith(extra: Record<string, string> = {}): VirtualTreeContainer {
@@ -35,17 +40,18 @@ function toBuffer(obj: unknown): Buffer {
   return Buffer.from(JSON.stringify(obj));
 }
 
-function expectConfigError(fn: () => void, messageIncludes?: string): void {
+function expectConfigError(fn: () => void, messageIncludes?: string): SfError {
   try {
     fn();
-    assert.fail('expected to throw');
   } catch (e) {
     expect(e).to.be.instanceOf(SfError);
     expect((e as SfError).name).to.equal('InvalidUiBundleConfigError');
     if (messageIncludes) {
       expect((e as SfError).message).to.include(messageIncludes);
     }
+    return e as SfError;
   }
+  assert.fail('expected to throw');
 }
 
 function expectFileError(fn: () => void): void {
@@ -119,11 +125,25 @@ describe('validateUiBundleJson (direct unit tests)', () => {
       expectConfigError(() => validateUiBundleJson(toBuffer({ foo: 1, bar: 2 }), DESCRIPTOR_PATH, CONTENT_PATH, tree));
     });
 
-    it('lists mcpResources among the allowed properties', () => {
+    it('lists the allowed properties', () => {
       expectConfigError(
         () => validateUiBundleJson(toBuffer({ foo: 1 }), DESCRIPTOR_PATH, CONTENT_PATH, tree),
-        'Allowed: outputDir, routing, headers, mcpResources.'
+        'Allowed: outputDir, routing, headers.'
       );
+    });
+
+    it('rejects mcpResources and points to mcp-resources.json', () => {
+      const err = expectConfigError(
+        () =>
+          validateUiBundleJson(
+            toBuffer({ outputDir: 'dist', mcpResources: [{ name: 'a', path: 'index.html' }] }),
+            DESCRIPTOR_PATH,
+            CONTENT_PATH,
+            tree
+          ),
+        "'mcpResources'"
+      );
+      expect(err.actions?.join('\n')).to.include('mcp-resources.json');
     });
   });
 
@@ -717,9 +737,9 @@ describe('validateUiBundleJson (direct unit tests)', () => {
 
   // ===== mcpResources validation =====
   describe('mcpResources', () => {
-    const tree = treeWith();
+    const tree = treeWith({ [join(CONTENT_PATH, 'index.html')]: '' });
     const validate = (mcpResources: unknown): void =>
-      validateUiBundleJson(toBuffer({ outputDir: 'dist', mcpResources }), DESCRIPTOR_PATH, CONTENT_PATH, tree);
+      validateMcpResourcesJson(toBuffer({ mcpResources }), MCP_RESOURCES_PATH, CONTENT_PATH, tree);
 
     it('throws when mcpResources is not an array', () => {
       expectConfigError(() => validate({ name: 'a', path: 'index.html' }), 'mcpResources');
@@ -812,22 +832,36 @@ describe('validateUiBundleJson (direct unit tests)', () => {
       expectConfigError(() => validate([{ name: 'a', path: '//index.html' }]), 'absolute path');
     });
 
-    it('throws for path containing .. within a segment', () => {
-      expectConfigError(() => validate([{ name: 'a', path: 'app..html' }]), 'consecutive dots');
+    it('accepts path containing .. within a segment', () => {
+      const dotsTree = treeWith({ [join(CONTENT_PATH, 'app..html')]: '' });
+      expect(() =>
+        validateMcpResourcesJson(
+          toBuffer({ mcpResources: [{ name: 'a', path: 'app..html' }] }),
+          MCP_RESOURCES_PATH,
+          CONTENT_PATH,
+          dotsTree
+        )
+      ).to.not.throw();
     });
 
-    it('throws for path with a . segment', () => {
-      expectConfigError(() => validate([{ name: 'a', path: './index.html' }]), 'current directory segment');
-      expectConfigError(() => validate([{ name: 'a', path: 'sub/./index.html' }]), 'current directory segment');
-      expectConfigError(() => validate([{ name: 'a', path: 'sub/.' }]), 'current directory segment');
+    it('ignores . segments in path', () => {
+      const dotTree = treeWith({ [join(CONTENT_PATH, 'dist', 'sub', 'index.html')]: '' });
+      expect(() =>
+        validateMcpResourcesJson(
+          toBuffer({ mcpResources: [{ name: 'a', path: './dist/./sub/index.html' }] }),
+          MCP_RESOURCES_PATH,
+          CONTENT_PATH,
+          dotTree
+        )
+      ).to.not.throw();
     });
 
     it('accepts dotted file names', () => {
-      const dottedTree = treeWith({ [join(CONTENT_PATH, 'dist', 'app.v2.html')]: '' });
+      const dottedTree = treeWith({ [join(CONTENT_PATH, 'app.v2.html')]: '' });
       expect(() =>
-        validateUiBundleJson(
-          toBuffer({ outputDir: 'dist', mcpResources: [{ name: 'a', path: 'app.v2.html' }] }),
-          DESCRIPTOR_PATH,
+        validateMcpResourcesJson(
+          toBuffer({ mcpResources: [{ name: 'a', path: 'app.v2.html' }] }),
+          MCP_RESOURCES_PATH,
           CONTENT_PATH,
           dottedTree
         )
@@ -870,11 +904,11 @@ describe('validateUiBundleJson (direct unit tests)', () => {
     });
 
     it('applies the 512-character limit to the trimmed path', () => {
-      const tree512 = treeWith({ [join(CONTENT_PATH, 'dist', `${'a'.repeat(507)}.html`)]: '' });
+      const tree512 = treeWith({ [join(CONTENT_PATH, `${'a'.repeat(507)}.html`)]: '' });
       expect(() =>
-        validateUiBundleJson(
-          toBuffer({ outputDir: 'dist', mcpResources: [{ name: 'a', path: `  ${'a'.repeat(507)}.html  ` }] }),
-          DESCRIPTOR_PATH,
+        validateMcpResourcesJson(
+          toBuffer({ mcpResources: [{ name: 'a', path: `  ${'a'.repeat(507)}.html  ` }] }),
+          MCP_RESOURCES_PATH,
           CONTENT_PATH,
           tree512
         )
@@ -887,11 +921,11 @@ describe('validateUiBundleJson (direct unit tests)', () => {
     });
 
     it('accepts .html extension in any case', () => {
-      const upperTree = treeWith({ [join(CONTENT_PATH, 'dist', 'INDEX.HTML')]: '' });
+      const upperTree = treeWith({ [join(CONTENT_PATH, 'INDEX.HTML')]: '' });
       expect(() =>
-        validateUiBundleJson(
-          toBuffer({ outputDir: 'dist', mcpResources: [{ name: 'a', path: 'INDEX.HTML' }] }),
-          DESCRIPTOR_PATH,
+        validateMcpResourcesJson(
+          toBuffer({ mcpResources: [{ name: 'a', path: 'INDEX.HTML' }] }),
+          MCP_RESOURCES_PATH,
           CONTENT_PATH,
           upperTree
         )
@@ -913,7 +947,7 @@ describe('validateUiBundleJson (direct unit tests)', () => {
     it('reports every path problem in one error', () => {
       expectConfigError(
         () => validate([{ name: 'a', path: './foo//bar..html#section' }]),
-        'consecutive slashes (//), a fragment marker (#), consecutive dots (..), a current directory segment (.)'
+        'consecutive slashes (//), a fragment marker (#)'
       );
       expectConfigError(
         () => validate([{ name: 'a', path: '/sub//index.html' }]),
@@ -1027,9 +1061,9 @@ describe('validateUiBundleJson (direct unit tests)', () => {
     it('throws when mcpResources path does not exist', () => {
       const tree = treeWith();
       expectFileError(() =>
-        validateUiBundleJson(
-          toBuffer({ outputDir: 'dist', mcpResources: [{ name: 'a', path: 'missing.html' }] }),
-          DESCRIPTOR_PATH,
+        validateMcpResourcesJson(
+          toBuffer({ mcpResources: [{ name: 'a', path: 'missing.html' }] }),
+          MCP_RESOURCES_PATH,
           CONTENT_PATH,
           tree
         )
@@ -1037,59 +1071,35 @@ describe('validateUiBundleJson (direct unit tests)', () => {
     });
 
     it('throws when mcpResources path is a directory', () => {
-      const tree = treeWith({ [join(CONTENT_PATH, 'dist', 'sub.html', 'nested.html')]: '' });
+      const tree = treeWith({ [join(CONTENT_PATH, 'sub.html', 'nested.html')]: '' });
       expectFileError(() =>
-        validateUiBundleJson(
-          toBuffer({ outputDir: 'dist', mcpResources: [{ name: 'a', path: 'sub.html' }] }),
-          DESCRIPTOR_PATH,
+        validateMcpResourcesJson(
+          toBuffer({ mcpResources: [{ name: 'a', path: 'sub.html' }] }),
+          MCP_RESOURCES_PATH,
           CONTENT_PATH,
           tree
         )
       );
     });
 
-    it('resolves mcpResources path under outputDir, not the bundle root', () => {
-      const tree = treeWith({ [join(CONTENT_PATH, 'hello.html')]: '' });
+    it('resolves mcpResources path from the bundle root, not outputDir', () => {
+      const tree = treeWith({ [join(CONTENT_PATH, 'dist', 'hello.html')]: '' });
       expectFileError(() =>
-        validateUiBundleJson(
-          toBuffer({ outputDir: 'dist', mcpResources: [{ name: 'a', path: 'hello.html' }] }),
-          DESCRIPTOR_PATH,
+        validateMcpResourcesJson(
+          toBuffer({ mcpResources: [{ name: 'a', path: 'hello.html' }] }),
+          MCP_RESOURCES_PATH,
           CONTENT_PATH,
           tree
         )
       );
     });
 
-    it('succeeds when mcpResources path exists under outputDir', () => {
+    it('succeeds when mcpResources path exists under the bundle root', () => {
       const tree = treeWith({ [join(CONTENT_PATH, 'dist', 'widgets', 'hello.html')]: '' });
       expect(() =>
-        validateUiBundleJson(
-          toBuffer({ outputDir: 'dist', mcpResources: [{ name: 'hello', path: 'widgets/hello.html' }] }),
-          DESCRIPTOR_PATH,
-          CONTENT_PATH,
-          tree
-        )
-      ).to.not.throw();
-    });
-
-    it('resolves mcpResources path under dist, not the bundle root, when outputDir is absent', () => {
-      const tree = treeWith({ [join(CONTENT_PATH, 'hello.html')]: '' });
-      expectFileError(() =>
-        validateUiBundleJson(
-          toBuffer({ mcpResources: [{ name: 'a', path: 'hello.html' }] }),
-          DESCRIPTOR_PATH,
-          CONTENT_PATH,
-          tree
-        )
-      );
-    });
-
-    it('succeeds when mcpResources path exists under dist and outputDir is absent', () => {
-      const tree = treeWith({ [join(CONTENT_PATH, 'dist', 'hello.html')]: '' });
-      expect(() =>
-        validateUiBundleJson(
-          toBuffer({ mcpResources: [{ name: 'a', path: 'hello.html' }] }),
-          DESCRIPTOR_PATH,
+        validateMcpResourcesJson(
+          toBuffer({ mcpResources: [{ name: 'hello', path: 'dist/widgets/hello.html' }] }),
+          MCP_RESOURCES_PATH,
           CONTENT_PATH,
           tree
         )
@@ -1141,7 +1151,7 @@ describe('validateUiBundleJson (direct unit tests)', () => {
       ).to.not.throw();
     });
 
-    it('accepts full config with routing, headers, mcpResources, and outputDir', () => {
+    it('accepts full config with routing, headers, and outputDir', () => {
       const config = {
         outputDir: 'dist',
         routing: {
@@ -1152,7 +1162,6 @@ describe('validateUiBundleJson (direct unit tests)', () => {
           redirects: [{ route: '/old', redirect: '/new', statusCode: 301 }],
         },
         headers: [{ source: '/**', headers: [{ key: 'X-Frame-Options', value: 'DENY' }] }],
-        mcpResources: [{ name: 'app', path: 'app.html' }],
       };
       expect(() => validateUiBundleJson(toBuffer(config), DESCRIPTOR_PATH, CONTENT_PATH, tree)).to.not.throw();
     });
@@ -1173,5 +1182,45 @@ describe('validateUiBundleJson (direct unit tests)', () => {
         )
       ).to.not.throw();
     });
+  });
+});
+
+describe('validateMcpResourcesJson', () => {
+  const tree = treeWith();
+  const validateRaw = (raw: string): void =>
+    validateMcpResourcesJson(Buffer.from(raw), MCP_RESOURCES_PATH, CONTENT_PATH, tree);
+
+  it('throws for empty, whitespace-only, invalid, or non-object JSON', () => {
+    expectConfigError(() => validateRaw(''), 'mcp-resources.json must not be empty');
+    expectConfigError(() => validateRaw('  \n '), 'mcp-resources.json must not be empty');
+    expectConfigError(() => validateRaw('{bad json'), 'mcp-resources.json is not valid JSON');
+    expectConfigError(() => validateRaw('[]'), 'must be a JSON object, but found array');
+    expectConfigError(() => validateRaw('null'), 'must be a JSON object');
+  });
+
+  it('throws when the file exceeds 100 KB', () => {
+    expectConfigError(
+      () =>
+        validateRaw(JSON.stringify({ mcpResources: [{ name: 'a', path: 'index.html' }], pad: 'x'.repeat(102_400) })),
+      'exceeds the maximum allowed size'
+    );
+  });
+
+  it('requires mcpResources as the only top-level property', () => {
+    expectConfigError(
+      () => validateRaw(JSON.stringify({ mcpResources: [{ name: 'a', path: 'index.html' }], outputDir: 'dist' })),
+      "mcp-resources.json contains unknown property: 'outputDir'. Allowed: mcpResources."
+    );
+    expectConfigError(() => validateRaw('{}'), "mcp-resources.json must contain 'mcpResources'.");
+  });
+
+  it('names mcp-resources.json in file-not-found errors', () => {
+    try {
+      validateRaw(JSON.stringify({ mcpResources: [{ name: 'a', path: 'missing.html' }] }));
+      assert.fail('expected to throw');
+    } catch (e) {
+      expect((e as SfError).name).to.equal('ExpectedSourceFilesError');
+      expect((e as SfError).message).to.include("mcp-resources.json 'mcpResources[0].path'");
+    }
   });
 });

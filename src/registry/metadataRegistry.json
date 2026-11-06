@@ -65,6 +65,7 @@
     "mktDataSources": "datasource",
     "objectTranslations": "customobjecttranslation",
     "objects": "customobject",
+    "computeApps": "computeapp",
     "restrictionRules": "restrictionrule",
     "siteDotComSites": "sitedotcom",
     "sites": "customsite",
@@ -609,6 +610,7 @@
     "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
     "meetingPlaybookDefinition": "meetingplaybookdefinition",
     "idpConfiguration": "idpconfiguration",
+    "computeApp": "computeapp",
     "ecaAttest": "extlclntappattestsettings",
     "ecaAttestPlcy": "extlclntappattestconfigurablepolicies",
     "genOpPlanEligibilityConfig": "genopplaneligibilityconfig",
@@ -5442,6 +5444,18 @@
         "adapter": "bundle"
       },
       "supportsPartialDelete": true
+    },
+    "computeapp": {
+      "directoryName": "computeApps",
+      "id": "computeapp",
+      "inFolder": false,
+      "name": "ComputeApp",
+      "strategies": {
+        "adapter": "bundle",
+        "transport": "computeApp"
+      },
+      "strictDirectoryName": true,
+      "suffix": "computeApp"
     },
     "extlclntappattestsettings": {
       "id": "extlclntappattestsettings",

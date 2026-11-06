@@ -15,7 +15,7 @@
  */
 import { fail } from 'node:assert';
 import { SinonStub } from 'sinon';
-import { AuthInfo, Connection, Messages } from '@salesforce/core';
+import { AuthInfo, Connection, Messages, SfError } from '@salesforce/core';
 import { assert, expect } from 'chai';
 import {
   Duration,
@@ -48,22 +48,19 @@ describe('MetadataTransfer', () => {
       post: $$.SANDBOX.stub().returns({ id: '1' }),
       cancel: $$.SANDBOX.stub().returns(true),
     };
-     
+
     public async checkStatus(): Promise<MetadataRequestStatus> {
       return this.lifecycle.checkStatus();
     }
 
-     
     public async cancel(): Promise<void> {
       this.canceled = this.lifecycle.cancel();
     }
 
-     
     protected async pre(): Promise<{ id: string }> {
       return this.lifecycle.pre();
     }
 
-     
     protected async post(): Promise<MetadataTransferResult> {
       return this.lifecycle.post();
     }
@@ -204,6 +201,35 @@ describe('MetadataTransfer', () => {
       expect(listenerStub.callCount).to.equal(1);
     });
 
+    it('should await result processors before returning the result', async () => {
+      const calls: string[] = [];
+      operation.addResultProcessor(async () => {
+        await sleep(1);
+        calls.push('processor');
+      });
+
+      await operation.pollStatus();
+      calls.push('returned');
+
+      expect(calls).to.deep.equal(['processor', 'returned']);
+    });
+
+    it('preserves result processor SfError data in the wrapped error', async () => {
+      const cause = new SfError('processor failed', 'ProcessorError');
+      cause.setData({ fileResponses: [{ fullName: 'MyApp' }] });
+      operation.addResultProcessor(async () => {
+        throw cause;
+      });
+
+      try {
+        await operation.pollStatus();
+        fail('should have thrown an error');
+      } catch (error) {
+        assert(error instanceof SfError);
+        expect(error.data).to.deep.equal({ id: undefined, causeErrorData: cause.data });
+      }
+    });
+
     it('should exit and fire "cancel" event when done = true and request status is "Canceled"', async () => {
       const { checkStatus } = operation.lifecycle;
       checkStatus.resolves({ status: RequestStatus.Canceled, done: true });
@@ -225,7 +251,7 @@ describe('MetadataTransfer', () => {
         callOrder.push('firstCall2');
         return { done: false };
       });
-       
+
       checkStatus.onSecondCall().callsFake(async () => {
         callOrder.push('secondCall1');
         return { done: true };
@@ -243,7 +269,7 @@ describe('MetadataTransfer', () => {
       // until the timeout is exceeded.
       const { checkStatus } = operation.lifecycle;
       let callCount = 0;
-       
+
       checkStatus.callsFake(async () => {
         callCount += 1;
         if (callCount > 22) {

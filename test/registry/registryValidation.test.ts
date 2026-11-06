@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { assert, expect } from 'chai';
-import { MetadataType } from '../../src/registry/types';
+import { MetadataType, transportNames } from '../../src/registry/types';
 import { metadataTypes as UnsupportedTypes } from '../../src/registry/nonSupportedTypes';
 import { presets } from './presetTesting';
 
@@ -37,6 +37,16 @@ describe('will run preset tests', () => {
             });
           });
         });
+      });
+
+      describe('transports', () => {
+        Object.values(registry.types)
+          .filter((type) => type.strategies?.transport)
+          .forEach((type) => {
+            it(`${type.name} has a known transport`, () => {
+              expect(transportNames).to.include(type.strategies?.transport);
+            });
+          });
       });
 
       describe('child types', () => {

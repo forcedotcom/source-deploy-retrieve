@@ -90,9 +90,7 @@ export const filePathsFromMetadataComponent = (
   if (
     !type.children &&
     type.suffix &&
-    (!type.strategies ||
-      type.strategies.adapter === 'default' ||
-      type.strategies.transformer === 'decomposedLabels')
+    (!type.strategies || type.strategies.adapter === 'default' || type.strategies.transformer === 'decomposedLabels')
   ) {
     return (type.inFolder ?? type.folderType ? generateFolders({ fullName, type }, packageDirWithTypeDir) : []).concat([
       join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`),

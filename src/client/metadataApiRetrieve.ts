@@ -38,6 +38,7 @@ import {
 import { extract } from './retrieveExtract';
 import { getPackageOptions } from './retrieveExtract';
 import { MetadataApiRetrieveOptions } from './types';
+import { AsyncTransportHandle, TransportOperationResult } from './transports/types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -48,6 +49,9 @@ export class RetrieveResult implements MetadataTransferResult {
   // rather than "Changed".
   private localComponents: ComponentSet;
   private fileResponses?: FileResponse[];
+  private transportFileResponses: FileResponse[] = [];
+  private asyncTransportHandles: AsyncTransportHandle[] = [];
+  private transportOperationResults: TransportOperationResult[] = [];
 
   /**
    * @param response The metadata retrieve response from the server
@@ -69,7 +73,7 @@ export class RetrieveResult implements MetadataTransferResult {
       return this.fileResponses;
     }
 
-    this.fileResponses = [];
+    const responses: FileResponse[] = [];
 
     // construct failures
     if (this.response.messages) {
@@ -80,7 +84,7 @@ export class RetrieveResult implements MetadataTransferResult {
         const matches = new RegExp(/.+'(.+)'.+'(.+)'/).exec(message.problem);
         if (matches) {
           const [typeName, fullName] = matches.slice(1);
-          this.fileResponses.push({
+          responses.push({
             fullName,
             type: typeName,
             state: ComponentStatus.Failed,
@@ -88,7 +92,7 @@ export class RetrieveResult implements MetadataTransferResult {
             problemType: 'Error',
           });
         } else {
-          this.fileResponses.push({
+          responses.push({
             fullName: '',
             type: '',
             problemType: 'Error',
@@ -110,20 +114,43 @@ export class RetrieveResult implements MetadataTransferResult {
 
       if (!type.children || Object.values(type.children.types).some((t) => t.unaddressableWithoutParent)) {
         for (const filePath of retrievedComponent.walkContent()) {
-          this.fileResponses.push({ ...baseResponse, filePath } satisfies FileResponseSuccess);
+          responses.push({ ...baseResponse, filePath } satisfies FileResponseSuccess);
         }
       }
 
       if (xml) {
-        this.fileResponses.push({ ...baseResponse, filePath: xml } satisfies FileResponseSuccess);
+        responses.push({ ...baseResponse, filePath: xml } satisfies FileResponseSuccess);
       }
     }
 
     // Add file responses for components that support partial delete (e.g., DigitalExperience)
     // where pieces of the component were deleted in the org, then retrieved.
-    this.fileResponses.push(...(this.partialDeleteFileResponses ?? []));
+    responses.push(...(this.partialDeleteFileResponses ?? []));
+
+    responses.push(...this.transportFileResponses);
+
+    this.fileResponses = responses;
 
     return this.fileResponses;
+  }
+
+  public addTransportResults(
+    fileResponses: FileResponse[],
+    asyncHandles: AsyncTransportHandle[] = [],
+    operationResults: TransportOperationResult[] = []
+  ): void {
+    this.transportFileResponses.push(...fileResponses);
+    this.asyncTransportHandles.push(...asyncHandles);
+    this.transportOperationResults.push(...operationResults);
+    this.fileResponses = undefined;
+  }
+
+  public getAsyncTransportHandles(): AsyncTransportHandle[] {
+    return this.asyncTransportHandles;
+  }
+
+  public getTransportOperationResults(): TransportOperationResult[] {
+    return this.transportOperationResults;
   }
 }
 

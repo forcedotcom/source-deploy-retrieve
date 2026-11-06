@@ -174,8 +174,13 @@ export type MetadataType = {
       | 'profile';
     decomposition?: 'topLevel' | 'folderPerType';
     recomposition?: 'startEmpty';
+    transport?: TransportName;
   };
 };
+
+export const transportNames = ['computeApp'] as const;
+
+export type TransportName = (typeof transportNames)[number];
 
 /**
  * Mapping of metadata type ids -> Metadata type definitions.

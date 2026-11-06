@@ -29,6 +29,7 @@ import { ReplacementEvent } from '../convert/types';
 import { MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
+import { AsyncTransportHandle, TransportOperationResult } from './transports/types';
 import {
   AsyncResult,
   ComponentStatus,
@@ -57,6 +58,9 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 // TODO: (NEXT MAJOR) this should just be a readonly object and not a class.
 export class DeployResult implements MetadataTransferResult {
   private fileResponses?: FileResponse[];
+  private transportFileResponses: FileResponse[] = [];
+  private asyncTransportHandles: AsyncTransportHandle[] = [];
+  private transportOperationResults: TransportOperationResult[] = [];
 
   public constructor(
     public readonly response: MetadataApiDeployStatus,
@@ -70,18 +74,37 @@ export class DeployResult implements MetadataTransferResult {
     if (!this.fileResponses) {
       this.fileResponses = [
         ...new Map(
-          (this.components
-            ? buildFileResponsesFromComponentSet(this.components)(this.response)
-            : buildFileResponses(this.response)
-          ).map((v) => {
-            const base = `${v.type}#${v.fullName}#${v.filePath ?? ''}#${v.state}`;
-            const key = 'error' in v ? `${base}#${v.error}#${String(v.lineNumber)}#${String(v.columnNumber)}` : base;
-            return [key, v] as const;
-          })
+          // MDAPI and required transport steps can report the same source file.
+          // A serialized structural key preserves one response without adding a dependency.
+          [
+            ...(this.components
+              ? buildFileResponsesFromComponentSet(this.components)(this.response)
+              : buildFileResponses(this.response)),
+            ...this.transportFileResponses,
+          ].map((v) => [JSON.stringify(v), v])
         ).values(),
       ];
     }
     return this.fileResponses;
+  }
+
+  public addTransportResults(
+    fileResponses: FileResponse[],
+    asyncHandles: AsyncTransportHandle[] = [],
+    operationResults: TransportOperationResult[] = []
+  ): void {
+    this.transportFileResponses.push(...fileResponses);
+    this.asyncTransportHandles.push(...asyncHandles);
+    this.transportOperationResults.push(...operationResults);
+    this.fileResponses = undefined;
+  }
+
+  public getAsyncTransportHandles(): AsyncTransportHandle[] {
+    return this.asyncTransportHandles;
+  }
+
+  public getTransportOperationResults(): TransportOperationResult[] {
+    return this.transportOperationResults;
   }
 }
 

@@ -36,7 +36,7 @@
     "ignore": "^5.3.2",
     "jszip": "^3.10.2",
     "mime": "2.6.0",
-    "minimatch": "^9.0.9",
+    "minimatch": "^11.0.1",
     "proxy-agent": "^6.5.0",
     "yaml": "^2.9.1"
   },

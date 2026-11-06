@@ -1,3 +1,12 @@
+# [13.12.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.11.1...13.12.0) (2026-11-06)
+
+
+### Features
+
+* **registry:** add ExperienceContainer metadata type @W-24799147@ ([#1868](https://github.com/forcedotcom/source-deploy-retrieve/issues/1868)) ([d096bbe](https://github.com/forcedotcom/source-deploy-retrieve/commit/d096bbec9589955631b02df56f10b03b8f757480))
+
+
+
 ## [13.11.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.11.0...13.11.1) (2026-11-06)
 
 

@@ -70,7 +70,7 @@ async function uploadSource(
 // allocation, while unpackComputeBundle limits the archive after download.
 async function downloadSource(connection: Connection, appIdOrName: string): Promise<Buffer> {
   const body = await connection.request<string>(
-    { method: 'GET', url: `/connect/compute/${encodeURIComponent(appIdOrName)}/source` },
+    { method: 'GET', url: `/connect/compute/${encodeURIComponent(appIdOrName)}/builds/latest/source` },
     { encoding: 'binary' }
   );
   if (body.length > MAX_COMPRESSED_BYTES) {

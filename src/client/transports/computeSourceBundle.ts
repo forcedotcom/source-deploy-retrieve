@@ -25,7 +25,7 @@ import { ForceIgnore } from '../../resolve/forceIgnore';
 const logger = Logger.childFromRoot('computeSourceBundle');
 
 // Compute source bundles are app source, not dependency caches or compiled artifacts.
-// Cap both gzip layers and the tar entries retained in memory when unpacking.
+// Cap the gzip layer and the tar entries retained in memory when unpacking.
 export const MAX_COMPRESSED_BYTES = 40 * 1024 * 1024;
 const MAX_TAR_BYTES = 64 * 1024 * 1024;
 const MAX_ENTRY_BYTES = 16 * 1024 * 1024;
@@ -41,8 +41,9 @@ export type UnpackedBundle = {
   fileCount: number;
 };
 
-// Bundle shape: deployment-bundle.tar.gz containing api-spec.yaml plus a
-// nested source.tar.gz with the app's source files.
+// Upload shape: deployment-bundle.tar.gz containing api-spec.yaml plus a
+// nested source.tar.gz with the app's source files. Downloads return only that
+// source.tar.gz (see unpackComputeBundle).
 export async function packageComputeBundle(appDir: string, name: string): Promise<PackagedBundle> {
   const apiSpecPath = join(appDir, 'api-spec.yaml');
   try {
@@ -116,37 +117,41 @@ export async function packageComputeBundle(appDir: string, name: string): Promis
   return { buffer, fileCount: sourceEntries.length };
 }
 
+// Download shape: a flat source.tar.gz of the latest build's source files,
+// which already include api-spec.yaml and project.toml.
 export async function unpackComputeBundle(buffer: Buffer, appDir: string): Promise<UnpackedBundle> {
-  const outer = await untarGzip(buffer, true);
-  const apiSpec = outer['api-spec.yaml'];
-  const sourceTarGz = outer['source.tar.gz'];
-  if (!apiSpec || !sourceTarGz) {
-    const missing = [!apiSpec && 'api-spec.yaml', !sourceTarGz && 'source.tar.gz'].filter(Boolean).join(', ');
-    throw new Error(`Malformed compute source bundle: missing ${missing}`);
+  const entries = await untarGzip(buffer);
+  const names = Object.keys(entries);
+  if (names.length === 0) {
+    throw new Error('Malformed compute source bundle: archive contains no files');
   }
 
   const resolvedAppDir = resolve(appDir);
+  const files = Object.entries(entries).map(([relativePath, data]) => {
+    const filePath = resolve(appDir, relativePath);
+    // tar-slip guard: reject entries that escape appDir
+    if (!filePath.startsWith(resolvedAppDir + sep)) {
+      throw new Error(`Malformed compute source bundle: unsafe entry path "${relativePath}"`);
+    }
+    return { filePath, data };
+  });
+  // Check every output path before writing so a rejected entry leaves the app directory untouched.
   await rejectSymlinks(resolvedAppDir);
-  await mkdir(appDir, { recursive: true });
-  await rejectSymlinks(join(resolvedAppDir, 'api-spec.yaml'));
-  await writeFile(join(appDir, 'api-spec.yaml'), apiSpec);
+  await Promise.all(files.map(({ filePath }) => rejectSymlinks(filePath)));
 
-  const sourceEntries = await untarGzip(sourceTarGz, false);
-  await Promise.all(
-    Object.entries(sourceEntries).map(async ([relativePath, data]) => {
-      const filePath = resolve(appDir, relativePath);
-      // tar-slip guard: reject entries that escape appDir
-      if (filePath !== resolvedAppDir && !filePath.startsWith(resolvedAppDir + sep)) {
-        throw new Error(`Malformed compute source bundle: unsafe entry path "${relativePath}"`);
-      }
-      await rejectSymlinks(filePath);
+  await mkdir(appDir, { recursive: true });
+  // Settle every write before reporting a failure so no write is still in flight when the caller sees the error.
+  const writes = await Promise.allSettled(
+    files.map(async ({ filePath, data }) => {
       await mkdir(dirname(filePath), { recursive: true });
       await rejectSymlinks(filePath);
       await writeFile(filePath, data);
     })
   );
+  const failed = writes.find((write): write is PromiseRejectedResult => write.status === 'rejected');
+  if (failed) throw failed.reason;
 
-  return { fileCount: new Set([...Object.keys(sourceEntries), 'api-spec.yaml']).size };
+  return { fileCount: names.length };
 }
 
 async function rejectSymlinks(filePath: string): Promise<void> {
@@ -173,7 +178,7 @@ async function rejectSymlinks(filePath: string): Promise<void> {
   }
 }
 
-function untarGzip(buffer: Buffer, outer: boolean): Promise<Record<string, Buffer>> {
+function untarGzip(buffer: Buffer): Promise<Record<string, Buffer>> {
   return new Promise((resolveEntries, reject) => {
     if (buffer.length > MAX_COMPRESSED_BYTES) {
       reject(
@@ -200,20 +205,30 @@ function untarGzip(buffer: Buffer, outer: boolean): Promise<Record<string, Buffe
     let entryCount = 0;
     let totalBytes = 0;
     extract.on('entry', (header, stream, next) => {
+      // Archives made by system tar list directories; files below them create those paths when written.
+      if (header.type === 'directory') {
+        stream.on('end', next);
+        stream.resume();
+        return;
+      }
+      if (header.type && header.type !== 'file' && header.type !== 'contiguous-file') {
+        reject(new Error(`Malformed compute source bundle: unsupported ${header.type} entry "${header.name}"`));
+        extract.destroy();
+        return;
+      }
       entryCount++;
       if (entryCount > MAX_ENTRIES) {
         reject(new Error(`Malformed compute source bundle: entry count limit (${MAX_ENTRIES}) exceeded`));
         extract.destroy();
         return;
       }
-      const entryLimit = outer && header.name === 'source.tar.gz' ? MAX_COMPRESSED_BYTES : MAX_ENTRY_BYTES;
       if (
-        (header.size && header.size > entryLimit) ||
+        (header.size && header.size > MAX_ENTRY_BYTES) ||
         (header.size && totalBytes + header.size > MAX_TOTAL_ENTRY_BYTES)
       ) {
         reject(
           new Error(
-            `Malformed compute source bundle: entry size limit (${entryLimit} bytes) or total size limit (${MAX_TOTAL_ENTRY_BYTES} bytes) exceeded`
+            `Malformed compute source bundle: entry size limit (${MAX_ENTRY_BYTES} bytes) or total size limit (${MAX_TOTAL_ENTRY_BYTES} bytes) exceeded`
           )
         );
         extract.destroy();

@@ -241,9 +241,7 @@ describe('ComputeAppTransport', () => {
         await transport.beforeDeploy(context);
         expect.fail('should have thrown');
       } catch (err) {
-        expect((err as Error).message).to.equal(
-          "Elastic Compute upload failed for 'App1': boom 1; 'App2': boom 2"
-        );
+        expect((err as Error).message).to.equal("Elastic Compute upload failed for 'App1': boom 1; 'App2': boom 2");
         const responses = (err as SfError).data as FileResponse[];
         expect((responses[0] as { error: string }).error).to.equal('boom 1');
       }
@@ -323,6 +321,27 @@ describe('ComputeAppTransport', () => {
         expect(result.fileResponses.map((response) => response.filePath)).to.deep.equal([
           join('/custom/output', 'computeApps', 'RemoteApp'),
           '/local/app',
+        ]);
+      } finally {
+        unpack.restore();
+      }
+    });
+
+    it('downloads the latest build source as binary', async () => {
+      const unpack = sinon.stub(computeSourceBundle, 'unpackComputeBundle').resolves({ fileCount: 2 });
+      try {
+        const request = sinon.stub().resolves(Buffer.from('bundle').toString('binary'));
+        const context = createMockContext({
+          connection: { version: '68.0', request } as unknown as Connection,
+          components: [createComputeComponent('My App', '/local/app')],
+        });
+
+        await transport.afterRetrieve(context);
+
+        expect(request.calledOnce).to.be.true;
+        expect(request.firstCall.args).to.deep.equal([
+          { method: 'GET', url: '/connect/compute/My%20App/builds/latest/source' },
+          { encoding: 'binary' },
         ]);
       } finally {
         unpack.restore();

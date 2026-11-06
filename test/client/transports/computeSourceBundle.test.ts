@@ -17,7 +17,7 @@
 import { access, chmod, mkdir, readFile, writeFile, rm, symlink } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { createGzip, gzipSync } from 'node:zlib';
+import { createGzip, gunzipSync, gzipSync } from 'node:zlib';
 import { buffer as streamToBuffer } from 'node:stream/consumers';
 import { promises as fsPromises } from 'node:fs';
 import { expect } from 'chai';
@@ -25,17 +25,45 @@ import sinon from 'sinon';
 import * as tarStream from 'tar-stream';
 import { packageComputeBundle, unpackComputeBundle } from '../../../src/client/transports/computeSourceBundle';
 
-async function archive(entries: Array<{ name: string; data: Buffer }>): Promise<Buffer> {
+type ArchiveEntry = {
+  name: string;
+  data?: Buffer;
+  type?: 'file' | 'directory' | 'symlink' | 'link';
+  linkname?: string;
+};
+
+async function archive(entries: ArchiveEntry[]): Promise<Buffer> {
   const pack = tarStream.pack();
   const output = streamToBuffer(pack.pipe(createGzip()));
   for (const entry of entries) {
     // eslint-disable-next-line no-await-in-loop
     await new Promise<void>((resolve, reject) =>
-      pack.entry({ name: entry.name }, entry.data, (err) => (err ? reject(err) : resolve()))
+      pack.entry({ name: entry.name, type: entry.type, linkname: entry.linkname }, entry.data ?? '', (err) =>
+        err ? reject(err) : resolve()
+      )
     );
   }
   pack.finalize();
   return output;
+}
+
+// The server keeps the uploaded bundle's nested source.tar.gz and returns it unchanged on download.
+function serverDownload(bundle: Buffer): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    let source: Buffer | undefined;
+    const extract = tarStream.extract();
+    extract.on('entry', (header, stream, next) => {
+      const chunks: Buffer[] = [];
+      stream.on('data', (chunk: unknown) => chunks.push(chunk as Buffer));
+      stream.on('end', () => {
+        if (header.name === 'source.tar.gz') source = Buffer.concat(chunks);
+        next();
+      });
+    });
+    extract.on('finish', () => (source ? resolve(source) : reject(new Error('upload bundle has no source.tar.gz'))));
+    extract.on('error', reject);
+    extract.end(gunzipSync(bundle));
+  });
 }
 
 describe('computeSourceBundle', () => {
@@ -90,7 +118,7 @@ describe('computeSourceBundle', () => {
       await writeFile(join(appDir, 'api-spec.yaml'), 'spec');
       await writeFile(join(appDir, 'large.py'), Buffer.alloc(16 * 1024 * 1024));
       const bundle = await packageComputeBundle(appDir, 'MyApp');
-      await unpackComputeBundle(bundle.buffer, join(tempDir, 'boundary-output'));
+      await unpackComputeBundle(await serverDownload(bundle.buffer), join(tempDir, 'boundary-output'));
       expect(bundle.fileCount).to.equal(2);
     });
 
@@ -151,7 +179,7 @@ describe('computeSourceBundle', () => {
       const bundle = await packageComputeBundle(appDir, 'MyApp');
       expect(bundle.fileCount).to.equal(2);
       const output = join(tempDir, 'safe-output');
-      await unpackComputeBundle(bundle.buffer, output);
+      await unpackComputeBundle(await serverDownload(bundle.buffer), output);
       expect(await readFile(join(output, 'main.py'), 'utf8')).to.equal('safe');
       for (const path of ['.env', '.git/objects/secret', 'lib/.hidden/secret']) {
         try {
@@ -192,7 +220,7 @@ describe('computeSourceBundle', () => {
       expect(result.fileCount).to.equal(3);
 
       const output = join(tempDir, 'build-critical-output');
-      await unpackComputeBundle(result.buffer, output);
+      await unpackComputeBundle(await serverDownload(result.buffer), output);
       expect(await readFile(join(output, 'api-spec.yaml'), 'utf8')).to.equal('openapi: 3.0.0');
       expect(await readFile(join(output, 'project.toml'), 'utf8')).to.equal('[project]\nname = "test"');
     });
@@ -223,7 +251,7 @@ describe('computeSourceBundle', () => {
       }
     });
 
-    it('rejects oversized decompressed outer gzip as a size limit', async () => {
+    it('rejects oversized decompressed gzip as a size limit', async () => {
       try {
         await unpackComputeBundle(gzipSync(Buffer.alloc(64 * 1024 * 1024 + 1)), join(tempDir, 'out'));
         expect.fail('should reject size');
@@ -232,27 +260,10 @@ describe('computeSourceBundle', () => {
       }
     });
 
-    it('rejects oversized decompressed inner gzip as a size limit', async () => {
-      const bundle = await archive([
-        { name: 'api-spec.yaml', data: Buffer.from('spec') },
-        { name: 'source.tar.gz', data: gzipSync(Buffer.alloc(64 * 1024 * 1024 + 1)) },
-      ]);
-      try {
-        await unpackComputeBundle(bundle, join(tempDir, 'out'));
-        expect.fail('should reject size');
-      } catch (err) {
-        expect((err as Error).message).to.include('size limit');
-      }
-    });
-
     it('rejects an oversized tar entry', async () => {
-      const inner = await archive([{ name: 'huge.py', data: Buffer.alloc(16 * 1024 * 1024 + 1) }]);
-      const outer = await archive([
-        { name: 'api-spec.yaml', data: Buffer.from('spec') },
-        { name: 'source.tar.gz', data: inner },
-      ]);
+      const source = await archive([{ name: 'huge.py', data: Buffer.alloc(16 * 1024 * 1024 + 1) }]);
       try {
-        await unpackComputeBundle(outer, join(tempDir, 'out'));
+        await unpackComputeBundle(source, join(tempDir, 'out'));
         expect.fail('should reject size');
       } catch (err) {
         expect((err as Error).message).to.include('size limit');
@@ -260,13 +271,9 @@ describe('computeSourceBundle', () => {
     });
 
     it('applies the source entry size limit even to a file named source.tar.gz', async () => {
-      const inner = await archive([{ name: 'source.tar.gz', data: Buffer.alloc(16 * 1024 * 1024 + 1) }]);
-      const outer = await archive([
-        { name: 'api-spec.yaml', data: Buffer.from('spec') },
-        { name: 'source.tar.gz', data: inner },
-      ]);
+      const source = await archive([{ name: 'source.tar.gz', data: Buffer.alloc(16 * 1024 * 1024 + 1) }]);
       try {
-        await unpackComputeBundle(outer, join(tempDir, 'out'));
+        await unpackComputeBundle(source, join(tempDir, 'out'));
         expect.fail('should reject size');
       } catch (err) {
         expect((err as Error).message).to.include('size limit');
@@ -274,29 +281,21 @@ describe('computeSourceBundle', () => {
     });
 
     it('rejects aggregate tar entry bytes above the limit', async () => {
-      const inner = await archive([0, 1, 2].map((i) => ({ name: `${i}.py`, data: Buffer.alloc(16 * 1024 * 1024) })));
-      const outer = await archive([
-        { name: 'api-spec.yaml', data: Buffer.from('spec') },
-        { name: 'source.tar.gz', data: inner },
-      ]);
+      const source = await archive([0, 1, 2].map((i) => ({ name: `${i}.py`, data: Buffer.alloc(16 * 1024 * 1024) })));
       try {
-        await unpackComputeBundle(outer, join(tempDir, 'out'));
+        await unpackComputeBundle(source, join(tempDir, 'out'));
         expect.fail('should reject size');
       } catch (err) {
         expect((err as Error).message).to.include('size limit');
       }
     });
 
-    it('rejects an excessive inner tar entry count', async () => {
-      const inner = await archive(
+    it('rejects an excessive tar entry count', async () => {
+      const source = await archive(
         Array.from({ length: 1001 }, (_, i) => ({ name: `${i}.py`, data: Buffer.from('x') }))
       );
-      const outer = await archive([
-        { name: 'api-spec.yaml', data: Buffer.from('spec') },
-        { name: 'source.tar.gz', data: inner },
-      ]);
       try {
-        await unpackComputeBundle(outer, join(tempDir, 'out'));
+        await unpackComputeBundle(source, join(tempDir, 'out'));
         expect.fail('should reject count');
       } catch (err) {
         expect((err as Error).message).to.include('entry count limit');
@@ -316,7 +315,7 @@ describe('computeSourceBundle', () => {
 
       let error: Error | undefined;
       try {
-        await unpackComputeBundle(bundle.buffer, join(outputLink, 'computeApps', 'MyApp'));
+        await unpackComputeBundle(await serverDownload(bundle.buffer), join(outputLink, 'computeApps', 'MyApp'));
       } catch (err) {
         error = err as Error;
       }
@@ -335,7 +334,7 @@ describe('computeSourceBundle', () => {
       await symlink(outside, output);
 
       try {
-        await unpackComputeBundle(bundle.buffer, output);
+        await unpackComputeBundle(await serverDownload(bundle.buffer), output);
         expect.fail('should reject symlinked output');
       } catch (err) {
         expect((err as Error).message).to.include('symlink');
@@ -359,7 +358,7 @@ describe('computeSourceBundle', () => {
       const output = join(outputLink, 'computeApps', 'MyApp');
 
       try {
-        await unpackComputeBundle(bundle.buffer, output);
+        await unpackComputeBundle(await serverDownload(bundle.buffer), output);
         expect.fail('should reject symlinked output ancestor');
       } catch (err) {
         expect((err as Error).message).to.include('symlink');
@@ -384,7 +383,7 @@ describe('computeSourceBundle', () => {
       await symlink(outside, join(output, 'lib'));
 
       try {
-        await unpackComputeBundle(bundle.buffer, output);
+        await unpackComputeBundle(await serverDownload(bundle.buffer), output);
         expect.fail('should reject symlinked child');
       } catch (err) {
         expect((err as Error).message).to.include('symlink');
@@ -408,7 +407,7 @@ describe('computeSourceBundle', () => {
       await symlink(outside, join(output, 'api-spec.yaml'));
 
       try {
-        await unpackComputeBundle(bundle.buffer, output);
+        await unpackComputeBundle(await serverDownload(bundle.buffer), output);
         expect.fail('should reject symlinked api-spec');
       } catch (err) {
         expect((err as Error).message).to.include('symlink');
@@ -428,9 +427,10 @@ describe('computeSourceBundle', () => {
       const outputDir = join(tempDir, 'output');
       await mkdir(outputDir, { recursive: true });
 
-      const unpacked = await unpackComputeBundle(packed.buffer, outputDir);
+      const unpacked = await unpackComputeBundle(await serverDownload(packed.buffer), outputDir);
 
-      expect(unpacked.fileCount).to.be.greaterThan(0);
+      // api-spec.yaml, main.py, lib/utils.py; the meta xml is never uploaded
+      expect(unpacked.fileCount).to.equal(3);
 
       const apiSpec = await readFile(join(outputDir, 'api-spec.yaml'), 'utf8');
       expect(apiSpec).to.include('openapi: 3.0.0');
@@ -451,50 +451,95 @@ describe('computeSourceBundle', () => {
       }
     });
 
-    it('should throw on bundle missing required entries', async () => {
-      const pack = tarStream.pack();
-      const bufPromise = streamToBuffer(pack.pipe(createGzip()));
-      pack.entry({ name: 'random.txt' }, 'data', () => {
-        pack.finalize();
-      });
-      const buf = await bufPromise;
-
+    it('should throw on an archive with no files', async () => {
       try {
-        await unpackComputeBundle(buf, join(tempDir, 'out'));
+        await unpackComputeBundle(await archive([]), join(tempDir, 'out'));
         expect.fail('should have thrown');
       } catch (err) {
-        expect((err as Error).message).to.include('missing api-spec.yaml, source.tar.gz');
+        expect((err as Error).message).to.include('archive contains no files');
+      }
+    });
+
+    it('unpacks a source archive without api-spec.yaml', async () => {
+      const output = join(tempDir, 'out');
+      const unpacked = await unpackComputeBundle(
+        await archive([{ name: 'main.py', data: Buffer.from('print("hello")') }]),
+        output
+      );
+      expect(unpacked.fileCount).to.equal(1);
+      expect(await readFile(join(output, 'main.py'), 'utf8')).to.equal('print("hello")');
+    });
+
+    it('skips directory entries from a system tar archive', async () => {
+      const output = join(tempDir, 'out');
+      const unpacked = await unpackComputeBundle(
+        await archive([
+          { name: './', type: 'directory' },
+          { name: './api-spec.yaml', data: Buffer.from('spec') },
+          { name: './lib/', type: 'directory' },
+          { name: './lib/utils.py', data: Buffer.from('def helper(): pass') },
+        ]),
+        output
+      );
+      expect(unpacked.fileCount).to.equal(2);
+      expect(await readFile(join(output, 'api-spec.yaml'), 'utf8')).to.equal('spec');
+      expect(await readFile(join(output, 'lib', 'utils.py'), 'utf8')).to.equal('def helper(): pass');
+    });
+
+    for (const type of ['symlink', 'link'] as const) {
+      it(`rejects ${type} entries without writing files`, async () => {
+        const output = join(tempDir, 'out');
+        try {
+          await unpackComputeBundle(
+            await archive([
+              { name: 'main.py', data: Buffer.from('safe') },
+              { name: 'passwd', type, linkname: '/etc/passwd' },
+            ]),
+            output
+          );
+          expect.fail('should reject link entry');
+        } catch (err) {
+          expect((err as Error).message).to.include(`unsupported ${type} entry "passwd"`);
+        }
+        try {
+          await access(output);
+          expect.fail('should not create output');
+        } catch (err) {
+          expect((err as NodeJS.ErrnoException).code).to.equal('ENOENT');
+        }
+      });
+    }
+
+    it('rejects a tar-slip entry before writing any other entry', async () => {
+      const output = join(tempDir, 'out');
+      try {
+        await unpackComputeBundle(
+          await archive([
+            { name: 'main.py', data: Buffer.from('safe') },
+            { name: '../escape.py', data: Buffer.from('malicious') },
+          ]),
+          output
+        );
+        expect.fail('should reject tar-slip');
+      } catch (err) {
+        expect((err as Error).message).to.include('unsafe entry path');
+      }
+      try {
+        await access(join(output, 'main.py'));
+        expect.fail('should not write main.py');
+      } catch (err) {
+        expect((err as NodeJS.ErrnoException).code).to.equal('ENOENT');
       }
     });
 
     it('should reject tar-slip entries', async () => {
-      const innerPack = tarStream.pack();
-      const innerBufPromise = streamToBuffer(innerPack.pipe(createGzip()));
-      innerPack.entry({ name: '../../../etc/passwd' }, 'malicious', () => {
-        innerPack.finalize();
-      });
-      const innerBuf = await innerBufPromise;
-
-      // Outer bundle
-      const outerPack = tarStream.pack();
-      const outerBufPromise = streamToBuffer(outerPack.pipe(createGzip()));
-      await new Promise<void>((resolve, reject) => {
-        outerPack.entry({ name: 'api-spec.yaml' }, 'openapi: 3.0.0', (err) => {
-          if (err) reject(err);
-          outerPack.entry({ name: 'source.tar.gz' }, innerBuf, (err2) => {
-            if (err2) reject(err2);
-            outerPack.finalize();
-            resolve();
-          });
-        });
-      });
-      const outerBuf = await outerBufPromise;
+      const source = await archive([{ name: '../../../etc/passwd', data: Buffer.from('malicious') }]);
 
       const outputDir = join(tempDir, 'tar-slip-test');
       await mkdir(outputDir, { recursive: true });
 
       try {
-        await unpackComputeBundle(outerBuf, outputDir);
+        await unpackComputeBundle(source, outputDir);
         expect.fail('should have thrown');
       } catch (err) {
         expect((err as Error).message).to.include('unsafe entry path');

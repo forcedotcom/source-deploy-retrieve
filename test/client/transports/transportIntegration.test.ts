@@ -803,6 +803,50 @@ describe('Transport integration', () => {
     });
   });
 
+  describe('retrieve wildcard members', () => {
+    const type = registryAccess.getTypeByName('ComputeApp');
+    const appA = new SourceComponent({ name: 'AppA', type, content: '/out/computeApps/AppA' });
+    const appB = new SourceComponent({ name: 'AppB', type, content: '/out/computeApps/AppB' });
+
+    async function runAfterRetrieve(groupMembers: string[], retrieved: SourceComponent[]): Promise<sinon.SinonStub> {
+      const transport = createMockTransport({
+        deployPhase: 'before-metadata',
+        retrievePhase: 'after-metadata',
+        typeNames: ['ComputeApp'],
+      });
+      const pipeline = new TransportPipeline([transport]);
+      const after = sinon
+        .stub(pipeline, 'runAfterMetadata')
+        .resolves({ fileResponses: [], asyncHandles: [], operationResults: [] });
+      const groups = [{ transport, components: groupMembers.map((name) => new SourceComponent({ name, type })) }];
+      const coordinator = new TransportCoordinator(pipeline, groups, mockContext, 'retrieve');
+      const result = new RetrieveResult(createRetrieveStatus(), new ComponentSet(retrieved));
+      await coordinator.processResult(result, RequestStatus.Succeeded);
+      return after;
+    }
+
+    it('expands * to every retrieved component of that type', async () => {
+      const after = await runAfterRetrieve(['*'], [appA, appB]);
+
+      const groups = after.firstCall.args[1] as Array<{ components: SourceComponent[] }>;
+      expect(groups[0].components).to.deep.equal([appA, appB]);
+    });
+
+    it('does not duplicate explicitly named members alongside *', async () => {
+      const after = await runAfterRetrieve(['AppA', '*'], [appA, appB]);
+
+      const groups = after.firstCall.args[1] as Array<{ components: SourceComponent[] }>;
+      expect(groups[0].components.map((c) => c.fullName)).to.deep.equal(['AppA', 'AppB']);
+    });
+
+    it('drops * when the org returned no components of that type', async () => {
+      const after = await runAfterRetrieve(['*'], []);
+
+      const groups = after.firstCall.args[1] as Array<{ components: SourceComponent[] }>;
+      expect(groups).to.deep.equal([]);
+    });
+  });
+
   describe('RetrieveResult transport responses', () => {
     it('should preserve duplicate transport responses', () => {
       const result = new RetrieveResult(createRetrieveStatus(), new ComponentSet());

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { ComponentSet } from '../../collections/componentSet';
 import { RequestStatus } from '../types';
 import { DeployResult } from '../metadataApiDeploy';
 import { RetrieveResult } from '../metadataApiRetrieve';
@@ -58,20 +59,32 @@ export class TransportCoordinator {
     this.afterStarted.add(result);
 
     if (this.operation === 'retrieve' && result instanceof RetrieveResult) {
+      const extracted = result.components.getSourceComponents().toArray();
       const extractedByKey = new Map(
-        result.components
-          .getSourceComponents()
-          .toArray()
-          .map((component) => [`${component.type.name}#${component.fullName}`, component])
+        extracted.map((component) => [`${component.type.name}#${component.fullName}`, component])
       );
       for (const group of this.groups) {
-        group.components = group.components.map(
-          (component) => extractedByKey.get(`${component.type.name}#${component.fullName}`) ?? component
+        const named = new Set(
+          group.components
+            .filter((component) => component.fullName !== ComponentSet.WILDCARD)
+            .map((component) => `${component.type.name}#${component.fullName}`)
         );
+        // a wildcard member (`Type:*`) resolves to every component of that type the org returned
+        group.components = group.components.flatMap((component) => {
+          const key = `${component.type.name}#${component.fullName}`;
+          if (component.fullName !== ComponentSet.WILDCARD) return [extractedByKey.get(key) ?? component];
+          return extracted.filter((candidate) => {
+            const candidateKey = `${candidate.type.name}#${candidate.fullName}`;
+            if (candidate.type.name !== component.type.name || named.has(candidateKey)) return false;
+            named.add(candidateKey);
+            return true;
+          });
+        });
       }
     }
 
-    const afterMetadataResults = await this.pipeline.runAfterMetadata(this.context, this.groups, this.operation);
+    const groups = this.groups.filter((group) => group.components.length > 0);
+    const afterMetadataResults = await this.pipeline.runAfterMetadata(this.context, groups, this.operation);
     result.addTransportResults(
       afterMetadataResults.fileResponses,
       afterMetadataResults.asyncHandles,

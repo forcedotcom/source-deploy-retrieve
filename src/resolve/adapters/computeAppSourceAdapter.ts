@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { basename, dirname } from 'node:path';
+import { basename, dirname, join } from 'node:path';
+import { META_XML_SUFFIX } from '../../common/constants';
 import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
@@ -45,12 +46,31 @@ export class ComputeAppSourceAdapter extends BundleSourceAdapter {
   public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent | undefined {
     const suffix = `.${this.type.suffix ?? ''}`;
     if (path.endsWith(suffix) && basename(dirname(path)) === this.type.directoryName && !this.tree.isDirectory(path)) {
-      return new SourceComponent(
-        { name: basename(path, suffix), type: this.type, xml: path },
-        this.tree,
-        this.forceIgnore
-      );
+      // app files can contain their own `computeApps/` folder; those belong to the enclosing app
+      const bundleDir = this.findEnclosingBundle(path);
+      if (bundleDir) {
+        return super.getComponent(bundleDir, isResolvingSource);
+      }
+      const name = basename(path, suffix);
+      // a stray flat file next to the bundle folder; the folder is the real component
+      const bundlePath = join(dirname(path), name);
+      // zip trees throw on isDirectory for missing paths
+      if (this.tree.exists(bundlePath) && this.tree.isDirectory(bundlePath)) {
+        return undefined;
+      }
+      return new SourceComponent({ name, type: this.type, xml: path }, this.tree, this.forceIgnore);
     }
     return super.getComponent(path, isResolvingSource);
+  }
+
+  private findEnclosingBundle(path: SourcePath): SourcePath | undefined {
+    for (let dir = dirname(dirname(path)); dir !== dirname(dir); dir = dirname(dir)) {
+      if (
+        basename(dirname(dir)) === this.type.directoryName &&
+        this.tree.exists(join(dir, `${basename(dir)}.${this.type.suffix ?? ''}${META_XML_SUFFIX}`))
+      ) {
+        return dir;
+      }
+    }
   }
 }

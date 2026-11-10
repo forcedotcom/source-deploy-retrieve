@@ -91,4 +91,38 @@ describe('ComputeApp conversion', () => {
     const infos = await new ComputeAppMetadataTransformer(registryAccess).toSourceFormat({ component, mergeWith });
     expect(infos.map((info) => info.output)).to.deep.equal([sourceXml]);
   });
+
+  it('writes the meta file into an existing app folder that has none', async () => {
+    const component = new SourceComponent({ name: 'MyApp', type, xml: mdapiXml }, tree);
+    const mergeWith = new SourceComponent({ name: 'MyApp', type, content: sourceDir }, tree);
+    const infos = await new ComputeAppMetadataTransformer(registryAccess).toSourceFormat({ component, mergeWith });
+    expect(infos.map((info) => info.output)).to.deep.equal([sourceXml]);
+  });
+
+  it('throws on deploy when the meta file is missing', async () => {
+    const component = new SourceComponent({ name: 'MyApp', type, content: sourceDir }, tree);
+    try {
+      await new ComputeAppMetadataTransformer(registryAccess).toMetadataFormat(component);
+      expect.fail('should have thrown');
+    } catch (err) {
+      expect((err as Error).name).to.equal('Error_parsing_xmlError');
+    }
+  });
+
+  it('ignores a stray flat file next to the bundle folder', () => {
+    writeFileSync(join(sourceRoot, 'main', 'default', 'computeApps', 'MyApp.computeApp'), xmlData);
+    const components = new MetadataResolver(registryAccess, tree).getComponentsFromPath(sourceRoot);
+    expect(components).to.have.lengthOf(1);
+    expect(components[0].content).to.equal(sourceDir);
+  });
+
+  it('resolves a computeApps folder inside an app to the enclosing app', () => {
+    const nested = join(sourceDir, 'lib', 'computeApps', 'Other.computeApp');
+    mkdirSync(join(sourceDir, 'lib', 'computeApps'), { recursive: true });
+    writeFileSync(nested, xmlData);
+    const components = new MetadataResolver(registryAccess, tree).getComponentsFromPath(nested);
+    expect(components).to.have.lengthOf(1);
+    expect(components[0].fullName).to.equal('MyApp');
+    expect(components[0].content).to.equal(sourceDir);
+  });
 });

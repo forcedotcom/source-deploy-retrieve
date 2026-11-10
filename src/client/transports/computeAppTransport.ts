@@ -212,6 +212,13 @@ export class ComputeAppTransport implements TransportProvider {
         'MissingComponentContent'
       );
     }
+    // check before uploading, otherwise the app source goes live with no metadata deploy
+    if (!component.xml) {
+      throw new SfError(
+        `ComputeApp '${component.fullName}' is missing ${component.fullName}.computeApp-meta.xml in ${component.content}`,
+        'MissingComponentXml'
+      );
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this

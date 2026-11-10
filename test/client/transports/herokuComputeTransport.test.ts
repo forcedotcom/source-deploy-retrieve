@@ -326,6 +326,31 @@ describe('ComputeAppTransport', () => {
       }
     });
 
+    it('falls back to the project default package when there is no output', async () => {
+      const unpack = sinon.stub(computeSourceBundle, 'unpackComputeBundle').resolves({ fileCount: 2 });
+      const packageDir = mkdtempSync(join(tmpdir(), 'force-app-'));
+      try {
+        mkdirSync(join(packageDir, 'main', 'default'), { recursive: true });
+        const request = sinon.stub().resolves(Buffer.from('bundle').toString('binary'));
+        const type = registryAccess.getTypeByName('ComputeApp');
+        const context = createMockContext({
+          project: {
+            getPath: () => '/mock/project',
+            getDefaultPackage: () => ({ fullPath: packageDir }),
+          } as unknown as SfProject,
+          connection: { version: '68.0', request } as unknown as Connection,
+          components: [new SourceComponent({ name: 'RemoteApp', type })],
+        });
+
+        await transport.afterRetrieve(context);
+
+        expect(unpack.firstCall.args[1]).to.equal(join(packageDir, 'main', 'default', 'computeApps', 'RemoteApp'));
+      } finally {
+        unpack.restore();
+        rmSync(packageDir, { recursive: true, force: true });
+      }
+    });
+
     it('uses explicit output for manifest-only content but preserves existing content paths', async () => {
       const unpack = sinon.stub(computeSourceBundle, 'unpackComputeBundle').resolves({ fileCount: 2 });
       try {
@@ -423,6 +448,21 @@ describe('ComputeAppTransport', () => {
           expect((responses[0] as { error: string }).error).to.include('requires a content path');
         }
       );
+    });
+    it('fails before uploading when the meta xml is missing', async () => {
+      const type = registryAccess.getTypeByName('ComputeApp');
+      const component = new SourceComponent({ name: 'NoXml', type, content: '/project/computeApps/NoXml' });
+      const packageStub = sinon.stub(computeSourceBundle, 'packageComputeBundle');
+      try {
+        await transport.beforeDeploy(createMockContext({ components: [component] }));
+        expect.fail('should have thrown');
+      } catch (err) {
+        const responses = (err as SfError).data as FileResponse[];
+        expect((responses[0] as { error: string }).error).to.include('NoXml.computeApp-meta.xml');
+        expect(packageStub.called).to.be.false;
+      } finally {
+        packageStub.restore();
+      }
     });
   });
 

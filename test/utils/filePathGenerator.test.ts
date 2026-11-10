@@ -151,6 +151,18 @@ const testData = {
       },
     ],
   },
+  bundleComputeApp: {
+    fullName: 'MyApp',
+    typeName: 'ComputeApp',
+    expectedFilePaths: [getFilePath('computeApps/MyApp/MyApp.computeApp-meta.xml')],
+    extraResolutionFilePaths: [getFilePath('computeApps/MyApp/package.json')],
+    expectedComponents: [
+      {
+        content: getFilePath('computeApps/MyApp'),
+        xml: getFilePath('computeApps/MyApp/MyApp.computeApp-meta.xml'),
+      },
+    ],
+  },
   bundleUIBundles: {
     fullName: 'MyWebApp',
     typeName: 'UIBundle',
@@ -410,6 +422,10 @@ describe('generating virtual tree from component name/type', () => {
 
     it('uiBundles', () => {
       runTest(testData.bundleUIBundles);
+    });
+
+    it('computeApp', () => {
+      runTest(testData.bundleComputeApp);
     });
 
     it('appFrameworkTemplate', () => {

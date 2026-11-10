@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 import { join } from 'node:path';
+import { Messages } from '@salesforce/core/messages';
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../../common/constants';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { WriteInfo } from '../types';
 import { getReplacementStreamForReadable } from '../replacements';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 /**
  * Transformer for ComputeApp components.
@@ -31,7 +35,9 @@ import { BaseMetadataTransformer } from './baseMetadataTransformer';
 export class ComputeAppMetadataTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line @typescript-eslint/require-await, class-methods-use-this
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
-    if (!component.xml) return [];
+    if (!component.xml) {
+      throw messages.createError('error_parsing_xml', [component.fullName, component.type.name]);
+    }
     const { directoryName, suffix } = component.type;
     return [
       {
@@ -51,17 +57,16 @@ export class ComputeAppMetadataTransformer extends BaseMetadataTransformer {
   }): Promise<WriteInfo[]> {
     if (!component.xml) return [];
     const { directoryName, suffix } = component.type;
+    const xmlName = `${component.fullName}.${suffix ?? ''}${META_XML_SUFFIX}`;
     return [
       {
         source: getReplacementStreamForReadable(component, component.xml),
+        // a local app folder may exist without its meta file; keep the app in one place
         output:
           mergeWith?.xml ??
-          join(
-            DEFAULT_PACKAGE_ROOT_SFDX,
-            directoryName,
-            component.fullName,
-            `${component.fullName}.${suffix ?? ''}${META_XML_SUFFIX}`
-          ),
+          (mergeWith?.content
+            ? join(mergeWith.content, xmlName)
+            : join(DEFAULT_PACKAGE_ROOT_SFDX, directoryName, component.fullName, xmlName)),
       },
     ];
   }

@@ -60,6 +60,14 @@
     "secondaryIndexes": "secondaryindex",
     "dataStreamBundles": "datastreambundle",
     "dataConnections": "dataconnection",
+    "dataTransforms": "datatransform",
+    "activationTargets": "activationtarget",
+    "dataActions": "dataaction",
+    "dataActionTargets": "dataactiontarget",
+    "dataGraphs": "datagraph",
+    "identityResolutions": "identityresolution",
+    "marketSegments": "marketsegment",
+    "marketSegmentActivations": "marketsegmentactivation",
     "documents": "document",
     "emailservices": "emailservicesfunction",
     "experiencePropertyTypeBundles": "experiencepropertytypebundle",
@@ -5524,6 +5532,102 @@
       "name": "DataConnection",
       "suffix": "json",
       "directoryName": "dataConnections",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "datatransform": {
+      "id": "datatransform",
+      "name": "DataTransform",
+      "suffix": "json",
+      "directoryName": "dataTransforms",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "activationtarget": {
+      "id": "activationtarget",
+      "name": "ActivationTarget",
+      "suffix": "json",
+      "directoryName": "activationTargets",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "dataaction": {
+      "id": "dataaction",
+      "name": "DataAction",
+      "suffix": "json",
+      "directoryName": "dataActions",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "dataactiontarget": {
+      "id": "dataactiontarget",
+      "name": "DataActionTarget",
+      "suffix": "json",
+      "directoryName": "dataActionTargets",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "datagraph": {
+      "id": "datagraph",
+      "name": "DataGraph",
+      "suffix": "json",
+      "directoryName": "dataGraphs",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "identityresolution": {
+      "id": "identityresolution",
+      "name": "IdentityResolution",
+      "suffix": "json",
+      "directoryName": "identityResolutions",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "marketsegment": {
+      "id": "marketsegment",
+      "name": "MarketSegment",
+      "suffix": "json",
+      "directoryName": "marketSegments",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "marketsegmentactivation": {
+      "id": "marketsegmentactivation",
+      "name": "MarketSegmentActivation",
+      "suffix": "json",
+      "directoryName": "marketSegmentActivations",
       "inFolder": false,
       "strictDirectoryName": true,
       "strategies": {

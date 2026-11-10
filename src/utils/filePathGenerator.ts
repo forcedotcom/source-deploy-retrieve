@@ -127,14 +127,15 @@ export const filePathsFromMetadataComponent = (
     ];
   }
 
-  // lwc, aura, waveTemplate, experiencePropertyType, lightningTypeBundle, contentTypeBundle, uiBundles
-  if (type.strategies?.adapter === 'bundle' || type.strategies?.adapter === 'uiBundles') {
+  // lwc, aura, waveTemplate, experiencePropertyType, lightningTypeBundle, contentTypeBundle, uiBundles, computeApps
+  if (['bundle', 'uiBundles', 'computeApp'].includes(type.strategies?.adapter ?? '')) {
     const mappings = new Map<string, string[]>([
       ['ExperiencePropertyTypeBundle', [join(packageDirWithTypeDir, `${fullName}${sep}schema.json`)]],
       ['LightningTypeBundle', [join(packageDirWithTypeDir, `${fullName}${sep}schema.json`)]],
       ['ContentTypeBundle', [join(packageDirWithTypeDir, `${fullName}${sep}schema.json`)]],
       ['WaveTemplateBundle', [join(packageDirWithTypeDir, `${fullName}${sep}template-info.json`)]],
       // ui-bundle.json is optional, so only the meta XML is a guaranteed file path.
+      ['ComputeApp', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.computeApp${META_XML_SUFFIX}`)]],
       ['UIBundle', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.uibundle${META_XML_SUFFIX}`)]],
       ['LightningComponentBundle', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.js${META_XML_SUFFIX}`)]],
       ['AuraDefinitionBundle', [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.cmp${META_XML_SUFFIX}`)]],

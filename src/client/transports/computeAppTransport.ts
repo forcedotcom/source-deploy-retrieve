@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import FormData from 'form-data';
 import { Lifecycle, Logger, SfError } from '@salesforce/core';
-import type { Connection, SfProject } from '@salesforce/core';
+import type { Connection } from '@salesforce/core';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../common/constants';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { ComponentStatus, FileResponse } from '../types';
@@ -39,9 +40,12 @@ type ComputeSourceUploadResponse = {
 
 const ENDPOINT = '/connect/compute/source';
 
-function resolveContentPath(component: SourceComponent, project: SfProject): string {
-  const packageDir = project.getDefaultPackage().fullPath;
-  return join(packageDir, DEFAULT_PACKAGE_ROOT_SFDX, component.type.directoryName, component.fullName);
+// follow the package's existing layout: `<pkg>/main/default/...` when it has that root, otherwise `<pkg>/...`
+function resolveContentPath(component: SourceComponent, packageDir: string): string {
+  const sourceRoot = existsSync(join(packageDir, DEFAULT_PACKAGE_ROOT_SFDX))
+    ? join(packageDir, DEFAULT_PACKAGE_ROOT_SFDX)
+    : packageDir;
+  return join(sourceRoot, component.type.directoryName, component.fullName);
 }
 
 async function uploadSource(
@@ -162,13 +166,13 @@ export class ComputeAppTransport implements TransportProvider {
         }
         const contentPath =
           component.content ??
-          (packageOutput || context.output
-            ? join(
-                packageOutput?.outputDir ?? packageOutput?.name ?? context.output!,
-                component.type.directoryName,
-                component.fullName
-              )
-            : resolveContentPath(component, context.project));
+          resolveContentPath(
+            component,
+            packageOutput?.outputDir ??
+              packageOutput?.name ??
+              context.output ??
+              context.project.getDefaultPackage().fullPath
+          );
         this.logger.debug('retrieving compute source for %s into %s', component.fullName, contentPath);
 
         // eslint-disable-next-line no-await-in-loop

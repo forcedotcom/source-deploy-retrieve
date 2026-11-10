@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -297,6 +299,30 @@ describe('ComputeAppTransport', () => {
         expect(unpack.secondCall.args[1]).to.equal(join('/packages/second', 'computeApps', 'SecondApp'));
       } finally {
         unpack.restore();
+      }
+    });
+
+    it('places manifest-only members under main/default when the output package has that root', async () => {
+      const unpack = sinon.stub(computeSourceBundle, 'unpackComputeBundle').resolves({ fileCount: 2 });
+      const packageDir = mkdtempSync(join(tmpdir(), 'force-app-'));
+      try {
+        mkdirSync(join(packageDir, 'main', 'default'), { recursive: true });
+        const request = sinon.stub().resolves(Buffer.from('bundle').toString('binary'));
+        const type = registryAccess.getTypeByName('ComputeApp');
+        const context = createMockContext({
+          output: packageDir,
+          connection: { version: '68.0', request } as unknown as Connection,
+          components: [new SourceComponent({ name: 'RemoteApp', type })],
+        });
+
+        const result = await transport.afterRetrieve(context);
+
+        const expected = join(packageDir, 'main', 'default', 'computeApps', 'RemoteApp');
+        expect(unpack.firstCall.args[1]).to.equal(expected);
+        expect(result.fileResponses[0].filePath).to.equal(expected);
+      } finally {
+        unpack.restore();
+        rmSync(packageDir, { recursive: true, force: true });
       }
     });
 

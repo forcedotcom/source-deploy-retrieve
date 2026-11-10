@@ -304,6 +304,7 @@ describe('will run preset tests', () => {
                 'partiallyDecomposed',
                 'digitalExperience',
                 'uiBundles',
+                'computeApp',
               ]).includes(type.strategies?.adapter);
             });
           });

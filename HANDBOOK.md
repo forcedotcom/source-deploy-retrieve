@@ -9,6 +9,7 @@
   - [Metadata registry file](#metadata-registry-file)
   - [Metadata registry entries](#metadata-registry-file)
   - [Updating the Metadata registry file](#updating-the-metadata-registry-file)
+  - [Transport strategies](#transport-strategies)
   - [The registry object](#the-registry-object)
   - [Standard value sets](#standard-value-sets)
   - [Querying registry data](#querying-registry-data)
@@ -42,13 +43,19 @@
   - [Deploying](#deploying)
     - [Deploy with a source path](#deploy-with-a-source-path)
     - [Deploy with a manifest file](#deploy-with-a-manifest-file)
+    - [Deploying types with a transport](#deploying-types-with-a-transport)
     - [Canceling a deploy](#canceling-a-deploy)
     - [Make requests with an existing deploy](#make-requests-with-an-existing-deploy)
   - [Retrieving](#retrieving)
     - [Retrieve with a source path](#retrieve-with-a-source-path)
     - [Retrieve with a manifest file](#retrieve-with-a-manifest-file)
+    - [Retrieving types with a transport](#retrieving-types-with-a-transport)
     - [Canceling a retrieve](#canceling-a-retrieve)
     - [Make requests with an existing retrieve](#make-requests-with-an-existing-retrieve)
+  - [Transports](#transports)
+    - [Previewing the plan with `explain()`](#previewing-the-plan-with-explain)
+    - [Transport results and events](#transport-results-and-events)
+    - [Adding a transport](#adding-a-transport)
 - [Further Examples](#further-examples)
 
 ## Introduction
@@ -125,6 +132,7 @@ Now, for all the optional properties which define how the metadata type is conve
 - `ignoreParentName` This boolean, when set to `true` will ignore the parent's name when constructing this type's `fullName`. This is only set on the `CustomLabel` type, the child of `CustomLabels`.
 - `ignoreParsedFullName` This is a boolean that dictates whether to ignore the `fullName` (see [Component Resolution](#component-resolution) for a detailed breakdown of the `fullName` attribute) that's parsed from the file path. If set to `true` the metadata type's name will be used instead. This is set to true for `CustomLabels`
 - `isAddressable` this is a boolean that determines if a metadata type is supported by the Metadata API and if it should be written to a manifest, this is used for `CustomFieldTranslation`.
+- `strategies` An object that selects the non-default classes used to process a type. `adapter` chooses the [source adapter](#adapters) used for resolution, `transformer` chooses the [transformer](#transformers) used for conversion, `decomposition`/`recomposition` control how decomposed types are split and rebuilt, and `transport` routes the type through a secondary API in addition to the Metadata API (see [Transport strategies](#transport-strategies)).
 - `legacySuffix` When converting/deploying source, this will update the suffix in the output or temporary directory (metadata format) Use this, along with additional suffix keys in the registry, to support incorrect suffixes from existing code. `CustomPageWebLinks` used to use the `.custompageweblink` suffix, now they use `.weblink` this property was added to maintain existing projects functionality
 - `strictDirectoryName` The `strictDirectoryName` is a boolean that determines whether components MUST reside in a folder named after the type's `directoryName`
 - `suffix` The `suffix` is the suffix of the metadata type file, which is also in the `suffixes` entry in the registry. You might be wondering why is this an optional property? Well, some types, such as `LightningComponentBundles` and `Documents` don't require a certain suffix, or are a "bundle" type which is made of multiple files and directories. For ApexClass, this is `.cls`
@@ -133,6 +141,34 @@ Now, for all the optional properties which define how the metadata type is conve
 - `unaddressableWithoutParent` This applies to child types, and if `true` will require the parent type to be included when deploying/retrieving the child type
 - `uniqueIdElements` This is the xml attribute that acts as the unique identifier when parsing the xml, usually `fullName`
 - `xmlElementName` This is the XML element name for the type in the xml file used for constructing child components.
+
+### Transport strategies
+
+Most types travel entirely through the Metadata API. Some don't: part of a component lives behind a different API, and the Metadata API only carries its root `-meta.xml` file. `strategies.transport` marks those types. Its value names a transport provider that SDR runs before or after the Metadata API request (see [Transports](#transports)).
+
+`ComputeApp` is the first type to use one. Its source is a bundle folder holding the app's code. The Metadata API deploys and retrieves only `myApp.computeApp-meta.xml`, and the Elastic Compute transport uploads and downloads the app source through `/connect/compute`.
+
+```json
+"computeapp": {
+  "directoryName": "computeApps",
+  "id": "computeapp",
+  "inFolder": false,
+  "name": "ComputeApp",
+  "strategies": {
+    "adapter": "computeApp",
+    "transformer": "computeApp",
+    "transport": "computeApp"
+  },
+  "strictDirectoryName": true,
+  "suffix": "computeApp"
+}
+```
+
+Transport types usually need a matching adapter and transformer, because the source format and the metadata format no longer line up. `ComputeApp` is a bundle folder in source format but a single flat `computeApps/myApp.computeApp` file in metadata format. The `computeApp` transformer converts only the xml, and the `computeApp` adapter resolves both shapes. If an app's own source contains a `computeApps/` folder, the adapter assigns those files to the enclosing app.
+
+Valid transport names are listed in `transportNames` in [src/registry/types.ts](https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/registry/types.ts). The registry JSON is cast rather than type-checked, so a typo there is caught by `test/registry/registryValidation.test.ts`, not by the compiler. If a type names a transport but no provider is registered for it, a deploy or retrieve that consults the pipeline throws a `MissingTransportProvider` error. It won't quietly send the type through the Metadata API alone.
+
+📝 _A component set that contains a `ComputeApp` bumps its manifest API version to at least `68.0`, the first version that supports the type._
 
 ### The registry object
 
@@ -285,7 +321,7 @@ We'll continue to see examples of this as we look at the `strategies` that can b
 These strategies are optional, but all have a default transformer, and converter assigned to them, which assumes nothing special needs to be done and that their source and metadata format are identical, _link to these files_.
 Luckily, lots of type use the default transformers and adapters.
 
-The `strategies` property, of a metadatata type entry in the registry, can define four properties, the `adapter`,`transformer`,`decompositon`, and `recomposition`. How SDR uses these values is explained more in detail later on, but we'll go through each of the options for these values, what they do, what behavior they enable, and the types that use them.
+The `strategies` property, of a metadatata type entry in the registry, can define five properties, the `adapter`,`transformer`,`decompositon`, `recomposition`, and `transport` (covered in [Transport strategies](#transport-strategies)). How SDR uses these values is explained more in detail later on, but we'll go through each of the options for these values, what they do, what behavior they enable, and the types that use them.
 
 The "adapters", or "source adapters", are responsible for understanding how a metadata type should be represented in source format and recognizing that pattern when constructing `Component Sets`
 
@@ -891,6 +927,8 @@ The order in which we’ve examined the concepts up to this point has been inten
 
 Metadata API deploys and retrieves are asynchronous operations. Once a request has been made, the status of the operation needs to be polled to determine whether or not the request has finished processing. This lifecycle is encapsulated with the `MetadataApiDeploy` and `MetadataApiRetrieve` classes — one instance is meant to map to one operation. They expose useful methods to process the lifecycle and make other requests, which will be illustrated later. These both extend `MetadataTransfer` in order to share common functionality such as polling.
 
+Types with a [transport strategy](#transport-strategies) add steps around that Metadata API request. When a component set contains one, `deploy()` and `retrieve()` run the type's transport before and/or after the Metadata API operation, and fold its results into the same `DeployResult` or `RetrieveResult`. Callers don't need to do anything different. See [Transports](#transports).
+
 The most common and simplest way to deploy and retrieve metadata is by using a [Component Set](#component-sets). The easiest way to build `ComponentSets` is by using the `ComponentSetBuilder` class's static `build()` function. See <https://github.com/forcedotcom/source-deploy-retrieve/tree/main/src/collections/componentSetBuilder.ts> for details.
 
 ### Establishing an org connection
@@ -977,6 +1015,40 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve';
   console.log(result.getFileResponses());
 })();
 ```
+
+#### Deploying types with a transport
+
+Deploying a set that contains transport components looks the same as any other deploy. Behind the scenes, `deploy()` runs each transport's `beforeDeploy` step first, then starts the Metadata API deploy with every component in the set, including the transport components, since their `-meta.xml` still needs the Metadata API. When the deploy succeeds, `pollStatus()` runs any `afterDeploy` steps before it returns the result.
+
+For `ComputeApp`, `beforeDeploy` packages the app folder into a `deployment-bundle.tar.gz` and uploads it to `/connect/compute/source`, then the Metadata API deploys `myApp.computeApp-meta.xml`. The folder must contain an `api-spec.yaml`, or the upload fails with `MissingApiSpec`. The bundle follows the project's `.forceignore`, except that `api-spec.yaml` and `project.toml` are always included. It leaves out the `-meta.xml` and `.forceignore` files. Bundles are size-capped: 40 MB compressed, 16 MB per file and 40 MB total.
+
+```typescript
+import { ComponentSet } from '@salesforce/source-deploy-retrieve';
+
+(async () => {
+  // force-app/main/default/computeApps/myApp/{myApp.computeApp-meta.xml, api-spec.yaml, package.json, src/...}
+  const set = ComponentSet.fromSource('/path/to/force-app');
+
+  // Elastic Compute upload happens here, before the Metadata API deploy starts
+  const deploy = await set.deploy({ usernameOrConnection: 'user@example.com' });
+  const result = await deploy.pollStatus();
+
+  // File responses from the transport are merged with the Metadata API's
+  console.log(result.getFileResponses());
+
+  // Per-step summary from each transport, e.g.
+  // [{ transportLabel: 'Elastic Compute', operation: 'Upload myApp', status: 'Succeeded' }]
+  console.log(result.getTransportOperationResults());
+})();
+```
+
+📝 _Keep in mind:_
+
+- _A failed `beforeDeploy` step makes the `deploy()` promise reject, and the Metadata API deploy never starts. For `ComputeApp`, the error's `data` holds the transport's file responses, including the failed ones._
+- _Nothing is rolled back. `ComputeApp` uploads apps one at a time, so if a later app fails, the earlier ones are already uploaded. If the Metadata API deploy fails afterwards, the uploaded source also stays in place._
+- _Validation-only deploys (`apiOptions: { checkOnly: true }`) skip transports entirely. So does a quick deploy of that validation, so the app source is never uploaded that way._
+- _Transports only run through `ComponentSet.prototype.deploy()` and `retrieve()`. Constructing `MetadataApiDeploy` or `MetadataApiRetrieve` yourself, including for an existing operation ID, skips them._
+- _Components marked for delete never go to a transport. They're deleted with Metadata API destructive changes only._
 
 #### Canceling a deploy
 
@@ -1106,6 +1178,49 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve';
 })();
 ```
 
+#### Retrieving types with a transport
+
+Retrieves follow the same pattern. `retrieve()` runs any `beforeRetrieve` steps and then starts the Metadata API retrieve. Once the retrieve succeeds and its files are extracted, `pollStatus()` runs the `afterRetrieve` steps before it returns.
+
+For `ComputeApp`, the Metadata API returns `myApp.computeApp`. The transformer writes it to the existing local app folder when there is one. Otherwise it goes to `main/default/computeApps/myApp/myApp.computeApp-meta.xml` under the output directory, whether or not that package already has a `main/default` folder. Then `afterRetrieve` downloads the app's latest build source from `/connect/compute/{name}/builds/latest/source` and unpacks it into the same folder as the xml.
+
+Transport components don't need to exist locally. A manifest member such as `<members>myApp</members>` for `ComputeApp` is enough. `<members>*</members>` also works, and expands to every `ComputeApp` the org returned. But when the set is built with `resolveSourcePaths`, wildcards are dropped unless you also pass `forceAddWildcards: true`, as in the example below. `ComponentSetBuilder` does this for the CLI.
+
+📝 _`afterRetrieve` has its own fallback for choosing a folder: the package named in `transportPackageNames`, then `output`, then the default package directory. `transportPackageNames` is a retrieve option keyed by `type#fullName`, e.g. `{ 'ComputeApp#myApp': 'my-pkg' }`, and its package must also appear in `packageOptions`. In practice the fallback only applies when the Metadata API didn't return the component's xml, because otherwise the transport reuses the folder the xml was extracted to._
+
+```typescript
+import { ComponentSet } from '@salesforce/source-deploy-retrieve';
+
+(async () => {
+  const set = await ComponentSet.fromManifest({
+    manifestPath: '/path/to/package.xml', // includes ComputeApp: myApp (or *)
+    resolveSourcePaths: ['/path/to/force-app'],
+    // keep `*` members when resolving against local source
+    forceAddWildcards: true,
+  });
+
+  const retrieve = await set.retrieve({
+    usernameOrConnection: 'user@example.com',
+    output: '/path/to/force-app',
+    merge: true,
+    // optional: retrieve ComputeApp xml through the Metadata API, but skip the source download
+    // skipTransports: ['ComputeApp'],
+  });
+
+  // the Elastic Compute download runs inside pollStatus, after extraction
+  const result = await retrieve.pollStatus();
+
+  // includes an entry for the unpacked app folder
+  console.log(result.getFileResponses());
+})();
+```
+
+📝 _Keep in mind:_
+
+- _Transports only run for source-format retrieves. With `format: 'metadata'` the set goes through the Metadata API alone._
+- _`skipTransports` takes metadata type names. Those types are still retrieved by the Metadata API, but their transport steps don't run._
+- _A failed `afterRetrieve` step makes `pollStatus()` throw a `MetadataTransferError`, and the transport's file responses are in `error.data.causeErrorData`. If an `onError` listener is registered, `pollStatus()` emits the error to it and resolves `undefined` instead. By then the xml has already been extracted, and the app folder may be partly written._
+
 #### Canceling a retrieve
 
 Unlike deploys, there isn’t a mechanism for signaling a retrieve cancelation with the Metadata API. The library will simply break any potential polling of the retrieved status, and that is exposed through the `cancel()` method on the transfer object.
@@ -1155,6 +1270,134 @@ import { MetadataApiRetrieve } from '@salesforce/source-deploy-retrieve';
   console.result(result.getFileResponses());
 })();
 ```
+
+### Transports
+
+**Module:** <https://github.com/forcedotcom/source-deploy-retrieve/tree/main/src/client/transports>
+
+A transport moves the parts of a component that the Metadata API can't carry. The pieces are:
+
+- `TransportProvider` — one implementation per transport name (`ComputeAppTransport` for `computeApp`). It must provide a `name` (matched against `strategies.transport`), `handles(component)`, and `describe()` for display. It can also provide up to four optional hooks: `beforeDeploy`, `afterDeploy`, `beforeRetrieve` and `afterRetrieve`. Each hook receives a `TransportContext` (its components, the connection, the project, the org ID and retrieve output options) and returns file responses plus optional operation results.
+- `TransportPipeline` — the list of registered providers. It groups components by their type's `strategies.transport`, runs the hooks for a phase, and describes the plan with `explain()`.
+- `TransportCoordinator` — attaches the pipeline to one `MetadataApiDeploy` or `MetadataApiRetrieve`. It runs the "before" hooks when the operation starts, and registers a result processor so the "after" hooks run inside `pollStatus()` once the Metadata API request succeeds.
+
+```mermaid
+sequenceDiagram
+  participant C as Caller
+  participant CS as ComponentSet
+  participant T as Transport
+  participant M as Metadata API
+  C->>CS: deploy() / retrieve()
+  CS->>T: beforeDeploy / beforeRetrieve
+  CS->>M: start deploy / retrieve
+  C->>CS: pollStatus()
+  M-->>CS: Succeeded
+  CS->>T: afterDeploy / afterRetrieve
+  CS-->>C: DeployResult / RetrieveResult (with transport results)
+```
+
+`ComponentSet.transportPipeline` returns a pipeline with the built-in transports when the set contains a transport type, and `undefined` otherwise. Sets without transport types follow the usual Metadata API path unchanged.
+
+#### Previewing the plan with `explain()`
+
+`TransportPipeline.prototype.explain(components, operation)` returns the phases an operation will run through, without making any requests. Every component appears in the `metadata-api` phase. Transport components also appear in a `before-metadata` or `after-metadata` phase for each hook their provider implements for that operation. This is what `sf project deploy preview` and `sf project retrieve preview` use to show where each component goes.
+
+```typescript
+import { ComponentSet } from '@salesforce/source-deploy-retrieve';
+
+const set = ComponentSet.fromSource('/path/to/force-app');
+const components = set.getSourceComponents().toArray();
+const pipeline = set.transportPipeline;
+
+if (pipeline?.hasTransports(components)) {
+  const deployPlan = pipeline.explain(components, 'deploy');
+  const retrievePlan = pipeline.explain(components, 'retrieve');
+}
+```
+
+For a project with one Apex class and one `ComputeApp`, the deploy plan uploads the app source first:
+
+```json
+{
+  "phases": [
+    {
+      "phase": "before-metadata",
+      "label": "Elastic Compute",
+      "endpoint": "/connect/compute/source",
+      "components": [{ "fullName": "myApp", "type": "ComputeApp" }]
+    },
+    {
+      "phase": "metadata-api",
+      "label": "Metadata API",
+      "endpoint": "SOAP/REST",
+      "components": [
+        { "fullName": "MyClass", "type": "ApexClass" },
+        { "fullName": "myApp", "type": "ComputeApp" }
+      ]
+    }
+  ]
+}
+```
+
+The retrieve plan for the same set reverses the order, because `ComputeAppTransport` implements `afterRetrieve` rather than `beforeRetrieve`:
+
+```json
+{
+  "phases": [
+    {
+      "phase": "metadata-api",
+      "label": "Metadata API",
+      "endpoint": "SOAP/REST",
+      "components": [
+        { "fullName": "MyClass", "type": "ApexClass" },
+        { "fullName": "myApp", "type": "ComputeApp" }
+      ]
+    },
+    {
+      "phase": "after-metadata",
+      "label": "Elastic Compute",
+      "endpoint": "/connect/compute/source",
+      "components": [{ "fullName": "myApp", "type": "ComputeApp" }]
+    }
+  ]
+}
+```
+
+Components marked for delete only appear in the `metadata-api` phase, with a `destructiveChangesType` of `pre` or `post`.
+
+📝 _`endpoint` comes from the provider's `describe()`, which returns a single value for both operations. That's why the retrieve plan shows `/connect/compute/source`, even though the actual download goes to `/connect/compute/{name}/builds/latest/source`. `explain()` also only plans the components you pass it. Manifest-only retrieve members (no local source) aren't source components, so a plan built from `getSourceComponents()` leaves them out, even though `retrieve()` still sends them to the transport. The CLI preview has the same gap, because it plans only source-backed components._
+
+The `TransportPlan`, `TransportPlanPhase` and `TransportPlanComponent` types are exported from the package root.
+
+#### Transport results and events
+
+Transport output lands on the same result object as the Metadata API output:
+
+- `getFileResponses()` includes the transport's file responses after the Metadata API's (`DeployResult` drops exact duplicates)
+- `getTransportOperationResults()` returns a `TransportOperationResult[]` (`transportLabel`, `operation`, `status`, `message`) to show what each transport did
+- `getAsyncTransportHandles()` returns handles for any transport work still running on the server when the hook returned. No built-in transport returns them yet.
+
+Each hook emits a `transportStage` lifecycle event (`TransportStageEvent`) with `stage: 'start'`, then either `'complete'` or `'error'`. The event includes the transport label, the operation, and the names of the components involved. The CLI uses this event for progress output:
+
+```typescript
+import { Lifecycle } from '@salesforce/core';
+import { TransportStageEvent } from '@salesforce/source-deploy-retrieve';
+
+Lifecycle.getInstance().on('transportStage', async (event: TransportStageEvent) => {
+  if (event.stage === 'start') {
+    console.log(`${event.label}: ${event.operation} ${event.componentCount} component(s)`);
+  }
+});
+```
+
+#### Adding a transport
+
+1. Add the name to `transportNames` in [src/registry/types.ts](https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/registry/types.ts).
+2. Implement `TransportProvider` in `src/client/transports/`, defining only the hooks the type needs. Throw an `SfError` when a step fails, and put the file responses (including the failed ones) on the error's `data` so callers can report them.
+3. Register it in `TransportPipeline.withBuiltinTransports()`.
+4. Set `strategies.transport` on the type in the [Metadata registry file], plus an adapter and transformer if the source and metadata formats differ.
+
+In tests, assign a pipeline with fake providers to a set, e.g. `set.transportPipeline = new TransportPipeline([fakeTransport])`, so no real transport endpoints get called. `test/client/transports/transportIntegration.test.ts` has examples.
 
 ## Further Examples
 

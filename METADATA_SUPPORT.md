@@ -359,6 +359,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |EinsteinDocumentCaptureSettings|✅||
 |EinsteinGPTSalesEmailsSettings|✅||
 |EinsteinGptSettings|✅||
+|ElasticComputeSettings|✅||
 |EmailAdministrationSettings|✅||
 |EmailAuthorizationSettings|✅||
 |EmailFolder|✅||
@@ -498,7 +499,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |HealthInsDataSyncDefn|❌|Not supported, but support could be added|
 |HelpSettings|✅||
 |HerokuAppLinkSettings|✅||
-|HerokuComputeSettings|✅||
 |HighVelocitySalesSettings|✅||
 |HomePageComponent|✅||
 |HomePageLayout|✅||

@@ -613,7 +613,8 @@
     "ecaAttestPlcy": "extlclntappattestconfigurablepolicies",
     "genOpPlanEligibilityConfig": "genopplaneligibilityconfig",
     "debugLevel": "debuglevel",
-    "experienceContainer": "experiencecontainer"
+    "experienceContainer": "experiencecontainer",
+    "docProcDefinition": "docprocdefinition"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -5480,6 +5481,14 @@
       "name": "ExperienceContainer",
       "suffix": "experienceContainer",
       "directoryName": "experienceContainers",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "docprocdefinition": {
+      "id": "docprocdefinition",
+      "name": "DocProcDefinition",
+      "suffix": "docProcDefinition",
+      "directoryName": "docProcDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     }

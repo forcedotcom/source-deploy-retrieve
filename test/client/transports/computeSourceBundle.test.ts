@@ -74,6 +74,7 @@ describe('computeSourceBundle', () => {
     tempDir = join(tmpdir(), `sdr-bundle-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
     appDir = join(tempDir, 'force-app', 'computeApps', 'MyApp');
     await mkdir(appDir, { recursive: true });
+    await writeFile(join(appDir, 'Procfile'), 'web: node index.js');
   });
 
   afterEach(async () => {
@@ -81,6 +82,52 @@ describe('computeSourceBundle', () => {
   });
 
   describe('packageComputeBundle', () => {
+    async function fileNames(bundle: { buffer: Buffer }): Promise<string[]> {
+      const out = join(tempDir, `unpacked-${Math.random().toString(36).slice(2)}`);
+      await unpackComputeBundle(await serverDownload(bundle.buffer), out);
+      const { readdir } = fsPromises;
+      return (await readdir(out)).sort();
+    }
+
+    it('rejects an app with no Procfile', async () => {
+      await writeFile(join(appDir, 'api-spec.yaml'), 'spec');
+      await rm(join(appDir, 'Procfile'));
+      try {
+        await packageComputeBundle(appDir, 'MyApp', tempDir);
+        expect.fail('should reject a missing Procfile');
+      } catch (err) {
+        expect((err as { name: string }).name).to.equal('MissingProcfile');
+        expect((err as Error).message).to.include('needs a Procfile');
+      }
+    });
+
+    it('applies the project-root .forceignore as well as the app one', async () => {
+      await writeFile(join(appDir, 'api-spec.yaml'), 'spec');
+      await writeFile(join(appDir, 'a.py'), 'x');
+      await writeFile(join(appDir, 'b.py'), 'x');
+      await writeFile(join(appDir, 'c.py'), 'x');
+      await writeFile(join(tempDir, '.forceignore'), 'force-app/computeApps/MyApp/a.py\n');
+      await writeFile(join(appDir, '.forceignore'), 'b.py\n');
+      const names = await fileNames(await packageComputeBundle(appDir, 'MyApp', tempDir));
+      expect(names).to.deep.equal(['Procfile', 'api-spec.yaml', 'c.py']);
+    });
+
+    it('applies a project-root .forceignore when the app has none', async () => {
+      await writeFile(join(appDir, 'api-spec.yaml'), 'spec');
+      await writeFile(join(appDir, 'a.py'), 'x');
+      await writeFile(join(tempDir, '.forceignore'), '**/a.py\n');
+      const names = await fileNames(await packageComputeBundle(appDir, 'MyApp', tempDir));
+      expect(names).to.deep.equal(['Procfile', 'api-spec.yaml']);
+    });
+
+    it('keeps api-spec.yaml and project.toml even when the project .forceignore matches them', async () => {
+      await writeFile(join(appDir, 'api-spec.yaml'), 'spec');
+      await writeFile(join(appDir, 'project.toml'), 'x');
+      await writeFile(join(tempDir, '.forceignore'), '**/*.yaml\n**/*.toml\n');
+      const names = await fileNames(await packageComputeBundle(appDir, 'MyApp', tempDir));
+      expect(names).to.include.members(['api-spec.yaml', 'project.toml']);
+    });
+
     it('stops walking other directories once the source entry cap is exceeded', async () => {
       await writeFile(join(appDir, 'api-spec.yaml'), 'spec');
       const first = join(appDir, 'a');
@@ -119,7 +166,7 @@ describe('computeSourceBundle', () => {
       await writeFile(join(appDir, 'large.py'), Buffer.alloc(16 * 1024 * 1024));
       const bundle = await packageComputeBundle(appDir, 'MyApp');
       await unpackComputeBundle(await serverDownload(bundle.buffer), join(tempDir, 'boundary-output'));
-      expect(bundle.fileCount).to.equal(2);
+      expect(bundle.fileCount).to.equal(3);
     });
 
     it('rejects a source entry above the per-entry limit', async () => {
@@ -161,7 +208,7 @@ describe('computeSourceBundle', () => {
       await chmod(join(appDir, 'lib', '.hidden'), 0);
       try {
         const bundle = await packageComputeBundle(appDir, 'MyApp');
-        expect(bundle.fileCount).to.equal(1);
+        expect(bundle.fileCount).to.equal(2);
       } finally {
         await chmod(join(appDir, 'lib', '.hidden'), 0o700);
       }
@@ -177,7 +224,7 @@ describe('computeSourceBundle', () => {
       await writeFile(join(appDir, 'lib', '.hidden', 'secret'), 'secret');
 
       const bundle = await packageComputeBundle(appDir, 'MyApp');
-      expect(bundle.fileCount).to.equal(2);
+      expect(bundle.fileCount).to.equal(3);
       const output = join(tempDir, 'safe-output');
       await unpackComputeBundle(await serverDownload(bundle.buffer), output);
       expect(await readFile(join(output, 'main.py'), 'utf8')).to.equal('safe');
@@ -204,7 +251,7 @@ describe('computeSourceBundle', () => {
       expect(result.buffer.length).to.be.greaterThan(0);
       // api-spec.yaml counts as +1 in the outer bundle, source files are main.py + lib/utils.py = 2
       // fileCount = source entries + 1 (api-spec)
-      expect(result.fileCount).to.equal(3);
+      expect(result.fileCount).to.equal(4);
     });
 
     it('should include build-critical files in source tar even when forceignored', async () => {
@@ -217,7 +264,7 @@ describe('computeSourceBundle', () => {
       const result = await packageComputeBundle(appDir, 'MyApp');
 
       // api-spec.yaml, project.toml, and main.py are distinct source files.
-      expect(result.fileCount).to.equal(3);
+      expect(result.fileCount).to.equal(4);
 
       const output = join(tempDir, 'build-critical-output');
       await unpackComputeBundle(await serverDownload(result.buffer), output);
@@ -237,7 +284,7 @@ describe('computeSourceBundle', () => {
       const result = await packageComputeBundle(appDir, 'MyApp');
 
       // Only main.py is in source + api-spec = 2
-      expect(result.fileCount).to.equal(2);
+      expect(result.fileCount).to.equal(3);
     });
   });
 
@@ -430,7 +477,7 @@ describe('computeSourceBundle', () => {
       const unpacked = await unpackComputeBundle(await serverDownload(packed.buffer), outputDir);
 
       // api-spec.yaml, main.py, lib/utils.py; the meta xml is never uploaded
-      expect(unpacked.fileCount).to.equal(3);
+      expect(unpacked.fileCount).to.equal(4);
 
       const apiSpec = await readFile(join(outputDir, 'api-spec.yaml'), 'utf8');
       expect(apiSpec).to.include('openapi: 3.0.0');

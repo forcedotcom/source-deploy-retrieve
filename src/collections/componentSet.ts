@@ -411,7 +411,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       );
     }
 
-    const pipeline = options.apiOptions?.checkOnly ? undefined : this.transportPipeline;
+    const pipeline = this.transportPipeline;
     if (pipeline?.hasTransports(toDeploy)) {
       return this.deployWithPipeline(options, toDeploy, pipeline);
     }
@@ -797,6 +797,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const transportContext = {
       components,
       connection,
+      checkOnly: options.apiOptions?.checkOnly,
       project: await SfProject.resolve(this.projectDirectory),
       orgId: connection.getAuthInfoFields().orgId ?? '',
     };

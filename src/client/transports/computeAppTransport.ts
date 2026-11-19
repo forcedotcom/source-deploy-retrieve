@@ -109,7 +109,7 @@ export class ComputeAppTransport implements TransportProvider {
         this.logger.debug('deploying compute source for %s from %s', component.fullName, component.content);
 
         // eslint-disable-next-line no-await-in-loop
-        const bundle = await packageComputeBundle(component.content, component.fullName);
+        const bundle = await packageComputeBundle(component.content, component.fullName, context.project.getPath());
         this.logger.debug(
           'packaged %s: %d bytes, %d files',
           component.fullName,
@@ -117,9 +117,13 @@ export class ComputeAppTransport implements TransportProvider {
           bundle.fileCount
         );
 
-        // eslint-disable-next-line no-await-in-loop
-        const result = await uploadSource(context.connection, component.fullName, bundle.buffer);
-        this.logger.debug('uploaded %s: buildId=%s', component.fullName, result.buildId);
+        if (context.checkOnly) {
+          this.logger.debug('check only: skipping upload of %s', component.fullName);
+        } else {
+          // eslint-disable-next-line no-await-in-loop
+          const result = await uploadSource(context.connection, component.fullName, bundle.buffer);
+          this.logger.debug('uploaded %s: buildId=%s', component.fullName, result.buildId);
+        }
 
         fileResponses.push({
           fullName: component.fullName,
@@ -129,7 +133,7 @@ export class ComputeAppTransport implements TransportProvider {
         });
         operationResults.push({
           transportLabel: this.describe().label,
-          operation: `Upload ${component.fullName}`,
+          operation: `${context.checkOnly ? 'Validate' : 'Upload'} ${component.fullName}`,
           status: 'Succeeded',
         });
       } catch (err) {

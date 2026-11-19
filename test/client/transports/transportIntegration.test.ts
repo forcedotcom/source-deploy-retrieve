@@ -534,13 +534,22 @@ describe('Transport integration', () => {
       expect((await set.getObject()).Package.types).to.deep.include({ name: 'ComputeApp', members: ['MyApp'] });
     });
 
-    it('does not run a secondary transport for checkOnly but still starts MDAPI with that option', async () => {
+    it('runs the secondary transport for checkOnly, tells it not to upload, and still starts MDAPI with that option', async () => {
       const type = registryAccess.getTypeByName('ComputeApp');
       const set = new ComponentSet([new SourceComponent({ name: 'MyApp', type, content: '/local/app' })]);
-      const pipeline = new TransportPipeline();
-      set.transportPipeline = pipeline;
+      const deploySpy = sinon.spy();
+      set.transportPipeline = new TransportPipeline([
+        createMockTransport({
+          deployPhase: 'before-metadata',
+          retrievePhase: 'before-metadata',
+          typeNames: ['ComputeApp'],
+          deploySpy,
+        }),
+      ]);
       const result = await set.deploy({ usernameOrConnection: connection, apiOptions: { checkOnly: true } });
       expect(result).to.be.instanceOf(MetadataApiDeploy);
+      expect(deploySpy.calledOnce).to.be.true;
+      expect((deploySpy.firstCall.args[0] as TransportContext).checkOnly).to.be.true;
       expect((result as unknown as { options: { apiOptions: { checkOnly: boolean } } }).options.apiOptions.checkOnly).to
         .be.true;
     });

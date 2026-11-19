@@ -20,7 +20,7 @@ import { join } from 'node:path';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { Connection, SfError, SfProject } from '@salesforce/core';
-import { FileResponse, RegistryAccess, SourceComponent } from '../../../src';
+import { ComponentStatus, FileResponse, RegistryAccess, SourceComponent } from '../../../src';
 import { ComputeAppTransport } from '../../../src/client/transports/computeAppTransport';
 import { TransportPipeline } from '../../../src/client/transports/transportPipeline';
 import { TransportContext } from '../../../src/client/transports/types';
@@ -114,6 +114,47 @@ describe('ComputeAppTransport', () => {
       expect(requestStub.calledOnce).to.be.true;
 
       stub.restore();
+    });
+  });
+
+  describe('check only', () => {
+    it('packages the app with the project root but does not upload', async () => {
+      const stub = sinon.stub(computeSourceBundle, 'packageComputeBundle');
+      stub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
+      const requestStub = sinon.stub();
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('MyApp', '/mock/app')],
+        checkOnly: true,
+      });
+
+      const result = await transport.beforeDeploy(context);
+
+      expect(stub.calledOnceWithExactly('/mock/app', 'MyApp', '/mock/project')).to.be.true;
+      expect(requestStub.called).to.be.false;
+      expect(result.fileResponses).to.have.lengthOf(1);
+      expect(result.fileResponses[0].state).to.equal(ComponentStatus.Changed);
+      stub.restore();
+    });
+
+    it('fails on a check error without uploading', async () => {
+      const stub = sinon.stub(computeSourceBundle, 'packageComputeBundle').rejects(new Error('no Procfile'));
+      const requestStub = sinon.stub();
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('MyApp', '/mock/app')],
+        checkOnly: true,
+      });
+
+      try {
+        await transport.beforeDeploy(context);
+        expect.fail('should reject when the checks fail');
+      } catch (err) {
+        expect((err as Error).message).to.include('no Procfile');
+      } finally {
+        stub.restore();
+      }
+      expect(requestStub.called).to.be.false;
     });
   });
 

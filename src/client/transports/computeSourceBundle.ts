@@ -44,12 +44,24 @@ export type UnpackedBundle = {
 // Upload shape: deployment-bundle.tar.gz containing api-spec.yaml plus a
 // nested source.tar.gz with the app's source files. Downloads return only that
 // source.tar.gz (see unpackComputeBundle).
-export async function packageComputeBundle(appDir: string, name: string): Promise<PackagedBundle> {
+export async function packageComputeBundle(
+  appDir: string,
+  name: string,
+  projectRoot?: string
+): Promise<PackagedBundle> {
   const apiSpecPath = join(appDir, 'api-spec.yaml');
   try {
     await access(apiSpecPath);
   } catch {
     throw new SfError(`ComputeApp '${name}' is missing required api-spec.yaml in ${appDir}`, 'MissingApiSpec');
+  }
+  try {
+    await access(join(appDir, 'Procfile'));
+  } catch {
+    throw new SfError(
+      `ComputeApp '${name}' has no Procfile in ${appDir}. A compute app needs a Procfile to define how it starts. Add a Procfile to the app directory before deploying.`,
+      'MissingProcfile'
+    );
   }
 
   const metaFileName = `${name}.computeApp-meta.xml`;
@@ -57,11 +69,18 @@ export async function packageComputeBundle(appDir: string, name: string): Promis
   // Both files are consumed at build/runtime, so a broad .forceignore must not
   // remove them from the nested source archive.
   const alwaysIncluded = new Set(['api-spec.yaml', 'project.toml']);
-  const forceIgnore = ForceIgnore.findAndCreate(appDir);
+  // The app's own .forceignore and the project-root .forceignore each match paths
+  // relative to their own directory, so keep one instance per directory.
+  const forceIgnores = [ForceIgnore.findAndCreate(appDir)];
+  if (projectRoot && resolve(projectRoot) !== resolve(appDir)) {
+    forceIgnores.push(ForceIgnore.findAndCreate(projectRoot));
+  }
 
   const sourceRelativePaths = await listFilesRecursive(
     appDir,
-    (file) => !excluded.has(file) && (alwaysIncluded.has(file) || forceIgnore.accepts(join(appDir, file)))
+    (file) =>
+      !excluded.has(file) &&
+      (alwaysIncluded.has(file) || forceIgnores.every((ignore) => ignore.accepts(join(appDir, file))))
   );
   logger.debug('packaging %s: %d files after exclusions/.forceignore', appDir, sourceRelativePaths.length);
 

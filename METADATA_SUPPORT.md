@@ -449,7 +449,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |FileUploadAndDownloadSecuritySettings|✅||
 |FilesConnectSettings|✅||
 |FinancialAppUiConfig|❌|Not supported, but support could be added|
-|FinancialClientComponentConfig|❌|Not supported, but support could be added|
+|FinancialCustomerComponentConfig|❌|Not supported, but support could be added|
 |FinancialEvaluationDef|❌|Not supported, but support could be added|
 |FinancialPortfolioUiConfig|❌|Not supported, but support could be added|
 |FlexHierConfig|❌|Not supported, but support could be added (but not for tracking)|

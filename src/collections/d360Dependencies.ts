@@ -136,7 +136,10 @@ export const resolveDataspaceQualifiedComponents = (
     return;
   }
   for (const component of ComponentSet.fromSource({ fsPaths, include, registry }).getSourceComponents()) {
-    componentSet.addWithoutManifestEntry(component);
+    // Requested by its bare name too: it is already in the set, with the manifest entry that name needs.
+    if (!componentSet.has(component)) {
+      componentSet.addWithoutManifestEntry(component);
+    }
   }
 };
 

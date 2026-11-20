@@ -297,4 +297,18 @@ describe('resolveDataspaceQualifiedComponents', () => {
       { name: 'DataLakeObject', members: ['default.myDlo__dll'] },
     ]);
   });
+
+  it('should keep the bare name in the manifest when it is requested too', async () => {
+    const manifestPath = join(projectDir, 'package.xml');
+    writeFileSync(
+      manifestPath,
+      '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">' +
+        '<types><members>myDlo__dll</members><members>default.myDlo__dll</members><name>DataLakeObject</name></types>' +
+        '<version>68.0</version></Package>'
+    );
+    const set = await ComponentSetBuilder.build({ manifest: { manifestPath, directoryPaths: [projectDir] } });
+    expect((await set.getObject()).Package.types).to.deep.equal([
+      { name: 'DataLakeObject', members: ['default.myDlo__dll', 'myDlo__dll'] },
+    ]);
+  });
 });

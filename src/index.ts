@@ -24,6 +24,7 @@ export {
   MetadataApiRetrieve,
   MetadataApiRetrieveOptions,
   RetrieveResult,
+  TransportStageEvent,
   ComponentDeployment,
   ComponentRetrieval,
   ComponentDiagnostic,
@@ -59,6 +60,10 @@ export {
   DeployVersionData,
   DeployZipData,
   RetrieveVersionData,
+  TransportOperationResult,
+  TransportPlan,
+  TransportPlanComponent,
+  TransportPlanPhase,
 } from './client';
 export {
   MetadataConverter,

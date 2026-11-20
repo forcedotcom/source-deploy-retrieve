@@ -1,0 +1,584 @@
+/*
+ * Copyright 2026, Salesforce, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { expect } from 'chai';
+import sinon from 'sinon';
+import { Connection, SfError, SfProject } from '@salesforce/core';
+import { ComponentStatus, FileResponse, RegistryAccess, SourceComponent } from '../../../src';
+import { ComputeAppTransport } from '../../../src/client/transports/computeAppTransport';
+import { TransportPipeline } from '../../../src/client/transports/transportPipeline';
+import { TransportContext } from '../../../src/client/transports/types';
+import * as computeSourceBundle from '../../../src/client/transports/computeSourceBundle';
+
+const registryAccess = new RegistryAccess();
+
+function createComputeComponent(fullName: string, appDir: string): SourceComponent {
+  const type = registryAccess.getTypeByName('ComputeApp');
+  return new SourceComponent({
+    name: fullName,
+    type,
+    content: appDir,
+    xml: `${appDir}/${fullName}.computeApp-meta.xml`,
+  });
+}
+
+function createMockContext(overrides: Partial<TransportContext> = {}): TransportContext {
+  const connection = {
+    version: '68.0',
+    request: sinon.stub(),
+  } as unknown as Connection;
+
+  const project = {
+    getPath: () => '/mock/project',
+  } as unknown as SfProject;
+
+  return {
+    components: [],
+    connection,
+    project,
+    orgId: '00Dxx0000000000',
+    ...overrides,
+  };
+}
+
+describe('ComputeAppTransport', () => {
+  const transport = new ComputeAppTransport();
+
+  describe('metadata', () => {
+    it('should have the computeApp provider name', () => {
+      expect(transport.name).to.equal('computeApp');
+      expect(typeof transport.beforeDeploy).to.equal('function');
+      expect(typeof transport.afterRetrieve).to.equal('function');
+    });
+
+    it('should describe itself correctly', () => {
+      const desc = transport.describe();
+      expect(desc.label).to.equal('Elastic Compute');
+      expect(desc.endpoint).to.equal('/connect/compute/source');
+    });
+  });
+
+  describe('handles', () => {
+    it('should handle ComputeApp by type name', () => {
+      const component = createComputeComponent('MyApp', '/mock/app');
+      expect(transport.handles(component)).to.be.true;
+    });
+
+    it('should handle components with ComputeApp transport strategy', () => {
+      const type = {
+        ...registryAccess.getTypeByName('ApexClass'),
+        strategies: { adapter: 'default' as const, transport: 'computeApp' as const },
+      };
+      const component = new SourceComponent({ name: 'Test', type });
+      expect(transport.handles(component)).to.be.true;
+    });
+
+    it('should not handle standard types', () => {
+      const type = registryAccess.getTypeByName('ApexClass');
+      const component = new SourceComponent({ name: 'MyClass', type });
+      expect(transport.handles(component)).to.be.false;
+    });
+  });
+
+  describe('API version compatibility', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('should upload using a lower configured connection version', async () => {
+      const stub = sinon.stub(computeSourceBundle, 'packageComputeBundle');
+      stub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
+
+      const requestStub = sinon.stub();
+      requestStub.resolves({ platformComputeId: 'id', buildId: 'b1', sourceBlobSize: 100, uploadedAt: 'now' });
+
+      const context = createMockContext({
+        connection: { version: '67.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('MyApp', '/mock/app')],
+      });
+
+      const result = await transport.beforeDeploy(context);
+      expect(result.fileResponses).to.have.lengthOf(1);
+      expect(requestStub.calledOnce).to.be.true;
+    });
+  });
+
+  describe('multiple apps', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('uploads nothing when any app fails its checks', async () => {
+      sinon
+        .stub(computeSourceBundle, 'packageComputeBundle')
+        .onFirstCall()
+        .resolves({ buffer: Buffer.from('fake'), fileCount: 1 })
+        .onSecondCall()
+        .rejects(new Error('no Procfile'));
+      const requestStub = sinon.stub();
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('App1', '/mock/app1'), createComputeComponent('App2', '/mock/app2')],
+      });
+
+      try {
+        await transport.beforeDeploy(context);
+        expect.fail('should reject when one app fails its checks');
+      } catch (err) {
+        expect((err as Error).message).to.include("'App2': no Procfile");
+      }
+      expect(requestStub.called).to.be.false;
+    });
+
+    it('says check failed, not upload failed, on a dry run', async () => {
+      sinon.stub(computeSourceBundle, 'packageComputeBundle').rejects(new Error('no Procfile'));
+      const context = createMockContext({
+        connection: { version: '68.0', request: sinon.stub() } as unknown as Connection,
+        components: [createComputeComponent('MyApp', '/mock/app')],
+        checkOnly: true,
+      });
+
+      try {
+        await transport.beforeDeploy(context);
+        expect.fail('should reject');
+      } catch (err) {
+        expect((err as Error).message).to.include('Elastic Compute check failed');
+        expect((err as { name: string }).name).to.equal('ComputeAppCheckError');
+      }
+    });
+
+    it('explains on a dry run that the org checks the last uploaded source', async () => {
+      sinon.stub(computeSourceBundle, 'packageComputeBundle').resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
+      const context = createMockContext({
+        connection: { version: '68.0', request: sinon.stub() } as unknown as Connection,
+        components: [createComputeComponent('MyApp', '/mock/app')],
+        checkOnly: true,
+      });
+
+      const result = await transport.beforeDeploy(context);
+
+      expect(result.operationResults?.[0].message).to.include('last uploaded source');
+    });
+  });
+
+  describe('check only', () => {
+    it('packages the app with the project root but does not upload', async () => {
+      const stub = sinon.stub(computeSourceBundle, 'packageComputeBundle');
+      stub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
+      const requestStub = sinon.stub();
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('MyApp', '/mock/app')],
+        checkOnly: true,
+      });
+
+      const result = await transport.beforeDeploy(context);
+
+      expect(stub.calledOnceWithExactly('/mock/app', 'MyApp', '/mock/project')).to.be.true;
+      expect(requestStub.called).to.be.false;
+      expect(result.fileResponses).to.have.lengthOf(1);
+      expect(result.fileResponses[0].state).to.equal(ComponentStatus.Changed);
+      stub.restore();
+    });
+
+    it('fails on a check error without uploading', async () => {
+      const stub = sinon.stub(computeSourceBundle, 'packageComputeBundle').rejects(new Error('no Procfile'));
+      const requestStub = sinon.stub();
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('MyApp', '/mock/app')],
+        checkOnly: true,
+      });
+
+      try {
+        await transport.beforeDeploy(context);
+        expect.fail('should reject when the checks fail');
+      } catch (err) {
+        expect((err as Error).message).to.include('no Procfile');
+      } finally {
+        stub.restore();
+      }
+      expect(requestStub.called).to.be.false;
+    });
+  });
+
+  describe('deploy', () => {
+    let packageStub: sinon.SinonStub;
+
+    beforeEach(() => {
+      packageStub = sinon.stub(computeSourceBundle, 'packageComputeBundle');
+    });
+
+    afterEach(() => {
+      packageStub.restore();
+    });
+
+    it('should package and upload each component via Connect API', async () => {
+      packageStub.resolves({ buffer: Buffer.from('fake-bundle'), fileCount: 3 });
+
+      const requestStub = sinon.stub();
+      requestStub.resolves({
+        platformComputeId: 'pc1',
+        buildId: 'build1',
+        sourceBlobSize: 500,
+        uploadedAt: '2026-01-01',
+      });
+
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('MyApp', '/mock/app')],
+      });
+
+      const result = await transport.beforeDeploy(context);
+
+      expect(packageStub.calledOnce).to.be.true;
+      expect(packageStub.firstCall.args[0]).to.equal('/mock/app');
+      expect(requestStub.calledOnce).to.be.true;
+      expect(requestStub.firstCall.args[0]).to.have.property('method', 'POST');
+      expect(result.fileResponses).to.have.lengthOf(1);
+      expect(result.fileResponses[0]).to.include({ fullName: 'MyApp', type: 'ComputeApp' });
+      expect(result.operationResults).to.deep.equal([
+        { transportLabel: 'Elastic Compute', operation: 'Upload MyApp', status: 'Succeeded' },
+      ]);
+    });
+
+    it('should deploy multiple components in sequence', async () => {
+      packageStub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
+
+      const requestStub = sinon.stub();
+      requestStub.resolves({ platformComputeId: 'pc1', buildId: 'b1', sourceBlobSize: 100, uploadedAt: 'now' });
+
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('App1', '/mock/app1'), createComputeComponent('App2', '/mock/app2')],
+      });
+
+      const result = await transport.beforeDeploy(context);
+
+      expect(packageStub.calledTwice).to.be.true;
+      expect(requestStub.calledTwice).to.be.true;
+      expect(result.fileResponses).to.have.lengthOf(2);
+      expect(result.operationResults).to.deep.equal([
+        { transportLabel: 'Elastic Compute', operation: 'Upload App1', status: 'Succeeded' },
+        { transportLabel: 'Elastic Compute', operation: 'Upload App2', status: 'Succeeded' },
+      ]);
+    });
+
+    it('should process all components and throw aggregate error when one fails', async () => {
+      packageStub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
+
+      const requestStub = sinon.stub();
+      requestStub
+        .onFirstCall()
+        .resolves({ platformComputeId: 'pc1', buildId: 'b1', sourceBlobSize: 100, uploadedAt: 'now' });
+      requestStub.onSecondCall().rejects(new Error('500 server error'));
+
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('App1', '/mock/app1'), createComputeComponent('App2', '/mock/app2')],
+      });
+
+      try {
+        await transport.beforeDeploy(context);
+        expect.fail('should have thrown');
+      } catch (err) {
+        const sfErr = err as SfError;
+        expect(sfErr.message).to.equal("Elastic Compute upload failed for 'App2': 500 server error");
+        // partial results attached to error.data
+        const responses = sfErr.data as FileResponse[];
+        expect(responses).to.have.lengthOf(2);
+        expect(responses[0]).to.include({ fullName: 'App1', state: 'Changed' });
+        expect(responses[1]).to.include({ fullName: 'App2', state: 'Failed' });
+      }
+    });
+
+    it('should throw with error details when single component fails', async () => {
+      packageStub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
+
+      const requestStub = sinon.stub();
+      requestStub.rejects(new Error('500 server error'));
+
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('MyApp', '/mock/app')],
+      });
+
+      try {
+        await transport.beforeDeploy(context);
+        expect.fail('should have thrown');
+      } catch (err) {
+        // context is added once: no repeated "Elastic Compute upload failed" prefix around the server message
+        expect((err as Error).message).to.equal("Elastic Compute upload failed for 'MyApp': 500 server error");
+      }
+    });
+
+    it('should list every failed component once in the aggregate message', async () => {
+      packageStub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
+
+      const requestStub = sinon.stub();
+      requestStub.onFirstCall().rejects(new Error('boom 1'));
+      requestStub.onSecondCall().rejects(new Error('boom 2'));
+
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('App1', '/mock/app1'), createComputeComponent('App2', '/mock/app2')],
+      });
+
+      try {
+        await transport.beforeDeploy(context);
+        expect.fail('should have thrown');
+      } catch (err) {
+        expect((err as Error).message).to.equal("Elastic Compute upload failed for 'App1': boom 1; 'App2': boom 2");
+        const responses = (err as SfError).data as FileResponse[];
+        expect((responses[0] as { error: string }).error).to.equal('boom 1');
+      }
+    });
+  });
+
+  describe('retrieve', () => {
+    it('rejects an oversized response before converting the binary string to a Buffer', async () => {
+      const request = sinon.stub().resolves('x'.repeat(40 * 1024 * 1024 + 1));
+      const unpack = sinon.spy(computeSourceBundle, 'unpackComputeBundle');
+      try {
+        const context = createMockContext({
+          connection: { version: '68.0', request } as unknown as Connection,
+          components: [createComputeComponent('MyApp', '/mock/app')],
+        });
+        try {
+          await transport.afterRetrieve(context);
+          expect.fail('should reject response');
+        } catch (err) {
+          expect((err as Error).message).to.include('compressed size limit');
+          expect(unpack.called).to.be.false;
+        }
+      } finally {
+        unpack.restore();
+      }
+    });
+
+    it('routes manifest-only members to their associated package output directories', async () => {
+      const unpack = sinon.stub(computeSourceBundle, 'unpackComputeBundle').resolves({ fileCount: 2 });
+      try {
+        const request = sinon.stub().resolves(Buffer.from('bundle').toString('binary'));
+        const type = registryAccess.getTypeByName('ComputeApp');
+        const context = createMockContext({
+          output: '/unpackaged',
+          packageOptions: [
+            { name: 'FirstPackage', outputDir: '/packages/first' },
+            { name: 'SecondPackage', outputDir: '/packages/second' },
+          ],
+          transportPackageNames: {
+            'ComputeApp#FirstApp': 'FirstPackage',
+            'ComputeApp#SecondApp': 'SecondPackage',
+          },
+          connection: { version: '68.0', request } as unknown as Connection,
+          components: [
+            new SourceComponent({ name: 'FirstApp', type }),
+            new SourceComponent({ name: 'SecondApp', type }),
+          ],
+        });
+
+        await transport.afterRetrieve(context);
+
+        expect(unpack.firstCall.args[1]).to.equal(join('/packages/first', 'computeApps', 'FirstApp'));
+        expect(unpack.secondCall.args[1]).to.equal(join('/packages/second', 'computeApps', 'SecondApp'));
+      } finally {
+        unpack.restore();
+      }
+    });
+
+    it('places manifest-only members under main/default when the output package has that root', async () => {
+      const unpack = sinon.stub(computeSourceBundle, 'unpackComputeBundle').resolves({ fileCount: 2 });
+      const packageDir = mkdtempSync(join(tmpdir(), 'force-app-'));
+      try {
+        mkdirSync(join(packageDir, 'main', 'default'), { recursive: true });
+        const request = sinon.stub().resolves(Buffer.from('bundle').toString('binary'));
+        const type = registryAccess.getTypeByName('ComputeApp');
+        const context = createMockContext({
+          output: packageDir,
+          connection: { version: '68.0', request } as unknown as Connection,
+          components: [new SourceComponent({ name: 'RemoteApp', type })],
+        });
+
+        const result = await transport.afterRetrieve(context);
+
+        const expected = join(packageDir, 'main', 'default', 'computeApps', 'RemoteApp');
+        expect(unpack.firstCall.args[1]).to.equal(expected);
+        expect(result.fileResponses[0].filePath).to.equal(expected);
+      } finally {
+        unpack.restore();
+        rmSync(packageDir, { recursive: true, force: true });
+      }
+    });
+
+    it('falls back to the project default package when there is no output', async () => {
+      const unpack = sinon.stub(computeSourceBundle, 'unpackComputeBundle').resolves({ fileCount: 2 });
+      const packageDir = mkdtempSync(join(tmpdir(), 'force-app-'));
+      try {
+        mkdirSync(join(packageDir, 'main', 'default'), { recursive: true });
+        const request = sinon.stub().resolves(Buffer.from('bundle').toString('binary'));
+        const type = registryAccess.getTypeByName('ComputeApp');
+        const context = createMockContext({
+          project: {
+            getPath: () => '/mock/project',
+            getDefaultPackage: () => ({ fullPath: packageDir }),
+          } as unknown as SfProject,
+          connection: { version: '68.0', request } as unknown as Connection,
+          components: [new SourceComponent({ name: 'RemoteApp', type })],
+        });
+
+        await transport.afterRetrieve(context);
+
+        expect(unpack.firstCall.args[1]).to.equal(join(packageDir, 'main', 'default', 'computeApps', 'RemoteApp'));
+      } finally {
+        unpack.restore();
+        rmSync(packageDir, { recursive: true, force: true });
+      }
+    });
+
+    it('uses explicit output for manifest-only content but preserves existing content paths', async () => {
+      const unpack = sinon.stub(computeSourceBundle, 'unpackComputeBundle').resolves({ fileCount: 2 });
+      try {
+        const request = sinon.stub().resolves(Buffer.from('bundle').toString('binary'));
+        const type = registryAccess.getTypeByName('ComputeApp');
+        const context = createMockContext({
+          output: '/custom/output',
+          connection: { version: '68.0', request } as unknown as Connection,
+          components: [
+            new SourceComponent({ name: 'RemoteApp', type }),
+            createComputeComponent('LocalApp', '/local/app'),
+          ],
+        });
+
+        const result = await transport.afterRetrieve(context);
+
+        expect(unpack.firstCall.args[1]).to.equal(join('/custom/output', 'computeApps', 'RemoteApp'));
+        expect(unpack.secondCall.args[1]).to.equal('/local/app');
+        expect(result.fileResponses.map((response) => response.filePath)).to.deep.equal([
+          join('/custom/output', 'computeApps', 'RemoteApp'),
+          '/local/app',
+        ]);
+      } finally {
+        unpack.restore();
+      }
+    });
+
+    it('downloads the latest build source as binary', async () => {
+      const unpack = sinon.stub(computeSourceBundle, 'unpackComputeBundle').resolves({ fileCount: 2 });
+      try {
+        const request = sinon.stub().resolves(Buffer.from('bundle').toString('binary'));
+        const context = createMockContext({
+          connection: { version: '68.0', request } as unknown as Connection,
+          components: [createComputeComponent('My App', '/local/app')],
+        });
+
+        await transport.afterRetrieve(context);
+
+        expect(request.calledOnce).to.be.true;
+        expect(request.firstCall.args).to.deep.equal([
+          { method: 'GET', url: '/connect/compute/My%20App/builds/latest/source' },
+          { encoding: 'binary' },
+        ]);
+      } finally {
+        unpack.restore();
+      }
+    });
+
+    it('should throw with error details on download failure', async () => {
+      const stub = sinon.stub();
+      stub.rejects(new Error('404 not found'));
+
+      const context = createMockContext({
+        connection: { version: '68.0', request: stub } as unknown as Connection,
+        components: [createComputeComponent('MyApp', '/mock/app')],
+      });
+
+      try {
+        await transport.afterRetrieve(context);
+        expect.fail('should have thrown');
+      } catch (err) {
+        const sfErr = err as SfError;
+        expect(sfErr.message).to.include('Elastic Compute download failed');
+        expect(sfErr.message).to.include('MyApp');
+        const responses = sfErr.data as FileResponse[];
+        expect(responses).to.have.lengthOf(1);
+        expect(responses[0]).to.include({ fullName: 'MyApp', state: 'Failed' });
+      }
+    });
+  });
+
+  describe('component validation', () => {
+    it('should accept components with a content path', () => {
+      const component = createComputeComponent('MyApp', '/project/force-app/computeApps/MyApp');
+      expect(component.content).to.equal('/project/force-app/computeApps/MyApp');
+    });
+
+    it('should collect failure for component with no content path', () => {
+      const type = registryAccess.getTypeByName('ComputeApp');
+      const component = new SourceComponent({ name: 'NoPath', type });
+
+      const context = createMockContext({
+        components: [component],
+      });
+
+      return transport.beforeDeploy(context).then(
+        () => expect.fail('should have thrown'),
+        (err: unknown) => {
+          const sfErr = err as SfError;
+          expect(sfErr.message).to.include('Elastic Compute upload failed');
+          expect(sfErr.message).to.include('NoPath');
+          const responses = sfErr.data as FileResponse[];
+          expect(responses).to.have.lengthOf(1);
+          expect(responses[0].state).to.equal('Failed');
+          expect((responses[0] as { error: string }).error).to.include('requires a content path');
+        }
+      );
+    });
+    it('fails before uploading when the meta xml is missing', async () => {
+      const type = registryAccess.getTypeByName('ComputeApp');
+      const component = new SourceComponent({ name: 'NoXml', type, content: '/project/computeApps/NoXml' });
+      const packageStub = sinon.stub(computeSourceBundle, 'packageComputeBundle');
+      try {
+        await transport.beforeDeploy(createMockContext({ components: [component] }));
+        expect.fail('should have thrown');
+      } catch (err) {
+        const responses = (err as SfError).data as FileResponse[];
+        expect((responses[0] as { error: string }).error).to.include('NoXml.computeApp-meta.xml');
+        expect(packageStub.called).to.be.false;
+      } finally {
+        packageStub.restore();
+      }
+    });
+  });
+
+  describe('withBuiltinTransports integration', () => {
+    it('should auto-register ComputeAppTransport in pipeline', () => {
+      const pipeline = TransportPipeline.withBuiltinTransports();
+      const component = createComputeComponent('MyApp', '/mock/app');
+      expect(pipeline.hasTransports([component])).to.be.true;
+    });
+
+    it('should not match standard types via builtin transports', () => {
+      const pipeline = TransportPipeline.withBuiltinTransports();
+      const type = registryAccess.getTypeByName('ApexClass');
+      const component = new SourceComponent({ name: 'MyClass', type });
+      expect(pipeline.hasTransports([component])).to.be.false;
+    });
+  });
+});

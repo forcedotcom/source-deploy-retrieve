@@ -161,7 +161,8 @@ export type MetadataType = {
       | 'bundle'
       | 'default'
       | 'partiallyDecomposed'
-      | 'uiBundles';
+      | 'uiBundles'
+      | 'computeApp';
     transformer?:
       | 'decomposed'
       | 'staticResource'
@@ -171,11 +172,17 @@ export type MetadataType = {
       | 'decomposedPermissionSet'
       | 'decomposeExternalServiceRegistration'
       | 'uiBundle'
-      | 'profile';
+      | 'profile'
+      | 'computeApp';
     decomposition?: 'topLevel' | 'folderPerType';
     recomposition?: 'startEmpty';
+    transport?: TransportName;
   };
 };
+
+export const transportNames = ['computeApp'] as const;
+
+export type TransportName = (typeof transportNames)[number];
 
 /**
  * Mapping of metadata type ids -> Metadata type definitions.

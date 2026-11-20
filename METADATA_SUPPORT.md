@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v68 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 819/992 supported metadata types.
+Currently, there are 822/998 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -221,6 +221,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | ConsentPreferenceFormDef                     | ❌      | Not supported, but support could be added (but not for tracking) |
 | ConsentTemplate                              | ❌      | Not supported, but support could be added                        |
 | ConstraintOptDef                             | ❌      | Not supported, but support could be added                        |
+| ContactCenterCommLineRqst                    | ❌      | Not supported, but support could be added                        |
 | ContentAsset                                 | ✅      |                                                                  |
 | ContentSettings                              | ✅      |                                                                  |
 | ContentTypeBundle                            | ✅      |                                                                  |
@@ -327,7 +328,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | DiscoveryGoal                                | ✅      |                                                                  |
 | DiscoverySettings                            | ✅      |                                                                  |
 | DiscoveryStory                               | ✅      |                                                                  |
-| DocProcDefinition                            | ❌      | Not supported, but support could be added                        |
+| DocProcDefinition                            | ✅      |                                                                  |
 | Document                                     | ✅      |                                                                  |
 | DocumentCategory                             | ✅      |                                                                  |
 | DocumentCategoryDocumentType                 | ✅      |                                                                  |
@@ -359,6 +360,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | EinsteinDocumentCaptureSettings              | ✅      |                                                                  |
 | EinsteinGPTSalesEmailsSettings               | ✅      |                                                                  |
 | EinsteinGptSettings                          | ✅      |                                                                  |
+| ElasticComputeSettings                       | ✅      |                                                                  |
 | EmailAdministrationSettings                  | ✅      |                                                                  |
 | EmailAuthorizationSettings                   | ✅      |                                                                  |
 | EmailFolder                                  | ✅      |                                                                  |
@@ -447,7 +449,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | FileUploadAndDownloadSecuritySettings        | ✅      |                                                                  |
 | FilesConnectSettings                         | ✅      |                                                                  |
 | FinancialAppUiConfig                         | ❌      | Not supported, but support could be added                        |
-| FinancialClientComponentConfig               | ❌      | Not supported, but support could be added                        |
+| FinancialCustomerComponentConfig             | ❌      | Not supported, but support could be added                        |
 | FinancialEvaluationDef                       | ❌      | Not supported, but support could be added                        |
 | FinancialPortfolioUiConfig                   | ❌      | Not supported, but support could be added                        |
 | FlexHierConfig                               | ❌      | Not supported, but support could be added (but not for tracking) |
@@ -475,6 +477,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | GRCIntelligenceUddSettings                   | ✅      |                                                                  |
 | GatewayProviderPaymentMethodType             | ✅      |                                                                  |
 | GenAiFunction                                | ✅      |                                                                  |
+| GenAiPlannerBundle                           | ✅      |                                                                  |
 | GenAiPlugin                                  | ✅      |                                                                  |
 | GenAiPromptTemplate                          | ✅      |                                                                  |
 | GenAiPromptTemplateActv                      | ✅      |                                                                  |
@@ -730,6 +733,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | PlatformWebIdeSettings                       | ✅      |                                                                  |
 | PolicyRuleDefinition                         | ✅      |                                                                  |
 | PolicyRuleDefinitionSet                      | ✅      |                                                                  |
+| PolicyRulePlaceholder                        | ❌      | Not supported, but support could be added                        |
 | PortalDelegablePermissionSet                 | ✅      |                                                                  |
 | PortalsSettings                              | ✅      |                                                                  |
 | PostTemplate                                 | ✅      |                                                                  |
@@ -740,6 +744,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | PricingRecipe                                | ✅      |                                                                  |
 | PrivacyAgentSettings                         | ✅      |                                                                  |
 | PrivacyOrgConfig                             | ❌      | Not supported, but support could be added                        |
+| PrivacyPolicyDefinition                      | ❌      | Not supported, but support could be added (but not for tracking) |
 | PrivacySettings                              | ✅      |                                                                  |
 | PrmCoreSettings                              | ✅      |                                                                  |
 | ProcedureOutputResolution                    | ❌      | Not supported, but support could be added (but not for tracking) |
@@ -825,6 +830,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | SandboxSettings                              | ✅      |                                                                  |
 | SceGlobalModelOptOutSettings                 | ✅      |                                                                  |
 | SchedulingObjective                          | ✅      |                                                                  |
+| SchedulingPolicy                             | ❌      | Not supported, but support could be added                        |
 | SchedulingRecipeSettings                     | ✅      |                                                                  |
 | SchedulingRule                               | ✅      |                                                                  |
 | SchemaSettings                               | ✅      |                                                                  |
@@ -1044,7 +1050,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - Form
 - FormSection
 - GenAiPlanner
-- GenAiPlannerBundle
 - GlobalPicklist
 - InsightType
 - IntegrationHubSettings
@@ -1077,3 +1082,4 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - WorkSkillRoutingAttribute
 - XOrgHub
 - RuleLibraryDefinition
+- ExperienceContainer

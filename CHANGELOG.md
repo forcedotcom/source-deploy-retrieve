@@ -1,3 +1,15 @@
+# [13.13.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.12.1...13.13.0) (2026-11-17)
+
+### Features
+
+- @W-24923093: add DocProcDefinition metadata type to registry ([#1872](https://github.com/forcedotcom/source-deploy-retrieve/issues/1872)) ([b13e11a](https://github.com/forcedotcom/source-deploy-retrieve/commit/b13e11a389cf3d29f2647d498c830321333a8f82))
+
+## [13.12.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.12.0...13.12.1) (2026-11-12)
+
+### Bug Fixes
+
+- **deps:** bump zod from 4.3.5 to 4.6.7 ([#1858](https://github.com/forcedotcom/source-deploy-retrieve/issues/1858)) ([1feab46](https://github.com/forcedotcom/source-deploy-retrieve/commit/1feab464074bdf0d03184ec541eea9d821c81b31))
+
 # [13.12.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.11.1...13.12.0) (2026-11-06)
 
 ### Features

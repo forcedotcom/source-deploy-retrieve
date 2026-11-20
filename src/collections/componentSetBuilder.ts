@@ -32,6 +32,7 @@ import {
   parseBotVersionFullName,
 } from '../resolve/pseudoTypes/agentResolver';
 import { DestructiveChangesType, FromConnectionOptions } from './types';
+import { expandD360ComponentSet, resolveDataspaceQualifiedComponents } from './d360Dependencies';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -81,6 +82,11 @@ export type ComponentSetOptions = {
   org?: OrgOption;
   /** important for constructing registries based on your project.  Uses CWD by default */
   projectDir?: string;
+  /**
+   * Build the set for a deploy. Data Cloud components then bring the components that deploy together
+   * with them, so the set matches what the deploy sends.
+   */
+  forDeploy?: boolean;
 };
 
 type MetadataMap = Map<string, string[]>;
@@ -159,6 +165,8 @@ export class ComponentSetBuilder {
         destructivePost: manifest.destructiveChangesPost,
         registry,
       });
+      // Enable Data Cloud components in a manifest: resolve them the same way the metadata entries below do.
+      resolveDataspaceQualifiedComponents(componentSet, manifest.directoryPaths, registry);
     }
 
     // Resolve metadata entries with source in package directories, unless we are building a ComponentSet
@@ -230,6 +238,7 @@ export class ComponentSetBuilder {
       }
 
       resolvedComponents.toArray().map(addToComponentSet(componentSet));
+      resolveDataspaceQualifiedComponents(componentSet, directoryPaths, registry);
     }
 
     // Resolve metadata entries with an org connection
@@ -248,6 +257,9 @@ export class ComponentSetBuilder {
     componentSet.apiVersion ??= options.apiversion;
     componentSet.sourceApiVersion ??= options.sourceapiversion;
     componentSet.projectDirectory = options.projectDir;
+    if (options.forDeploy) {
+      expandD360ComponentSet(componentSet, registry);
+    }
 
     logComponents(componentSet);
     return componentSet;

@@ -49,6 +49,7 @@ import {
 } from './types';
 import { LazyCollection } from './lazyCollection';
 import { DecodeableMap } from './decodeableMap';
+import { expandD360ComponentSet } from './d360Dependencies';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -107,6 +108,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   };
   // used to store components meant for a "constructive" (not destructive) manifest
   private manifestComponents = new DecodeableMap<string, DecodeableMap<string, SourceComponent>>();
+  // components whose files are sent in the payload but that get no manifest entry of their own
+  private withoutManifestEntry = new Set<string>();
 
   private destructiveChangesType = DestructiveChangesType.POST;
 
@@ -384,6 +387,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       throw new SfError(messages.getMessage('error_no_source_to_deploy'), 'ComponentSetError');
     }
 
+    // Data Cloud components deploy together with their peers. A set built for a deploy has them already,
+    // and expanding it again adds nothing; this covers sets built any other way.
+    expandD360ComponentSet(this, this.registry);
     this.forDeploy = true;
 
     if (
@@ -460,6 +466,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const typeMap = new Map<string, Set<string>>();
 
     [...components.entries()].map(([key, cmpMap]) => {
+      if (this.withoutManifestEntry.has(key)) return;
       const [typeId, fullName] = splitOnFirstDelimiter(key);
       const type = this.registry.getTypeByName(typeId);
 
@@ -549,6 +556,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
   public add(component: ComponentLike, deletionType?: DestructiveChangesType): void {
     const key = simpleKey(component);
+    // Adding a component the usual way gives it a manifest entry, even if it was added without one before.
+    this.withoutManifestEntry.delete(key);
     if (!this.components.has(key)) {
       this.components.set(key, new DecodeableMap<string, SourceComponent>());
     }
@@ -593,6 +602,28 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       }
       this.manifestComponents.get(key)?.set(srcKey, component);
     }
+  }
+
+  /**
+   * Add a component whose files go into the deploy payload without giving it its own entry in the
+   * manifest. Use this for components the Metadata API deploys as part of another component in the set.
+   *
+   * @param component Component to add
+   */
+  public addWithoutManifestEntry(component: SourceComponent): void {
+    this.add(component);
+    this.withoutManifestEntry.add(simpleKey(component));
+  }
+
+  /**
+   * Tests whether a component was added with {@link addWithoutManifestEntry} and has no manifest entry
+   * of its own.
+   *
+   * @param component Component to test
+   * @returns `true` if the component is in the set without its own manifest entry
+   */
+  public isWithoutManifestEntry(component: ComponentLike): boolean {
+    return this.withoutManifestEntry.has(simpleKey(component));
   }
 
   /**
@@ -833,7 +864,7 @@ const addToTypeMap = ({
   fullName: string;
   destructiveType?: DestructiveChangesType;
 }): void => {
-  if (type.isAddressable === false) return;
+  if (type.isAddressable === false || type.excludeFromManifest) return;
   if (fullName === ComponentSet.WILDCARD && !type.supportsWildcardAndName && !destructiveType) {
     // if the type doesn't support mixed wildcards and specific names, overwrite the names to be a wildcard
     typeMap.set(type.name, new Set([fullName]));

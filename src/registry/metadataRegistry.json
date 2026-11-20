@@ -51,7 +51,23 @@
     "botBlocks": "botblock",
     "botTemplates": "bottemplate",
     "bots": "bot",
+    "calculatedInsights": "calculatedinsight",
     "contentTypes": "contenttypebundle",
+    "dataModelObjects": "datamodelobject",
+    "dataModelObjectMappings": "datamodelobjectmapping",
+    "dataLakeObjects": "datalakeobject",
+    "dataspaceMembers": "dataspacemember",
+    "secondaryIndexes": "secondaryindex",
+    "dataStreamBundles": "datastreambundle",
+    "dataConnections": "dataconnection",
+    "dataTransforms": "datatransform",
+    "activationTargets": "activationtarget",
+    "dataActions": "dataaction",
+    "dataActionTargets": "dataactiontarget",
+    "dataGraphs": "datagraph",
+    "identityResolutions": "identityresolution",
+    "marketSegments": "marketsegment",
+    "marketSegmentActivations": "marketsegmentactivation",
     "documents": "document",
     "emailservices": "emailservicesfunction",
     "experiencePropertyTypeBundles": "experiencepropertytypebundle",
@@ -344,6 +360,7 @@
     "integrationProviderDefinition": "integrationproviderdef",
     "internalDataConnector": "internaldataconnector",
     "internalOrganization": "internalorganization",
+    "json": "calculatedinsight",
     "keywords": "keywordlist",
     "labels": "customlabels",
     "layout": "layout",
@@ -394,7 +411,6 @@
     "navigationMenu": "navigationmenu",
     "network": "network",
     "networkBranding": "networkbranding",
-    "notificationDefinition": "ntfcndefinition",
     "notifications": "apexemailnotifications",
     "notiftype": "customnotificationtype",
     "oauthcustomscope": "oauthcustomscope",
@@ -609,6 +625,7 @@
     "cnfgMgmtRelationTypeDef": "cnfgmgmtrelationtypedef",
     "meetingPlaybookDefinition": "meetingplaybookdefinition",
     "idpConfiguration": "idpconfiguration",
+    "notificationDefinition": "ntfcndefinition",
     "ecaAttest": "extlclntappattestsettings",
     "ecaAttestPlcy": "extlclntappattestconfigurablepolicies",
     "genOpPlanEligibilityConfig": "genopplaneligibilityconfig",
@@ -3573,14 +3590,6 @@
       "strictDirectoryName": false,
       "suffix": "config"
     },
-    "ntfcndefinition": {
-      "directoryName": "notificationDefinitions",
-      "id": "ntfcndefinition",
-      "inFolder": false,
-      "name": "NtfcnDefinition",
-      "strictDirectoryName": false,
-      "suffix": "notificationDefinition"
-    },
     "oauthcustomscope": {
       "directoryName": "oauthcustomscopes",
       "id": "oauthcustomscope",
@@ -3929,12 +3938,12 @@
       "id": "profile",
       "inFolder": false,
       "name": "Profile",
+      "strictDirectoryName": false,
+      "suffix": "profile",
       "strategies": {
         "adapter": "default",
         "transformer": "profile"
-      },
-      "strictDirectoryName": false,
-      "suffix": "profile"
+      }
     },
     "profilepasswordpolicy": {
       "directoryName": "profilePasswordPolicies",
@@ -5443,6 +5452,209 @@
         "adapter": "bundle"
       },
       "supportsPartialDelete": true
+    },
+    "calculatedinsight": {
+      "id": "calculatedinsight",
+      "name": "CalculatedInsight",
+      "suffix": "json",
+      "directoryName": "calculatedInsights",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "datamodelobject": {
+      "id": "datamodelobject",
+      "name": "DataModelObject",
+      "suffix": "json",
+      "directoryName": "dataModelObjects",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "datalakeobject": {
+      "id": "datalakeobject",
+      "name": "DataLakeObject",
+      "suffix": "json",
+      "directoryName": "dataLakeObjects",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "dataspacemember": {
+      "id": "dataspacemember",
+      "name": "DataspaceMember",
+      "suffix": "json",
+      "directoryName": "dataspaceMembers",
+      "inFolder": false,
+      "excludeFromManifest": true,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "datamodelobjectmapping": {
+      "id": "datamodelobjectmapping",
+      "name": "DataModelObjectMapping",
+      "suffix": "json",
+      "directoryName": "dataModelObjectMappings",
+      "inFolder": false,
+      "excludeFromManifest": true,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "secondaryindex": {
+      "id": "secondaryindex",
+      "name": "SecondaryIndex",
+      "suffix": "json",
+      "directoryName": "secondaryIndexes",
+      "inFolder": false,
+      "excludeFromManifest": true,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "datastreambundle": {
+      "id": "datastreambundle",
+      "name": "DataStreamBundle",
+      "suffix": "json",
+      "directoryName": "dataStreamBundles",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "dataconnection": {
+      "id": "dataconnection",
+      "name": "DataConnection",
+      "suffix": "json",
+      "directoryName": "dataConnections",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "datatransform": {
+      "id": "datatransform",
+      "name": "DataTransform",
+      "suffix": "json",
+      "directoryName": "dataTransforms",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "activationtarget": {
+      "id": "activationtarget",
+      "name": "ActivationTarget",
+      "suffix": "json",
+      "directoryName": "activationTargets",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "dataaction": {
+      "id": "dataaction",
+      "name": "DataAction",
+      "suffix": "json",
+      "directoryName": "dataActions",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "dataactiontarget": {
+      "id": "dataactiontarget",
+      "name": "DataActionTarget",
+      "suffix": "json",
+      "directoryName": "dataActionTargets",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "datagraph": {
+      "id": "datagraph",
+      "name": "DataGraph",
+      "suffix": "json",
+      "directoryName": "dataGraphs",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "identityresolution": {
+      "id": "identityresolution",
+      "name": "IdentityResolution",
+      "suffix": "json",
+      "directoryName": "identityResolutions",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "marketsegment": {
+      "id": "marketsegment",
+      "name": "MarketSegment",
+      "suffix": "json",
+      "directoryName": "marketSegments",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "marketsegmentactivation": {
+      "id": "marketsegmentactivation",
+      "name": "MarketSegmentActivation",
+      "suffix": "json",
+      "directoryName": "marketSegmentActivations",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "d360",
+        "transformer": "d360"
+      }
+    },
+    "ntfcndefinition": {
+      "directoryName": "notificationDefinitions",
+      "id": "ntfcndefinition",
+      "inFolder": false,
+      "name": "NtfcnDefinition",
+      "strictDirectoryName": false,
+      "suffix": "notificationDefinition"
     },
     "extlclntappattestsettings": {
       "id": "extlclntappattestsettings",

@@ -35,6 +35,8 @@ export type TransportContext = {
   packageOptions?: PackageOptions;
   /** Package name for each manifest-only transport member (`type#fullName`). */
   transportPackageNames?: Record<string, string>;
+  /** Validate only: transports run their checks but do not upload or change anything. */
+  checkOnly?: boolean;
 };
 
 export type TransportResult = {

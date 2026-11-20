@@ -20,7 +20,7 @@ import { join } from 'node:path';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { Connection, SfError, SfProject } from '@salesforce/core';
-import { FileResponse, RegistryAccess, SourceComponent } from '../../../src';
+import { ComponentStatus, FileResponse, RegistryAccess, SourceComponent } from '../../../src';
 import { ComputeAppTransport } from '../../../src/client/transports/computeAppTransport';
 import { TransportPipeline } from '../../../src/client/transports/transportPipeline';
 import { TransportContext } from '../../../src/client/transports/types';
@@ -97,6 +97,10 @@ describe('ComputeAppTransport', () => {
   });
 
   describe('API version compatibility', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
     it('should upload using a lower configured connection version', async () => {
       const stub = sinon.stub(computeSourceBundle, 'packageComputeBundle');
       stub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
@@ -112,8 +116,105 @@ describe('ComputeAppTransport', () => {
       const result = await transport.beforeDeploy(context);
       expect(result.fileResponses).to.have.lengthOf(1);
       expect(requestStub.calledOnce).to.be.true;
+    });
+  });
 
+  describe('multiple apps', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('uploads nothing when any app fails its checks', async () => {
+      sinon
+        .stub(computeSourceBundle, 'packageComputeBundle')
+        .onFirstCall()
+        .resolves({ buffer: Buffer.from('fake'), fileCount: 1 })
+        .onSecondCall()
+        .rejects(new Error('no Procfile'));
+      const requestStub = sinon.stub();
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('App1', '/mock/app1'), createComputeComponent('App2', '/mock/app2')],
+      });
+
+      try {
+        await transport.beforeDeploy(context);
+        expect.fail('should reject when one app fails its checks');
+      } catch (err) {
+        expect((err as Error).message).to.include("'App2': no Procfile");
+      }
+      expect(requestStub.called).to.be.false;
+    });
+
+    it('says check failed, not upload failed, on a dry run', async () => {
+      sinon.stub(computeSourceBundle, 'packageComputeBundle').rejects(new Error('no Procfile'));
+      const context = createMockContext({
+        connection: { version: '68.0', request: sinon.stub() } as unknown as Connection,
+        components: [createComputeComponent('MyApp', '/mock/app')],
+        checkOnly: true,
+      });
+
+      try {
+        await transport.beforeDeploy(context);
+        expect.fail('should reject');
+      } catch (err) {
+        expect((err as Error).message).to.include('Elastic Compute check failed');
+        expect((err as { name: string }).name).to.equal('ComputeAppCheckError');
+      }
+    });
+
+    it('explains on a dry run that the org checks the last uploaded source', async () => {
+      sinon.stub(computeSourceBundle, 'packageComputeBundle').resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
+      const context = createMockContext({
+        connection: { version: '68.0', request: sinon.stub() } as unknown as Connection,
+        components: [createComputeComponent('MyApp', '/mock/app')],
+        checkOnly: true,
+      });
+
+      const result = await transport.beforeDeploy(context);
+
+      expect(result.operationResults?.[0].message).to.include('last uploaded source');
+    });
+  });
+
+  describe('check only', () => {
+    it('packages the app with the project root but does not upload', async () => {
+      const stub = sinon.stub(computeSourceBundle, 'packageComputeBundle');
+      stub.resolves({ buffer: Buffer.from('fake'), fileCount: 1 });
+      const requestStub = sinon.stub();
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('MyApp', '/mock/app')],
+        checkOnly: true,
+      });
+
+      const result = await transport.beforeDeploy(context);
+
+      expect(stub.calledOnceWithExactly('/mock/app', 'MyApp', '/mock/project')).to.be.true;
+      expect(requestStub.called).to.be.false;
+      expect(result.fileResponses).to.have.lengthOf(1);
+      expect(result.fileResponses[0].state).to.equal(ComponentStatus.Changed);
       stub.restore();
+    });
+
+    it('fails on a check error without uploading', async () => {
+      const stub = sinon.stub(computeSourceBundle, 'packageComputeBundle').rejects(new Error('no Procfile'));
+      const requestStub = sinon.stub();
+      const context = createMockContext({
+        connection: { version: '68.0', request: requestStub } as unknown as Connection,
+        components: [createComputeComponent('MyApp', '/mock/app')],
+        checkOnly: true,
+      });
+
+      try {
+        await transport.beforeDeploy(context);
+        expect.fail('should reject when the checks fail');
+      } catch (err) {
+        expect((err as Error).message).to.include('no Procfile');
+      } finally {
+        stub.restore();
+      }
+      expect(requestStub.called).to.be.false;
     });
   });
 

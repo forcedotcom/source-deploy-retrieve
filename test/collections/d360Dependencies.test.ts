@@ -17,10 +17,12 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect } from 'chai';
+import { createSandbox } from 'sinon';
 import {
   ComponentSet,
   ComponentSetBuilder,
   DestructiveChangesType,
+  MetadataApiDeploy,
   RegistryAccess,
   SourceComponent,
   VirtualTreeContainer,
@@ -463,5 +465,37 @@ describe('ComponentSetBuilder.build for a deploy', () => {
     const set = await ComponentSetBuilder.build({ sourcepath: [dloDir] });
 
     expect(members(set)).to.deep.equal(['DataLakeObject:myDlo__dll']);
+  });
+});
+
+describe('ComponentSet.deploy with Data Cloud components', () => {
+  const registry = new RegistryAccess();
+  const sandbox = createSandbox();
+  const tree = new VirtualTreeContainer([
+    { dirPath: D360_DIR, children: ['dataLakeObjects', 'dataspace'] },
+    {
+      dirPath: join(D360_DIR, 'dataLakeObjects'),
+      children: component('DataLakeObject', 'myDlo__dll', undefined, [
+        { componentType: 'DataModelObject', name: 'myDmo__dlm', dataspaceName: 'default' },
+      ]),
+    },
+    { dirPath: join(D360_DIR, 'dataspace'), children: ['default'] },
+    { dirPath: join(D360_DIR, 'dataspace', 'default'), children: ['dataModelObjects'] },
+    {
+      dirPath: join(D360_DIR, 'dataspace', 'default', 'dataModelObjects'),
+      children: component('DataModelObject', 'myDmo__dlm', 'default'),
+    },
+  ]);
+
+  beforeEach(() => sandbox.stub(MetadataApiDeploy.prototype, 'start').resolves());
+  afterEach(() => sandbox.restore());
+
+  it('should deploy the components that deploy together with the requested ones', async () => {
+    const set = ComponentSet.fromSource({ fsPaths: [join(D360_DIR, 'dataLakeObjects')], tree, registry });
+
+    await set.deploy({ usernameOrConnection: 'test@example.com' });
+
+    expect(members(set)).to.deep.equal(['DataLakeObject:myDlo__dll', 'DataModelObject:default.myDmo__dlm']);
+    expect((await set.getObject()).Package.types).to.deep.equal([{ name: 'DataLakeObject', members: ['myDlo__dll'] }]);
   });
 });

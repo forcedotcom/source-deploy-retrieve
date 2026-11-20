@@ -49,6 +49,7 @@ import {
 } from './types';
 import { LazyCollection } from './lazyCollection';
 import { DecodeableMap } from './decodeableMap';
+import { expandD360ComponentSet } from './d360Dependencies';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -386,6 +387,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       throw new SfError(messages.getMessage('error_no_source_to_deploy'), 'ComponentSetError');
     }
 
+    // Data Cloud components deploy together with their peers. A set built for a deploy has them already,
+    // and expanding it again adds nothing; this covers sets built any other way.
+    expandD360ComponentSet(this, this.registry);
     this.forDeploy = true;
 
     if (

@@ -25,7 +25,7 @@
     "node": ">=22.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^9.4.4",
+    "@salesforce/core": "^9.6.0",
     "@salesforce/kit": "^4.0.9",
     "@salesforce/ts-types": "^3.2.4",
     "@salesforce/types": "^1.9.0",

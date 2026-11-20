@@ -17,7 +17,14 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect } from 'chai';
-import { ComponentSet, ComponentSetBuilder, RegistryAccess, VirtualTreeContainer } from '../../src';
+import {
+  ComponentSet,
+  ComponentSetBuilder,
+  DestructiveChangesType,
+  RegistryAccess,
+  SourceComponent,
+  VirtualTreeContainer,
+} from '../../src';
 import { expandD360ComponentSet, resolveDataspaceQualifiedComponents } from '../../src/collections/d360Dependencies';
 
 type Ref = { componentType: string; name: string; dataspaceName?: string };
@@ -87,7 +94,7 @@ describe('expandD360ComponentSet', () => {
     const [type, fullName] = member.split(':');
     const requested = new ComponentSet([], registry);
     requested.add(full.getSourceComponents({ fullName, type: registry.getTypeByName(type) }).first()!);
-    return expandD360ComponentSet(full, requested, registry);
+    return expandD360ComponentSet(full, requested);
   };
 
   // Mirrors what the builder produces for `DataLakeObject:<dataspace>.myDlo__dll`: the requested name,
@@ -97,7 +104,7 @@ describe('expandD360ComponentSet', () => {
     const requested = new ComponentSet([], registry);
     dataspaces.forEach((ds) => requested.add({ type, fullName: `${ds}.myDlo__dll` }));
     requested.addWithoutManifestEntry(full.getSourceComponents({ type, fullName: 'myDlo__dll' }).first()!);
-    return expandD360ComponentSet(full, requested, registry);
+    return expandD360ComponentSet(full, requested);
   };
 
   it('should tell apart components of different types that share a name', () => {
@@ -144,7 +151,7 @@ describe('expandD360ComponentSet', () => {
     requested.add({ type, fullName: 'default.sharedDlo__dll' });
     requested.addWithoutManifestEntry(full.getSourceComponents({ type, fullName: 'sharedDlo__dll' }).first()!);
 
-    expect(members(expandD360ComponentSet(full, requested, registry))).to.deep.equal([
+    expect(members(expandD360ComponentSet(full, requested))).to.deep.equal([
       'DataLakeObject:sharedDlo__dll',
       'DataModelObject:default.myDmo__dlm',
     ]);
@@ -156,7 +163,7 @@ describe('expandD360ComponentSet', () => {
     requested.add({ type, fullName: 'default.sharedDlo__dll' });
     requested.addWithoutManifestEntry(full.getSourceComponents({ type, fullName: 'sharedDlo__dll' }).first()!);
 
-    const dlo = expandD360ComponentSet(full, requested, registry)
+    const dlo = expandD360ComponentSet(full, requested)
       .getSourceComponents({ type, fullName: 'sharedDlo__dll' })
       .first()!;
     const sidecar = dlo.content!.replace(/\.json$/, '.meta.json');
@@ -178,9 +185,7 @@ describe('expandD360ComponentSet', () => {
     const requested = new ComponentSet([original], registry);
 
     expect(
-      expandD360ComponentSet(full, requested, registry)
-        .getSourceComponents({ type, fullName: 'sharedDlo__dll' })
-        .first()
+      expandD360ComponentSet(full, requested).getSourceComponents({ type, fullName: 'sharedDlo__dll' }).first()
     ).to.equal(original);
   });
 
@@ -192,6 +197,65 @@ describe('expandD360ComponentSet', () => {
     expect((await expandInDataspaces('default').getObject()).Package.types).to.deep.equal([
       { name: 'DataLakeObject', members: ['default.myDlo__dll'] },
     ]);
+  });
+
+  describe('the set it is given', () => {
+    // Resolved again for each test, since marking a component for delete changes the component itself.
+    const resolveOne = (type: string, fullName: string): SourceComponent =>
+      ComponentSet.fromSource({ fsPaths: ['force-app'], tree, registry })
+        .getSourceComponents({ type: registry.getTypeByName(type), fullName })
+        .first()!;
+    const dlo = (): SourceComponent => resolveOne('DataLakeObject', 'myDlo__dll');
+    const dmo = (dataspace: string): SourceComponent => resolveOne('DataModelObject', `${dataspace}.myDmo__dlm`);
+
+    it('should add the peers to it and keep its versions and other members', async () => {
+      const requested = new ComponentSet([dlo(), { type: 'ApexClass', fullName: '*' }], registry);
+      requested.apiVersion = '68.0';
+      requested.sourceApiVersion = '67.0';
+
+      const expanded = expandD360ComponentSet(full, requested);
+
+      expect(expanded).to.equal(requested);
+      expect(expanded.apiVersion).to.equal('68.0');
+      expect(expanded.sourceApiVersion).to.equal('67.0');
+      expect(members(expanded)).to.have.length(5);
+      expect((await expanded.getObject()).Package).to.deep.include({
+        types: [
+          { name: 'ApexClass', members: ['*'] },
+          { name: 'DataLakeObject', members: ['myDlo__dll'] },
+        ],
+        version: '67.0',
+      });
+    });
+
+    it('should keep a component marked for delete as a delete, without its peers', async () => {
+      const requested = new ComponentSet([], registry);
+      requested.add(dlo(), DestructiveChangesType.POST);
+
+      const expanded = expandD360ComponentSet(full, requested);
+
+      expect(members(expanded)).to.deep.equal(['DataLakeObject:myDlo__dll']);
+      expect((await expanded.getObject(DestructiveChangesType.POST)).Package.types).to.deep.equal([
+        { name: 'DataLakeObject', members: ['myDlo__dll'] },
+      ]);
+      expect((await expanded.getObject()).Package.types).to.be.empty;
+    });
+
+    it('should leave a peer marked for delete as a delete', () => {
+      const requested = new ComponentSet([dlo()], registry);
+      requested.add(dmo('other'), DestructiveChangesType.POST);
+
+      const expanded = expandD360ComponentSet(full, requested);
+
+      expect(
+        expanded
+          .getSourceComponents()
+          .toArray()
+          .filter((c) => c.isMarkedForDelete())
+          .map((c) => c.fullName)
+      ).to.deep.equal(['other.myDmo__dlm']);
+      expect(members(expanded)).to.include('DataModelObject:default.myDmo__dlm');
+    });
   });
 
   it('should pull the Data Lake Object of a data stream bundle and its closure', () => {
@@ -213,7 +277,7 @@ describe('expandD360ComponentSet', () => {
     const type = registry.getTypeByName('DataStreamBundle');
     const requested = new ComponentSet([{ type, fullName: 'default.myStream' }], registry);
     requested.addWithoutManifestEntry(bundles.getSourceComponents({ type, fullName: 'myStream' }).first()!);
-    expect(members(expandD360ComponentSet(project, requested, registry))).to.deep.equal([
+    expect(members(expandD360ComponentSet(project, requested))).to.deep.equal([
       'DataLakeObject:myDlo__dll',
       'DataModelObject:default.myDmo__dlm',
       'DataStreamBundle:myStream',
@@ -242,7 +306,7 @@ describe('expandD360ComponentSet', () => {
     const type = registry.getTypeByName('DataStreamBundle');
     const requested = new ComponentSet([{ type, fullName: 'default.myStream' }], registry);
     requested.addWithoutManifestEntry(bundles.getSourceComponents({ type, fullName: 'myStream' }).first()!);
-    expect(members(expandD360ComponentSet(project, requested, registry))).to.deep.equal([
+    expect(members(expandD360ComponentSet(project, requested))).to.deep.equal([
       'DataLakeObject:myDlo__dll',
       'DataModelObject:default.myDmo__dlm',
       'DataStreamBundle:myStream',

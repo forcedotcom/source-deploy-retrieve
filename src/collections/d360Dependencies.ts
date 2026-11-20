@@ -19,11 +19,7 @@ import { SourceComponent } from '../resolve/sourceComponent';
 import { TreeContainer } from '../resolve/treeContainers';
 import { MetadataComponent } from '../resolve/types';
 import { SourcePath } from '../common/types';
-import {
-  METADATA_SIDECAR_SUFFIX,
-  parseDataspaceQualifiedName,
-  toDataspaceQualifiedName,
-} from '../resolve/adapters/d360SourceAdapter';
+import { METADATA_SIDECAR_SUFFIX, parseDataspaceQualifiedName } from '../resolve/adapters/d360SourceAdapter';
 import { ComponentSet } from './componentSet';
 
 /**
@@ -254,32 +250,29 @@ const indexCandidates = (
 };
 
 /**
- * Build the minimal deploy closure for Data Cloud components.
+ * Add the deploy closure of the Data Cloud components in a set to that set.
  *
- * The result is the requested components plus the transitive closure of their `retrieveWith` peers
- * (resolved via `retrieveWith` -> sidecar `componentType` + `componentName`), and nothing else. A peer
- * named with a dataspace is pulled from that dataspace. Otherwise a peer that exists in several
- * dataspaces is pulled from the requester's dataspace. A component outside any
- * dataspace pulls peers from the dataspaces it was requested for, or from all of them when requested
- * by its bare name. Other requested components pass through unchanged, so this is safe to call on any set.
+ * The closure is the transitive closure of the requested components' `retrieveWith` peers (resolved via
+ * `retrieveWith` -> sidecar `componentType` + `componentName`). A peer named with a dataspace is pulled
+ * from that dataspace. Otherwise a peer that exists in several dataspaces is pulled from the requester's
+ * dataspace. A component outside any dataspace pulls peers from the dataspaces it was requested for, or
+ * from all of them when requested by its bare name.
+ *
+ * The set is changed in place, so everything else about it is kept: other components, components marked
+ * for delete, wildcards, and its API versions. Components marked for delete are not walked, and a peer
+ * already in the set is left as it is.
  *
  * @param full A ComponentSet with every candidate component (the whole project); only its Data Cloud members are indexed for lookup.
- * @param requested The components the user asked to deploy.
- * @param registry Optional RegistryAccess to seed the resulting ComponentSet with (defaults to a fresh one).
- * @returns A new ComponentSet containing the requested components plus their retrieveWith closure.
- * Only the requested components get package.xml entries; the closure peers are sent as files.
+ * @param requested The components to deploy. The closure peers are added to it.
+ * @returns The same set, with the closure peers added. They are sent as files, without package.xml entries.
  */
-export const expandD360ComponentSet = (
-  full: ComponentSet,
-  requested: ComponentSet,
-  registry?: RegistryAccess
-): ComponentSet => {
+export const expandD360ComponentSet = (full: ComponentSet, requested: ComponentSet): ComponentSet => {
   const { findPeers, getDataspace } = indexCandidates(full);
+  const inSet = new Set(requested.getSourceComponents().toArray().map(memberKey));
 
-  // Members are collected first and added once the walk is done, since how a component outside every
+  // Members are collected first and written once the walk is done, since how a component outside every
   // dataspace is sent depends on all the dataspaces it was walked in.
-  const members = new Map<string, { component: SourceComponent; inManifest: boolean }>();
-  const qualifiedNames: MetadataComponent[] = [];
+  const members = new Map<string, { component: SourceComponent; inManifest: boolean; requested: boolean }>();
   const walkedIn = new Map<string, Set<string | undefined>>();
   const worklist: Array<{ component: SourceComponent; dataspace: string | undefined }> = [];
   // A component is walked once per dataspace, since it can be requested for several of them.
@@ -291,20 +284,16 @@ export const expandD360ComponentSet = (
     }
   };
 
-  // Seed with everything the user requested; non-Data Cloud members are kept as-is.
+  // Seed with the Data Cloud components to deploy.
   for (const component of requested.getSourceComponents()) {
-    if (members.has(memberKey(component))) {
+    if (!isD360(component) || component.isMarkedForDelete() || members.has(memberKey(component))) {
       continue;
     }
-    const dataspaces =
-      isD360(component) && !getDataspace(component) ? getRequestedDataspaces(requested, component) : [];
-    // Requested as `<dataspace>.<name>`: keep that name in the manifest and walk only those dataspaces.
-    members.set(memberKey(component), { component, inManifest: !dataspaces.length });
-    for (const dataspace of dataspaces) {
-      qualifiedNames.push({ type: component.type, fullName: toDataspaceQualifiedName(dataspace, component.fullName) });
-      visit(component, dataspace);
-    }
-    if (!dataspaces.length && isD360(component)) {
+    const dataspaces = getDataspace(component) ? [] : getRequestedDataspaces(requested, component);
+    // Requested as `<dataspace>.<name>`: that name is in the manifest, so walk only those dataspaces.
+    members.set(memberKey(component), { component, inManifest: !dataspaces.length, requested: true });
+    dataspaces.forEach((dataspace) => visit(component, dataspace));
+    if (!dataspaces.length) {
       visit(component, getDataspace(component));
     }
   }
@@ -314,10 +303,15 @@ export const expandD360ComponentSet = (
     const { component, dataspace } = worklist.pop()!;
     for (const ref of readSidecar(component)?.retrieveWith ?? []) {
       for (const peer of findPeers(ref, dataspace)) {
-        if (!members.has(memberKey(peer))) {
+        const key = memberKey(peer);
+        // A peer the set already has (to deploy or to delete) keeps what the caller asked for it.
+        if (inSet.has(key) && !members.has(key)) {
+          continue;
+        }
+        if (!members.has(key)) {
           // Peers travel as files only. The Metadata API deploys them as part of the requested
           // component, so package.xml lists just what the user asked for, the same as on retrieve.
-          members.set(memberKey(peer), { component: peer, inManifest: false });
+          members.set(key, { component: peer, inManifest: false, requested: false });
         }
         // A peer outside every dataspace keeps walking in the dataspace it was reached from.
         visit(peer, getDataspace(peer) ?? dataspace);
@@ -325,16 +319,18 @@ export const expandD360ComponentSet = (
     }
   }
 
-  const result = new ComponentSet([], registry);
-  for (const [key, { component, inManifest }] of members) {
+  for (const [key, { component, inManifest, requested: isRequested }] of members) {
     const sent = withSidecarFor(component, walkedIn.get(key));
+    // A requested component is already in the set; it is only replaced when its sidecar is narrowed.
+    if (isRequested && sent === component) {
+      continue;
+    }
     if (inManifest) {
-      result.add(sent);
+      requested.add(sent);
     } else {
-      result.addWithoutManifestEntry(sent);
+      requested.addWithoutManifestEntry(sent);
     }
   }
-  qualifiedNames.forEach((member) => result.add(member));
 
-  return result;
+  return requested;
 };

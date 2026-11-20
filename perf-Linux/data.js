@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794517954447,
+  "lastUpdate": 1795199558568,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -123270,6 +123270,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 7725,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "michael.malave@salesforce.com",
+            "name": "Michael Malave",
+            "username": "michaelmalave"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "396181683d1374ce0360c6f86396c9643a6afb01",
+          "message": "feat: add Procfile, project .forceignore and dry-run checks for ComputeApp deploys (#1873)\n\n* feat: check Procfile, project .forceignore and dry run for ComputeApp deploys\n\n* fix: address review feedback on ComputeApp pre-deploy checks\n\nAlways include Procfile in the bundle, check it is a file, check every app before uploading any, bound .forceignore lookup at the project root, and make dry runs say the org validates the last uploaded source.",
+          "timestamp": "2026-11-20T11:30:45-07:00",
+          "tree_id": "0595ba9031f0677bf3a7f1fabb9bfd7383197dcc",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/396181683d1374ce0360c6f86396c9643a6afb01"
+        },
+        "date": 1795199547599,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 259,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 1420,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 1554,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 2341,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 314,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 2938,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 3606,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 2999,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 512,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 5054,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 7134,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 5360,
             "unit": "ms"
           }
         ]

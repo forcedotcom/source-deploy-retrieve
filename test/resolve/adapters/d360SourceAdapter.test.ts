@@ -16,7 +16,12 @@
 import { join } from 'node:path';
 import { expect } from 'chai';
 import { ComponentSet, RegistryAccess, VirtualTreeContainer } from '../../../src';
-import { getD360RelativePath } from '../../../src/resolve/adapters/d360SourceAdapter';
+import {
+  getD360ContentPath,
+  getD360Dataspaces,
+  getD360Location,
+  getD360RelativePath,
+} from '../../../src/resolve/adapters/d360SourceAdapter';
 
 const files = (name: string): Array<{ name: string; data: Buffer }> => [
   { name: `${name}.json`, data: Buffer.from('{}') },
@@ -72,5 +77,52 @@ describe('getD360RelativePath', () => {
     expect(getD360RelativePath(join('d360', 'other', 'dataLakeObjects', 'x.json'), 'dataLakeObjects')).to.equal(
       undefined
     );
+  });
+});
+
+describe('getD360Location', () => {
+  it('should find the d360 folder and the dataspace of a path', () => {
+    expect(
+      getD360Location(join('a', 'd360', 'dataspace', 'ds', 'dataTransforms', 'x.json'), 'dataTransforms')
+    ).to.deep.equal({
+      root: join('a', 'd360'),
+      dataspace: 'ds',
+      relativePath: join('d360', 'dataspace', 'ds', 'dataTransforms', 'x.json'),
+    });
+  });
+
+  it('should leave the dataspace undefined outside every dataspace', () => {
+    expect(getD360Location(join('a', 'd360', 'dataLakeObjects', 'x.json'), 'dataLakeObjects')).to.deep.equal({
+      root: join('a', 'd360'),
+      dataspace: undefined,
+      relativePath: join('d360', 'dataLakeObjects', 'x.json'),
+    });
+  });
+});
+
+describe('getD360ContentPath', () => {
+  const type = { directoryName: 'dataModelObjects' };
+
+  it('should build the path in a dataspace', () => {
+    expect(getD360ContentPath(join('a', 'd360'), type, 'x', 'ds')).to.equal(
+      join('a', 'd360', 'dataspace', 'ds', 'dataModelObjects', 'x.json')
+    );
+  });
+
+  it('should build the path outside every dataspace', () => {
+    expect(getD360ContentPath(join('a', 'd360'), type, 'x')).to.equal(join('a', 'd360', 'dataModelObjects', 'x.json'));
+  });
+});
+
+describe('getD360Dataspaces', () => {
+  it('should list the dataspace folders', () => {
+    const tree = new VirtualTreeContainer([
+      { dirPath: join('a', 'd360', 'dataspace'), children: ['default', 'other'] },
+    ]);
+    expect(getD360Dataspaces(tree, join('a', 'd360'))).to.deep.equal(['default', 'other']);
+  });
+
+  it('should return none when there is no dataspace folder', () => {
+    expect(getD360Dataspaces(new VirtualTreeContainer([]), join('a', 'd360'))).to.be.empty;
   });
 });

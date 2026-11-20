@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { sep } from 'node:path';
+import { join, sep } from 'node:path';
 import { Messages } from '@salesforce/core/messages';
 import { SfError } from '@salesforce/core/sfError';
 import { baseName } from '../../utils/path';
 import { SourcePath } from '../../common/types';
+import { MetadataType } from '../../registry/types';
 import { MetadataXml } from '../types';
 import { SourceComponent } from '../sourceComponent';
+import { TreeContainer } from '../treeContainers';
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
@@ -34,12 +36,22 @@ export const D360_ROOT = 'd360';
 /** Folder that wraps dataspace-scoped components: `d360/dataspace/<dataspace>/<typeDir>/`. */
 const DATASPACE_FOLDER = 'dataspace';
 
+/** Where a Data Cloud file sits in its `d360` folder. */
+export type D360Location = {
+  /** The `d360` folder itself. */
+  root: SourcePath;
+  /** The dataspace the file is in, or undefined when it is outside every dataspace. */
+  dataspace?: string;
+  /** The path from the `d360` folder down. */
+  relativePath: SourcePath;
+};
+
 /**
- * The part of a path from its `d360` folder down, for a file of the type stored in `typeDir`. The path
- * must be `.../d360/<typeDir>/<file>` or `.../d360/dataspace/<dataspace>/<typeDir>/<file>`; any other
- * shape returns undefined.
+ * Where a file of the type stored in `typeDir` sits in its `d360` folder. The path must be
+ * `.../d360/<typeDir>/<file>` or `.../d360/dataspace/<dataspace>/<typeDir>/<file>`; any other shape
+ * returns undefined.
  */
-export const getD360RelativePath = (fsPath: SourcePath, typeDir: string): SourcePath | undefined => {
+export const getD360Location = (fsPath: SourcePath, typeDir: string): D360Location | undefined => {
   const parts = fsPath.split(sep);
   const typeIndex = parts.lastIndexOf(typeDir);
   if (typeIndex < 1) {
@@ -47,7 +59,40 @@ export const getD360RelativePath = (fsPath: SourcePath, typeDir: string): Source
   }
   const inDataspace = parts[typeIndex - 2] === DATASPACE_FOLDER && parts[typeIndex - 3] === D360_ROOT;
   const rootIndex = inDataspace ? typeIndex - 3 : typeIndex - 1;
-  return parts[rootIndex] === D360_ROOT ? parts.slice(rootIndex).join(sep) : undefined;
+  if (parts[rootIndex] !== D360_ROOT) {
+    return undefined;
+  }
+  return {
+    root: parts.slice(0, rootIndex + 1).join(sep),
+    dataspace: inDataspace ? parts[typeIndex - 1] : undefined,
+    relativePath: parts.slice(rootIndex).join(sep),
+  };
+};
+
+/** The part of a path from its `d360` folder down. See {@link getD360Location}. */
+export const getD360RelativePath = (fsPath: SourcePath, typeDir: string): SourcePath | undefined =>
+  getD360Location(fsPath, typeDir)?.relativePath;
+
+/**
+ * The payload path of a component in a `d360` folder: `<root>/<typeDir>/<name>.json`, or
+ * `<root>/dataspace/<dataspace>/<typeDir>/<name>.json` for a component in a dataspace.
+ */
+export const getD360ContentPath = (
+  root: SourcePath,
+  type: Pick<MetadataType, 'directoryName'>,
+  name: string,
+  dataspace?: string
+): SourcePath => {
+  const file = `${name}.json`;
+  return dataspace
+    ? join(root, DATASPACE_FOLDER, dataspace, type.directoryName, file)
+    : join(root, type.directoryName, file);
+};
+
+/** The dataspace folders in a `d360` folder. */
+export const getD360Dataspaces = (tree: TreeContainer, root: SourcePath): string[] => {
+  const folder = join(root, DATASPACE_FOLDER);
+  return tree.exists(folder) && tree.isDirectory(folder) ? tree.readDirectory(folder) : [];
 };
 
 /** Joins the dataspace and the component name in a dataspace-scoped fullName: `<dataspace>.<name>`. */

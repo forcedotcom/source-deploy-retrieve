@@ -57,7 +57,7 @@ describe('expandD360ComponentSet', () => {
   // A Data Lake Object outside any dataspace, a member of two dataspaces. Its DataspaceMember shares its name.
   const tree = new VirtualTreeContainer([
     { dirPath: 'force-app', children: ['d360'] },
-    { dirPath: D360_DIR, children: ['dataLakeObjects', 'dataspace'] },
+    { dirPath: D360_DIR, children: ['dataLakeObjects', 'dataStreamBundles', 'dataspace'] },
     {
       dirPath: join(D360_DIR, 'dataLakeObjects'),
       children: [
@@ -73,6 +73,22 @@ describe('expandD360ComponentSet', () => {
           { componentType: 'DataModelObject', name: 'myDmo__dlm', dataspaceName: 'default' },
           { componentType: 'DataModelObject', name: 'myDmo__dlm', dataspaceName: 'other' },
         ]),
+        // Names a file whose sidecar is for another component.
+        ...component('DataLakeObject', 'strayDlo__dll', undefined, [
+          { componentType: 'DataModelObject', name: 'strayDmo__dlm', dataspaceName: 'default' },
+        ]),
+      ],
+    },
+    {
+      dirPath: join(D360_DIR, 'dataStreamBundles'),
+      children: [
+        ...component('DataStreamBundle', 'myStream', undefined, [
+          { componentType: 'DataLakeObject', name: 'myDlo__dll' },
+        ]),
+        // The server names the DLO with the dataspace the bundle uses it in, though the DLO is stored bare.
+        ...component('DataStreamBundle', 'pinnedStream', undefined, [
+          { componentType: 'DataLakeObject', name: 'myDlo__dll', dataspaceName: 'default' },
+        ]),
       ],
     },
     { dirPath: join(D360_DIR, 'dataspace'), children: ['default', 'other'] },
@@ -84,7 +100,14 @@ describe('expandD360ComponentSet', () => {
       },
       {
         dirPath: join(D360_DIR, 'dataspace', ds, 'dataModelObjects'),
-        children: component('DataModelObject', 'myDmo__dlm', ds),
+        children: [
+          ...component('DataModelObject', 'myDmo__dlm', ds),
+          // Stored as strayDmo__dlm, with the sidecar of otherDmo__dlm.
+          ...component('DataModelObject', 'otherDmo__dlm', ds).map((file) => ({
+            ...file,
+            name: file.name.replace('otherDmo__dlm', 'strayDmo__dlm'),
+          })),
+        ],
       },
     ]),
   ]);
@@ -94,7 +117,7 @@ describe('expandD360ComponentSet', () => {
     const [type, fullName] = member.split(':');
     const requested = new ComponentSet([], registry);
     requested.add(full.getSourceComponents({ fullName, type: registry.getTypeByName(type) }).first()!);
-    return expandD360ComponentSet(full, requested);
+    return expandD360ComponentSet(requested, registry);
   };
 
   // Mirrors what the builder produces for `DataLakeObject:<dataspace>.myDlo__dll`: the requested name,
@@ -104,7 +127,7 @@ describe('expandD360ComponentSet', () => {
     const requested = new ComponentSet([], registry);
     dataspaces.forEach((ds) => requested.add({ type, fullName: `${ds}.myDlo__dll` }));
     requested.addWithoutManifestEntry(full.getSourceComponents({ type, fullName: 'myDlo__dll' }).first()!);
-    return expandD360ComponentSet(full, requested);
+    return expandD360ComponentSet(requested, registry);
   };
 
   it('should tell apart components of different types that share a name', () => {
@@ -151,7 +174,7 @@ describe('expandD360ComponentSet', () => {
     requested.add({ type, fullName: 'default.sharedDlo__dll' });
     requested.addWithoutManifestEntry(full.getSourceComponents({ type, fullName: 'sharedDlo__dll' }).first()!);
 
-    expect(members(expandD360ComponentSet(full, requested))).to.deep.equal([
+    expect(members(expandD360ComponentSet(requested, registry))).to.deep.equal([
       'DataLakeObject:sharedDlo__dll',
       'DataModelObject:default.myDmo__dlm',
     ]);
@@ -163,7 +186,7 @@ describe('expandD360ComponentSet', () => {
     requested.add({ type, fullName: 'default.sharedDlo__dll' });
     requested.addWithoutManifestEntry(full.getSourceComponents({ type, fullName: 'sharedDlo__dll' }).first()!);
 
-    const dlo = expandD360ComponentSet(full, requested)
+    const dlo = expandD360ComponentSet(requested, registry)
       .getSourceComponents({ type, fullName: 'sharedDlo__dll' })
       .first()!;
     const sidecar = dlo.content!.replace(/\.json$/, '.meta.json');
@@ -185,7 +208,7 @@ describe('expandD360ComponentSet', () => {
     const requested = new ComponentSet([original], registry);
 
     expect(
-      expandD360ComponentSet(full, requested).getSourceComponents({ type, fullName: 'sharedDlo__dll' }).first()
+      expandD360ComponentSet(requested, registry).getSourceComponents({ type, fullName: 'sharedDlo__dll' }).first()
     ).to.equal(original);
   });
 
@@ -213,7 +236,7 @@ describe('expandD360ComponentSet', () => {
       requested.apiVersion = '68.0';
       requested.sourceApiVersion = '67.0';
 
-      const expanded = expandD360ComponentSet(full, requested);
+      const expanded = expandD360ComponentSet(requested, registry);
 
       expect(expanded).to.equal(requested);
       expect(expanded.apiVersion).to.equal('68.0');
@@ -232,7 +255,7 @@ describe('expandD360ComponentSet', () => {
       const requested = new ComponentSet([], registry);
       requested.add(dlo(), DestructiveChangesType.POST);
 
-      const expanded = expandD360ComponentSet(full, requested);
+      const expanded = expandD360ComponentSet(requested, registry);
 
       expect(members(expanded)).to.deep.equal(['DataLakeObject:myDlo__dll']);
       expect((await expanded.getObject(DestructiveChangesType.POST)).Package.types).to.deep.equal([
@@ -245,7 +268,7 @@ describe('expandD360ComponentSet', () => {
       const requested = new ComponentSet([dlo()], registry);
       requested.add(dmo('other'), DestructiveChangesType.POST);
 
-      const expanded = expandD360ComponentSet(full, requested);
+      const expanded = expandD360ComponentSet(requested, registry);
 
       expect(
         expanded
@@ -258,26 +281,15 @@ describe('expandD360ComponentSet', () => {
     });
   });
 
-  it('should pull the Data Lake Object of a data stream bundle and its closure', () => {
-    const bundles = ComponentSet.fromSource({
-      fsPaths: ['force-app'],
-      tree: new VirtualTreeContainer([
-        { dirPath: 'force-app', children: ['d360'] },
-        { dirPath: D360_DIR, children: ['dataStreamBundles'] },
-        {
-          dirPath: join(D360_DIR, 'dataStreamBundles'),
-          children: component('DataStreamBundle', 'myStream', undefined, [
-            { componentType: 'DataLakeObject', name: 'myDlo__dll' },
-          ]),
-        },
-      ]),
-      registry,
-    });
-    const project = new ComponentSet([...full.getSourceComponents(), ...bundles.getSourceComponents()], registry);
+  const expandBundle = (name: string): ComponentSet => {
     const type = registry.getTypeByName('DataStreamBundle');
-    const requested = new ComponentSet([{ type, fullName: 'default.myStream' }], registry);
-    requested.addWithoutManifestEntry(bundles.getSourceComponents({ type, fullName: 'myStream' }).first()!);
-    expect(members(expandD360ComponentSet(project, requested))).to.deep.equal([
+    const requested = new ComponentSet([{ type, fullName: `default.${name}` }], registry);
+    requested.addWithoutManifestEntry(full.getSourceComponents({ type, fullName: name }).first()!);
+    return expandD360ComponentSet(requested, registry);
+  };
+
+  it('should pull the Data Lake Object of a data stream bundle and its closure', () => {
+    expect(members(expandBundle('myStream'))).to.deep.equal([
       'DataLakeObject:myDlo__dll',
       'DataModelObject:default.myDmo__dlm',
       'DataStreamBundle:myStream',
@@ -286,32 +298,22 @@ describe('expandD360ComponentSet', () => {
   });
 
   it('should pull a Data Lake Object a bundle references with a dataspace, though the DLO is stored bare', () => {
-    // The server names the DLO ref with the dataspace the bundle uses it in, but the DLO lives outside
-    // every dataspace, so its sidecar has none. The dataspace-named ref must still match the bare DLO.
-    const bundles = ComponentSet.fromSource({
-      fsPaths: ['force-app'],
-      tree: new VirtualTreeContainer([
-        { dirPath: 'force-app', children: ['d360'] },
-        { dirPath: D360_DIR, children: ['dataStreamBundles'] },
-        {
-          dirPath: join(D360_DIR, 'dataStreamBundles'),
-          children: component('DataStreamBundle', 'myStream', undefined, [
-            { componentType: 'DataLakeObject', name: 'myDlo__dll', dataspaceName: 'default' },
-          ]),
-        },
-      ]),
-      registry,
-    });
-    const project = new ComponentSet([...full.getSourceComponents(), ...bundles.getSourceComponents()], registry);
-    const type = registry.getTypeByName('DataStreamBundle');
-    const requested = new ComponentSet([{ type, fullName: 'default.myStream' }], registry);
-    requested.addWithoutManifestEntry(bundles.getSourceComponents({ type, fullName: 'myStream' }).first()!);
-    expect(members(expandD360ComponentSet(project, requested))).to.deep.equal([
+    expect(members(expandBundle('pinnedStream'))).to.deep.equal([
       'DataLakeObject:myDlo__dll',
       'DataModelObject:default.myDmo__dlm',
-      'DataStreamBundle:myStream',
+      'DataStreamBundle:pinnedStream',
       'DataspaceMember:default.myDlo__dll',
     ]);
+  });
+
+  it('should not pull a file whose sidecar is for another component', () => {
+    expect(members(expand('DataLakeObject:strayDlo__dll'))).to.deep.equal(['DataLakeObject:strayDlo__dll']);
+  });
+
+  it('should leave a set without Data Cloud components as it is', () => {
+    const requested = new ComponentSet([{ type: 'ApexClass', fullName: 'MyClass' }], registry);
+
+    expect([...expandD360ComponentSet(requested, registry)]).to.have.length(1);
   });
 });
 

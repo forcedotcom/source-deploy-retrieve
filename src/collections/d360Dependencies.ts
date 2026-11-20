@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 import { Readable } from 'node:stream';
+import { Logger } from '@salesforce/core/logger';
 import { RegistryAccess } from '../registry/registryAccess';
+import { MetadataType } from '../registry/types';
+import { MetadataResolver } from '../resolve/metadataResolver';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { TreeContainer } from '../resolve/treeContainers';
 import { MetadataComponent } from '../resolve/types';
 import { SourcePath } from '../common/types';
-import { METADATA_SIDECAR_SUFFIX, parseDataspaceQualifiedName } from '../resolve/adapters/d360SourceAdapter';
+import {
+  getD360ContentPath,
+  getD360Dataspaces,
+  getD360Location,
+  METADATA_SIDECAR_SUFFIX,
+  parseDataspaceQualifiedName,
+} from '../resolve/adapters/d360SourceAdapter';
 import { ComponentSet } from './componentSet';
 
 /**
@@ -62,7 +71,9 @@ type ComponentSidecar = {
   dependsOn?: { derived?: DependencyRef[]; inbound?: DependencyRef[] };
 };
 
-const isD360 = (component: MetadataComponent): boolean => component.type.strategies?.adapter === D360_ADAPTER;
+const isD360Type = (type: MetadataType): boolean => type.strategies?.adapter === D360_ADAPTER;
+
+const isD360 = (component: MetadataComponent): boolean => isD360Type(component.type);
 
 /** A requested name with no local source behind it, e.g. one that still has to be resolved. */
 const isNameOnly = (component: MetadataComponent): boolean => !(component instanceof SourceComponent);
@@ -84,12 +95,6 @@ const getSidecarPath = (component: SourceComponent): string | undefined =>
 
 const readSidecar = (component: SourceComponent): ComponentSidecar | undefined =>
   readJson<ComponentSidecar>(component, getSidecarPath(component));
-
-/**
- * Lookup key for a component reference. The type is part of the key because different types can share
- * a name: a Data Lake Object and its DataspaceMember are both named after the DLO.
- */
-const refKey = (componentType: string, name: string): string => `${componentType}|${name}`;
 
 /** Identifies a component across sets; the same component resolved into two sets is two objects. */
 const memberKey = (component: MetadataComponent): string => `${component.type.name}|${component.fullName}`;
@@ -207,46 +212,89 @@ const withSidecarFor = (
   return copy;
 };
 
+/** The dataspace a Data Cloud component is stored in, from its path. Undefined outside every dataspace. */
+const getDataspace = (component: SourceComponent): string | undefined =>
+  component.content ? getD360Location(component.content, component.type.directoryName)?.dataspace : undefined;
+
 /**
- * Index every Data Cloud component in `full` by its sidecar type + componentName, the key space
- * `retrieveWith` references. A key can match several components, one per dataspace.
+ * Finds the components a `retrieveWith` entry points at, by path. The layout under a `d360` folder is
+ * fixed, so an entry's type, name and dataspace give the path of each candidate directly, and only those
+ * paths are checked. Peers are looked up in the same `d360` folder as the component that names them.
+ *
+ * A candidate is a peer when its sidecar names the same type and component as the entry, so a file
+ * without a matching sidecar is never pulled in.
  */
-const indexCandidates = (
-  full: ComponentSet
-): {
-  findPeers: (ref: ComponentRef, dataspace: string | undefined) => SourceComponent[];
-  getDataspace: (component: SourceComponent) => string | undefined;
-} => {
-  const byRef = new Map<string, SourceComponent[]>();
-  const dataspaceOf = new Map<string, string | undefined>();
-  for (const component of full.getSourceComponents()) {
-    const sidecar = isD360(component) ? readSidecar(component) : undefined;
-    if (sidecar?.componentType && sidecar.componentName) {
-      const key = refKey(sidecar.componentType, sidecar.componentName);
-      byRef.set(key, [...(byRef.get(key) ?? []), component]);
-      dataspaceOf.set(memberKey(component), sidecar.dataspaceName);
+const createPeerFinder = (
+  registry: RegistryAccess
+): ((from: SourceComponent, ref: ComponentRef, dataspace: string | undefined) => SourceComponent[]) => {
+  const types = new Map<string, MetadataType | undefined>();
+  const getType = (name: string): MetadataType | undefined => {
+    if (!types.has(name)) {
+      types.set(
+        name,
+        registry.findType((type) => type.name === name && isD360Type(type))
+      );
     }
-  }
-  const getDataspace = (component: SourceComponent): string | undefined => dataspaceOf.get(memberKey(component));
+    return types.get(name);
+  };
+
+  const resolved = new Map<SourcePath, SourceComponent | undefined>();
+  const resolveAt = (tree: TreeContainer, path: SourcePath): SourceComponent | undefined => {
+    if (!resolved.has(path)) {
+      const found = tree.exists(path)
+        ? new MetadataResolver(registry, tree).getComponentsFromPath(path).find(isD360)
+        : undefined;
+      resolved.set(path, found);
+    }
+    return resolved.get(path);
+  };
 
   // A reference that names its dataspace matches a peer in that dataspace, and also one outside every
   // dataspace (a bare component serves every dataspace), but is skipped while walking another dataspace.
   // Otherwise, while walking a dataspace, only peers in it or outside every dataspace qualify; with no
   // dataspace to walk, all of them do.
-  const findPeers = (ref: ComponentRef, dataspace: string | undefined): SourceComponent[] => {
-    if (!ref.componentType || !ref.name || (dataspace && ref.dataspaceName && ref.dataspaceName !== dataspace)) {
+  return (from, ref, dataspace) => {
+    const { componentType, name, dataspaceName } = ref;
+    const type = componentType ? getType(componentType) : undefined;
+    const location = from.content ? getD360Location(from.content, from.type.directoryName) : undefined;
+    if (!type || !name || !location || (dataspace && dataspaceName && dataspaceName !== dataspace)) {
       return [];
     }
-    const candidates = byRef.get(refKey(ref.componentType, ref.name)) ?? [];
-    if (ref.dataspaceName) {
-      return candidates.filter((candidate) => [ref.dataspaceName, undefined].includes(getDataspace(candidate)));
-    }
-    return dataspace
-      ? candidates.filter((candidate) => [dataspace, undefined].includes(getDataspace(candidate)))
-      : candidates;
+    const dataspaces = dataspaceName ?? dataspace;
+    return [undefined, ...(dataspaces ? [dataspaces] : getD360Dataspaces(from.tree, location.root))]
+      .map((ds) => resolveAt(from.tree, getD360ContentPath(location.root, type, name, ds)))
+      .filter((peer): peer is SourceComponent => {
+        const sidecar = peer ? readSidecar(peer) : undefined;
+        return sidecar?.componentType === componentType && sidecar?.componentName === name;
+      });
   };
+};
 
-  return { findPeers, getDataspace };
+/** A component of the closure, and whether it was requested and needs a manifest entry of its own. */
+type Member = { component: SourceComponent; inManifest: boolean; requested: boolean };
+
+/** Writes the walked members into the set, each with the sidecar for the dataspaces it was walked in. */
+const addMembers = (
+  set: ComponentSet,
+  members: Map<string, Member>,
+  walkedIn: Map<string, Set<string | undefined>>
+): void => {
+  const peers = [...members.keys()].filter((key) => !members.get(key)?.requested);
+  if (peers.length) {
+    Logger.childFromRoot('expandD360ComponentSet').debug(`Adding Data Cloud deploy peers: ${peers.join(', ')}`);
+  }
+  for (const [key, { component, inManifest, requested }] of members) {
+    const sent = withSidecarFor(component, walkedIn.get(key));
+    // A requested component is already in the set; it is only replaced when its sidecar is narrowed.
+    if (requested && sent === component) {
+      continue;
+    }
+    if (inManifest) {
+      set.add(sent);
+    } else {
+      set.addWithoutManifestEntry(sent);
+    }
+  }
 };
 
 /**
@@ -262,17 +310,20 @@ const indexCandidates = (
  * for delete, wildcards, and its API versions. Components marked for delete are not walked, and a peer
  * already in the set is left as it is.
  *
- * @param full A ComponentSet with every candidate component (the whole project); only its Data Cloud members are indexed for lookup.
+ * Peers are found by path, in the same `d360` folder as the component that names them, so the project
+ * is not resolved as a whole.
+ *
  * @param requested The components to deploy. The closure peers are added to it.
+ * @param registry RegistryAccess used to resolve the peers.
  * @returns The same set, with the closure peers added. They are sent as files, without package.xml entries.
  */
-export const expandD360ComponentSet = (full: ComponentSet, requested: ComponentSet): ComponentSet => {
-  const { findPeers, getDataspace } = indexCandidates(full);
+export const expandD360ComponentSet = (requested: ComponentSet, registry: RegistryAccess): ComponentSet => {
+  const findPeers = createPeerFinder(registry);
   const inSet = new Set(requested.getSourceComponents().toArray().map(memberKey));
 
   // Members are collected first and written once the walk is done, since how a component outside every
   // dataspace is sent depends on all the dataspaces it was walked in.
-  const members = new Map<string, { component: SourceComponent; inManifest: boolean; requested: boolean }>();
+  const members = new Map<string, Member>();
   const walkedIn = new Map<string, Set<string | undefined>>();
   const worklist: Array<{ component: SourceComponent; dataspace: string | undefined }> = [];
   // A component is walked once per dataspace, since it can be requested for several of them.
@@ -302,7 +353,7 @@ export const expandD360ComponentSet = (full: ComponentSet, requested: ComponentS
   while (worklist.length) {
     const { component, dataspace } = worklist.pop()!;
     for (const ref of readSidecar(component)?.retrieveWith ?? []) {
-      for (const peer of findPeers(ref, dataspace)) {
+      for (const peer of findPeers(component, ref, dataspace)) {
         const key = memberKey(peer);
         // A peer the set already has (to deploy or to delete) keeps what the caller asked for it.
         if (inSet.has(key) && !members.has(key)) {
@@ -319,18 +370,7 @@ export const expandD360ComponentSet = (full: ComponentSet, requested: ComponentS
     }
   }
 
-  for (const [key, { component, inManifest, requested: isRequested }] of members) {
-    const sent = withSidecarFor(component, walkedIn.get(key));
-    // A requested component is already in the set; it is only replaced when its sidecar is narrowed.
-    if (isRequested && sent === component) {
-      continue;
-    }
-    if (inManifest) {
-      requested.add(sent);
-    } else {
-      requested.addWithoutManifestEntry(sent);
-    }
-  }
+  addMembers(requested, members, walkedIn);
 
   return requested;
 };

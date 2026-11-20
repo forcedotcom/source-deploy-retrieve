@@ -17,7 +17,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect } from 'chai';
-import { ComponentSet, RegistryAccess, VirtualTreeContainer } from '../../src';
+import { ComponentSet, ComponentSetBuilder, RegistryAccess, VirtualTreeContainer } from '../../src';
 import { expandD360ComponentSet, resolveDataspaceQualifiedComponents } from '../../src/collections/d360Dependencies';
 
 type Ref = { componentType: string; name: string; dataspaceName?: string };
@@ -282,5 +282,19 @@ describe('resolveDataspaceQualifiedComponents', () => {
 
   it('should leave a name without a dataspace alone', () => {
     expect(members(resolve('unknown__dll'))).to.be.empty;
+  });
+
+  it('should resolve a dataspace-qualified name in a manifest', async () => {
+    const manifestPath = join(projectDir, 'package.xml');
+    writeFileSync(
+      manifestPath,
+      '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">' +
+        '<types><members>default.myDlo__dll</members><name>DataLakeObject</name></types><version>68.0</version></Package>'
+    );
+    const set = await ComponentSetBuilder.build({ manifest: { manifestPath, directoryPaths: [projectDir] } });
+    expect(members(set)).to.deep.equal(['DataLakeObject:myDlo__dll']);
+    expect((await set.getObject()).Package.types).to.deep.equal([
+      { name: 'DataLakeObject', members: ['default.myDlo__dll'] },
+    ]);
   });
 });

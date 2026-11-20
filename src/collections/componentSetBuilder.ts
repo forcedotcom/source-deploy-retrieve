@@ -160,6 +160,8 @@ export class ComponentSetBuilder {
         destructivePost: manifest.destructiveChangesPost,
         registry,
       });
+      // Enable Data Cloud components in a manifest: resolve them the same way the metadata entries below do.
+      resolveDataspaceQualifiedComponents(componentSet, manifest.directoryPaths, registry);
     }
 
     // Resolve metadata entries with source in package directories, unless we are building a ComponentSet

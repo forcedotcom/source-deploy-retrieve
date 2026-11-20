@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { Readable } from 'node:stream';
 import { expect } from 'chai';
-import { ComponentSet, RegistryAccess, VirtualTreeContainer } from '../../../src';
+import { ComponentSet, MetadataConverter, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
 import { D360MetadataTransformer, mergeSidecars } from '../../../src/convert/transformers/d360MetadataTransformer';
 
 const sidecar = (retrieveWith: Array<{ componentType: string; name: string; dataspaceName?: string }>) =>
@@ -97,10 +98,10 @@ describe('D360MetadataTransformer', () => {
     return component;
   };
 
-  const writtenSidecar = async (): Promise<string> => {
+  const writtenSidecar = async (mergeWith?: SourceComponent, output = sidecarPath): Promise<string> => {
     const transformer = new D360MetadataTransformer(registry);
     transformer.defaultDirectory = defaultDirectory;
-    const info = (await transformer.toSourceFormat({ component: dlo() })).find((i) => i.output === sidecarPath)!;
+    const info = (await transformer.toSourceFormat({ component: dlo(), mergeWith })).find((i) => i.output === output)!;
     const chunks: Buffer[] = [];
     for await (const chunk of info.source as Readable) {
       chunks.push(Buffer.from(chunk as string | Buffer));
@@ -125,5 +126,62 @@ describe('D360MetadataTransformer', () => {
     await writeFile(join(defaultDirectory, sidecarPath), sidecar([member('sales')]));
 
     expect(parse(await writtenSidecar()).retrieveWith).to.deep.equal([member('sales'), member('default')]);
+  });
+
+  describe('a component already in the project', () => {
+    // Stored outside main/default, the way a project laid out by hand would have it.
+    const localDir = (): string => join(defaultDirectory, 'force-app', 'd360', 'dataLakeObjects');
+    const localDlo = async (sidecarJson: string): Promise<SourceComponent> => {
+      await mkdir(localDir(), { recursive: true });
+      await writeFile(join(localDir(), 'Orders__dll.json'), '{}');
+      await writeFile(join(localDir(), 'Orders__dll.meta.json'), sidecarJson);
+      return ComponentSet.fromSource({ fsPaths: [join(defaultDirectory, 'force-app')], registry })
+        .getSourceComponents()
+        .first()!;
+    };
+
+    it('writes over the files of the component in the project', async () => {
+      const mergeWith = await localDlo(sidecar([member('sales')]));
+      const transformer = new D360MetadataTransformer(registry);
+      transformer.defaultDirectory = defaultDirectory;
+
+      const outputs = (await transformer.toSourceFormat({ component: dlo(), mergeWith })).map((i) => i.output);
+
+      expect(outputs).to.deep.equal([join(localDir(), 'Orders__dll.json'), join(localDir(), 'Orders__dll.meta.json')]);
+    });
+
+    it('merges the retrieved sidecar into the one in the project', async () => {
+      const mergeWith = await localDlo(sidecar([member('sales')]));
+
+      const written = await writtenSidecar(mergeWith, join(localDir(), 'Orders__dll.meta.json'));
+
+      expect(parse(written).retrieveWith).to.deep.equal([member('sales'), member('default')]);
+    });
+
+    it('round trips from the project to a package and back without a second copy', async () => {
+      await localDlo(sidecar([member('default')]));
+      const project = ComponentSet.fromSource({ fsPaths: [join(defaultDirectory, 'force-app')], registry });
+      const converter = new MetadataConverter(registry);
+      const packageDir = join(defaultDirectory, 'package');
+
+      await converter.convert(project, 'metadata', {
+        type: 'directory',
+        outputDirectory: packageDir,
+        genUniqueDir: false,
+      });
+      expect(existsSync(join(packageDir, 'd360', 'dataLakeObjects', 'Orders__dll.meta.json'))).to.equal(true);
+
+      // The org changed the component since it was last retrieved.
+      await writeFile(join(packageDir, 'd360', 'dataLakeObjects', 'Orders__dll.json'), '{"changed":true}');
+      const fromOrg = ComponentSet.fromSource({ fsPaths: [join(packageDir, 'd360')], registry });
+      await converter.convert(fromOrg, 'source', {
+        type: 'merge',
+        mergeWith: project.getSourceComponents(),
+        defaultDirectory: join(defaultDirectory, 'force-app', 'main', 'default'),
+      });
+
+      expect(await readFile(join(localDir(), 'Orders__dll.json'), 'utf8')).to.equal('{"changed":true}');
+      expect(existsSync(join(defaultDirectory, 'force-app', 'main'))).to.equal(false);
+    });
   });
 });

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { isAbsolute, join } from 'node:path';
 import { Readable } from 'node:stream';
 import { Messages } from '@salesforce/core/messages';
 import { SfError } from '@salesforce/core/sfError';
@@ -51,20 +51,29 @@ export class D360MetadataTransformer extends BaseMetadataTransformer {
     return getWriteInfos(component, 'metadata');
   }
 
-  public async toSourceFormat({ component }: { component: SourceComponent }): Promise<WriteInfo[]> {
-    const infos = getWriteInfos(component, 'source');
+  public async toSourceFormat({
+    component,
+    mergeWith,
+  }: {
+    component: SourceComponent;
+    mergeWith?: SourceComponent;
+  }): Promise<WriteInfo[]> {
+    const infos = getWriteInfos(component, 'source', mergeWith);
     const { defaultDirectory } = this;
-    if (!defaultDirectory) {
-      return infos;
-    }
     const sidecars = new Map(
-      getSidecars(component).map((sidecar) => [getD360Destination(sidecar, 'source', component), sidecar])
+      getSidecars(component).map((sidecar) => [getSourceDestination(sidecar, component, mergeWith), sidecar])
     );
     return Promise.all(
       infos.map(async (info) => {
         const sidecar = sidecars.get(info.output);
-        return sidecar
-          ? mergeWithLocalSidecar((await component.tree.readFile(sidecar)).toString('utf8'), info, defaultDirectory)
+        // A relative output is written under the default directory, an absolute one where it points.
+        const localPath = isAbsolute(info.output)
+          ? info.output
+          : defaultDirectory
+          ? join(defaultDirectory, info.output)
+          : undefined;
+        return sidecar && localPath
+          ? mergeWithLocalSidecar((await component.tree.readFile(sidecar)).toString('utf8'), info, localPath)
           : info;
       })
     );
@@ -78,25 +87,45 @@ const getSidecars = (component: SourceComponent): SourcePath[] =>
     .map((path) => path.replace(/\.json$/, METADATA_SIDECAR_SUFFIX))
     .filter((sidecar) => sidecar.endsWith(METADATA_SIDECAR_SUFFIX) && component.tree.exists(sidecar));
 
-const getWriteInfos = (component: SourceComponent, targetFormat: 'source' | 'metadata'): WriteInfo[] =>
+const getWriteInfos = (
+  component: SourceComponent,
+  targetFormat: 'source' | 'metadata',
+  mergeWith?: SourceComponent
+): WriteInfo[] =>
   // walkContent() yields only the payload file(s), so their sidecars are added to write both halves of each pair.
   [...component.walkContent(), ...getSidecars(component)].map((path) => ({
     source: getReplacementStreamForReadable(component, path),
-    output: getD360Destination(path, targetFormat, component),
+    output:
+      targetFormat === 'source'
+        ? getSourceDestination(path, component, mergeWith)
+        : getD360Destination(path, targetFormat, component),
   }));
+
+/**
+ * Where a retrieved file goes in the project. A component already in the project is written over its
+ * own files, wherever they are; a new one goes under the default directory.
+ */
+const getSourceDestination = (
+  path: SourcePath,
+  component: SourceComponent,
+  mergeWith?: SourceComponent
+): SourcePath => {
+  if (!mergeWith?.content) {
+    return getD360Destination(path, 'source', component);
+  }
+  return path.endsWith(METADATA_SIDECAR_SUFFIX)
+    ? mergeWith.content.replace(/\.json$/, METADATA_SIDECAR_SUFFIX)
+    : mergeWith.content;
+};
 
 /**
  * Merge a retrieved sidecar into the one already in the project, if any. The retrieved sidecar is
  * written unchanged when there is no local one or nothing in it needs keeping.
  */
-const mergeWithLocalSidecar = async (
-  retrieved: string,
-  info: WriteInfo,
-  defaultDirectory: string
-): Promise<WriteInfo> => {
+const mergeWithLocalSidecar = async (retrieved: string, info: WriteInfo, localPath: string): Promise<WriteInfo> => {
   let local: string;
   try {
-    local = await readFile(join(defaultDirectory, info.output), 'utf8');
+    local = await readFile(localPath, 'utf8');
   } catch {
     return info;
   }

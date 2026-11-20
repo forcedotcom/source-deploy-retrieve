@@ -308,7 +308,7 @@ const addMembers = (
  *
  * The set is changed in place, so everything else about it is kept: other components, components marked
  * for delete, wildcards, and its API versions. Components marked for delete are not walked, and a peer
- * already in the set is left as it is.
+ * already in the set is left as it is. Expanding a set that was already expanded adds nothing.
  *
  * Peers are found by path, in the same `d360` folder as the component that names them, so the project
  * is not resolved as a whole.
@@ -341,6 +341,11 @@ export const expandD360ComponentSet = (requested: ComponentSet, registry: Regist
       continue;
     }
     const dataspaces = getDataspace(component) ? [] : getRequestedDataspaces(requested, component);
+    // Without a manifest entry and not requested for a dataspace, it is a peer an earlier expansion added.
+    // Its closure is already in the set, and walking it again could reach dataspaces it wasn't reached in.
+    if (!dataspaces.length && requested.isWithoutManifestEntry(component)) {
+      continue;
+    }
     // Requested as `<dataspace>.<name>`: that name is in the manifest, so walk only those dataspaces.
     members.set(memberKey(component), { component, inManifest: !dataspaces.length, requested: true });
     dataspaces.forEach((dataspace) => visit(component, dataspace));

@@ -310,6 +310,42 @@ describe('expandD360ComponentSet', () => {
     expect(members(expand('DataLakeObject:strayDlo__dll'))).to.deep.equal(['DataLakeObject:strayDlo__dll']);
   });
 
+  describe('a set it already expanded', () => {
+    const snapshot = async (set: ComponentSet): Promise<unknown> => ({
+      members: members(set),
+      types: (await set.getObject()).Package.types,
+    });
+
+    it('should add nothing to a component requested by its bare name', async () => {
+      const expanded = expand('DataLakeObject:myDlo__dll');
+      const before = await snapshot(expanded);
+
+      expect(await snapshot(expandD360ComponentSet(expanded, registry))).to.deep.equal(before);
+    });
+
+    it('should not walk a peer outside every dataspace in other dataspaces', async () => {
+      const expanded = expandBundle('myStream');
+      const before = await snapshot(expanded);
+
+      expect(await snapshot(expandD360ComponentSet(expanded, registry))).to.deep.equal(before);
+      expect(members(expanded)).to.not.include('DataModelObject:other.myDmo__dlm');
+    });
+
+    it('should keep the sidecar narrowed for the requested dataspace', () => {
+      const type = registry.getTypeByName('DataLakeObject');
+      const requested = new ComponentSet([], registry);
+      requested.add({ type, fullName: 'default.sharedDlo__dll' });
+      requested.addWithoutManifestEntry(full.getSourceComponents({ type, fullName: 'sharedDlo__dll' }).first()!);
+      const narrowed = expandD360ComponentSet(requested, registry)
+        .getSourceComponents({ type, fullName: 'sharedDlo__dll' })
+        .first();
+
+      expect(
+        expandD360ComponentSet(requested, registry).getSourceComponents({ type, fullName: 'sharedDlo__dll' }).first()
+      ).to.equal(narrowed);
+    });
+  });
+
   it('should leave a set without Data Cloud components as it is', () => {
     const requested = new ComponentSet([{ type: 'ApexClass', fullName: 'MyClass' }], registry);
 

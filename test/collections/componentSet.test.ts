@@ -790,6 +790,19 @@ describe('ComponentSet', () => {
       ]);
     });
 
+    it('should tell whether a component was added without a manifest entry', () => {
+      const set = new ComponentSet([], registryAccess);
+      const dlo = new SourceComponent({ name: 'default.myDlo', type: registry.types.datalakeobject });
+      const dmo = new SourceComponent({ name: 'default.myDmo', type: registry.types.datamodelobject });
+      set.add(dlo);
+      set.addWithoutManifestEntry(dmo);
+
+      expect(set.isWithoutManifestEntry(dlo)).to.be.false;
+      expect(set.isWithoutManifestEntry(dmo)).to.be.true;
+      set.add(dmo);
+      expect(set.isWithoutManifestEntry(dmo)).to.be.false;
+    });
+
     it('should allow the componentSet to set the apiVersion', async () => {
       const resolveSpy = $$.SANDBOX.spy(SfProject.prototype, 'resolveProjectConfig');
       const set = ComponentSet.fromSource({

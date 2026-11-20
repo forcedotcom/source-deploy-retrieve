@@ -612,6 +612,17 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   /**
+   * Tests whether a component was added with {@link addWithoutManifestEntry} and has no manifest entry
+   * of its own.
+   *
+   * @param component Component to test
+   * @returns `true` if the component is in the set without its own manifest entry
+   */
+  public isWithoutManifestEntry(component: ComponentLike): boolean {
+    return this.withoutManifestEntry.has(simpleKey(component));
+  }
+
+  /**
    * Tests whether or not a `fullName` and `type` pair is present in the set.
    *
    * A pair is considered present in the set if one of the following criteria is met:

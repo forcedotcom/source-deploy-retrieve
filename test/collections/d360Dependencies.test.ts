@@ -414,3 +414,54 @@ describe('resolveDataspaceQualifiedComponents', () => {
     ]);
   });
 });
+
+describe('ComponentSetBuilder.build for a deploy', () => {
+  let projectDir: string;
+  let dloDir: string;
+
+  beforeEach(() => {
+    projectDir = mkdtempSync(join(tmpdir(), 'd360-'));
+    dloDir = join(projectDir, 'd360', 'dataLakeObjects');
+    const dmoDir = join(projectDir, 'd360', 'dataspace', 'default', 'dataModelObjects');
+    [dloDir, dmoDir].forEach((dir) => mkdirSync(dir, { recursive: true }));
+    component('DataLakeObject', 'myDlo__dll', undefined, [
+      { componentType: 'DataModelObject', name: 'myDmo__dlm', dataspaceName: 'default' },
+    ]).forEach(({ name, data }) => writeFileSync(join(dloDir, name), data));
+    component('DataModelObject', 'myDmo__dlm', 'default').forEach(({ name, data }) =>
+      writeFileSync(join(dmoDir, name), data)
+    );
+  });
+
+  afterEach(() => rmSync(projectDir, { recursive: true, force: true }));
+
+  it('should add the components that deploy together with the requested ones', async () => {
+    const set = await ComponentSetBuilder.build({ sourcepath: [dloDir], forDeploy: true });
+
+    expect(members(set)).to.deep.equal(['DataLakeObject:myDlo__dll', 'DataModelObject:default.myDmo__dlm']);
+    expect((await set.getObject()).Package.types).to.deep.equal([{ name: 'DataLakeObject', members: ['myDlo__dll'] }]);
+  });
+
+  it('should add them for a dataspace-qualified name in a manifest', async () => {
+    const manifestPath = join(projectDir, 'package.xml');
+    writeFileSync(
+      manifestPath,
+      '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">' +
+        '<types><members>default.myDlo__dll</members><name>DataLakeObject</name></types><version>68.0</version></Package>'
+    );
+    const set = await ComponentSetBuilder.build({
+      manifest: { manifestPath, directoryPaths: [projectDir] },
+      forDeploy: true,
+    });
+
+    expect(members(set)).to.deep.equal(['DataLakeObject:myDlo__dll', 'DataModelObject:default.myDmo__dlm']);
+    expect((await set.getObject()).Package.types).to.deep.equal([
+      { name: 'DataLakeObject', members: ['default.myDlo__dll'] },
+    ]);
+  });
+
+  it('should build the set as asked for anything other than a deploy', async () => {
+    const set = await ComponentSetBuilder.build({ sourcepath: [dloDir] });
+
+    expect(members(set)).to.deep.equal(['DataLakeObject:myDlo__dll']);
+  });
+});

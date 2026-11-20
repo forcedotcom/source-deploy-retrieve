@@ -235,3 +235,7 @@ If the type is available via Metadata API but not in the registry
 
 - Open an issue <https://github.com/forcedotcom/cli/issues>
 - Add the type via PR. Instructions: <https://github.com/forcedotcom/source-deploy-retrieve/blob/main/contributing/metadata.md>
+
+# error_d360_outside_root
+
+%s: A %s must be stored under a d360 folder, as d360/%s/<name>.json or d360/dataspace/<dataspace>/%s/<name>.json

@@ -28,8 +28,27 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 /** Filename suffix of the per-component metadata sidecar (`<name>.meta.json`). */
 export const METADATA_SIDECAR_SUFFIX = '.meta.json';
 
+/** Folder every Data Cloud component is stored under, on disk and in the metadata package. */
+export const D360_ROOT = 'd360';
+
 /** Folder that wraps dataspace-scoped components: `d360/dataspace/<dataspace>/<typeDir>/`. */
 const DATASPACE_FOLDER = 'dataspace';
+
+/**
+ * The part of a path from its `d360` folder down, for a file of the type stored in `typeDir`. The path
+ * must be `.../d360/<typeDir>/<file>` or `.../d360/dataspace/<dataspace>/<typeDir>/<file>`; any other
+ * shape returns undefined.
+ */
+export const getD360RelativePath = (fsPath: SourcePath, typeDir: string): SourcePath | undefined => {
+  const parts = fsPath.split(sep);
+  const typeIndex = parts.lastIndexOf(typeDir);
+  if (typeIndex < 1) {
+    return undefined;
+  }
+  const inDataspace = parts[typeIndex - 2] === DATASPACE_FOLDER && parts[typeIndex - 3] === D360_ROOT;
+  const rootIndex = inDataspace ? typeIndex - 3 : typeIndex - 1;
+  return parts[rootIndex] === D360_ROOT ? parts.slice(rootIndex).join(sep) : undefined;
+};
 
 /** Joins the dataspace and the component name in a dataspace-scoped fullName: `<dataspace>.<name>`. */
 const DATASPACE_NAME_SEPARATOR = '.';
@@ -104,6 +123,15 @@ export class D360SourceAdapter extends MixedContentSourceAdapter {
     if (!contentPath || !this.tree.exists(contentPath)) {
       throw new SfError(
         messages.getMessage('error_expected_source_files', [trigger, this.type.name]),
+        'ExpectedSourceFilesError'
+      );
+    }
+    // The package path of a Data Cloud component is its path from the `d360` folder down. Without that
+    // folder the component has no package path, so it is rejected instead of being sent or written wrongly.
+    const { directoryName, name: typeName } = this.type;
+    if (!getD360RelativePath(contentPath, directoryName)) {
+      throw new SfError(
+        messages.getMessage('error_d360_outside_root', [contentPath, typeName, directoryName, directoryName]),
         'ExpectedSourceFilesError'
       );
     }

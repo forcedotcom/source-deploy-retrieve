@@ -16,19 +16,18 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
+import { Messages } from '@salesforce/core/messages';
+import { SfError } from '@salesforce/core/sfError';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../common/constants';
 import { SourcePath } from '../../common/types';
-import { trimUntil } from '../../utils/path';
-import { METADATA_SIDECAR_SUFFIX } from '../../resolve/adapters/d360SourceAdapter';
+import { getD360RelativePath, METADATA_SIDECAR_SUFFIX } from '../../resolve/adapters/d360SourceAdapter';
 import { getReplacementStreamForReadable } from '../replacements';
 import { WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
-// The Data Cloud wrapper root that must be preserved on disk and in the mdapi package. The full
-// wire path is `d360/dataspace/<ds>/<typeDir>/<name>.json`; we anchor on `d360` so the whole
-// dataspace-scoped structure below it is kept verbatim.
-const DATASPACE_ROOT = 'd360';
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 /**
  * Transformer for any Data Cloud dataspace-scoped type. It is type-agnostic — it operates purely on
@@ -58,7 +57,9 @@ export class D360MetadataTransformer extends BaseMetadataTransformer {
     if (!defaultDirectory) {
       return infos;
     }
-    const sidecars = new Map(getSidecars(component).map((sidecar) => [getD360Destination(sidecar, 'source'), sidecar]));
+    const sidecars = new Map(
+      getSidecars(component).map((sidecar) => [getD360Destination(sidecar, 'source', component), sidecar])
+    );
     return Promise.all(
       infos.map(async (info) => {
         const sidecar = sidecars.get(info.output);
@@ -81,7 +82,7 @@ const getWriteInfos = (component: SourceComponent, targetFormat: 'source' | 'met
   // walkContent() yields only the payload file(s), so their sidecars are added to write both halves of each pair.
   [...component.walkContent(), ...getSidecars(component)].map((path) => ({
     source: getReplacementStreamForReadable(component, path),
-    output: getD360Destination(path, targetFormat),
+    output: getD360Destination(path, targetFormat, component),
   }));
 
 /**
@@ -138,8 +139,24 @@ export const mergeSidecars = (existingJson: string, incomingJson: string): strin
  * Build the destination path preserving the `d360/dataspace/<ds>/<typeDir>/<name>.json` structure.
  * Source format is rooted under `main/default`; metadata format keeps it at the package root.
  */
-const getD360Destination = (source: SourcePath, targetFormat: 'source' | 'metadata'): SourcePath => {
+const getD360Destination = (
+  source: SourcePath,
+  targetFormat: 'source' | 'metadata',
+  component: SourceComponent
+): SourcePath => {
   const base = targetFormat === 'source' ? DEFAULT_PACKAGE_ROOT_SFDX : '';
-  // trimUntil keeps the path from `d360` onward (dataspace wrapper + type dir + file).
-  return join(base, trimUntil(source, DATASPACE_ROOT, true));
+  // The adapter only resolves files under a `d360` folder, so this is a guard, not an expected path.
+  const relative = getD360RelativePath(source, component.type.directoryName);
+  if (!relative) {
+    throw new SfError(
+      messages.getMessage('error_d360_outside_root', [
+        source,
+        component.type.name,
+        component.type.directoryName,
+        component.type.directoryName,
+      ]),
+      'ExpectedSourceFilesError'
+    );
+  }
+  return join(base, relative);
 };

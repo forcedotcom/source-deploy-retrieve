@@ -48,6 +48,14 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 export class D360MetadataTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line @typescript-eslint/require-await, class-methods-use-this
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
+    // The org rejects a payload deployed without its sidecar, so stop here with a clearer message.
+    const sidecar = component.content?.replace(/\.json$/, METADATA_SIDECAR_SUFFIX);
+    if (sidecar && !component.tree.exists(sidecar)) {
+      throw new SfError(
+        messages.getMessage('error_d360_missing_sidecar', [component.content, component.type.name, sidecar]),
+        'ExpectedSourceFilesError'
+      );
+    }
     return getWriteInfos(component, 'metadata');
   }
 

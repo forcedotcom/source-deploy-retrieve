@@ -184,4 +184,34 @@ describe('D360MetadataTransformer', () => {
       expect(existsSync(join(defaultDirectory, 'force-app', 'main'))).to.equal(false);
     });
   });
+
+  describe('toMetadataFormat', () => {
+    const payloadOnly = (): SourceComponent => {
+      const tree = new VirtualTreeContainer([
+        { dirPath: 'd360', children: ['dataLakeObjects'] },
+        { dirPath: join('d360', 'dataLakeObjects'), children: [{ name: 'Orders__dll.json', data: Buffer.from('{}') }] },
+      ]);
+      return ComponentSet.fromSource({ fsPaths: ['d360'], registry, tree })
+        .getSourceComponents()
+        .first()!;
+    };
+
+    it('sends the payload and its sidecar', async () => {
+      const outputs = (await new D360MetadataTransformer(registry).toMetadataFormat(dlo())).map((i) => i.output);
+
+      expect(outputs).to.deep.equal([
+        join('d360', 'dataLakeObjects', 'Orders__dll.json'),
+        join('d360', 'dataLakeObjects', 'Orders__dll.meta.json'),
+      ]);
+    });
+
+    it('rejects a payload whose sidecar is missing', async () => {
+      try {
+        await new D360MetadataTransformer(registry).toMetadataFormat(payloadOnly());
+        expect.fail('expected an error');
+      } catch (error) {
+        expect((error as Error).message).to.include('Orders__dll.meta.json is missing');
+      }
+    });
+  });
 });

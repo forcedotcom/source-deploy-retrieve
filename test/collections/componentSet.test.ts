@@ -779,6 +779,17 @@ describe('ComponentSet', () => {
       ]);
     });
 
+    it('should give a component its manifest entry back when it is added again', async () => {
+      const set = new ComponentSet([], registryAccess);
+      const dmo = new SourceComponent({ name: 'default.myDmo', type: registry.types.datamodelobject });
+      set.addWithoutManifestEntry(dmo);
+      set.add(dmo);
+
+      expect((await set.getObject()).Package.types).to.deep.equal([
+        { name: registry.types.datamodelobject.name, members: ['default.myDmo'] },
+      ]);
+    });
+
     it('should allow the componentSet to set the apiVersion', async () => {
       const resolveSpy = $$.SANDBOX.spy(SfProject.prototype, 'resolveProjectConfig');
       const set = ComponentSet.fromSource({

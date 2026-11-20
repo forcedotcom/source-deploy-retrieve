@@ -552,6 +552,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
   public add(component: ComponentLike, deletionType?: DestructiveChangesType): void {
     const key = simpleKey(component);
+    // Adding a component the usual way gives it a manifest entry, even if it was added without one before.
+    this.withoutManifestEntry.delete(key);
     if (!this.components.has(key)) {
       this.components.set(key, new DecodeableMap<string, SourceComponent>());
     }

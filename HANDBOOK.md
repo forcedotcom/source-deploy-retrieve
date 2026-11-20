@@ -120,6 +120,7 @@ Now, for all the optional properties which define how the metadata type is conve
 
 - `aliasFor` This is used as a redirect, whenever this type is requested, return the value of `aliasFor` instead.
 - `directoryName` The `directoryName` is the name of the directory where components are located in a package. Continuing with the `ApexClass` type, this would be `classes`.
+- `excludeFromManifest` This boolean, when set to `true`, keeps the type out of every manifest. Its files still go in the deploy or retrieve payload, but it never gets a `package.xml` entry, constructive or destructive. Use it for types the Metadata API only accepts as part of a parent component. The Data Cloud `DataspaceMember`, `DataModelObjectMapping`, and `SecondaryIndex` types set it.
 - `folderContentType` If the type is a folder type, which means it is made up multiple files inside a directory, this is the id of the type it is a container for. For `<x>Folder` this is set to `<x>`, the `DashboardFolder` type has `folderContentType` set to `Dashboard`
 - `folderType` If the type is contained in folders, the id of the type that contains it. This is like the inverse of `folderContentType` the `Dashboard` metadata type has `folderType` set to `DashboardFolder`
 - `ignoreParentName` This boolean, when set to `true` will ignore the parent's name when constructing this type's `fullName`. This is only set on the `CustomLabel` type, the child of `CustomLabels`.
@@ -435,6 +436,30 @@ bars/
 ├── myBar.ext2-meta.xml
 ```
 
+### The `d360SourceAdapter`
+
+Handles Data Cloud types. Each component is a pair of JSON files: the payload `<name>.json`, which holds the component's definition, and a `<name>.meta.json` sidecar. The sidecar describes the component (`componentType`, `componentName`, `dataspaceName`) and lists the components that deploy with it as one unit (`retrieveWith`). There is no `-meta.xml` file.
+
+Every Data Cloud file ends in `.json`, so these types set `strictDirectoryName` and the folder decides the type. Components are stored under a `d360` folder, either outside any dataspace or inside one:
+
+```text
+d360/
+├── dataLakeObjects/
+|   ├── myDlo__dll.json                  -> DataLakeObject:myDlo__dll
+|   ├── myDlo__dll.meta.json
+├── dataspace/
+|   ├── default/
+|   |   ├── dataTransforms/
+|   |   |   ├── myTransform.json         -> DataTransform:default.myTransform
+|   |   |   ├── myTransform.meta.json
+```
+
+A component inside a dataspace is named `<dataspace>.<name>`. The sidecar is never resolved as a component of its own; it always belongs to its payload. A file of one of these types that isn't under a `d360` folder is rejected with an error.
+
+A component outside any dataspace can still be requested as `<dataspace>.<name>`, which is the name the org uses. The component set builder resolves that name to the local `<name>` file and keeps the requested name in the manifest.
+
+When you deploy a Data Cloud component, `expandD360ComponentSet` adds the components its sidecar lists in `retrieveWith`, and theirs in turn. They are added with `addWithoutManifestEntry`, so their files are sent but `package.xml` lists only what was requested.
+
 ### Transformers
 
 So now that we're able to recognize different "classes" of metadata based on either their file structure, their extensions, matching files, or any of the adapters listed above, we can start to convert them from source, or metadata format, to the other
@@ -445,8 +470,11 @@ Each of these transformers implements two different methods, a `toSourceFormat` 
 - `staticResourceMetadataTransformer`
 - `defaultMetadataTransfomer`
 - `nonDecomposedMetadataTransformer`
+- `d360MetadataTransformer`
 
 There are fewer transformers than adapters because many types that have different adapters can share a transformer. A Bundle type and a MatchingContent type (`LWC` and `ApexClass`) are written the same in metadata and source format, but they're recognized in different ways.
+
+The `d360MetadataTransformer` writes each Data Cloud component as its payload and sidecar together, and keeps the whole path from the `d360` folder down in both formats. In metadata format that path starts at the package root. In source format a component that is already in the project is written over its own files, wherever they are, and a new one goes under `main/default` in the default package directory. A component outside any dataspace can be retrieved once for each dataspace, and each retrieve only lists that dataspace's peers, so the transformer merges a retrieved sidecar into the local one instead of replacing it. Converting a payload to metadata format fails if its sidecar is missing, since the Metadata API needs both files.
 
 ### Decomposition
 

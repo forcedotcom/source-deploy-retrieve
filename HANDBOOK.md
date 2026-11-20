@@ -460,6 +460,8 @@ A component outside any dataspace can still be requested as `<dataspace>.<name>`
 
 When you deploy a Data Cloud component, `expandD360ComponentSet` adds the components its sidecar lists in `retrieveWith`, and theirs in turn. They are added with `addWithoutManifestEntry`, so their files are sent but `package.xml` lists only what was requested.
 
+Peers are found by path. Each `retrieveWith` entry gives the type, name and dataspace of a peer, so only those paths in the same `d360` folder are checked, and a file counts as a peer only when its sidecar names the same type and component. The expansion runs when `ComponentSetBuilder.build` is called with `forDeploy: true`, so a deploy and its preview list the same components. `ComponentSet.deploy` runs it again for sets built any other way. Expanding a set that was already expanded adds nothing.
+
 ### Transformers
 
 So now that we're able to recognize different "classes" of metadata based on either their file structure, their extensions, matching files, or any of the adapters listed above, we can start to convert them from source, or metadata format, to the other

@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { access, lstat, mkdir, readdir, readFile, realpath, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { access, lstat, mkdir, readdir, readFile, realpath, stat, writeFile } from 'node:fs/promises';
 import { dirname, join, parse, relative, resolve, sep } from 'node:path';
 import { createGzip, gunzipSync } from 'node:zlib';
 import { buffer as streamToBuffer } from 'node:stream/consumers';
@@ -56,7 +57,10 @@ export async function packageComputeBundle(
     throw new SfError(`ComputeApp '${name}' is missing required api-spec.yaml in ${appDir}`, 'MissingApiSpec');
   }
   try {
-    await access(join(appDir, 'Procfile'));
+    // a directory named Procfile, or a differently-cased file on a case-insensitive disk, must not pass
+    if (!(await stat(join(appDir, 'Procfile'))).isFile() || !(await readdir(appDir)).includes('Procfile')) {
+      throw new Error('not a Procfile');
+    }
   } catch {
     throw new SfError(
       `ComputeApp '${name}' has no Procfile in ${appDir}. A compute app needs a Procfile to define how it starts. Add a Procfile to the app directory before deploying.`,
@@ -66,14 +70,16 @@ export async function packageComputeBundle(
 
   const metaFileName = `${name}.computeApp-meta.xml`;
   const excluded = new Set([metaFileName, '.forceignore']);
-  // Both files are consumed at build/runtime, so a broad .forceignore must not
-  // remove them from the nested source archive.
-  const alwaysIncluded = new Set(['api-spec.yaml', 'project.toml']);
-  // The app's own .forceignore and the project-root .forceignore each match paths
-  // relative to their own directory, so keep one instance per directory.
-  const forceIgnores = [ForceIgnore.findAndCreate(appDir)];
+  // These files are consumed at build/runtime (and Procfile is checked above), so a broad
+  // .forceignore must not remove them from the nested source archive.
+  const alwaysIncluded = new Set(['api-spec.yaml', 'project.toml', 'Procfile']);
+  // The app's nearest .forceignore and the project-root .forceignore each match paths
+  // relative to their own directory, so keep one instance per directory. Neither search
+  // goes above the project root, so a stray file in a parent folder or home directory
+  // cannot apply.
+  const forceIgnores = [nearestForceIgnore(appDir, projectRoot)];
   if (projectRoot && resolve(projectRoot) !== resolve(appDir)) {
-    forceIgnores.push(ForceIgnore.findAndCreate(projectRoot));
+    forceIgnores.push(new ForceIgnore(join(projectRoot, '.forceignore')));
   }
 
   const sourceRelativePaths = await listFilesRecursive(
@@ -181,8 +187,8 @@ async function rejectSymlinks(filePath: string): Promise<void> {
   while (current !== root) {
     try {
       // eslint-disable-next-line no-await-in-loop
-      const stat = await lstat(current);
-      if (stat.isSymbolicLink()) {
+      const entryStat = await lstat(current);
+      if (entryStat.isSymbolicLink()) {
         // macOS exposes /var as a system alias for /private/var. Do not reject
         // ordinary output paths in its temporary directory for that alias.
         // eslint-disable-next-line no-await-in-loop
@@ -298,6 +304,20 @@ async function tarGzip(entries: ReadonlyArray<{ name: string; data: Buffer }>): 
   );
   pack.finalize();
   return gzippedBufferPromise;
+}
+
+function nearestForceIgnore(appDir: string, projectRoot?: string): ForceIgnore {
+  if (!projectRoot) return ForceIgnore.findAndCreate(appDir);
+  const root = resolve(projectRoot);
+  let dir = resolve(appDir);
+  // Only search upward when the app is inside the project.
+  while (dir === root || dir.startsWith(root + sep)) {
+    const candidate = join(dir, '.forceignore');
+    if (existsSync(candidate)) return new ForceIgnore(candidate);
+    if (dir === root) break;
+    dir = dirname(dir);
+  }
+  return new ForceIgnore();
 }
 
 async function listFilesRecursive(base: string, accepts: (file: string) => boolean): Promise<string[]> {

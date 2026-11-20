@@ -112,12 +112,37 @@ describe('computeSourceBundle', () => {
       expect(names).to.deep.equal(['Procfile', 'api-spec.yaml', 'c.py']);
     });
 
-    it('applies a project-root .forceignore when the app has none', async () => {
+    it('keeps Procfile even when a .forceignore matches it', async () => {
       await writeFile(join(appDir, 'api-spec.yaml'), 'spec');
-      await writeFile(join(appDir, 'a.py'), 'x');
-      await writeFile(join(tempDir, '.forceignore'), '**/a.py\n');
+      await writeFile(join(tempDir, '.forceignore'), 'Procfile\n**/Procfile\n');
+      await writeFile(join(appDir, '.forceignore'), 'Procfile*\n');
       const names = await fileNames(await packageComputeBundle(appDir, 'MyApp', tempDir));
-      expect(names).to.deep.equal(['Procfile', 'api-spec.yaml']);
+      expect(names).to.include('Procfile');
+    });
+
+    it('rejects a Procfile that is a directory', async () => {
+      await writeFile(join(appDir, 'api-spec.yaml'), 'spec');
+      await rm(join(appDir, 'Procfile'));
+      await mkdir(join(appDir, 'Procfile'));
+      try {
+        await packageComputeBundle(appDir, 'MyApp', tempDir);
+        expect.fail('should reject a Procfile directory');
+      } catch (err) {
+        expect((err as { name: string }).name).to.equal('MissingProcfile');
+      }
+    });
+
+    it('ignores a .forceignore in a folder above the project root', async () => {
+      const project = join(tempDir, 'nested-project');
+      const nestedApp = join(project, 'force-app', 'computeApps', 'MyApp');
+      await mkdir(nestedApp, { recursive: true });
+      await writeFile(join(nestedApp, 'Procfile'), 'web: node index.js');
+      await writeFile(join(nestedApp, 'api-spec.yaml'), 'spec');
+      await writeFile(join(nestedApp, 'a.py'), 'x');
+      // lives above the project root, so it must not apply
+      await writeFile(join(tempDir, '.forceignore'), '**/a.py\n');
+      const names = await fileNames(await packageComputeBundle(nestedApp, 'MyApp', project));
+      expect(names).to.include('a.py');
     });
 
     it('keeps api-spec.yaml and project.toml even when the project .forceignore matches them', async () => {
@@ -249,8 +274,7 @@ describe('computeSourceBundle', () => {
 
       expect(result.buffer).to.be.instanceOf(Buffer);
       expect(result.buffer.length).to.be.greaterThan(0);
-      // api-spec.yaml counts as +1 in the outer bundle, source files are main.py + lib/utils.py = 2
-      // fileCount = source entries + 1 (api-spec)
+      // Source files: Procfile, api-spec.yaml, main.py and lib/utils.py.
       expect(result.fileCount).to.equal(4);
     });
 
@@ -263,7 +287,7 @@ describe('computeSourceBundle', () => {
 
       const result = await packageComputeBundle(appDir, 'MyApp');
 
-      // api-spec.yaml, project.toml, and main.py are distinct source files.
+      // Procfile, api-spec.yaml, project.toml and main.py.
       expect(result.fileCount).to.equal(4);
 
       const output = join(tempDir, 'build-critical-output');
@@ -283,7 +307,7 @@ describe('computeSourceBundle', () => {
 
       const result = await packageComputeBundle(appDir, 'MyApp');
 
-      // Only main.py is in source + api-spec = 2
+      // Procfile, api-spec.yaml and main.py; the log and pycache files are ignored.
       expect(result.fileCount).to.equal(3);
     });
   });
@@ -476,7 +500,7 @@ describe('computeSourceBundle', () => {
 
       const unpacked = await unpackComputeBundle(await serverDownload(packed.buffer), outputDir);
 
-      // api-spec.yaml, main.py, lib/utils.py; the meta xml is never uploaded
+      // Procfile, api-spec.yaml, main.py and lib/utils.py; the meta xml is never uploaded
       expect(unpacked.fileCount).to.equal(4);
 
       const apiSpec = await readFile(join(outputDir, 'api-spec.yaml'), 'utf8');

@@ -39,6 +39,8 @@ type ComputeSourceUploadResponse = {
 };
 
 const ENDPOINT = '/connect/compute/source';
+const CHECK_ONLY_MESSAGE =
+  'Packaged and checked only. The org validates against the last uploaded source, not your local files.';
 
 // follow the package's existing layout: `<pkg>/main/default/...` when it has that root, otherwise `<pkg>/...`
 function resolveContentPath(component: SourceComponent, packageDir: string): string {
@@ -97,16 +99,22 @@ export class ComputeAppTransport implements TransportProvider {
   }
 
   public async beforeDeploy(context: TransportContext): Promise<TransportResult> {
-    const fileResponses: FileResponse[] = [];
     const operationResults: TransportOperationResult[] = [];
     void Lifecycle.getInstance().emitTelemetry({
       eventName: 'heroku_compute_pre_deploy',
       library: 'SDR',
+      checkOnly: Boolean(context.checkOnly),
     });
+    const operation = context.checkOnly ? 'check' : 'upload';
+
+    // Package and check every app before uploading any, so one bad app cannot
+    // leave another app's source live without its metadata deploy.
+    const packaged: Array<{ component: SourceComponent & { content: string }; buffer: Buffer }> = [];
+    const failedResponses: FileResponse[] = [];
     for (const component of context.components) {
       try {
         this.assertComputeComponent(component);
-        this.logger.debug('deploying compute source for %s from %s', component.fullName, component.content);
+        this.logger.debug('packaging compute source for %s from %s', component.fullName, component.content);
 
         // eslint-disable-next-line no-await-in-loop
         const bundle = await packageComputeBundle(component.content, component.fullName, context.project.getPath());
@@ -116,12 +124,23 @@ export class ComputeAppTransport implements TransportProvider {
           bundle.buffer.length,
           bundle.fileCount
         );
+        packaged.push({ component, buffer: bundle.buffer });
+      } catch (err) {
+        failedResponses.push(this.failedResponse(component, err));
+      }
+    }
+    if (failedResponses.length > 0) {
+      throw this.failureError(failedResponses, operation);
+    }
 
+    const fileResponses: FileResponse[] = [];
+    for (const { component, buffer } of packaged) {
+      try {
         if (context.checkOnly) {
           this.logger.debug('check only: skipping upload of %s', component.fullName);
         } else {
           // eslint-disable-next-line no-await-in-loop
-          const result = await uploadSource(context.connection, component.fullName, bundle.buffer);
+          const result = await uploadSource(context.connection, component.fullName, buffer);
           this.logger.debug('uploaded %s: buildId=%s', component.fullName, result.buildId);
         }
 
@@ -135,20 +154,14 @@ export class ComputeAppTransport implements TransportProvider {
           transportLabel: this.describe().label,
           operation: `${context.checkOnly ? 'Validate' : 'Upload'} ${component.fullName}`,
           status: 'Succeeded',
+          ...(context.checkOnly ? { message: CHECK_ONLY_MESSAGE } : {}),
         });
       } catch (err) {
-        fileResponses.push({
-          fullName: component.fullName,
-          type: component.type.name,
-          state: ComponentStatus.Failed,
-          filePath: component.content ?? component.xml ?? '',
-          error: (err as Error).message,
-          problemType: 'Error',
-        });
+        fileResponses.push(this.failedResponse(component, err));
       }
     }
 
-    return { ...this.checkForFailures(fileResponses, 'upload'), operationResults };
+    return { ...this.checkForFailures(fileResponses, operation), operationResults };
   }
 
   public async afterRetrieve(context: TransportContext): Promise<TransportResult> {
@@ -226,16 +239,32 @@ export class ComputeAppTransport implements TransportProvider {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private checkForFailures(fileResponses: FileResponse[], operation: string): TransportResult {
+  private failedResponse(component: SourceComponent, err: unknown): FileResponse {
+    return {
+      fullName: component.fullName,
+      type: component.type.name,
+      state: ComponentStatus.Failed,
+      filePath: component.content ?? component.xml ?? '',
+      error: (err as Error).message,
+      problemType: 'Error',
+    };
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  private failureError(fileResponses: FileResponse[], operation: string): SfError {
     const failures = fileResponses.filter((r) => r.state === ComponentStatus.Failed);
-    if (failures.length > 0) {
-      const details = failures.map((f) => `'${f.fullName}': ${f.error ?? 'unknown error'}`).join('; ');
-      const error = new SfError(
-        `Elastic Compute ${operation} failed for ${details}`,
-        `ComputeApp${operation.charAt(0).toUpperCase() + operation.slice(1)}Error`
-      );
-      error.data = fileResponses;
-      throw error;
+    const details = failures.map((f) => `'${f.fullName}': ${f.error ?? 'unknown error'}`).join('; ');
+    const error = new SfError(
+      `Elastic Compute ${operation} failed for ${details}`,
+      `ComputeApp${operation.charAt(0).toUpperCase() + operation.slice(1)}Error`
+    );
+    error.data = fileResponses;
+    return error;
+  }
+
+  private checkForFailures(fileResponses: FileResponse[], operation: string): TransportResult {
+    if (fileResponses.some((r) => r.state === ComponentStatus.Failed)) {
+      throw this.failureError(fileResponses, operation);
     }
 
     return { fileResponses };

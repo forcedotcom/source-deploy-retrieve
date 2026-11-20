@@ -1020,7 +1020,7 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve';
 
 Deploying a set that contains transport components looks the same as any other deploy. Behind the scenes, `deploy()` runs each transport's `beforeDeploy` step first, then starts the Metadata API deploy with every component in the set, including the transport components, since their `-meta.xml` still needs the Metadata API. When the deploy succeeds, `pollStatus()` runs any `afterDeploy` steps before it returns the result.
 
-For `ComputeApp`, `beforeDeploy` packages the app folder into a `deployment-bundle.tar.gz` and uploads it to `/connect/compute/source`, then the Metadata API deploys `myApp.computeApp-meta.xml`. The folder must contain an `api-spec.yaml`, or the upload fails with `MissingApiSpec`. The bundle follows the project's `.forceignore`, except that `api-spec.yaml` and `project.toml` are always included. It leaves out the `-meta.xml` and `.forceignore` files. Bundles are size-capped: 40 MB compressed, 16 MB per file and 40 MB total.
+For `ComputeApp`, `beforeDeploy` packages the app folder into a `deployment-bundle.tar.gz` and uploads it to `/connect/compute/source`, then the Metadata API deploys `myApp.computeApp-meta.xml`. The folder must contain an `api-spec.yaml` (`MissingApiSpec`) and a `Procfile` (`MissingProcfile`), and every app is packaged and checked before any is uploaded. The bundle follows the app's `.forceignore` and the project root's `.forceignore`, so both apply; `api-spec.yaml`, `project.toml` and `Procfile` are always included. It leaves out the `-meta.xml` and `.forceignore` files. Bundles are size-capped: 40 MB compressed, 16 MB per file and 40 MB total.
 
 ```typescript
 import { ComponentSet } from '@salesforce/source-deploy-retrieve';
@@ -1046,7 +1046,7 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve';
 
 - _A failed `beforeDeploy` step makes the `deploy()` promise reject, and the Metadata API deploy never starts. For `ComputeApp`, the error's `data` holds the transport's file responses, including the failed ones._
 - _Nothing is rolled back. `ComputeApp` uploads apps one at a time, so if a later app fails, the earlier ones are already uploaded. If the Metadata API deploy fails afterwards, the uploaded source also stays in place._
-- _Validation-only deploys (`apiOptions: { checkOnly: true }`) skip transports entirely. So does a quick deploy of that validation, so the app source is never uploaded that way._
+- _Validation-only deploys (`apiOptions: { checkOnly: true }`) still run each transport's `beforeDeploy`, and every transport must check `context.checkOnly` itself before changing anything. `ComputeApp` packages and checks the app on validation but does not upload it, so the org validates against the last uploaded source. A quick deploy of that validation replays only the Metadata API job, so the app source is never uploaded that way._
 - _Transports only run through `ComponentSet.prototype.deploy()` and `retrieve()`. Constructing `MetadataApiDeploy` or `MetadataApiRetrieve` yourself, including for an existing operation ID, skips them._
 - _Components marked for delete never go to a transport. They're deleted with Metadata API destructive changes only._
 

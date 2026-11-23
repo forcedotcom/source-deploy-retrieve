@@ -42,6 +42,10 @@ Merge convert for metadata target format currently unsupported
 
 Missing adapter '%s' for metadata type '%s'
 
+# error_missing_transport_provider
+
+No transport provider is registered for '%s' required by %s.
+
 # error_missing_transformer
 
 Missing transformer '%s' for metadata type '%s'

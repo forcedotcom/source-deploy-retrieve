@@ -34,7 +34,6 @@ export class ConvertContext {
   public readonly decomposedExternalServiceRegistration = new DecomposedExternalServiceRegistrationFinalizer();
   public readonly profileMetadata = new ProfileMetadataFinalizer();
 
-   
   public async *executeFinalizers(defaultDirectory?: string): AsyncIterable<WriterFormat[]> {
     for (const member of Object.values(this)) {
       if (member instanceof ConvertTransactionFinalizer) {

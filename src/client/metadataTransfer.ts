@@ -54,6 +54,7 @@ export abstract class MetadataTransfer<
   protected mdapiTempDir?: string;
   private transferId: Options['id'];
   private event = new EventEmitter();
+  private readonly resultProcessors: Array<(result: Result, status: Status) => Promise<void>> = [];
   private usernameOrConnection: string | Connection;
   private apiVersion?: string;
   private consecutiveErrorRetries = 0;
@@ -148,6 +149,11 @@ export abstract class MetadataTransfer<
       }
 
       const result = await this.post(completedMdapiStatus);
+      for (const processor of this.resultProcessors) {
+        // Processors extend the operation result before it is returned to callers.
+        // eslint-disable-next-line no-await-in-loop
+        await processor(result, completedMdapiStatus);
+      }
       if (completedMdapiStatus.status === RequestStatus.Canceled) {
         this.event.emit('cancel', completedMdapiStatus);
       } else {
@@ -176,7 +182,7 @@ export abstract class MetadataTransfer<
           // this keeps SfError data for failures in post deploy/retrieve.
           error.setData({
             id: this.id,
-            causeErrorData: error.data,
+            causeErrorData: err.data as AnyJson,
           });
 
           error.actions = err.actions;
@@ -199,6 +205,11 @@ export abstract class MetadataTransfer<
 
   public onFinish(subscriber: (result: Result) => void): void {
     this.event.on('finish', subscriber);
+  }
+
+  /** @internal Register work that must complete before pollStatus returns its result. */
+  public addResultProcessor(processor: (result: Result, status: Status) => Promise<void>): void {
+    this.resultProcessors.push(processor);
   }
 
   public onCancel(subscriber: (result: Status | undefined) => void): void {

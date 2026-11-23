@@ -10,9 +10,26 @@
 <ul class="tsd-breadcrumb" aria-label="Breadcrumb">
 <li><a href="" aria-current="page">MetadataApiRetrieveOptions</a></li></ul>
 <h1>Type Alias MetadataApiRetrieveOptions</h1></div>
-<div class="tsd-signature"><span class="tsd-kind-type-alias">MetadataApiRetrieveOptions</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">MetadataTransferOptions</span> <span class="tsd-signature-symbol">&amp;</span> <a href="RetrieveOptions.html" class="tsd-signature-type tsd-kind-type-alias">RetrieveOptions</a> <span class="tsd-signature-symbol">&amp;</span> <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">botVersionFilters</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">BotVersionFilter</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">registry</span><span class="tsd-signature-symbol">?:</span> <a href="../classes/RegistryAccess.html" class="tsd-signature-type tsd-kind-class">RegistryAccess</a><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
+<div class="tsd-signature"><span class="tsd-kind-type-alias">MetadataApiRetrieveOptions</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">MetadataTransferOptions</span> <span class="tsd-signature-symbol">&amp;</span> <a href="RetrieveOptions.html" class="tsd-signature-type tsd-kind-type-alias">RetrieveOptions</a> <span class="tsd-signature-symbol">&amp;</span> <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">botVersionFilters</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">BotVersionFilter</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">registry</span><span class="tsd-signature-symbol">?:</span> <a href="../classes/RegistryAccess.html" class="tsd-signature-type tsd-kind-class">RegistryAccess</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">skipTransports</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">transportPackageNames</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
+<div class="tsd-type-declaration">
+<h4>Type Declaration</h4>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">botVersionFilters</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BotVersionFilter</span><span class="tsd-signature-symbol">[]</span></h5></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">registry</span><span class="tsd-signature-symbol">?: </span><a href="../classes/RegistryAccess.html" class="tsd-signature-type tsd-kind-class">RegistryAccess</a></h5></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">skipTransports</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+<div class="tsd-comment tsd-typography"><p>Metadata type names whose transports should be skipped (e.g., <code>['ComputeApp']</code>).
+Components of these types will still be retrieved via the Metadata API but their
+secondary transport (Connect API, presigned URL, etc.) will not run.</p>
+</div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">transportPackageNames</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h5>
+<div class="tsd-comment tsd-typography"><p>Explicit package association for manifest-only transport members, keyed by <code>type#fullName</code>.</p>
+</div></li></ul></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/client/types.ts#L425">client/types.ts:425</a></li></ul></aside></div>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/client/types.ts#L425">client/types.ts:425</a></li></ul></aside></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

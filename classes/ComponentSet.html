@@ -19,14 +19,14 @@ This is typically the case when a component's source files are split across loca
 the <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_mpd.htm">multiple package directories</a>
 scenario.</p>
 </div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="874">
+<section class="tsd-panel tsd-hierarchy" data-refl="943">
 <h4>Hierarchy (<a href="../hierarchy.html#ComponentSet">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="LazyCollection.html" class="tsd-signature-type tsd-kind-class">LazyCollection</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/MetadataComponent.html" class="tsd-signature-type tsd-kind-type-alias">MetadataComponent</a><span class="tsd-signature-symbol">&gt;</span>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">ComponentSet</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L73">collections/componentSet.ts:73</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L75">collections/componentSet.ts:75</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -51,6 +51,7 @@ scenario.</p>
 <div class="tsd-index-list"><a href="#destructivechangespost" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>destructive<wbr/>Changes<wbr/>Post</span></a>
 <a href="#destructivechangespre" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>destructive<wbr/>Changes<wbr/>Pre</span></a>
 <a href="#size" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>size</span></a>
+<a href="#transportpipeline" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>transport<wbr/>Pipeline</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
@@ -92,7 +93,7 @@ scenario.</p>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">ComponentSet</a></h4><aside class="tsd-sources">
 <p>Overrides <a href="LazyCollection.html">LazyCollection</a>.<a href="LazyCollection.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L113">collections/componentSet.ts:113</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L117">collections/componentSet.ts:117</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -102,22 +103,22 @@ scenario.</p>
 <div class="tsd-comment tsd-typography"><p>The metadata API version to use. E.g., 52.0</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L78">collections/componentSet.ts:78</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L80">collections/componentSet.ts:80</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="botversionfilters"><code class="tsd-tag">Optional</code><span>bot<wbr/>Version<wbr/>Filters</span><a href="#botversionfilters" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">botVersionFilters</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">botName</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">versionFilter</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;all&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;highest&quot;</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L91">collections/componentSet.ts:91</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L93">collections/componentSet.ts:93</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="forceignoredpaths"><code class="tsd-tag">Optional</code><span>force<wbr/>Ignored<wbr/>Paths</span><a href="#forceignoredpaths" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">forceIgnoredPaths</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L90">collections/componentSet.ts:90</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L92">collections/componentSet.ts:92</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="fullname"><code class="tsd-tag">Optional</code><span>full<wbr/>Name</span><a href="#fullname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">fullName</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L89">collections/componentSet.ts:89</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L91">collections/componentSet.ts:91</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="projectdirectory"><code class="tsd-tag">Optional</code><span>project<wbr/>Directory</span><a href="#projectdirectory" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">projectDirectory</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -125,7 +126,7 @@ scenario.</p>
 When not present, sfdx-core's SfProject will use the current working directory.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L88">collections/componentSet.ts:88</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L90">collections/componentSet.ts:90</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="sourceapiversion"><code class="tsd-tag">Optional</code><span>source<wbr/>Api<wbr/>Version</span><a href="#sourceapiversion" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">sourceApiVersion</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -133,12 +134,12 @@ When not present, sfdx-core's SfProject will use the current working directory.<
 This is used as the value for the <code>version</code> field in the manifest.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L83">collections/componentSet.ts:83</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L85">collections/componentSet.ts:85</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="wildcard"><code class="tsd-tag">Static</code> <code class="tsd-tag">Readonly</code><span>WILDCARD</span><a href="#wildcard" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">WILDCARD</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;*&quot;</span><span class="tsd-signature-symbol"> = &#39;*&#39;</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L74">collections/componentSet.ts:74</a></li></ul></aside></section></section></details>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L76">collections/componentSet.ts:76</a></li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="accessors-1">Accessors<a href="#accessors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -150,7 +151,7 @@ This is used as the value for the <code>version</code> field in the manifest.</p
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">DecodeableMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">DecodeableMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <a href="SourceComponent.html" class="tsd-signature-type tsd-kind-class">SourceComponent</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L145">collections/componentSet.ts:145</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L149">collections/componentSet.ts:149</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="destructivechangespre"><span>destructive<wbr/>Changes<wbr/>Pre</span><a href="#destructivechangespre" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -159,7 +160,7 @@ This is used as the value for the <code>version</code> field in the manifest.</p
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">DecodeableMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">DecodeableMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <a href="SourceComponent.html" class="tsd-signature-type tsd-kind-class">SourceComponent</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L141">collections/componentSet.ts:141</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L145">collections/componentSet.ts:145</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="size"><span>size</span><a href="#size" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -172,7 +173,26 @@ ones map to the same <code>fullName</code> and <code>type</code> pair.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>number of metadata components in the set</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L132">collections/componentSet.ts:132</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L136">collections/componentSet.ts:136</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="transportpipeline"><span>transport<wbr/>Pipeline</span><a href="#transportpipeline" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li>
+<div class="tsd-signature" id="transportpipelinetransportpipeline"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">transportPipeline</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">TransportPipeline</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TransportPipeline</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L153">collections/componentSet.ts:153</a></li></ul></aside></div></li>
+<li>
+<div class="tsd-signature" id="transportpipelinetransportpipeline-1"><span class="tsd-signature-keyword">set</span> <span class="tsd-kind-set-signature">transportPipeline</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">pipeline</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">TransportPipeline</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">pipeline</span>: <span class="tsd-signature-type">TransportPipeline</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L158">collections/componentSet.ts:158</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -190,7 +210,7 @@ subclass if <code>iterable</code> is not set.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/MetadataComponent.html" class="tsd-signature-type tsd-kind-type-alias">MetadataComponent</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Overrides <a href="LazyCollection.html">LazyCollection</a>.<a href="LazyCollection.html#iterator">[iterator]</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L686">collections/componentSet.ts:686</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L727">collections/componentSet.ts:727</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="add"><span>add</span><a href="#add" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -204,7 +224,7 @@ subclass if <code>iterable</code> is not set.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">deletionType</span>: <a href="../enums/DestructiveChangesType.html" class="tsd-signature-type tsd-kind-enum">DestructiveChangesType</a></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L550">collections/componentSet.ts:550</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L591">collections/componentSet.ts:591</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="deploy"><span>deploy</span><a href="#deploy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -222,7 +242,7 @@ the set to create an operation.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="MetadataApiDeploy.html" class="tsd-signature-type tsd-kind-class">MetadataApiDeploy</a><span class="tsd-signature-symbol">&gt;</span></h4><p>Metadata API deploy operation</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L380">collections/componentSet.ts:380</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L394">collections/componentSet.ts:394</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="filter"><span>filter</span><a href="#filter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -236,7 +256,7 @@ the set to create an operation.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="LazyCollection.html">LazyCollection</a>.<a href="LazyCollection.html#filter">filter</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/lazyCollection.ts#L39">collections/lazyCollection.ts:39</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/lazyCollection.ts#L39">collections/lazyCollection.ts:39</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="find"><span>find</span><a href="#find" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -250,7 +270,7 @@ the set to create an operation.</p>
 <h4 class="tsd-returns-title">Returns <a href="../types/MetadataComponent.html" class="tsd-signature-type tsd-kind-type-alias">MetadataComponent</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="LazyCollection.html">LazyCollection</a>.<a href="LazyCollection.html#find">find</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/lazyCollection.ts#L28">collections/lazyCollection.ts:28</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/lazyCollection.ts#L28">collections/lazyCollection.ts:28</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="first"><span>first</span><a href="#first" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -260,7 +280,7 @@ the set to create an operation.</p>
 <h4 class="tsd-returns-title">Returns <a href="../types/MetadataComponent.html" class="tsd-signature-type tsd-kind-type-alias">MetadataComponent</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="LazyCollection.html">LazyCollection</a>.<a href="LazyCollection.html#first">first</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/lazyCollection.ts#L24">collections/lazyCollection.ts:24</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/lazyCollection.ts#L24">collections/lazyCollection.ts:24</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getcomponentfilenamesbynameandtype"><span>get<wbr/>Component<wbr/>Filenames<wbr/>By<wbr/>Name<wbr/>And<wbr/>Type</span><a href="#getcomponentfilenamesbynameandtype" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -278,7 +298,7 @@ the set to create an operation.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4><p>string[]</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L662">collections/componentSet.ts:662</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L703">collections/componentSet.ts:703</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getdestructivechangestype"><span>get<wbr/>Destructive<wbr/>Changes<wbr/>Type</span><a href="#getdestructivechangestype" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -291,7 +311,7 @@ type to build the appropriate destructive changes manifest.</p>
 <h4 class="tsd-returns-title">Returns <a href="../enums/DestructiveChangesType.html" class="tsd-signature-type tsd-kind-enum">DestructiveChangesType</a></h4><p>The type of destructive changes to make; i.e., pre or post deploy.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L720">collections/componentSet.ts:720</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L761">collections/componentSet.ts:761</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getobject"><span>get<wbr/>Object</span><a href="#getobject" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -309,7 +329,7 @@ type to build the appropriate destructive changes manifest.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/PackageManifestObject.html" class="tsd-signature-type tsd-kind-type-alias">PackageManifestObject</a><span class="tsd-signature-symbol">&gt;</span></h4><p>Object representation of a package manifest</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L450">collections/componentSet.ts:450</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L491">collections/componentSet.ts:491</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getpackagexml"><span>get<wbr/>Package<wbr/>Xml</span><a href="#getpackagexml" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -331,7 +351,7 @@ type of manifest to create.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L517">collections/componentSet.ts:517</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L558">collections/componentSet.ts:558</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getsourcecomponents"><span>get<wbr/>Source<wbr/>Components</span><a href="#getsourcecomponents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -349,7 +369,7 @@ type of manifest to create.</p>
 <h4 class="tsd-returns-title">Returns <a href="LazyCollection.html" class="tsd-signature-type tsd-kind-class">LazyCollection</a><span class="tsd-signature-symbol">&lt;</span><a href="SourceComponent.html" class="tsd-signature-type tsd-kind-class">SourceComponent</a><span class="tsd-signature-symbol">&gt;</span></h4><p>Collection of source-backed components</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L535">collections/componentSet.ts:535</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L576">collections/componentSet.ts:576</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="gettypesofdestructivechanges"><span>get<wbr/>Types<wbr/>Of<wbr/>Destructive<wbr/>Changes</span><a href="#gettypesofdestructivechanges" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -362,7 +382,7 @@ or an empty array if there aren't destructive components present</p>
 <h4 class="tsd-returns-title">Returns <a href="../enums/DestructiveChangesType.html" class="tsd-signature-type tsd-kind-enum">DestructiveChangesType</a><span class="tsd-signature-symbol">[]</span></h4><p>DestructiveChangesType[]</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L730">collections/componentSet.ts:730</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L771">collections/componentSet.ts:771</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="has"><span>has</span><a href="#has" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -387,7 +407,7 @@ or an empty array if there aren't destructive components present</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p><code>true</code> if the component is in the set</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L611">collections/componentSet.ts:611</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L652">collections/componentSet.ts:652</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="map"><span>map</span><a href="#map" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -405,7 +425,7 @@ or an empty array if there aren't destructive components present</p>
 <h4 class="tsd-returns-title">Returns <a href="LazyCollection.html" class="tsd-signature-type tsd-kind-class">LazyCollection</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="LazyCollection.html#mapr">R</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="LazyCollection.html">LazyCollection</a>.<a href="LazyCollection.html#map">map</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/lazyCollection.ts#L58">collections/lazyCollection.ts:58</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/lazyCollection.ts#L58">collections/lazyCollection.ts:58</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="retrieve"><span>retrieve</span><a href="#retrieve" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -422,7 +442,7 @@ starts the retrieval.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="MetadataApiRetrieve.html" class="tsd-signature-type tsd-kind-class">MetadataApiRetrieve</a><span class="tsd-signature-symbol">&gt;</span></h4><p>Metadata API retrieve operation</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L418">collections/componentSet.ts:418</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L437">collections/componentSet.ts:437</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="setdestructivechangestype"><span>set<wbr/>Destructive<wbr/>Changes<wbr/>Type</span><a href="#setdestructivechangestype" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -442,7 +462,7 @@ deployed (<code>destructiveChangesPre.xml</code>) or after changes are deployed
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L710">collections/componentSet.ts:710</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L751">collections/componentSet.ts:751</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="toarray"><span>to<wbr/>Array</span><a href="#toarray" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -452,7 +472,7 @@ deployed (<code>destructiveChangesPre.xml</code>) or after changes are deployed
 <h4 class="tsd-returns-title">Returns <a href="../types/MetadataComponent.html" class="tsd-signature-type tsd-kind-type-alias">MetadataComponent</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="LazyCollection.html">LazyCollection</a>.<a href="LazyCollection.html#toarray">toArray</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/lazyCollection.ts#L71">collections/lazyCollection.ts:71</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/lazyCollection.ts#L71">collections/lazyCollection.ts:71</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="fromconnection"><code class="tsd-tag">Static</code><span>from<wbr/>Connection</span><a href="#fromconnection" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -470,7 +490,7 @@ deployed (<code>destructiveChangesPre.xml</code>) or after changes are deployed
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">ComponentSet</a><span class="tsd-signature-symbol">&gt;</span></h4><p>ComponentSet of source resolved components</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L339">collections/componentSet.ts:339</a></li></ul></aside></div></li>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L353">collections/componentSet.ts:353</a></li></ul></aside></div></li>
 <li class="">
 <div class="tsd-signature tsd-anchor-link" id="fromconnection-2"><span class="tsd-kind-call-signature">fromConnection</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">FromConnectionOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">ComponentSet</a><span class="tsd-signature-symbol">&gt;</span><a href="#fromconnection-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
@@ -483,7 +503,7 @@ deployed (<code>destructiveChangesPre.xml</code>) or after changes are deployed
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">ComponentSet</a><span class="tsd-signature-symbol">&gt;</span></h4><p>ComponentSet of source resolved components</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L346">collections/componentSet.ts:346</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L360">collections/componentSet.ts:360</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="frommanifest"><code class="tsd-tag">Static</code><span>from<wbr/>Manifest</span><a href="#frommanifest" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -502,7 +522,7 @@ deployed (<code>destructiveChangesPre.xml</code>) or after changes are deployed
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">ComponentSet</a><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise of a ComponentSet containing manifest components</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L209">collections/componentSet.ts:209</a></li></ul></aside></div></li>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L223">collections/componentSet.ts:223</a></li></ul></aside></div></li>
 <li class="">
 <div class="tsd-signature tsd-anchor-link" id="frommanifest-2"><span class="tsd-kind-call-signature">fromManifest</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">:</span> <a href="../types/FromManifestOptions.html" class="tsd-signature-type tsd-kind-type-alias">FromManifestOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">ComponentSet</a><span class="tsd-signature-symbol">&gt;</span><a href="#frommanifest-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
@@ -520,7 +540,7 @@ and using the manifest file as a filter.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">ComponentSet</a><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise of a ComponentSet containing manifest components</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L222">collections/componentSet.ts:222</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L236">collections/componentSet.ts:236</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="fromsource"><code class="tsd-tag">Static</code><span>from<wbr/>Source</span><a href="#fromsource" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -538,7 +558,7 @@ and using the manifest file as a filter.</p>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">ComponentSet</a></h4><p>ComponentSet of source resolved components</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L155">collections/componentSet.ts:155</a></li></ul></aside></div></li>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L169">collections/componentSet.ts:169</a></li></ul></aside></div></li>
 <li class="">
 <div class="tsd-signature tsd-anchor-link" id="fromsource-2"><span class="tsd-kind-call-signature">fromSource</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">fsPaths</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">ComponentSet</a><a href="#fromsource-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
@@ -553,7 +573,7 @@ and using the manifest file as a filter.</p>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">ComponentSet</a></h4><p>ComponentSet of source resolved components</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L162">collections/componentSet.ts:162</a></li></ul></aside></div></li>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L176">collections/componentSet.ts:176</a></li></ul></aside></div></li>
 <li class="">
 <div class="tsd-signature tsd-anchor-link" id="fromsource-3"><span class="tsd-kind-call-signature">fromSource</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">:</span> <a href="../types/FromSourceOptions.html" class="tsd-signature-type tsd-kind-type-alias">FromSourceOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">ComponentSet</a><a href="#fromsource-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
@@ -568,7 +588,7 @@ and resolving against a different file system abstraction (see <a href="TreeCont
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">ComponentSet</a></h4><p>ComponentSet of source resolved components</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/b13e11a389cf3d29f2647d498c830321333a8f82/src/collections/componentSet.ts#L171">collections/componentSet.ts:171</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e10b6564d5946243ce2e90376a61b1f655fe6157/src/collections/componentSet.ts#L185">collections/componentSet.ts:185</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -587,7 +607,7 @@ and resolving against a different file system abstraction (see <a href="TreeCont
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
 <div><a href="#apiversion"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>api<wbr/>Version</span></a><a href="#botversionfilters"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>bot<wbr/>Version<wbr/>Filters</span></a><a href="#forceignoredpaths"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>force<wbr/>Ignored<wbr/>Paths</span></a><a href="#fullname"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>full<wbr/>Name</span></a><a href="#projectdirectory"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>project<wbr/>Directory</span></a><a href="#sourceapiversion"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>source<wbr/>Api<wbr/>Version</span></a><a href="#wildcard"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>WILDCARD</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Accessors</summary>
-<div><a href="#destructivechangespost"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>destructive<wbr/>Changes<wbr/>Post</span></a><a href="#destructivechangespre"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>destructive<wbr/>Changes<wbr/>Pre</span></a><a href="#size"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>size</span></a></div></details>
+<div><a href="#destructivechangespost"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>destructive<wbr/>Changes<wbr/>Post</span></a><a href="#destructivechangespre"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>destructive<wbr/>Changes<wbr/>Pre</span></a><a href="#size"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>size</span></a><a href="#transportpipeline"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>transport<wbr/>Pipeline</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
 <div><a href="#iterator"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>[iterator]</span></a><a href="#add"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add</span></a><a href="#deploy"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>deploy</span></a><a href="#filter" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>filter</span></a><a href="#find" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>find</span></a><a href="#first" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>first</span></a><a href="#getcomponentfilenamesbynameandtype"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Component<wbr/>Filenames<wbr/>By<wbr/>Name<wbr/>And<wbr/>Type</span></a><a href="#getdestructivechangestype"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Destructive<wbr/>Changes<wbr/>Type</span></a><a href="#getobject"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Object</span></a><a href="#getpackagexml"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Package<wbr/>Xml</span></a><a href="#getsourcecomponents"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Source<wbr/>Components</span></a><a href="#gettypesofdestructivechanges"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Types<wbr/>Of<wbr/>Destructive<wbr/>Changes</span></a><a href="#has"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has</span></a><a href="#map" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>map</span></a><a href="#retrieve"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>retrieve</span></a><a href="#setdestructivechangestype"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Destructive<wbr/>Changes<wbr/>Type</span></a><a href="#toarray" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>to<wbr/>Array</span></a><a href="#fromconnection"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>from<wbr/>Connection</span></a><a href="#frommanifest"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>from<wbr/>Manifest</span></a><a href="#fromsource"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>from<wbr/>Source</span></a></div></details></div></details></div>
 <div class="site-menu">

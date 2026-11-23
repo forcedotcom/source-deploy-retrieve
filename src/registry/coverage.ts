@@ -17,23 +17,26 @@
 
 import { OptionsOfTextResponseBody } from 'got';
 import got from 'got';
-import { ProxyAgent } from 'proxy-agent';
 import { isString } from '@salesforce/ts-types';
 import { SfError } from '@salesforce/core/sfError';
 import { CoverageObject } from '../../src/registry/types';
 
-const getProxiedOptions = (url: string): OptionsOfTextResponseBody => ({
-  timeout: {
-    request: 10_000,
-  },
-  retry: {
-    limit: 0,
-  },
-  agent: {
-    https: new ProxyAgent(),
-  },
-  url,
-});
+// proxy-agent >= 7 is ESM-only; load it lazily so this CommonJS package keeps working
+const getProxiedOptions = async (url: string): Promise<OptionsOfTextResponseBody> => {
+  const { ProxyAgent } = await import('proxy-agent');
+  return {
+    timeout: {
+      request: 10_000,
+    },
+    retry: {
+      limit: 0,
+    },
+    agent: {
+      https: new ProxyAgent(),
+    },
+    url,
+  };
+};
 
 type ApiVersion = {
   label: string;
@@ -47,7 +50,8 @@ export const getCurrentApiVersion = async (): Promise<number> => {
   if (apiVer === undefined) {
     try {
       const apiVersionsUrl = 'https://appexchange.salesforce.com/services/data';
-      const lastVersionEntry = (await got(getProxiedOptions(apiVersionsUrl)).json<ApiVersion[]>()).at(-1) as ApiVersion;
+      const options = await getProxiedOptions(apiVersionsUrl);
+      const lastVersionEntry = (await got(options).json<ApiVersion[]>()).at(-1) as ApiVersion;
       apiVer = +lastVersionEntry.version;
     } catch (e: unknown) {
       const err = e instanceof Error ? e : SfError.wrap(isString(e) ? e : 'unknown');
@@ -79,7 +83,7 @@ export const getCoverage = async (apiVersion: number): Promise<CoverageObject> =
   );
 
   const results = await Promise.allSettled(
-    urls.map(getProxiedOptions).map(async (proxy) => got(proxy).json<CoverageObject>())
+    urls.map(async (url) => got(await getProxiedOptions(url)).json<CoverageObject>())
   );
   for (const result of results) {
     if (result.status === 'fulfilled' && result.value?.apiVersion === apiVersion) {

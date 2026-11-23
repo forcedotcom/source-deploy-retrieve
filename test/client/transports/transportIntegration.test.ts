@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { join } from 'node:path';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { AuthInfo, Connection, SfProject } from '@salesforce/core';
@@ -996,17 +997,17 @@ describe('Transport integration', () => {
       const request = sinon.stub().resolves(Buffer.from('bundle').toString('binary'));
       const query = sinon.stub().resolves({ records: [{ NamespacePrefix: 'xorgns' }] });
       const transport = new ComputeAppTransport();
+      const appDir = join('proj', 'force-app', 'main', 'default', 'computeApps', 'XorgApp');
+      const xml = join(appDir, 'XorgApp.computeApp-meta.xml');
       const requested = new SourceComponent({ name: 'xorgns__XorgApp', type });
       const extracted = new SourceComponent(
         {
           name: 'XorgApp',
           type,
-          content: '/proj/force-app/main/default/computeApps/XorgApp',
-          xml: '/proj/force-app/main/default/computeApps/XorgApp/XorgApp.computeApp-meta.xml',
+          content: appDir,
+          xml,
         },
-        VirtualTreeContainer.fromFilePaths([
-          '/proj/force-app/main/default/computeApps/XorgApp/XorgApp.computeApp-meta.xml',
-        ])
+        VirtualTreeContainer.fromFilePaths([xml])
       );
       const coordinator = new TransportCoordinator(
         new TransportPipeline([transport]),
@@ -1019,16 +1020,14 @@ describe('Transport integration', () => {
       await coordinator.processResult(result, RequestStatus.Succeeded);
 
       expect(request.firstCall.args[0]).to.include({ url: '/connect/compute/XorgApp/builds/latest/source' });
-      expect(unpack.firstCall.args[1]).to.equal('/proj/force-app/main/default/computeApps/XorgApp');
-      const transportResponses = result
-        .getFileResponses()
-        .filter((response) => response.filePath === '/proj/force-app/main/default/computeApps/XorgApp');
+      expect(unpack.firstCall.args[1]).to.equal(appDir);
+      const transportResponses = result.getFileResponses().filter((response) => response.filePath === appDir);
       expect(transportResponses).to.deep.equal([
         {
           fullName: 'XorgApp',
           type: 'ComputeApp',
           state: ComponentStatus.Changed,
-          filePath: '/proj/force-app/main/default/computeApps/XorgApp',
+          filePath: appDir,
         },
       ]);
     });

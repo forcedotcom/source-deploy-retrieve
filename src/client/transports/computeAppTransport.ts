@@ -17,7 +17,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import FormData from 'form-data';
-import { Lifecycle, Logger, SfError } from '@salesforce/core';
+import { Lifecycle, Logger, Messages, SfError } from '@salesforce/core';
 import type { Connection } from '@salesforce/core';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../common/constants';
 import { SourceComponent } from '../../resolve/sourceComponent';
@@ -38,9 +38,10 @@ type ComputeSourceUploadResponse = {
   uploadedAt: string;
 };
 
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'computeApp');
+
 const ENDPOINT = '/connect/compute/source';
-const CHECK_ONLY_MESSAGE =
-  'Packaged and checked only. The org validates against the last uploaded source, not your local files.';
 
 // follow the package's existing layout: `<pkg>/main/default/...` when it has that root, otherwise `<pkg>/...`
 function resolveContentPath(component: SourceComponent, packageDir: string): string {
@@ -80,7 +81,7 @@ async function downloadSource(connection: Connection, appIdOrName: string): Prom
     { encoding: 'binary' }
   );
   if (body.length > MAX_COMPRESSED_BYTES) {
-    throw new Error(`Compute source bundle: compressed size limit (${MAX_COMPRESSED_BYTES} bytes) exceeded`);
+    throw messages.createError('bundleCompressedSizeLimit', [MAX_COMPRESSED_BYTES]);
   }
   return Buffer.from(body, 'binary');
 }
@@ -154,7 +155,7 @@ export class ComputeAppTransport implements TransportProvider {
           transportLabel: this.describe().label,
           operation: `${context.checkOnly ? 'Validate' : 'Upload'} ${component.fullName}`,
           status: 'Succeeded',
-          ...(context.checkOnly ? { message: CHECK_ONLY_MESSAGE } : {}),
+          ...(context.checkOnly ? { message: messages.getMessage('checkOnlyResult') } : {}),
         });
       } catch (err) {
         fileResponses.push(this.failedResponse(component, err));
@@ -179,7 +180,7 @@ export class ComputeAppTransport implements TransportProvider {
               .find((option) => option.name === packageName)
           : undefined;
         if (!component.content && packageName && !packageOutput) {
-          throw new Error(`No package option found for '${packageName}' (component '${component.fullName}')`);
+          throw messages.createError('missingPackageOption', [packageName, component.fullName]);
         }
         const contentPath =
           component.content ??
@@ -225,14 +226,14 @@ export class ComputeAppTransport implements TransportProvider {
   ): asserts component is SourceComponent & { content: string } {
     if (!component.content) {
       throw new SfError(
-        `ComputeAppTransport requires a content path for '${component.fullName}'`,
+        messages.getMessage('missingComponentContent', [component.fullName]),
         'MissingComponentContent'
       );
     }
     // check before uploading, otherwise the app source goes live with no metadata deploy
     if (!component.xml) {
       throw new SfError(
-        `ComputeApp '${component.fullName}' is missing ${component.fullName}.computeApp-meta.xml in ${component.content}`,
+        messages.getMessage('missingComponentXml', [component.fullName, component.fullName, component.content]),
         'MissingComponentXml'
       );
     }
@@ -253,9 +254,11 @@ export class ComputeAppTransport implements TransportProvider {
   // eslint-disable-next-line class-methods-use-this
   private failureError(fileResponses: FileResponse[], operation: string): SfError {
     const failures = fileResponses.filter((r) => r.state === ComponentStatus.Failed);
-    const details = failures.map((f) => `'${f.fullName}': ${f.error ?? 'unknown error'}`).join('; ');
+    const details = failures
+      .map((f) => `'${f.fullName}': ${f.error ?? messages.getMessage('unknownError')}`)
+      .join('; ');
     const error = new SfError(
-      `Elastic Compute ${operation} failed for ${details}`,
+      messages.getMessage('transportOperationFailed', [operation, details]),
       `ComputeApp${operation.charAt(0).toUpperCase() + operation.slice(1)}Error`
     );
     error.data = fileResponses;

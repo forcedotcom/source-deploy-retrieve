@@ -20,9 +20,11 @@ import { dirname, join, parse, relative, resolve, sep } from 'node:path';
 import { createGzip, gunzipSync } from 'node:zlib';
 import { buffer as streamToBuffer } from 'node:stream/consumers';
 import * as tarStream from 'tar-stream';
-import { Logger, SfError } from '@salesforce/core';
+import { Logger, Messages, SfError } from '@salesforce/core';
 import { ForceIgnore } from '../../resolve/forceIgnore';
 
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'computeApp');
 const logger = Logger.childFromRoot('computeSourceBundle');
 
 // Compute source bundles are app source, not dependency caches or compiled artifacts.
@@ -54,18 +56,17 @@ export async function packageComputeBundle(
   try {
     await access(apiSpecPath);
   } catch {
-    throw new SfError(`ComputeApp '${name}' is missing required api-spec.yaml in ${appDir}`, 'MissingApiSpec');
+    throw new SfError(messages.getMessage('missingApiSpec', [name, appDir]), 'MissingApiSpec');
   }
+  let hasProcfile = false;
   try {
     // a directory named Procfile, or a differently-cased file on a case-insensitive disk, must not pass
-    if (!(await stat(join(appDir, 'Procfile'))).isFile() || !(await readdir(appDir)).includes('Procfile')) {
-      throw new Error('not a Procfile');
-    }
+    hasProcfile = (await stat(join(appDir, 'Procfile'))).isFile() && (await readdir(appDir)).includes('Procfile');
   } catch {
-    throw new SfError(
-      `ComputeApp '${name}' has no Procfile in ${appDir}. A compute app needs a Procfile to define how it starts. Add a Procfile to the app directory before deploying.`,
-      'MissingProcfile'
-    );
+    // a missing Procfile is reported below
+  }
+  if (!hasProcfile) {
+    throw new SfError(messages.getMessage('missingProcfile', [name, appDir]), 'MissingProcfile');
   }
 
   const metaFileName = `${name}.computeApp-meta.xml`;
@@ -92,20 +93,18 @@ export async function packageComputeBundle(
 
   const apiSpec = await readFile(apiSpecPath);
   if (apiSpec.length > MAX_ENTRY_BYTES) {
-    throw new Error(`Compute source bundle: api-spec.yaml entry size limit (${MAX_ENTRY_BYTES} bytes) exceeded`);
+    throw messages.createError('bundleApiSpecSizeLimit', [MAX_ENTRY_BYTES]);
   }
   let sourceBytes = 0;
   for (const relativePath of sourceRelativePaths) {
     // eslint-disable-next-line no-await-in-loop
     const { size } = await lstat(join(appDir, relativePath));
     if (size > MAX_ENTRY_BYTES) {
-      throw new Error(
-        `Compute source bundle: entry size limit (${MAX_ENTRY_BYTES} bytes) exceeded for ${relativePath}`
-      );
+      throw messages.createError('bundleFileSizeLimit', [MAX_ENTRY_BYTES, relativePath]);
     }
     sourceBytes += size;
     if (sourceBytes > MAX_TOTAL_ENTRY_BYTES) {
-      throw new Error(`Compute source bundle: total size limit (${MAX_TOTAL_ENTRY_BYTES} bytes) exceeded`);
+      throw messages.createError('bundleTotalSizeLimit', [MAX_TOTAL_ENTRY_BYTES]);
     }
   }
 
@@ -117,17 +116,17 @@ export async function packageComputeBundle(
   );
   // The source may change between stat and read; check actual bytes before assembling.
   if (sourceEntries.some(({ data }) => data.length > MAX_ENTRY_BYTES)) {
-    throw new Error(`Compute source bundle: entry size limit (${MAX_ENTRY_BYTES} bytes) exceeded`);
+    throw messages.createError('bundleEntrySizeLimit', [MAX_ENTRY_BYTES]);
   }
   if (sourceEntries.reduce((total, { data }) => total + data.length, 0) > MAX_TOTAL_ENTRY_BYTES) {
-    throw new Error(`Compute source bundle: total size limit (${MAX_TOTAL_ENTRY_BYTES} bytes) exceeded`);
+    throw messages.createError('bundleTotalSizeLimit', [MAX_TOTAL_ENTRY_BYTES]);
   }
   const sourceTarGz = await tarGzip(sourceEntries);
   if (sourceTarGz.length > MAX_COMPRESSED_BYTES) {
-    throw new Error(`Compute source bundle: source.tar.gz entry size limit (${MAX_COMPRESSED_BYTES} bytes) exceeded`);
+    throw messages.createError('bundleSourceArchiveSizeLimit', [MAX_COMPRESSED_BYTES]);
   }
   if (apiSpec.length + sourceTarGz.length > MAX_TOTAL_ENTRY_BYTES) {
-    throw new Error(`Compute source bundle: outer total size limit (${MAX_TOTAL_ENTRY_BYTES} bytes) exceeded`);
+    throw messages.createError('bundleOuterTotalSizeLimit', [MAX_TOTAL_ENTRY_BYTES]);
   }
 
   const buffer = await tarGzip([
@@ -135,7 +134,7 @@ export async function packageComputeBundle(
     { name: 'source.tar.gz', data: sourceTarGz },
   ]);
   if (buffer.length > MAX_COMPRESSED_BYTES) {
-    throw new Error(`Compute source bundle: compressed size limit (${MAX_COMPRESSED_BYTES} bytes) exceeded`);
+    throw messages.createError('bundleCompressedSizeLimit', [MAX_COMPRESSED_BYTES]);
   }
   logger.debug('packaged %s into %d bytes (%d files)', appDir, buffer.length, sourceEntries.length);
 
@@ -148,7 +147,7 @@ export async function unpackComputeBundle(buffer: Buffer, appDir: string): Promi
   const entries = await untarGzip(buffer);
   const names = Object.keys(entries);
   if (names.length === 0) {
-    throw new Error('Malformed compute source bundle: archive contains no files');
+    throw messages.createError('malformedBundleEmpty');
   }
 
   const resolvedAppDir = resolve(appDir);
@@ -156,7 +155,7 @@ export async function unpackComputeBundle(buffer: Buffer, appDir: string): Promi
     const filePath = resolve(appDir, relativePath);
     // tar-slip guard: reject entries that escape appDir
     if (!filePath.startsWith(resolvedAppDir + sep)) {
-      throw new Error(`Malformed compute source bundle: unsafe entry path "${relativePath}"`);
+      throw messages.createError('malformedBundleUnsafePath', [relativePath]);
     }
     return { filePath, data };
   });
@@ -193,7 +192,7 @@ async function rejectSymlinks(filePath: string): Promise<void> {
         // ordinary output paths in its temporary directory for that alias.
         // eslint-disable-next-line no-await-in-loop
         if (!(process.platform === 'darwin' && current === '/var' && (await realpath(current)) === '/private/var')) {
-          throw new Error(`Malformed compute source bundle: symlink in output path "${current}"`);
+          throw messages.createError('malformedBundleSymlink', [current]);
         }
       }
     } catch (err) {
@@ -206,9 +205,7 @@ async function rejectSymlinks(filePath: string): Promise<void> {
 function untarGzip(buffer: Buffer): Promise<Record<string, Buffer>> {
   return new Promise((resolveEntries, reject) => {
     if (buffer.length > MAX_COMPRESSED_BYTES) {
-      reject(
-        new Error(`Malformed compute source bundle: compressed size limit (${MAX_COMPRESSED_BYTES} bytes) exceeded`)
-      );
+      reject(messages.createError('malformedBundleCompressedSizeLimit', [MAX_COMPRESSED_BYTES]));
       return;
     }
     let decompressed: Buffer;
@@ -216,11 +213,9 @@ function untarGzip(buffer: Buffer): Promise<Record<string, Buffer>> {
       decompressed = gunzipSync(buffer, { maxOutputLength: MAX_TAR_BYTES });
     } catch (err) {
       reject(
-        new Error(
-          (err as NodeJS.ErrnoException).code === 'ERR_BUFFER_TOO_LARGE'
-            ? `Malformed compute source bundle: decompressed size limit (${MAX_TAR_BYTES} bytes) exceeded`
-            : 'Malformed compute source bundle: not a valid gzip archive'
-        )
+        (err as NodeJS.ErrnoException).code === 'ERR_BUFFER_TOO_LARGE'
+          ? messages.createError('malformedBundleDecompressedSizeLimit', [MAX_TAR_BYTES])
+          : messages.createError('malformedBundleInvalidGzip')
       );
       return;
     }
@@ -237,13 +232,13 @@ function untarGzip(buffer: Buffer): Promise<Record<string, Buffer>> {
         return;
       }
       if (header.type && header.type !== 'file' && header.type !== 'contiguous-file') {
-        reject(new Error(`Malformed compute source bundle: unsupported ${header.type} entry "${header.name}"`));
+        reject(messages.createError('malformedBundleUnsupportedEntry', [header.type, header.name]));
         extract.destroy();
         return;
       }
       entryCount++;
       if (entryCount > MAX_ENTRIES) {
-        reject(new Error(`Malformed compute source bundle: entry count limit (${MAX_ENTRIES}) exceeded`));
+        reject(messages.createError('malformedBundleEntryCountLimit', [MAX_ENTRIES]));
         extract.destroy();
         return;
       }
@@ -251,11 +246,7 @@ function untarGzip(buffer: Buffer): Promise<Record<string, Buffer>> {
         (header.size && header.size > MAX_ENTRY_BYTES) ||
         (header.size && totalBytes + header.size > MAX_TOTAL_ENTRY_BYTES)
       ) {
-        reject(
-          new Error(
-            `Malformed compute source bundle: entry size limit (${MAX_ENTRY_BYTES} bytes) or total size limit (${MAX_TOTAL_ENTRY_BYTES} bytes) exceeded`
-          )
-        );
+        reject(messages.createError('malformedBundleEntrySizeLimit', [MAX_ENTRY_BYTES, MAX_TOTAL_ENTRY_BYTES]));
         extract.destroy();
         return;
       }
@@ -263,9 +254,7 @@ function untarGzip(buffer: Buffer): Promise<Record<string, Buffer>> {
       stream.on('data', (chunk: unknown) => {
         totalBytes += (chunk as Buffer).length;
         if (totalBytes > MAX_TOTAL_ENTRY_BYTES) {
-          reject(
-            new Error(`Malformed compute source bundle: total size limit (${MAX_TOTAL_ENTRY_BYTES} bytes) exceeded`)
-          );
+          reject(messages.createError('malformedBundleTotalSizeLimit', [MAX_TOTAL_ENTRY_BYTES]));
           extract.destroy();
           return;
         }
@@ -279,7 +268,7 @@ function untarGzip(buffer: Buffer): Promise<Record<string, Buffer>> {
       stream.resume();
     });
     extract.on('finish', () => resolveEntries(entries));
-    extract.on('error', () => reject(new Error('Malformed compute source bundle: not a valid tar archive')));
+    extract.on('error', () => reject(messages.createError('malformedBundleInvalidTar')));
     extract.end(decompressed);
   });
 }
@@ -334,7 +323,7 @@ async function listFilesRecursive(base: string, accepts: (file: string) => boole
         const file = relative(base, full).split(sep).join('/');
         if (accepts(file)) {
           if (files.length === MAX_ENTRIES) {
-            throw new Error(`Compute source bundle: entry count limit (${MAX_ENTRIES}) exceeded`);
+            throw messages.createError('bundleEntryCountLimit', [MAX_ENTRIES]);
           }
           files.push(file);
         }

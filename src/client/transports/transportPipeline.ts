@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Lifecycle, Logger, SfError } from '@salesforce/core';
+import { Lifecycle, Logger, Messages, SfError } from '@salesforce/core';
 import type { DestructiveChangesType } from '../../collections/types';
 import { TransportName } from '../../registry/types';
 import { SourceComponent } from '../../resolve/sourceComponent';
@@ -27,6 +27,9 @@ import {
   TransportResult,
 } from './types';
 import { ComputeAppTransport } from './computeAppTransport';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export type TransportGroup = {
   transport: TransportProvider;
@@ -178,7 +181,7 @@ export class TransportPipeline {
     const transport = this.transports.find((candidate) => candidate.name === transportName);
     if (!transport) {
       throw new SfError(
-        `No transport provider is registered for '${transportName}' required by ${component.type.name}.`,
+        messages.getMessage('error_missing_transport_provider', [transportName, component.type.name]),
         'MissingTransportProvider'
       );
     }

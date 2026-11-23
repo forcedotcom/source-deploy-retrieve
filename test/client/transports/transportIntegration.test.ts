@@ -36,6 +36,7 @@ import { TransportCoordinator } from '../../../src/client/transports/transportCo
 import { MetadataApiRetrieve } from '../../../src/client/metadataApiRetrieve';
 import { MetadataApiDeploy } from '../../../src/client/metadataApiDeploy';
 import { ComputeAppTransport } from '../../../src/client/transports/computeAppTransport';
+import * as computeSourceBundle from '../../../src/client/transports/computeSourceBundle';
 import {
   TransportContext,
   TransportDescription,
@@ -817,7 +818,11 @@ describe('Transport integration', () => {
     const appA = new SourceComponent({ name: 'AppA', type, content: '/out/computeApps/AppA' });
     const appB = new SourceComponent({ name: 'AppB', type, content: '/out/computeApps/AppB' });
 
-    async function runAfterRetrieve(groupMembers: string[], retrieved: SourceComponent[]): Promise<sinon.SinonStub> {
+    async function runAfterRetrieve(
+      groupMembers: string[],
+      retrieved: SourceComponent[],
+      connection: Connection = {} as Connection
+    ): Promise<sinon.SinonStub> {
       const transport = createMockTransport({
         deployPhase: 'before-metadata',
         retrievePhase: 'after-metadata',
@@ -828,7 +833,7 @@ describe('Transport integration', () => {
         .stub(pipeline, 'runAfterMetadata')
         .resolves({ fileResponses: [], asyncHandles: [], operationResults: [] });
       const groups = [{ transport, components: groupMembers.map((name) => new SourceComponent({ name, type })) }];
-      const coordinator = new TransportCoordinator(pipeline, groups, mockContext, 'retrieve');
+      const coordinator = new TransportCoordinator(pipeline, groups, { ...mockContext, connection }, 'retrieve');
       const result = new RetrieveResult(createRetrieveStatus(), new ComponentSet(retrieved));
       await coordinator.processResult(result, RequestStatus.Succeeded);
       return after;
@@ -848,11 +853,184 @@ describe('Transport integration', () => {
       expect(groups[0].components.map((c) => c.fullName)).to.deep.equal(['AppA', 'AppB']);
     });
 
+    describe('namespace-prefixed members in the namespace org', () => {
+      const xorg = new SourceComponent({ name: 'XorgApp', type, content: '/out/computeApps/XorgApp' });
+      const orgWithNamespace = (namespace: string | null): { connection: Connection; query: sinon.SinonStub } => {
+        const query = sinon.stub().resolves({ records: [{ NamespacePrefix: namespace }] });
+        return { connection: { query } as unknown as Connection, query };
+      };
+      const members = (after: sinon.SinonStub): Array<[string, string | undefined]> =>
+        (after.firstCall.args[1] as Array<{ components: SourceComponent[] }>)[0].components.map((c) => [
+          c.fullName,
+          c.content,
+        ]);
+
+      it('resolves ns__Name to the unprefixed component the namespace org returned', async () => {
+        const { connection, query } = orgWithNamespace('xorgns');
+        const after = await runAfterRetrieve(['xorgns__XorgApp'], [xorg], connection);
+        expect(members(after)).to.deep.equal([['XorgApp', '/out/computeApps/XorgApp']]);
+        expect(query.calledOnceWith('SELECT NamespacePrefix FROM Organization')).to.be.true;
+      });
+
+      it('does not resolve in an org without a namespace', async () => {
+        const after = await runAfterRetrieve(['xorgns__XorgApp'], [xorg], orgWithNamespace(null).connection);
+        expect(members(after)).to.deep.equal([['xorgns__XorgApp', undefined]]);
+      });
+
+      it('does not resolve a different prefix', async () => {
+        const after = await runAfterRetrieve(['otherns__XorgApp'], [xorg], orgWithNamespace('xorgns').connection);
+        expect(members(after)).to.deep.equal([['otherns__XorgApp', undefined]]);
+      });
+
+      it('keeps the requested name when the namespace query fails', async () => {
+        const connection = { query: sinon.stub().rejects(new Error('INVALID_TYPE')) } as unknown as Connection;
+        const after = await runAfterRetrieve(['xorgns__XorgApp'], [xorg], connection);
+        expect(members(after)).to.deep.equal([['xorgns__XorgApp', undefined]]);
+      });
+
+      it('does not query the org when every member matched', async () => {
+        const subscriber = new SourceComponent({
+          name: 'xorgns__XorgApp',
+          type,
+          content: '/out/computeApps/xorgns__XorgApp',
+        });
+        const { connection, query } = orgWithNamespace('xorgns');
+        const after = await runAfterRetrieve(['xorgns__XorgApp', 'AppA'], [subscriber, appA], connection);
+        expect(members(after)).to.deep.equal([
+          ['xorgns__XorgApp', '/out/computeApps/xorgns__XorgApp'],
+          ['AppA', '/out/computeApps/AppA'],
+        ]);
+        expect(query.called).to.be.false;
+      });
+
+      it('downloads once when both ns__Name and Name are requested', async () => {
+        const after = await runAfterRetrieve(
+          ['xorgns__XorgApp', 'XorgApp'],
+          [xorg],
+          orgWithNamespace('xorgns').connection
+        );
+        expect(members(after)).to.deep.equal([['XorgApp', '/out/computeApps/XorgApp']]);
+      });
+
+      it('does not duplicate a resolved ns__Name alongside *', async () => {
+        const after = await runAfterRetrieve(['xorgns__XorgApp', '*'], [xorg], orgWithNamespace('xorgns').connection);
+        expect(members(after)).to.deep.equal([['XorgApp', '/out/computeApps/XorgApp']]);
+      });
+
+      it('matches the org namespace case-insensitively', async () => {
+        const after = await runAfterRetrieve(['XORGNS__XorgApp'], [xorg], orgWithNamespace('XorgNS').connection);
+        expect(members(after)).to.deep.equal([['XorgApp', '/out/computeApps/XorgApp']]);
+      });
+
+      it('does not resolve when the org returns no Organization record', async () => {
+        const connection = { query: sinon.stub().resolves({ records: [] }) } as unknown as Connection;
+        const after = await runAfterRetrieve(['xorgns__XorgApp'], [xorg], connection);
+        expect(members(after)).to.deep.equal([['xorgns__XorgApp', undefined]]);
+      });
+
+      it('does not query the org when no unprefixed counterpart was returned', async () => {
+        const { connection, query } = orgWithNamespace('xorgns');
+        const after = await runAfterRetrieve(['xorgns__Missing', 'AppA'], [appA], connection);
+        expect(members(after)).to.deep.equal([
+          ['xorgns__Missing', undefined],
+          ['AppA', '/out/computeApps/AppA'],
+        ]);
+        expect(query.called).to.be.false;
+      });
+
+      it('queries once and resolves only the members with the org namespace', async () => {
+        const { connection, query } = orgWithNamespace('xorgns');
+        const after = await runAfterRetrieve(
+          ['xorgns__XorgApp', 'xorgns__AppA', 'My__AppB', 'xorgns__Missing'],
+          [xorg, appA, appB],
+          connection
+        );
+        expect(members(after)).to.deep.equal([
+          ['XorgApp', '/out/computeApps/XorgApp'],
+          ['AppA', '/out/computeApps/AppA'],
+          ['My__AppB', undefined],
+          ['xorgns__Missing', undefined],
+        ]);
+        expect(query.calledOnce).to.be.true;
+      });
+    });
+
+    it('keeps distinct unmatched local copies of the same member', async () => {
+      const transport = createMockTransport({
+        deployPhase: 'before-metadata',
+        retrievePhase: 'after-metadata',
+        typeNames: ['ComputeApp'],
+      });
+      const pipeline = new TransportPipeline([transport]);
+      const after = sinon
+        .stub(pipeline, 'runAfterMetadata')
+        .resolves({ fileResponses: [], asyncHandles: [], operationResults: [] });
+      const a = new SourceComponent({ name: 'Dup', type, content: '/pkgA/computeApps/Dup' });
+      const b = new SourceComponent({ name: 'Dup', type, content: '/pkgB/computeApps/Dup' });
+      const coordinator = new TransportCoordinator(
+        pipeline,
+        [{ transport, components: [a, b] }],
+        mockContext,
+        'retrieve'
+      );
+      await coordinator.processResult(
+        new RetrieveResult(createRetrieveStatus(), new ComponentSet()),
+        RequestStatus.Succeeded
+      );
+      const groups = after.firstCall.args[1] as Array<{ components: SourceComponent[] }>;
+      expect(groups[0].components).to.deep.equal([a, b]);
+    });
+
     it('drops * when the org returned no components of that type', async () => {
       const after = await runAfterRetrieve(['*'], []);
 
       const groups = after.firstCall.args[1] as Array<{ components: SourceComponent[] }>;
       expect(groups).to.deep.equal([]);
+    });
+  });
+
+  describe('ComputeApp retrieve by namespace-prefixed name', () => {
+    it('downloads into the folder the namespace org extracted the meta xml to', async () => {
+      const type = registryAccess.getTypeByName('ComputeApp');
+      const unpack = sinon.stub(computeSourceBundle, 'unpackComputeBundle').resolves({ fileCount: 3 });
+      const request = sinon.stub().resolves(Buffer.from('bundle').toString('binary'));
+      const query = sinon.stub().resolves({ records: [{ NamespacePrefix: 'xorgns' }] });
+      const transport = new ComputeAppTransport();
+      const requested = new SourceComponent({ name: 'xorgns__XorgApp', type });
+      const extracted = new SourceComponent(
+        {
+          name: 'XorgApp',
+          type,
+          content: '/proj/force-app/main/default/computeApps/XorgApp',
+          xml: '/proj/force-app/main/default/computeApps/XorgApp/XorgApp.computeApp-meta.xml',
+        },
+        VirtualTreeContainer.fromFilePaths([
+          '/proj/force-app/main/default/computeApps/XorgApp/XorgApp.computeApp-meta.xml',
+        ])
+      );
+      const coordinator = new TransportCoordinator(
+        new TransportPipeline([transport]),
+        [{ transport, components: [requested] }],
+        { ...mockContext, connection: { version: '68.0', request, query } as unknown as Connection },
+        'retrieve'
+      );
+      const result = new RetrieveResult(createRetrieveStatus(), new ComponentSet([extracted]));
+
+      await coordinator.processResult(result, RequestStatus.Succeeded);
+
+      expect(request.firstCall.args[0]).to.include({ url: '/connect/compute/XorgApp/builds/latest/source' });
+      expect(unpack.firstCall.args[1]).to.equal('/proj/force-app/main/default/computeApps/XorgApp');
+      const transportResponses = result
+        .getFileResponses()
+        .filter((response) => response.filePath === '/proj/force-app/main/default/computeApps/XorgApp');
+      expect(transportResponses).to.deep.equal([
+        {
+          fullName: 'XorgApp',
+          type: 'ComputeApp',
+          state: ComponentStatus.Changed,
+          filePath: '/proj/force-app/main/default/computeApps/XorgApp',
+        },
+      ]);
     });
   });
 

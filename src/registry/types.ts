@@ -116,6 +116,11 @@ export type MetadataType = {
    * Whether the component requires the parent to be present when deploying/retrieving
    */
   unaddressableWithoutParent?: boolean;
+  /**
+   * Leave the component out of package.xml while still sending its files in the deploy/retrieve payload.
+   * For types the Metadata API only accepts as part of a parent component, not as a manifest entry of their own.
+   */
+  excludeFromManifest?: boolean;
 
   /**
    * Whether or not components of the same type can be can be specified with the wildcard character, and by name in a manifest
@@ -161,7 +166,8 @@ export type MetadataType = {
       | 'bundle'
       | 'default'
       | 'partiallyDecomposed'
-      | 'uiBundles';
+      | 'uiBundles'
+      | 'd360';
     transformer?:
       | 'decomposed'
       | 'staticResource'
@@ -171,7 +177,8 @@ export type MetadataType = {
       | 'decomposedPermissionSet'
       | 'decomposeExternalServiceRegistration'
       | 'uiBundle'
-      | 'profile';
+      | 'profile'
+      | 'd360';
     decomposition?: 'topLevel' | 'folderPerType';
     recomposition?: 'startEmpty';
   };

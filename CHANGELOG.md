@@ -1,3 +1,12 @@
+## [13.14.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.14.0...13.14.1) (2026-11-23)
+
+
+### Bug Fixes
+
+* **deps:** bump proxy-agent to v8 to drop vulnerable basic-ftp @W-25010511@ ([#1874](https://github.com/forcedotcom/source-deploy-retrieve/issues/1874)) ([c1fd74e](https://github.com/forcedotcom/source-deploy-retrieve/commit/c1fd74e2654117b9be7842f281a06a121ceadf8a))
+
+
+
 # [13.14.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/13.13.0...13.14.0) (2026-11-23)
 
 

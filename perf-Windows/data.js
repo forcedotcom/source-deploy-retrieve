@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795454686416,
+  "lastUpdate": 1795466564938,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -118754,6 +118754,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 17291,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "randi.wilson@salesforce.com",
+            "name": "Randi Wilson",
+            "username": "randi274"
+          },
+          "committer": {
+            "email": "randi.wilson@salesforce.com",
+            "name": "Randi Wilson",
+            "username": "randi274"
+          },
+          "distinct": true,
+          "id": "12ae3ca7e969795c6746592552ee9fe534fe6678",
+          "message": "fix(deps): bump proxy-agent to v8 to drop vulnerable basic-ftp @W-25010511@\n\nproxy-agent >= 7 is ESM-only, so load it via dynamic import() from\ngetProxiedOptions; TS (module: Node16) preserves import() in CJS output,\nwhich works on all supported Node 22.x versions.\n\nThis moves basic-ftp from 5.3.1 to 6.2.6, clearing its high-severity\nadvisories for SDR consumers.",
+          "timestamp": "2026-11-23T15:36:49-05:00",
+          "tree_id": "8543bc58d1066f6167b8bb1649fc3808a1301669",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/12ae3ca7e969795c6746592552ee9fe534fe6678"
+        },
+        "date": 1795466551413,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 276,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 2913,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 2259,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 4330,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 546,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 5516,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 5135,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 5453,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 976,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 9258,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 8326,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 9727,
             "unit": "ms"
           }
         ]

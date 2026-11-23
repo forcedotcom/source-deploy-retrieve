@@ -102,7 +102,7 @@ export class ComputeAppTransport implements TransportProvider {
   public async beforeDeploy(context: TransportContext): Promise<TransportResult> {
     const operationResults: TransportOperationResult[] = [];
     void Lifecycle.getInstance().emitTelemetry({
-      eventName: 'heroku_compute_pre_deploy',
+      eventName: 'elastic_compute_pre_deploy',
       library: 'SDR',
       checkOnly: Boolean(context.checkOnly),
     });
@@ -168,7 +168,7 @@ export class ComputeAppTransport implements TransportProvider {
   public async afterRetrieve(context: TransportContext): Promise<TransportResult> {
     const fileResponses: FileResponse[] = [];
     void Lifecycle.getInstance().emitTelemetry({
-      eventName: 'heroku_compute_post_retrieve',
+      eventName: 'elastic_compute_post_retrieve',
       library: 'SDR',
     });
     for (const component of context.components) {

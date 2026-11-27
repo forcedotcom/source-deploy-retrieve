@@ -299,7 +299,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DataSourceObject|✅||
 |DataSourceTenant|✅||
 |DataSrcDataModelFieldMap|✅||
-|DataStreamBundle|❌|Not supported, but support could be added (but not for tracking)|
+|DataStream|❌|Not supported, but support could be added (but not for tracking)|
 |DataStreamDefinition|✅||
 |DataStreamTemplate|✅||
 |DataTransform|❌|Not supported, but support could be added (but not for tracking)|
